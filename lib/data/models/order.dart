@@ -1,24 +1,69 @@
 enum OrderType { pickup, collection }
 enum OrderStatus { pending, accepted, inTransit, completed, cancelled }
-enum WasteType { paper, plastic, metal, glass, electronics, organic }
+enum PickupTarget { company, riderBuy }
+enum WasteType {
+  paper, plastic, metal, glass, electronics, organic,
+  textile, wood, rubber, oil, chemicals, batteries, furniture, tires, construction,
+}
+
+enum WasteForm { solid, liquid, mixed }
+
+enum WeightCategory { light, medium, heavy, veryHeavy }
 
 extension WasteTypeLabel on WasteType {
-  String get label {
-    switch (this) {
-      case WasteType.paper:
-        return 'ورق';
-      case WasteType.plastic:
-        return 'بلاستيك';
-      case WasteType.metal:
-        return 'معادن';
-      case WasteType.glass:
-        return 'زجاج';
-      case WasteType.electronics:
-        return 'إلكترونيات';
-      case WasteType.organic:
-        return 'عضوي';
-    }
-  }
+  String get label => switch (this) {
+    WasteType.paper => 'ورق',
+    WasteType.plastic => 'بلاستيك',
+    WasteType.metal => 'معادن',
+    WasteType.glass => 'زجاج',
+    WasteType.electronics => 'إلكترونيات',
+    WasteType.organic => 'عضوي',
+    WasteType.textile => 'أقمشة',
+    WasteType.wood => 'خشب',
+    WasteType.rubber => 'مطاط',
+    WasteType.oil => 'زيوت',
+    WasteType.chemicals => 'كيميائيات',
+    WasteType.batteries => 'بطاريات',
+    WasteType.furniture => 'أثاث',
+    WasteType.tires => 'إطارات',
+    WasteType.construction => 'مخلفات بناء',
+  };
+}
+
+extension WasteFormLabel on WasteForm {
+  String get label => switch (this) {
+    WasteForm.solid => 'صلب',
+    WasteForm.liquid => 'سائل',
+    WasteForm.mixed => 'مختلط',
+  };
+}
+
+extension PickupTargetLabel on PickupTarget {
+  String get label => switch (this) {
+    PickupTarget.company => 'إرسال لشركة تدوير',
+    PickupTarget.riderBuy => 'السائق يشتريها مباشرة',
+  };
+
+  String get shortLabel => switch (this) {
+    PickupTarget.company => 'شركة',
+    PickupTarget.riderBuy => 'شراء مباشر',
+  };
+}
+
+extension WeightCategoryLabel on WeightCategory {
+  String get label => switch (this) {
+    WeightCategory.light => 'خفيف (أقل من ٥ كغ)',
+    WeightCategory.medium => 'متوسط (٥ - ٢٠ كغ)',
+    WeightCategory.heavy => 'ثقيل (٢٠ - ١٠٠ كغ)',
+    WeightCategory.veryHeavy => 'ثقيل جداً (أكثر من ١٠٠ كغ)',
+  };
+
+  String get shortLabel => switch (this) {
+    WeightCategory.light => 'خفيف',
+    WeightCategory.medium => 'متوسط',
+    WeightCategory.heavy => 'ثقيل',
+    WeightCategory.veryHeavy => 'ثقيل جداً',
+  };
 }
 
 extension OrderStatusLabel on OrderStatus {
@@ -62,6 +107,14 @@ class Order {
   final double? distanceKm;
   final String? proofImagePath;
   final double? paidAmount;
+  final String? supplierNotes;
+  final List<String> images;
+  final double? estimatedWeightKg;
+  final WasteForm? wasteForm;
+  final WeightCategory? weightCategory;
+  final double? deliveryFee;
+  final PickupTarget? pickupTarget;
+  final double? itemPrice;
 
   const Order({
     required this.id,
@@ -87,6 +140,14 @@ class Order {
     this.distanceKm,
     this.proofImagePath,
     this.paidAmount,
+    this.supplierNotes,
+    this.images = const [],
+    this.estimatedWeightKg,
+    this.wasteForm,
+    this.weightCategory,
+    this.deliveryFee,
+    this.pickupTarget,
+    this.itemPrice,
   });
 
   Order copyWith({
@@ -113,6 +174,14 @@ class Order {
     double? distanceKm,
     String? proofImagePath,
     double? paidAmount,
+    String? supplierNotes,
+    List<String>? images,
+    double? estimatedWeightKg,
+    WasteForm? wasteForm,
+    WeightCategory? weightCategory,
+    double? deliveryFee,
+    PickupTarget? pickupTarget,
+    double? itemPrice,
   }) {
     return Order(
       id: id ?? this.id,
@@ -138,180 +207,15 @@ class Order {
       distanceKm: distanceKm ?? this.distanceKm,
       proofImagePath: proofImagePath ?? this.proofImagePath,
       paidAmount: paidAmount ?? this.paidAmount,
+      supplierNotes: supplierNotes ?? this.supplierNotes,
+      images: images ?? this.images,
+      estimatedWeightKg: estimatedWeightKg ?? this.estimatedWeightKg,
+      wasteForm: wasteForm ?? this.wasteForm,
+      weightCategory: weightCategory ?? this.weightCategory,
+      deliveryFee: deliveryFee ?? this.deliveryFee,
+      pickupTarget: pickupTarget ?? this.pickupTarget,
+      itemPrice: itemPrice ?? this.itemPrice,
     );
   }
 
-  static List<Order> mockAvailableForDriver() => [
-        Order(
-          id: 'ORD-001',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.paper, WasteType.plastic],
-          pickupAddress: 'شارع الملكة نور، الجبيهة',
-          dropoffAddress: 'شركة الأفق الخضراء، الزرقاء',
-          status: OrderStatus.pending,
-          reward: 8.5,
-          distanceKm: 3.2,
-          createdAt: DateTime.now().subtract(const Duration(minutes: 12)),
-          supplierName: 'مطعم الأصيل',
-        ),
-        Order(
-          id: 'ORD-002',
-          type: OrderType.collection,
-          wasteTypes: [WasteType.metal, WasteType.glass],
-          pickupAddress: 'منطقة الوحدات، عمّان',
-          dropoffAddress: 'شركة الإعادة الوطنية، صويلح',
-          status: OrderStatus.pending,
-          reward: 12.0,
-          distanceKm: 5.8,
-          createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
-          supplierName: 'محل البقالة الكبير',
-        ),
-        Order(
-          id: 'ORD-003',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.electronics],
-          pickupAddress: 'شارع المدينة المنورة، عمّان',
-          dropoffAddress: 'مركز تدوير التقنية، الأردن',
-          status: OrderStatus.pending,
-          reward: 18.0,
-          distanceKm: 7.1,
-          createdAt: DateTime.now().subtract(const Duration(hours: 1)),
-          supplierName: 'أحمد العلي',
-        ),
-      ];
-
-  static Order? mockActiveDriverOrder() => Order(
-        id: 'ORD-000',
-        type: OrderType.pickup,
-        wasteTypes: [WasteType.paper],
-        pickupAddress: 'شارع الجامعة، عمّان',
-        dropoffAddress: 'شركة التدوير الذكي، خلدا',
-        status: OrderStatus.inTransit,
-        reward: 9.0,
-        distanceKm: 2.4,
-        eta: '٨ دقائق',
-        createdAt: DateTime.now().subtract(const Duration(minutes: 25)),
-        acceptedAt: DateTime.now().subtract(const Duration(minutes: 20)),
-        supplierName: 'محمد خالد',
-        driverPhone: '0791234567',
-        driverRating: 4.8,
-        driverVehicle: 'بيك آب',
-      );
-
-  static List<Order> mockDriverHistory() => [
-        Order(
-          id: 'ORD-H01',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.plastic],
-          pickupAddress: 'شارع الحمزة، عمّان',
-          dropoffAddress: 'شركة الأفق الخضراء',
-          status: OrderStatus.completed,
-          reward: 7.5,
-          createdAt: DateTime.now().subtract(const Duration(days: 1)),
-          acceptedAt: DateTime.now().subtract(const Duration(days: 1, hours: 1)),
-        ),
-        Order(
-          id: 'ORD-H02',
-          type: OrderType.collection,
-          wasteTypes: [WasteType.metal],
-          pickupAddress: 'العبدلي، عمّان',
-          dropoffAddress: 'مركز إعادة التدوير',
-          status: OrderStatus.completed,
-          reward: 11.0,
-          createdAt: DateTime.now().subtract(const Duration(days: 2)),
-          acceptedAt: DateTime.now().subtract(const Duration(days: 2, minutes: 40)),
-        ),
-      ];
-
-  static List<Order> mockSupplierActive() => [
-        Order(
-          id: 'SUP-001',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.paper, WasteType.plastic],
-          pickupAddress: 'عنواني الحالي',
-          dropoffAddress: 'أقرب مركز تدوير',
-          status: OrderStatus.inTransit,
-          reward: 0,
-          eta: '١٢ دقيقة',
-          distanceKm: 2.1,
-          createdAt: DateTime.now().subtract(const Duration(minutes: 18)),
-          acceptedAt: DateTime.now().subtract(const Duration(minutes: 12)),
-          driverName: 'خالد محمد',
-          driverPhone: '0791234567',
-          driverRating: 4.9,
-          driverVehicle: 'بيك آب',
-        ),
-        Order(
-          id: 'SUP-002',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.glass],
-          pickupAddress: 'عنواني الحالي',
-          dropoffAddress: 'أقرب مركز تدوير',
-          status: OrderStatus.pending,
-          reward: 0,
-          createdAt: DateTime.now().subtract(const Duration(hours: 2)),
-        ),
-      ];
-
-  static List<Order> mockCompanyIncoming() => [
-        Order(
-          id: 'INC-001',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.paper, WasteType.plastic],
-          pickupAddress: 'مطعم الأصيل، الجبيهة',
-          dropoffAddress: 'شركتنا',
-          status: OrderStatus.inTransit,
-          reward: 8.5,
-          weightKg: 45.0,
-          eta: '٨ دقائق',
-          distanceKm: 3.4,
-          createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
-          acceptedAt: DateTime.now().subtract(const Duration(minutes: 20)),
-          driverName: 'أحمد يوسف',
-          driverPhone: '0799876543',
-          driverRating: 4.7,
-          driverVehicle: 'شاحنة صغيرة',
-        ),
-        Order(
-          id: 'INC-002',
-          type: OrderType.collection,
-          wasteTypes: [WasteType.metal],
-          pickupAddress: 'محل قطع الغيار، الزرقاء',
-          dropoffAddress: 'شركتنا',
-          status: OrderStatus.accepted,
-          reward: 15.0,
-          weightKg: 80.0,
-          eta: '٢٥ دقيقة',
-          createdAt: DateTime.now().subtract(const Duration(hours: 1)),
-          acceptedAt: DateTime.now().subtract(const Duration(minutes: 45)),
-          driverName: 'سالم عبدالله',
-        ),
-      ];
-
-  static List<Order> mockCompanyJobs() => [
-        Order(
-          id: 'JOB-001',
-          type: OrderType.collection,
-          wasteTypes: [WasteType.plastic, WasteType.paper],
-          pickupAddress: 'منطقة الرابية، عمّان',
-          dropoffAddress: 'مستودعنا الرئيسي',
-          status: OrderStatus.pending,
-          reward: 20.0,
-          weightKg: 100.0,
-          createdAt: DateTime.now().subtract(const Duration(hours: 3)),
-        ),
-        Order(
-          id: 'JOB-002',
-          type: OrderType.collection,
-          wasteTypes: [WasteType.electronics],
-          pickupAddress: 'مجمع الإلكترونيات، الصويفية',
-          dropoffAddress: 'مستودعنا الرئيسي',
-          status: OrderStatus.accepted,
-          reward: 35.0,
-          weightKg: 60.0,
-          createdAt: DateTime.now().subtract(const Duration(days: 1)),
-          acceptedAt: DateTime.now().subtract(const Duration(hours: 22)),
-          driverName: 'محمد فارس',
-        ),
-      ];
 }

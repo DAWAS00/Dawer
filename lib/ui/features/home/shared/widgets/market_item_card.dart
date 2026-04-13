@@ -1,0 +1,179 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../../../data/models/order.dart';
+
+class MarketItemCard extends StatelessWidget {
+  final Order item;
+  final VoidCallback onTap;
+
+  const MarketItemCard({
+    super.key,
+    required this.item,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final timeDiff = DateTime.now().difference(item.createdAt);
+    final timeLabel = timeDiff.inDays > 0
+        ? 'منذ ${timeDiff.inDays} يوم'
+        : timeDiff.inHours > 0
+            ? 'منذ ${timeDiff.inHours} ساعة'
+            : 'منذ ${timeDiff.inMinutes} دقيقة';
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // ── Top: Price badge + waste type chips ──
+            Container(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Price badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF3C7),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFFFDE68A)),
+                    ),
+                    child: Text(
+                      '${item.itemPrice?.toStringAsFixed(1) ?? '0'} د.أ',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFFC8860A),
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  // Waste type chips
+                  Flexible(
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      alignment: WrapAlignment.end,
+                      children: item.wasteTypes.map((type) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF06402B).withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            type.label,
+                            style: GoogleFonts.cairo(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF06402B),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ── Middle: Seller info + address ──
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    item.supplierName ?? 'بائع مجهول',
+                    style: GoogleFonts.cairo(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF002819),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        item.pickupAddress,
+                        style: GoogleFonts.cairo(
+                          fontSize: 12,
+                          color: const Color(0xFF717973),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.location_on_rounded, size: 14, color: Color(0xFF717973)),
+                    ],
+                  ),
+                  if (item.supplierNotes != null && item.supplierNotes!.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      item.supplierNotes!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.cairo(
+                        fontSize: 12,
+                        color: const Color(0xFF9CA3AF),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+
+            // ── Bottom: Meta info row ──
+            Container(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF9FAFB),
+                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    timeLabel,
+                    style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF9CA3AF)),
+                  ),
+                  const Spacer(),
+                  if (item.weightCategory != null) ...[
+                    Icon(Icons.fitness_center_rounded, size: 13, color: const Color(0xFF717973)),
+                    const SizedBox(width: 3),
+                    Text(
+                      item.weightCategory!.shortLabel,
+                      style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF717973)),
+                    ),
+                    const SizedBox(width: 12),
+                  ],
+                  if (item.wasteForm != null) ...[
+                    Icon(Icons.category_rounded, size: 13, color: const Color(0xFF717973)),
+                    const SizedBox(width: 3),
+                    Text(
+                      item.wasteForm!.label,
+                      style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF717973)),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

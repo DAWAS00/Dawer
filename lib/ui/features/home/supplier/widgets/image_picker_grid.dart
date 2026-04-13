@@ -1,0 +1,201 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+
+class ImagePickerGrid extends StatelessWidget {
+  final List<String> imagePaths;
+  final ValueChanged<String> onAdd;
+  final ValueChanged<int> onRemove;
+  final int maxImages;
+
+  const ImagePickerGrid({
+    super.key,
+    required this.imagePaths,
+    required this.onAdd,
+    required this.onRemove,
+    this.maxImages = 5,
+  });
+
+  Future<void> _pickImage(BuildContext context) async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE6E9E7),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'اختر مصدر الصورة',
+                style: GoogleFonts.cairo(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF002819),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF06402B).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.camera_alt_rounded, color: Color(0xFF06402B)),
+                ),
+                title: Text('الكاميرا', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                onTap: () => Navigator.pop(ctx, ImageSource.camera),
+              ),
+              ListTile(
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF06402B).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.photo_library_rounded, color: Color(0xFF06402B)),
+                ),
+                title: Text('المعرض', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (source == null) return;
+
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source, imageQuality: 80);
+    if (pickedFile != null) {
+      onAdd(pickedFile.path);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final showAddButton = imagePaths.length < maxImages;
+    final itemCount = imagePaths.length + (showAddButton ? 1 : 0);
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        childAspectRatio: 1,
+      ),
+      itemCount: itemCount,
+      itemBuilder: (context, index) {
+        if (index == imagePaths.length && showAddButton) {
+          return _AddTile(onTap: () => _pickImage(context));
+        }
+        return _ImageTile(
+          path: imagePaths[index],
+          onRemove: () => onRemove(index),
+        );
+      },
+    );
+  }
+}
+
+class _AddTile extends StatelessWidget {
+  final VoidCallback onTap;
+  const _AddTile({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFFF2F4F2),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: const Color(0xFF06402B).withValues(alpha: 0.3),
+            width: 1.5,
+            strokeAlign: BorderSide.strokeAlignInside,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.add_a_photo_rounded, color: Color(0xFF06402B), size: 28),
+            const SizedBox(height: 6),
+            Text(
+              'إضافة صورة',
+              style: GoogleFonts.cairo(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF06402B),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ImageTile extends StatelessWidget {
+  final String path;
+  final VoidCallback onRemove;
+  const _ImageTile({required this.path, required this.onRemove});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: Image.file(
+            File(path),
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+          ),
+        ),
+        Positioned(
+          top: 4,
+          left: 4,
+          child: GestureDetector(
+            onTap: onRemove,
+            child: Container(
+              width: 26,
+              height: 26,
+              decoration: BoxDecoration(
+                color: Colors.red.shade600,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.2),
+                    blurRadius: 4,
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.close_rounded, color: Colors.white, size: 16),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

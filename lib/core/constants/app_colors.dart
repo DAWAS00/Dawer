@@ -22,6 +22,11 @@ class AppColors {
   static const Color statusCancelledBg = Color(0xFFFEE2E2);
   static const Color statusCancelledText = Color(0xFF991B1B);
 
+  // Gradient Tokens
+  static const Color ctaGradientStart = Color(0xFF06402B);
+  static const Color ctaGradientEnd = Color(0xFF0F6B43);
+  static const Color headerGradientEnd = Color(0xFF2D8052);
+
   // Shamrock-14 Palette
   static const Color shamrock50 = Color(0xFFFFFFFF);
   static const Color shamrock100 = Color(0xFF8DFFDA);

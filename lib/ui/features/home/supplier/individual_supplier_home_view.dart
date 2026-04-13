@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../data/models/order.dart';
 import '../../../../data/services/app_order_store.dart';
-import '../../../../ui/features/auth/viewmodels/login_viewmodel.dart';
-import 'viewmodels/supplier_home_viewmodel.dart';
-import 'tabs/supplier_home_tab.dart';
+import '../../../features/auth/viewmodels/login_viewmodel.dart';
+import 'viewmodels/individual_supplier_viewmodel.dart';
+import 'tabs/individual_supplier_home_tab.dart';
 import 'tabs/supplier_orders_tab.dart';
 import 'tabs/supplier_profile_tab.dart';
 import 'widgets/supplier_nav_item.dart';
@@ -13,40 +14,37 @@ import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../shared/widgets/pickup_fab.dart';
 import '../shared/widgets/post_to_market_sheet.dart';
 
-class SupplierHomeView extends StatelessWidget {
+class IndividualSupplierHomeView extends StatelessWidget {
   final String userName;
-  final SupplierType supplierType;
 
-  const SupplierHomeView({
+  const IndividualSupplierHomeView({
     super.key,
     required this.userName,
-    required this.supplierType,
   });
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (ctx) => SupplierHomeViewModel(ctx.read<AppOrderStore>())),
+        ChangeNotifierProvider(create: (ctx) => IndividualSupplierViewModel(ctx.read<AppOrderStore>())),
         ChangeNotifierProvider(create: (ctx) => MarketplaceViewModel(ctx.read<AppOrderStore>())),
       ],
-      child: _SupplierHomeBody(userName: userName, supplierType: supplierType),
+      child: _IndividualSupplierHomeBody(userName: userName),
     );
   }
 }
 
-class _SupplierHomeBody extends StatelessWidget {
+class _IndividualSupplierHomeBody extends StatelessWidget {
   final String userName;
-  final SupplierType supplierType;
 
-  const _SupplierHomeBody({required this.userName, required this.supplierType});
+  const _IndividualSupplierHomeBody({required this.userName});
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<SupplierHomeViewModel>();
+    final vm = context.watch<IndividualSupplierViewModel>();
 
     final tabs = [
-      SupplierHomeTab(userName: userName, supplierType: supplierType),
+      IndividualSupplierHomeTab(userName: userName),
       MarketplaceTab(
         role: UserRole.supplier,
         onSupplierPurchaseConfirmed: (purchasedOrder) {
@@ -64,7 +62,7 @@ class _SupplierHomeBody extends StatelessWidget {
         user: vm.user,
         totalPoints: vm.totalPoints,
         totalOrders: vm.totalOrders,
-        supplierType: supplierType,
+        supplierType: SupplierType.individual,
         onUpdateProfile: vm.updateProfile,
       ),
     ];
@@ -72,7 +70,7 @@ class _SupplierHomeBody extends StatelessWidget {
     final marketVm = context.watch<MarketplaceViewModel>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F5),
+      backgroundColor: AppColors.background,
       body: IndexedStack(
         index: vm.currentTab,
         children: tabs,
@@ -87,7 +85,7 @@ class _SupplierHomeBody extends StatelessWidget {
 
   void _showPostToMarketSheet(
     BuildContext context,
-    SupplierHomeViewModel vm,
+    IndividualSupplierViewModel vm,
     MarketplaceViewModel marketVm,
   ) {
     showModalBottomSheet<void>(
@@ -122,7 +120,7 @@ class _SupplierHomeBody extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomNav(BuildContext context, SupplierHomeViewModel vm) {
+  Widget _buildBottomNav(BuildContext context, IndividualSupplierViewModel vm) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,

@@ -1,11 +1,28 @@
 import 'package:flutter/material.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../data/models/user.dart';
+import '../../../../../data/services/app_order_store.dart';
 
 class DriverHomeViewModel extends ChangeNotifier {
+  final AppOrderStore _store;
+
+  DriverHomeViewModel(this._store) {
+    _store.addListener(_onStoreChanged);
+  }
+
+  @override
+  void dispose() {
+    _store.removeListener(_onStoreChanged);
+    super.dispose();
+  }
+
+  void _onStoreChanged() => notifyListeners();
+
+  // ── Local state ───────────────────────────────────────────────────────────
+
   int _currentTab = 0;
   bool _isAvailable = true;
-  
+
   User _user = const User(
     id: 'DRV-19842',
     name: 'سائق دوّر',
@@ -14,35 +31,91 @@ class DriverHomeViewModel extends ChangeNotifier {
     rating: 4.8,
   );
 
-  final List<Order> _available = Order.mockAvailableForDriver();
-  Order? _active = Order.mockActiveDriverOrder();
-  final List<Order> _history = Order.mockDriverHistory();
+  // ── Getters (delegated to store) ──────────────────────────────────────────
 
   int get currentTab => _currentTab;
   bool get isAvailable => _isAvailable;
   User get user => _user;
-  List<Order> get available => _available;
-  Order? get active => _active;
-  List<Order> get history => _history;
 
-  double get totalEarnings {
-    double total = 0.0;
-    for (final order in _history) {
-      if (order.status == OrderStatus.completed) {
-        total += order.reward;
-      }
-    }
-    return total;
-  }
+  List<Order> get available => _store.driverFeed;
+  Order? get active => _store.driverActiveOrder;
+  List<Order> get history => _store.driverHistory;
 
-  int get totalCompletedRides {
-    return _history.where((o) => o.status == OrderStatus.completed).length;
-  }
+  double get totalEarnings => _store.driverHistory
+      .fold(0.0, (sum, o) => sum + o.reward);
+
+  int get totalCompletedRides => _store.driverHistory
+      .where((o) => o.status == OrderStatus.completed)
+      .length;
+
+  // ── Tab navigation ────────────────────────────────────────────────────────
 
   void setTab(int index) {
     _currentTab = index;
     notifyListeners();
   }
+
+  // ── Availability ──────────────────────────────────────────────────────────
+
+  String? toggleAvailability(bool value) {
+    if (!value && _store.driverHasActiveOrder) {
+      return 'لا يمكنك تغيير حالتك إلى غير متاح أثناء وجود طلب نشط.';
+    }
+    _isAvailable = value;
+    notifyListeners();
+    return null;
+  }
+
+  // ── Order actions ─────────────────────────────────────────────────────────
+
+  String? acceptOrder(Order order) {
+    if (!_isAvailable) {
+      return 'أنت غير متاح حالياً. لا يمكنك قبول الطلب.';
+    }
+    final error = _store.acceptOrder(order.id, _user);
+    if (error == null) {
+      _currentTab = 2; // Switch to Orders tab
+      notifyListeners();
+    }
+    return error;
+  }
+
+  void completeOrder(Order order) {
+    _store.completeOrder(order);
+  }
+
+  Order createListing({
+    required List<WasteType> wasteTypes,
+    required String pickupAddress,
+    List<String> images = const [],
+    String? notes,
+    WasteForm? wasteForm,
+    WeightCategory? weightCategory,
+    double? itemPrice,
+  }) {
+    final orderId = 'DRV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final order = Order(
+      id: orderId,
+      type: OrderType.pickup,
+      wasteTypes: wasteTypes,
+      pickupAddress: pickupAddress,
+      dropoffAddress: 'منشأة التدوير',
+      status: OrderStatus.pending,
+      reward: 0,
+      createdAt: DateTime.now(),
+      supplierName: _user.name,
+      supplierNotes: notes,
+      images: images,
+      wasteForm: wasteForm,
+      weightCategory: weightCategory,
+      pickupTarget: PickupTarget.riderBuy,
+      itemPrice: itemPrice,
+    );
+    notifyListeners();
+    return order;
+  }
+
+  // ── Profile ───────────────────────────────────────────────────────────────
 
   void updateVehicleInfo({
     String? vehicleModel,
@@ -56,65 +129,6 @@ class DriverHomeViewModel extends ChangeNotifier {
       licensePlate: licensePlate,
       vehiclePhotoPath: vehiclePhotoPath,
     );
-    notifyListeners();
-  }
-
-  String? toggleAvailability(bool value) {
-    final hasUnfinished = _active != null || 
-        _history.any((o) => o.status == OrderStatus.accepted || o.status == OrderStatus.inTransit);
-        
-    if (!value && hasUnfinished) {
-      return 'لا يمكنك تغيير حالتك إلى غير متاح أثناء وجود طلبات نشطة.';
-    }
-
-    _isAvailable = value;
-    notifyListeners();
-    return null;
-  }
-
-  String? acceptOrder(Order order) {
-    if (!_isAvailable) {
-      return 'أنت غير متاح حالياً. لا يمكنك قبول الطلب.';
-    }
-
-    final hasUnfinished = _active != null || 
-        _history.any((o) => o.status == OrderStatus.accepted || o.status == OrderStatus.inTransit);
-
-    if (hasUnfinished) {
-      return 'لا يمكنك قبول طلب جديد. يرجى توصيل الطلب الحالي أولاً.';
-    }
-
-    _available.removeWhere((o) => o.id == order.id);
-    
-    final acceptedOrder = order.copyWith(
-      status: OrderStatus.accepted,
-      acceptedAt: DateTime.now(),
-      eta: 'جاري الحساب...',
-      driverName: _user.name,
-      driverPhone: _user.phone,
-      driverRating: _user.rating,
-      driverVehicleModel: _user.vehicleModel,
-      driverVehicleColor: _user.vehicleColor,
-      driverLicensePlate: _user.licensePlate,
-      driverVehiclePhotoPath: _user.vehiclePhotoPath,
-    );
-
-    _history.insert(0, acceptedOrder);
-    _currentTab = 1; // Auto-switch to "My Orders" tab
-    notifyListeners();
-    return null;
-  }
-
-  void completeOrder(Order order) {
-    final index = _history.indexWhere((o) => o.id == order.id);
-    if (index != -1) {
-      _history[index] = order;
-    } else {
-      if (_active?.id == order.id) {
-        _history.insert(0, order);
-        _active = null;
-      }
-    }
     notifyListeners();
   }
 }

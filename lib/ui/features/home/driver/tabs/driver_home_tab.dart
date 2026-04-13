@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order.dart';
+import 'package:provider/provider.dart';
 import '../../shared/order_card.dart';
 import '../../shared/order_details_view.dart';
+import '../../shared/viewmodels/marketplace_viewmodel.dart';
+import '../../shared/widgets/market_listing_card.dart';
+import '../viewmodels/driver_home_viewmodel.dart';
 import '../widgets/driver_stat_card.dart';
 
 class DriverHomeTab extends StatelessWidget {
@@ -30,12 +34,17 @@ class DriverHomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final driverVm = context.watch<DriverHomeViewModel>();
+    final marketVm = context.watch<MarketplaceViewModel>();
+    final myListings = marketVm.myListings(driverVm.user.name);
+
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(child: _buildHeader(context)),
         SliverToBoxAdapter(child: _buildStatsRow()),
         if (active != null)
           SliverToBoxAdapter(child: _buildActiveBanner(context)),
+        if (myListings.isNotEmpty) ..._buildMyListingsSection(context, myListings, marketVm),
         if (!isAvailable)
           SliverToBoxAdapter(
             child: Padding(
@@ -82,7 +91,7 @@ class DriverHomeTab extends StatelessWidget {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
             sliver: available.isEmpty
                 ? SliverToBoxAdapter(
                     child: Padding(
@@ -114,6 +123,94 @@ class DriverHomeTab extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+
+  List<Widget> _buildMyListingsSection(
+    BuildContext context,
+    List<Order> listings,
+    MarketplaceViewModel marketVm,
+  ) {
+    return [
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E40AF).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '${listings.length}',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF1E40AF),
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '\u0645\u0646\u0634\u0648\u0631\u0627\u062a\u064a \u0641\u064a \u0627\u0644\u0633\u0648\u0642',
+                textAlign: TextAlign.right,
+                style: GoogleFonts.cairo(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF002819),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      SliverPadding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+        sliver: SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (ctx, i) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: MarketListingCard(
+                order: listings[i],
+                onDelete: listings[i].status == OrderStatus.pending
+                    ? () => _confirmDeleteListing(context, listings[i].id, marketVm)
+                    : null,
+              ),
+            ),
+            childCount: listings.length,
+          ),
+        ),
+      ),
+    ];
+  }
+
+  void _confirmDeleteListing(
+    BuildContext context,
+    String orderId,
+    MarketplaceViewModel marketVm,
+  ) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text('\u0633\u062d\u0628 \u0627\u0644\u0625\u0639\u0644\u0627\u0646', textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        content: Text('\u0647\u0644 \u062a\u0631\u064a\u062f \u0633\u062d\u0628 \u0647\u0630\u0627 \u0627\u0644\u0625\u0639\u0644\u0627\u0646 \u0645\u0646 \u0627\u0644\u0633\u0648\u0642\u061f', textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('\u0644\u0627', style: GoogleFonts.cairo(color: const Color(0xFF717973))),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              marketVm.removeListing(orderId);
+            },
+            child: Text('\u0646\u0639\u0645\u060c \u0633\u062d\u0628', style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
     );
   }
 

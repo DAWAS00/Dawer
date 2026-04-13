@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/dawas/**)",
+      "Bash(obsidian vault=Obsidian-Brain:*)",
+      "Bash(dir \"C:/Users/dawas/OneDrive/Documents/GitHub/Obsidian-Brain\")"
+    ]
+  }
+}
