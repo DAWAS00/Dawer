@@ -10,6 +10,7 @@ import 'tabs/driver_orders_tab.dart';
 import 'tabs/driver_profile_tab.dart';
 import 'widgets/driver_nav_item.dart';
 import '../shared/tabs/marketplace_tab.dart';
+import '../shared/views/collection_sale_detail_view.dart';
 import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../shared/widgets/post_to_market_sheet.dart';
 import '../../auth/viewmodels/login_viewmodel.dart';
@@ -98,11 +99,24 @@ class _DriverHomeBody extends StatelessWidget {
             _handleAcceptOrder(context, vm, order),
         onCompleteOrder: vm.completeOrder,
       ),
-      const MarketplaceTab(role: UserRole.driver),
+      MarketplaceTab(
+        role: UserRole.driver,
+        currentUserName: userName,
+        onJobAccepted: (sale) {
+          vm.setTab(2);
+          if (sale != null) {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => CollectionSaleDetailView(sale: sale),
+            ));
+          }
+        },
+      ),
       DriverOrdersTab(
         history: vm.history,
         active: vm.active,
+        collectionSaleOrders: vm.collectionSaleOrders,
         onCompleteOrder: vm.completeOrder,
+        onCancelSale: (id) => vm.cancelCollectionSale(id),
       ),
       const DriverProfileTab(),
     ];

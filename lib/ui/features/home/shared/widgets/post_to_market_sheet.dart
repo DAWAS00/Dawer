@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/constants/waste_type_icons.dart';
 import '../../../../../data/models/order.dart';
 import '../../supplier/widgets/image_picker_grid.dart';
 
@@ -28,23 +29,6 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
   final _notesCtrl = TextEditingController();
   final List<String> _images = [];
 
-  static const List<(WasteType, IconData)> _wasteCategories = [
-    (WasteType.paper, Icons.newspaper_rounded),
-    (WasteType.plastic, Icons.local_drink_rounded),
-    (WasteType.metal, Icons.hardware_rounded),
-    (WasteType.glass, Icons.wine_bar_rounded),
-    (WasteType.electronics, Icons.devices_rounded),
-    (WasteType.organic, Icons.eco_rounded),
-    (WasteType.textile, Icons.checkroom_rounded),
-    (WasteType.wood, Icons.park_rounded),
-    (WasteType.rubber, Icons.circle_rounded),
-    (WasteType.oil, Icons.water_drop_rounded),
-    (WasteType.chemicals, Icons.science_rounded),
-    (WasteType.batteries, Icons.battery_alert_rounded),
-    (WasteType.furniture, Icons.chair_rounded),
-    (WasteType.tires, Icons.tire_repair_rounded),
-    (WasteType.construction, Icons.construction_rounded),
-  ];
 
   static const List<(WasteForm, IconData)> _wasteFormOptions = [
     (WasteForm.solid, Icons.inventory_2_rounded),
@@ -160,7 +144,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                 spacing: 8,
                 runSpacing: 8,
                 alignment: WrapAlignment.end,
-                children: _wasteCategories.map((entry) {
+                children: WasteTypeIcons.all.map((entry) {
                   final (type, icon) = entry;
                   final isSelected = _selected.contains(type);
                   return GestureDetector(

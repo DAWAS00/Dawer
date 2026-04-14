@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import '../../../../data/repositories/auth_repository.dart';
 
 enum UserRole { driver, supplier, recyclingCo }
 
@@ -8,10 +7,7 @@ enum SupplierType { individual, storeBusiness }
 enum LoginMethod { email, phone }
 
 class LoginViewModel extends ChangeNotifier {
-  // ignore: unused_field
-  final AuthRepository _authRepository;
-
-  LoginViewModel(this._authRepository);
+  LoginViewModel();
 
   // --- State ---
   UserRole _selectedRole = UserRole.driver;

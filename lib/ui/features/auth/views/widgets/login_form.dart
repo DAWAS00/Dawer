@@ -111,7 +111,7 @@ class LoginForm extends StatelessWidget {
             context: context,
             isPhone: true,
             label: 'رقم الهاتف',
-            hintText: '7X XXX XXXX',
+            hintText: '',
             onChanged: viewModel.setPhoneNumber,
             countryCode: viewModel.selectedCountryCode,
             dialCode: viewModel.selectedDialCode,
@@ -252,7 +252,7 @@ class LoginForm extends StatelessWidget {
                         ),
                       ),
                       // Filter for Middle East countries (and some North African)
-                      countryFilter: <String>['JO', 'SA', 'AE', 'EG', 'IQ', 'LB', 'SY', 'PS', 'KW', 'QA', 'BH', 'OM', 'YE'],
+                      countryFilter: <String>['JO'],
                       onSelect: (Country country) {
                         onCountryChanged(country.countryCode, '+${country.phoneCode}');
                       },

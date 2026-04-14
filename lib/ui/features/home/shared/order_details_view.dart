@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../data/models/order.dart';
+import '../../../../data/services/app_order_store.dart';
+import 'widgets/rate_driver_sheet.dart';
 import 'order_details/order_details_app_bar.dart';
 import 'order_details/order_map_section.dart';
 import 'order_details/order_status_timeline.dart';
@@ -26,7 +29,7 @@ class OrderDetailsView extends StatelessWidget {
             child: OrderMapSection(hasDriver: order.driverName != null),
           ),
           SliverToBoxAdapter(
-            child: OrderStatusTimeline(status: order.status),
+            child: OrderStatusTimeline(order: order),
           ),
           if (order.driverName != null)
             SliverToBoxAdapter(child: OrderDriverCard(order: order)),
@@ -48,9 +51,50 @@ class OrderDetailsView extends StatelessWidget {
               ),
             ),
             
+          if (order.status == OrderStatus.completed &&
+              order.driverName != null)
+            SliverToBoxAdapter(
+              child: _RateDriverButton(
+                order: order,
+                onRate: (r) =>
+                    context.read<AppOrderStore>().submitDriverRating(order.id, r),
+              ),
+            ),
           SliverToBoxAdapter(child: OrderActionButtons(order: order)),
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
+      ),
+    );
+  }
+}
+
+// ── Rate Driver Button ────────────────────────────────────────────────────────
+
+class _RateDriverButton extends StatelessWidget {
+  final Order order;
+  final ValueChanged<double> onRate;
+
+  const _RateDriverButton({required this.order, required this.onRate});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: OutlinedButton.icon(
+        onPressed: () => RateDriverSheet.show(
+          context,
+          order: order,
+          onSubmit: onRate,
+        ),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: const Color(0xFF1E40AF),
+          side: const BorderSide(color: Color(0xFFBFD3F5)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+        ),
+        icon: const Icon(Icons.star_outline_rounded, size: 20),
+        label: const Text('قيّم السائق'),
       ),
     );
   }

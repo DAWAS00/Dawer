@@ -1,4 +1,4 @@
-enum OrderType { pickup, collection }
+enum OrderType { pickup, collection, collectionSale }
 enum OrderStatus { pending, accepted, inTransit, completed, cancelled }
 enum PickupTarget { company, riderBuy }
 enum WasteType {
@@ -8,7 +8,34 @@ enum WasteType {
 
 enum WasteForm { solid, liquid, mixed }
 
+enum PaymentModel { perKg, flatFee }
+
 enum WeightCategory { light, medium, heavy, veryHeavy }
+
+enum CollectionDeliveryMethod { selfDelivery, assignRider }
+enum CollectionTransactionType { donate, sell }
+
+extension CollectionDeliveryMethodLabel on CollectionDeliveryMethod {
+  String get label => switch (this) {
+    CollectionDeliveryMethod.selfDelivery => 'أوصّل بنفسي',
+    CollectionDeliveryMethod.assignRider  => 'أعيّن سائقاً',
+  };
+  String get description => switch (this) {
+    CollectionDeliveryMethod.selfDelivery => 'ستوصل المواد بنفسك',
+    CollectionDeliveryMethod.assignRider  => 'سيتم تعيين سائق لك',
+  };
+}
+
+extension CollectionTransactionTypeLabel on CollectionTransactionType {
+  String get label => switch (this) {
+    CollectionTransactionType.donate => 'تبرع للشركة',
+    CollectionTransactionType.sell   => 'بيع للشركة',
+  };
+  String get description => switch (this) {
+    CollectionTransactionType.donate => 'رسوم التوصيل على الشركة، بدون مقابل مالي',
+    CollectionTransactionType.sell   => 'رسوم التوصيل عليك، وتحصل على المبلغ المتفق عليه',
+  };
+}
 
 extension WasteTypeLabel on WasteType {
   String get label => switch (this) {
@@ -50,6 +77,18 @@ extension PickupTargetLabel on PickupTarget {
   };
 }
 
+extension PaymentModelLabel on PaymentModel {
+  String get label => switch (this) {
+    PaymentModel.perKg => 'لكل كيلوغرام',
+    PaymentModel.flatFee => 'أجر ثابت',
+  };
+
+  String get unitLabel => switch (this) {
+    PaymentModel.perKg => 'د.أ / كغ',
+    PaymentModel.flatFee => 'د.أ',
+  };
+}
+
 extension WeightCategoryLabel on WeightCategory {
   String get label => switch (this) {
     WeightCategory.light => 'خفيف (أقل من ٥ كغ)',
@@ -67,20 +106,13 @@ extension WeightCategoryLabel on WeightCategory {
 }
 
 extension OrderStatusLabel on OrderStatus {
-  String get label {
-    switch (this) {
-      case OrderStatus.pending:
-        return 'قيد الانتظار';
-      case OrderStatus.accepted:
-        return 'تم القبول';
-      case OrderStatus.inTransit:
-        return 'في الطريق';
-      case OrderStatus.completed:
-        return 'مكتمل';
-      case OrderStatus.cancelled:
-        return 'ملغي';
-    }
-  }
+  String get label => switch (this) {
+        OrderStatus.pending => 'قيد الانتظار',
+        OrderStatus.accepted => 'تم القبول',
+        OrderStatus.inTransit => 'في الطريق',
+        OrderStatus.completed => 'مكتمل',
+        OrderStatus.cancelled => 'ملغي',
+      };
 }
 
 class Order {
@@ -103,6 +135,9 @@ class Order {
   final double? weightKg;
   final DateTime createdAt;
   final DateTime? acceptedAt;
+  final DateTime? inTransitAt;
+  final DateTime? completedAt;
+  final DateTime? scheduledAt;
   final String? eta;
   final double? distanceKm;
   final String? proofImagePath;
@@ -115,6 +150,16 @@ class Order {
   final double? deliveryFee;
   final PickupTarget? pickupTarget;
   final double? itemPrice;
+  final String? jobDescription;
+  final double? pricePerKg;
+  final PaymentModel? paymentModel;
+  final double? minQuantityKg;
+  final bool isEdited;
+  final DateTime? editedAt;
+  final String? editNote;
+  final String? linkedJobId;
+  final CollectionDeliveryMethod? collectionDeliveryMethod;
+  final CollectionTransactionType? collectionTransactionType;
 
   const Order({
     required this.id,
@@ -126,6 +171,9 @@ class Order {
     required this.reward,
     required this.createdAt,
     this.acceptedAt,
+    this.inTransitAt,
+    this.completedAt,
+    this.scheduledAt,
     this.driverName,
     this.driverPhone,
     this.driverRating,
@@ -148,6 +196,16 @@ class Order {
     this.deliveryFee,
     this.pickupTarget,
     this.itemPrice,
+    this.jobDescription,
+    this.pricePerKg,
+    this.paymentModel,
+    this.minQuantityKg,
+    this.isEdited = false,
+    this.editedAt,
+    this.editNote,
+    this.linkedJobId,
+    this.collectionDeliveryMethod,
+    this.collectionTransactionType,
   });
 
   Order copyWith({
@@ -170,6 +228,9 @@ class Order {
     double? weightKg,
     DateTime? createdAt,
     DateTime? acceptedAt,
+    DateTime? inTransitAt,
+    DateTime? completedAt,
+    DateTime? scheduledAt,
     String? eta,
     double? distanceKm,
     String? proofImagePath,
@@ -182,6 +243,16 @@ class Order {
     double? deliveryFee,
     PickupTarget? pickupTarget,
     double? itemPrice,
+    String? jobDescription,
+    double? pricePerKg,
+    PaymentModel? paymentModel,
+    double? minQuantityKg,
+    bool? isEdited,
+    DateTime? editedAt,
+    String? editNote,
+    String? linkedJobId,
+    CollectionDeliveryMethod? collectionDeliveryMethod,
+    CollectionTransactionType? collectionTransactionType,
   }) {
     return Order(
       id: id ?? this.id,
@@ -203,6 +274,9 @@ class Order {
       weightKg: weightKg ?? this.weightKg,
       createdAt: createdAt ?? this.createdAt,
       acceptedAt: acceptedAt ?? this.acceptedAt,
+      inTransitAt: inTransitAt ?? this.inTransitAt,
+      completedAt: completedAt ?? this.completedAt,
+      scheduledAt: scheduledAt ?? this.scheduledAt,
       eta: eta ?? this.eta,
       distanceKm: distanceKm ?? this.distanceKm,
       proofImagePath: proofImagePath ?? this.proofImagePath,
@@ -215,6 +289,16 @@ class Order {
       deliveryFee: deliveryFee ?? this.deliveryFee,
       pickupTarget: pickupTarget ?? this.pickupTarget,
       itemPrice: itemPrice ?? this.itemPrice,
+      jobDescription: jobDescription ?? this.jobDescription,
+      pricePerKg: pricePerKg ?? this.pricePerKg,
+      paymentModel: paymentModel ?? this.paymentModel,
+      minQuantityKg: minQuantityKg ?? this.minQuantityKg,
+      isEdited: isEdited ?? this.isEdited,
+      editedAt: editedAt ?? this.editedAt,
+      editNote: editNote ?? this.editNote,
+      linkedJobId: linkedJobId ?? this.linkedJobId,
+      collectionDeliveryMethod: collectionDeliveryMethod ?? this.collectionDeliveryMethod,
+      collectionTransactionType: collectionTransactionType ?? this.collectionTransactionType,
     );
   }
 

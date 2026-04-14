@@ -16,7 +16,7 @@ class GreenButton extends StatelessWidget {
     this.onPressed,
     this.isLoading = false,
     this.borderRadius = 12,
-    this.height = 54,
+    this.height = 60,
     this.leadingIcon,
     this.trailingIcon,
   });
@@ -39,7 +39,7 @@ class GreenButton extends StatelessWidget {
         child: isLoading
             ? const SizedBox(
                 width: 22,
-                height: 22,
+                height: 24,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.5,
                   color: Colors.white,

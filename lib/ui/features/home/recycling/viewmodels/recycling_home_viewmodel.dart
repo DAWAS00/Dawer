@@ -27,7 +27,6 @@ class RecyclingHomeViewModel extends ChangeNotifier {
     id: 'REC-4820',
     name: 'شركة دوّر للتدوير',
     role: 'recyclingCo',
-    phone: '+962 6 XXX XXXX',
     address: 'عمّان، الزرقاء، إربد',
     isVerified: true,
     points: 0,
@@ -105,6 +104,26 @@ class RecyclingHomeViewModel extends ChangeNotifier {
         weightCategory: weightCategory,
         reward: reward,
         itemPrice: itemPrice,
+      );
+
+  /// Post a paid collection job to the marketplace.
+  Order postCollectionJob({
+    required List<WasteType> wasteTypes,
+    required String collectionArea,
+    required String jobDescription,
+    required PaymentModel paymentModel,
+    required double price,
+    double? minQuantityKg,
+  }) =>
+      _store.createCollectionJob(
+        wasteTypes: wasteTypes,
+        pickupAddress: collectionArea,
+        companyName: companyName,
+        jobDescription: jobDescription,
+        paymentModel: paymentModel,
+        pricePerKg: paymentModel == PaymentModel.perKg ? price : null,
+        itemPrice: paymentModel == PaymentModel.flatFee ? price : null,
+        minQuantityKg: minQuantityKg,
       );
 
   // ── Profile ───────────────────────────────────────────────────────────────

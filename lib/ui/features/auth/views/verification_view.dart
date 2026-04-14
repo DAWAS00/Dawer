@@ -293,7 +293,7 @@ class _VerificationScreenState extends State<_VerificationScreen> {
               return Expanded(
                 child: Container(
                   height: 52,
-                  margin: EdgeInsets.only(right: i < 5 ? 8 : 0),
+                  margin: EdgeInsets.only(left: i < 5 ? 8 : 0),
                   decoration: BoxDecoration(
                     color: isFocused ? Colors.white : const Color(0xFFE1E3E1),
                     borderRadius: BorderRadius.circular(12),

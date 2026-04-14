@@ -1,39 +1,73 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order.dart';
+import 'post_job_form.dart';
+
+typedef PostJobSubmitCallback = void Function({
+  required List<WasteType> wasteTypes,
+  required PaymentModel paymentModel,
+  required double price,
+  required String collectionArea,
+  required String jobDescription,
+  double? minQuantityKg,
+});
 
 class PostJobSheet extends StatefulWidget {
-  const PostJobSheet({super.key});
+  final PostJobSubmitCallback onSubmit;
+
+  const PostJobSheet({super.key, required this.onSubmit});
 
   @override
   State<PostJobSheet> createState() => _PostJobSheetState();
 }
 
 class _PostJobSheetState extends State<PostJobSheet> {
-  final _areaCtrl = TextEditingController();
-  final _notesCtrl = TextEditingController();
   final Set<WasteType> _selected = {};
+  PaymentModel _paymentModel = PaymentModel.perKg;
 
-  final List<(WasteType, IconData)> _categories = const [
-    (WasteType.paper, Icons.newspaper_rounded),
-    (WasteType.plastic, Icons.local_drink_rounded),
-    (WasteType.metal, Icons.hardware_rounded),
-    (WasteType.glass, Icons.wine_bar_rounded),
-    (WasteType.electronics, Icons.devices_rounded),
-    (WasteType.organic, Icons.eco_rounded),
-  ];
+  final _priceCtrl = TextEditingController();
+  final _minQtyCtrl = TextEditingController();
+  final _areaCtrl = TextEditingController();
+  final _descCtrl = TextEditingController();
 
   @override
   void dispose() {
+    _priceCtrl.dispose();
+    _minQtyCtrl.dispose();
     _areaCtrl.dispose();
-    _notesCtrl.dispose();
+    _descCtrl.dispose();
     super.dispose();
+  }
+
+  bool get _isValid =>
+      _selected.isNotEmpty &&
+      _priceCtrl.text.trim().isNotEmpty &&
+      double.tryParse(_priceCtrl.text.trim()) != null &&
+      double.parse(_priceCtrl.text.trim()) > 0 &&
+      _areaCtrl.text.trim().isNotEmpty &&
+      _descCtrl.text.trim().isNotEmpty;
+
+  void _submit() {
+    if (!_isValid) return;
+    widget.onSubmit(
+      wasteTypes: _selected.toList(),
+      paymentModel: _paymentModel,
+      price: double.parse(_priceCtrl.text.trim()),
+      collectionArea: _areaCtrl.text.trim(),
+      jobDescription: _descCtrl.text.trim(),
+      minQuantityKg: _paymentModel == PaymentModel.perKg &&
+              _minQtyCtrl.text.trim().isNotEmpty
+          ? double.tryParse(_minQtyCtrl.text.trim())
+          : null,
+    );
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
         child: Column(
@@ -58,137 +92,52 @@ class _PostJobSheetState extends State<PostJobSheet> {
                 color: const Color(0xFF002819),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 4),
             Text(
-              'أنواع المخلفات المطلوبة *',
+              'حدّد المواد والتسعيرة وسيظهر في السوق للجميع',
               style: GoogleFonts.cairo(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF404943),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              alignment: WrapAlignment.end,
-              children: _categories.map((entry) {
-                final (type, icon) = entry;
-                final isSel = _selected.contains(type);
-                return GestureDetector(
-                  onTap: () => setState(
-                      () => isSel ? _selected.remove(type) : _selected.add(type)),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: isSel ? const Color(0xFF14401F) : const Color(0xFFF2F4F2),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          type.label,
-                          style: GoogleFonts.cairo(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: isSel ? Colors.white : const Color(0xFF404943),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Icon(icon,
-                            size: 15,
-                            color: isSel ? Colors.white : const Color(0xFF717973)),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
+                  fontSize: 12, color: const Color(0xFF717973)),
             ),
             const SizedBox(height: 20),
-            Text(
-              'منطقة الجمع *',
-              style: GoogleFonts.cairo(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF404943),
-              ),
+            PostJobFormBody(
+              selectedTypes: _selected,
+              onToggleType: (t) =>
+                  setState(() => _selected.contains(t)
+                      ? _selected.remove(t)
+                      : _selected.add(t)),
+              paymentModel: _paymentModel,
+              onPaymentModelChanged: (m) =>
+                  setState(() => _paymentModel = m),
+              priceCtrl: _priceCtrl,
+              minQtyCtrl: _minQtyCtrl,
+              areaCtrl: _areaCtrl,
+              descriptionCtrl: _descCtrl,
             ),
-            const SizedBox(height: 8),
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFE6E9E7),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: TextField(
-                controller: _areaCtrl,
-                textAlign: TextAlign.right,
-                style: GoogleFonts.cairo(fontSize: 14, color: const Color(0xFF191C1B)),
-                decoration: InputDecoration(
-                  hintText: 'مثال: الرابية، عمّان',
-                  hintStyle: GoogleFonts.cairo(
-                    fontSize: 13,
-                    color: const Color(0xFF6B7280).withValues(alpha: 0.5),
+            const SizedBox(height: 28),
+            ListenableBuilder(
+              listenable:
+                  Listenable.merge([_priceCtrl, _areaCtrl, _descCtrl]),
+              builder: (context, _) => SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton(
+                  onPressed: _isValid ? _submit : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF14401F),
+                    disabledBackgroundColor:
+                        const Color(0xFF14401F).withValues(alpha: 0.35),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    elevation: 0,
                   ),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'ملاحظات (اختياري)',
-              style: GoogleFonts.cairo(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF404943),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFE6E9E7),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: TextField(
-                controller: _notesCtrl,
-                maxLines: 3,
-                textAlign: TextAlign.right,
-                style: GoogleFonts.cairo(fontSize: 14, color: const Color(0xFF191C1B)),
-                decoration: InputDecoration(
-                  hintText: 'كميّة تقريبية، وقت التسليم...',
-                  hintStyle: GoogleFonts.cairo(
-                    fontSize: 13,
-                    color: const Color(0xFF6B7280).withValues(alpha: 0.5),
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.all(14),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              height: 54,
-              child: ElevatedButton(
-                onPressed: (_selected.isNotEmpty && _areaCtrl.text.isNotEmpty)
-                    ? () => Navigator.pop(context)
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF14401F),
-                  disabledBackgroundColor: const Color(0xFF14401F).withValues(alpha: 0.4),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  'نشر الوظيفة',
-                  style: GoogleFonts.cairo(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  child: Text(
+                    'نشر الوظيفة',
+                    style: GoogleFonts.cairo(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),

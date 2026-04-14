@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../features/auth/views/login_view.dart';
 import '../../../../features/auth/viewmodels/login_viewmodel.dart';
+import '../views/rewards_view.dart';
 
 class SupplierProfileTab extends StatelessWidget {
   final User user;
@@ -63,7 +64,9 @@ class SupplierProfileTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final isStore = supplierType == SupplierType.storeBusiness;
 
-    return CustomScrollView(
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Column(
@@ -109,13 +112,6 @@ class SupplierProfileTab extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          user.id,
-                          style: GoogleFonts.dmSans(fontSize: 14, color: Colors.white70, letterSpacing: 1.2),
-                        ),
-                        const SizedBox(width: 12),
-                        Container(width: 4, height: 4, decoration: const BoxDecoration(color: Colors.white54, shape: BoxShape.circle)),
-                        const SizedBox(width: 12),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                           decoration: BoxDecoration(
@@ -126,6 +122,13 @@ class SupplierProfileTab extends StatelessWidget {
                             isStore ? 'مورد متجر' : 'مورد فردي',
                             style: GoogleFonts.cairo(fontSize: 12, color: Colors.white),
                           ),
+                        ),
+                        const SizedBox(width: 12),
+                        Container(width: 4, height: 4, decoration: const BoxDecoration(color: Colors.white54, shape: BoxShape.circle)),
+                        const SizedBox(width: 12),
+                        Text(
+                          user.id,
+                          style: GoogleFonts.dmSans(fontSize: 14, color: Colors.white70, letterSpacing: 1.2),
                         ),
                       ],
                     ),
@@ -161,14 +164,14 @@ class SupplierProfileTab extends StatelessWidget {
               // Personal info section
               Row(
                 children: [
-                  const SizedBox(width: 24),
+                  _buildSectionTitle('المعلومات الشخصية'),
+                  const Spacer(),
                   TextButton.icon(
                     onPressed: () => _showEditProfileSheet(context),
                     icon: const Icon(Icons.edit_rounded, size: 16, color: Color(0xFF1E5C35)),
                     label: Text('تعديل', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: const Color(0xFF1E5C35))),
                   ),
-                  const Spacer(),
-                  _buildSectionTitle('المعلومات الشخصية'),
+                  const SizedBox(width: 24),
                 ],
               ),
               _buildProfileTile(Icons.phone_rounded, 'رقم الهاتف', user.phone),
@@ -187,6 +190,11 @@ class SupplierProfileTab extends StatelessWidget {
               _buildProfileTile(Icons.notifications_active_rounded, 'الإشعارات', 'مفعلة'),
 
               const SizedBox(height: 32),
+              _buildActionTile(context, 'مكافآتي', Icons.emoji_events_rounded, const Color(0xFFD97706), () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => RewardsView(totalPoints: totalPoints),
+                ));
+              }),
               _buildActionTile(context, 'تعديل الملف الشخصي', Icons.edit_rounded, const Color(0xFF002819), () => _showEditProfileSheet(context)),
               _buildActionTile(context, 'تسجيل الخروج', Icons.logout_rounded, Colors.red.shade700, () => _showLogoutDialog(context)),
               _buildActionTile(context, 'حذف الحساب', Icons.person_remove_rounded, Colors.red.shade700, () {}),
@@ -196,6 +204,7 @@ class SupplierProfileTab extends StatelessWidget {
           ),
         ),
       ],
+      ),
     );
   }
 
@@ -237,13 +246,6 @@ class SupplierProfileTab extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text(
-            value,
-            style: GoogleFonts.cairo(fontSize: 14, color: valueColor ?? const Color(0xFF404943), fontWeight: FontWeight.w600),
-          ),
-          const Spacer(),
-          Text(label, style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF002819))),
-          const SizedBox(width: 10),
           Container(
             width: 36,
             height: 36,
@@ -252,6 +254,13 @@ class SupplierProfileTab extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, size: 18, color: const Color(0xFF1E5C35)),
+          ),
+          const SizedBox(width: 10),
+          Text(label, style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF002819))),
+          const Spacer(),
+          Text(
+            value,
+            style: GoogleFonts.cairo(fontSize: 14, color: valueColor ?? const Color(0xFF404943), fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -265,11 +274,11 @@ class SupplierProfileTab extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Row(
           children: [
-            Icon(Icons.chevron_left_rounded, color: color.withValues(alpha: 0.5), size: 20),
-            const Spacer(),
-            Text(title, style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: color)),
-            const SizedBox(width: 16),
             Icon(icon, color: color, size: 22),
+            const SizedBox(width: 16),
+            Text(title, style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: color)),
+            const Spacer(),
+            Icon(Icons.chevron_left_rounded, color: color.withValues(alpha: 0.5), size: 20),
           ],
         ),
       ),

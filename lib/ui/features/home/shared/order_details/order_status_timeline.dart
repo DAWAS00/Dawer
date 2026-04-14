@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/utils/date_formatter.dart';
 import '../../../../../data/models/order.dart';
 
 class OrderStatusTimeline extends StatelessWidget {
-  final OrderStatus status;
+  final Order order;
 
-  const OrderStatusTimeline({super.key, required this.status});
+  const OrderStatusTimeline({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
     final steps = [
-      (OrderStatus.pending, 'انتظار'),
-      (OrderStatus.accepted, 'قُبل'),
-      (OrderStatus.inTransit, 'في الطريق'),
-      (OrderStatus.completed, 'مكتمل'),
+      (OrderStatus.pending, 'انتظار', order.createdAt),
+      (OrderStatus.accepted, 'قُبل', order.acceptedAt),
+      (OrderStatus.inTransit, 'في الطريق', order.inTransitAt),
+      (OrderStatus.completed, 'مكتمل', order.completedAt),
     ];
 
-    final currentIndex = steps.indexWhere((s) => s.$1 == status);
+    final currentIndex = steps.indexWhere((s) => s.$1 == order.status);
 
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -60,6 +61,7 @@ class OrderStatusTimeline extends StatelessWidget {
               final stepIdx = i ~/ 2;
               return _TimelineStep(
                 label: steps[stepIdx].$2,
+                timestamp: steps[stepIdx].$3,
                 active: stepIdx == currentIndex,
                 done: stepIdx < currentIndex,
               );
@@ -75,6 +77,7 @@ class OrderStatusTimeline extends StatelessWidget {
 
 class _TimelineStep extends StatelessWidget {
   final String label;
+  final DateTime? timestamp;
   final bool active;
   final bool done;
 
@@ -82,6 +85,7 @@ class _TimelineStep extends StatelessWidget {
     required this.label,
     required this.active,
     required this.done,
+    this.timestamp,
   });
 
   @override
@@ -115,6 +119,14 @@ class _TimelineStep extends StatelessWidget {
                 : const Color(0xFF9099A2),
           ),
         ),
+        if (timestamp != null && (done || active))
+          Text(
+            DateFormatter.time(timestamp!),
+            style: GoogleFonts.dmSans(
+              fontSize: 9,
+              color: const Color(0xFF9099A2),
+            ),
+          ),
       ],
     );
   }

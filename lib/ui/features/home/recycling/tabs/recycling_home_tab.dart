@@ -185,6 +185,7 @@ class RecyclingHomeTab extends StatelessWidget {
   }
 
   void _showPostJobSheet(BuildContext context) {
+    final vm = context.read<RecyclingHomeViewModel>();
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -192,7 +193,25 @@ class RecyclingHomeTab extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) => const PostJobSheet(),
+      builder: (_) => PostJobSheet(
+        onSubmit: ({
+          required List<WasteType> wasteTypes,
+          required PaymentModel paymentModel,
+          required double price,
+          required String collectionArea,
+          required String jobDescription,
+          double? minQuantityKg,
+        }) {
+          vm.postCollectionJob(
+            wasteTypes: wasteTypes,
+            collectionArea: collectionArea,
+            jobDescription: jobDescription,
+            paymentModel: paymentModel,
+            price: price,
+            minQuantityKg: minQuantityKg,
+          );
+        },
+      ),
     );
   }
 

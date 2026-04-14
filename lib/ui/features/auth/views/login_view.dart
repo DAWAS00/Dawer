@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../data/repositories/auth_repository.dart';
-import '../../../../data/services/auth_service.dart';
 import '../viewmodels/login_viewmodel.dart';
 import 'verification_view.dart';
 
@@ -18,9 +16,7 @@ class LoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     // Provide the ViewModel to this screen and its children
     return ChangeNotifierProvider(
-      create: (_) => LoginViewModel(
-        AuthRepository(AuthService()),
-      ),
+      create: (_) => LoginViewModel(),
       child: const _LoginScreen(),
     );
   }

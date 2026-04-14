@@ -102,4 +102,88 @@ class MarketplaceViewModel extends ChangeNotifier {
 
   Order? receiveAtFacility(String orderId, String facilityAddress) =>
       _store.receiveAtFacility(orderId, facilityAddress);
+
+  // ── Collection jobs (recycling company postings) ───────────────────────────
+
+  /// All pending collection jobs — shown in marketplace for all roles.
+  List<Order> get collectionJobs => _store.pendingCollectionJobs;
+
+  /// Pending jobs filtered so already-accepted ones are hidden for [userName].
+  List<Order> collectionJobsFor(String? userName) {
+    if (userName == null) return collectionJobs;
+    return collectionJobs
+        .where((j) => !_store.hasAcceptedJob(j.id, userName))
+        .toList();
+  }
+
+  /// The most recently created collection-sale commitment for [acceptorName].
+  Order? latestCollectionSaleFor(String acceptorName) =>
+      _store.collectionSalesFor(acceptorName).firstOrNull;
+
+  /// Jobs posted by a specific company (pending + accepted).
+  List<Order> myCollectionJobs(String companyName) =>
+      _store.myCollectionJobs(companyName);
+
+  /// Driver claims a collection job.
+  String? claimCollectionJob(String jobId, User driver) =>
+      _store.claimCollectionJob(jobId, driver);
+
+  /// Edit a collection job (owner only). Returns updated order or null.
+  Order? updateCollectionJob({
+    required String jobId,
+    required String companyName,
+    required List<WasteType> wasteTypes,
+    required String collectionArea,
+    required String jobDescription,
+    required PaymentModel paymentModel,
+    required double price,
+    double? minQuantityKg,
+    String? editNote,
+  }) =>
+      _store.updateCollectionJob(
+        jobId: jobId,
+        companyName: companyName,
+        wasteTypes: wasteTypes,
+        collectionArea: collectionArea,
+        jobDescription: jobDescription,
+        paymentModel: paymentModel,
+        price: price,
+        minQuantityKg: minQuantityKg,
+        editNote: editNote,
+      );
+
+  /// Delete a collection job (owner only). Returns true on success.
+  bool deleteCollectionJob(String jobId, String companyName) =>
+      _store.deleteCollectionJob(jobId, companyName);
+
+  /// Whether [acceptorName] has already committed to [jobId].
+  bool hasAcceptedJob(String jobId, String acceptorName) =>
+      _store.hasAcceptedJob(jobId, acceptorName);
+
+  /// Driver or supplier accepts a collection job → creates a collectionSale.
+  /// Returns an error string on failure, null on success.
+  String? acceptCollectionJob(
+    String jobId,
+    String acceptorName, {
+    CollectionDeliveryMethod? deliveryMethod,
+    CollectionTransactionType? transactionType,
+  }) {
+    final job = _store.getCollectionJob(jobId);
+    if (job == null) return 'الوظيفة غير موجودة';
+    if (job.status != OrderStatus.pending) return 'هذه الوظيفة لم تعد متاحة';
+    return _store.createCollectionSale(
+      jobId: jobId,
+      acceptorName: acceptorName,
+      collectionArea: job.pickupAddress,
+      wasteTypes: job.wasteTypes,
+      paymentModel: job.paymentModel,
+      pricePerKg: job.pricePerKg,
+      itemPrice: job.itemPrice,
+      minQuantityKg: job.minQuantityKg,
+      jobDescription: job.jobDescription,
+      companyName: job.supplierName,
+      deliveryMethod: deliveryMethod,
+      transactionType: transactionType,
+    );
+  }
 }

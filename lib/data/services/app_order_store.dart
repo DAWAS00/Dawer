@@ -1,6 +1,7 @@
-import 'package:flutter/foundation.dart';
+﻿import 'package:flutter/foundation.dart';
 import '../models/order.dart';
 import '../models/user.dart';
+import '../mock/order_mock_data.dart';
 
 /// Singleton shared order store — the single source of truth for all orders
 /// across Driver, Supplier, and Recycling Company roles.
@@ -15,10 +16,10 @@ class AppOrderStore extends ChangeNotifier {
 
   /// All regular orders — pickup requests (from suppliers) and collection jobs
   /// (posted by recycling companies). This is the canonical list.
-  final List<Order> _orders = _initialOrders();
+  final List<Order> _orders = OrderMockData.seedOrders();
 
   /// Marketplace items — materials listed for purchase/claim.
-  final List<Order> _market = _initialMarketItems();
+  final List<Order> _market = OrderMockData.seedMarketItems();
 
   /// ID of the order currently active for our mock driver session.
   String? _activeOrderId;
@@ -112,16 +113,39 @@ class AppOrderStore extends ChangeNotifier {
     return null;
   }
 
+  /// Mark the active order as in-transit (driver en-route to dropoff).
+  void markInTransit(String orderId) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return;
+    _orders[idx] = _orders[idx].copyWith(
+      status: OrderStatus.inTransit,
+      inTransitAt: DateTime.now(),
+    );
+    notifyListeners();
+  }
+
   /// Complete the active order (driver marks delivered).
   void completeOrder(Order completedOrder) {
     final idx = _orders.indexWhere((o) => o.id == completedOrder.id);
     if (idx == -1) return;
-    _orders[idx] = completedOrder.copyWith(status: OrderStatus.completed);
+    _orders[idx] = completedOrder.copyWith(
+      status: OrderStatus.completed,
+      completedAt: DateTime.now(),
+    );
     if (_activeOrderId == completedOrder.id) {
       _driverCompletedIds.add(completedOrder.id);
       _activeOrderId = null;
     }
     notifyListeners();
+  }
+
+  /// Record a driver rating after delivery (mock — updates driverRating on order).
+  void submitDriverRating(String orderId, double rating) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx != -1) {
+      _orders[idx] = _orders[idx].copyWith(driverRating: rating);
+      notifyListeners();
+    }
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -141,6 +165,7 @@ class AppOrderStore extends ChangeNotifier {
     WeightCategory? weightCategory,
     PickupTarget? pickupTarget,
     double? itemPrice,
+    DateTime? scheduledAt,
   }) {
     final orderId =
         'ORD-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
@@ -163,6 +188,7 @@ class AppOrderStore extends ChangeNotifier {
       deliveryFee: fee,
       pickupTarget: pickupTarget,
       itemPrice: itemPrice,
+      scheduledAt: scheduledAt,
     );
     _orders.insert(0, order);
     notifyListeners();
@@ -197,6 +223,10 @@ class AppOrderStore extends ChangeNotifier {
     WeightCategory? weightCategory,
     double reward = 0,
     double? itemPrice,
+    String? jobDescription,
+    double? pricePerKg,
+    PaymentModel? paymentModel,
+    double? minQuantityKg,
   }) {
     final orderId =
         'JOB-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
@@ -213,10 +243,157 @@ class AppOrderStore extends ChangeNotifier {
       supplierNotes: notes,
       wasteForm: wasteForm,
       weightCategory: weightCategory,
+      jobDescription: jobDescription,
+      pricePerKg: pricePerKg,
+      paymentModel: paymentModel,
+      minQuantityKg: minQuantityKg,
     );
     _orders.insert(0, order);
     notifyListeners();
     return order;
+  }
+
+  /// Pending collection jobs — for marketplace display (all roles).
+  List<Order> get pendingCollectionJobs => _orders
+      .where((o) =>
+          o.type == OrderType.collection && o.status == OrderStatus.pending)
+      .toList();
+
+  /// Active collection jobs posted by a specific company.
+  List<Order> myCollectionJobs(String companyName) => _orders
+      .where((o) =>
+          o.type == OrderType.collection &&
+          o.supplierName == companyName &&
+          (o.status == OrderStatus.pending || o.status == OrderStatus.accepted))
+      .toList();
+
+  /// Driver claims a collection job (does NOT set _activeOrderId — different flow).
+  String? claimCollectionJob(String jobId, User driver) {
+    final idx = _orders.indexWhere((o) => o.id == jobId);
+    if (idx == -1) return 'الوظيفة غير موجودة';
+    final job = _orders[idx];
+    if (job.status != OrderStatus.pending) return 'هذه الوظيفة لم تعد متاحة';
+    _orders[idx] = job.copyWith(
+      status: OrderStatus.accepted,
+      acceptedAt: DateTime.now(),
+      driverName: driver.name,
+      driverPhone: driver.phone,
+    );
+    notifyListeners();
+    return null;
+  }
+
+  /// Edit a collection job in place (company owner only). Sets isEdited flag.
+  Order? updateCollectionJob({
+    required String jobId,
+    required String companyName,
+    required List<WasteType> wasteTypes,
+    required String collectionArea,
+    required String jobDescription,
+    required PaymentModel paymentModel,
+    required double price,
+    double? minQuantityKg,
+    String? editNote,
+  }) {
+    final idx = _orders.indexWhere((o) => o.id == jobId);
+    if (idx == -1) return null;
+    final job = _orders[idx];
+    if (job.supplierName != companyName || job.type != OrderType.collection) {
+      return null;
+    }
+    _orders[idx] = job.copyWith(
+      wasteTypes: wasteTypes,
+      pickupAddress: collectionArea,
+      jobDescription: jobDescription,
+      paymentModel: paymentModel,
+      pricePerKg: paymentModel == PaymentModel.perKg ? price : null,
+      itemPrice: paymentModel == PaymentModel.flatFee ? price : null,
+      minQuantityKg: minQuantityKg,
+      isEdited: true,
+      editedAt: DateTime.now(),
+      editNote: editNote,
+    );
+    notifyListeners();
+    return _orders[idx];
+  }
+
+  /// Delete a collection job (company owner only, pending status).
+  bool deleteCollectionJob(String jobId, String companyName) {
+    final idx = _orders.indexWhere((o) => o.id == jobId);
+    if (idx == -1) return false;
+    final job = _orders[idx];
+    if (job.supplierName != companyName || job.type != OrderType.collection) {
+      return false;
+    }
+    _orders.removeAt(idx);
+    notifyListeners();
+    return true;
+  }
+
+  /// Look up a single collection job by ID.
+  Order? getCollectionJob(String jobId) => _orders
+      .where((o) => o.id == jobId && o.type == OrderType.collection)
+      .firstOrNull;
+
+  /// True if [acceptorName] already committed to [jobId].
+  bool hasAcceptedJob(String jobId, String acceptorName) => _orders.any(
+        (o) =>
+            o.type == OrderType.collectionSale &&
+            o.linkedJobId == jobId &&
+            o.supplierName == acceptorName,
+      );
+
+  /// All collection-sale commitments created by [acceptorName].
+  List<Order> collectionSalesFor(String acceptorName) => _orders
+      .where((o) =>
+          o.type == OrderType.collectionSale &&
+          o.supplierName == acceptorName)
+      .toList();
+
+  /// Driver or supplier commits to sell waste to the recycling company.
+  /// Creates a [collectionSale] order. Returns an error string or null.
+  String? createCollectionSale({
+    required String jobId,
+    required String acceptorName,
+    required String collectionArea,
+    required List<WasteType> wasteTypes,
+    PaymentModel? paymentModel,
+    double? pricePerKg,
+    double? itemPrice,
+    double? minQuantityKg,
+    String? jobDescription,
+    String? companyName,
+    CollectionDeliveryMethod? deliveryMethod,
+    CollectionTransactionType? transactionType,
+  }) {
+    if (hasAcceptedJob(jobId, acceptorName)) {
+      return 'لقد قبلت هذه الوظيفة مسبقاً';
+    }
+    final saleId =
+        'SALE-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final sale = Order(
+      id: saleId,
+      type: OrderType.collectionSale,
+      linkedJobId: jobId,
+      wasteTypes: wasteTypes,
+      pickupAddress: 'موقعك الحالي',
+      dropoffAddress: collectionArea,
+      status: OrderStatus.pending,
+      reward: pricePerKg ?? itemPrice ?? 0,
+      createdAt: DateTime.now(),
+      supplierName: acceptorName,
+      supplierNotes: companyName,
+      pricePerKg: pricePerKg,
+      itemPrice: itemPrice,
+      paymentModel: paymentModel,
+      minQuantityKg: minQuantityKg,
+      jobDescription: jobDescription,
+      collectionDeliveryMethod: deliveryMethod,
+      collectionTransactionType: transactionType,
+    );
+    _orders.insert(0, sale);
+    notifyListeners();
+    return null;
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -317,282 +494,4 @@ class AppOrderStore extends ChangeNotifier {
         };
   }
 
-  // ─────────────────────────────────────────────────────────────────────────
-  // Initial mock data  (replaces the role-split lists in OrderMockData)
-  // ─────────────────────────────────────────────────────────────────────────
-
-  static List<Order> _initialOrders() => [
-        // ── Our supplier's orders (مورد دوّر) ──────────────────────────────
-        // ORD-S01: accepted, driver خالد assigned → visible to supplier + company
-        Order(
-          id: 'ORD-S01',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.paper, WasteType.plastic],
-          pickupAddress: 'شارع الجامعة، عمّان',
-          dropoffAddress: 'شركة دوّر للتدوير',
-          status: OrderStatus.inTransit,
-          supplierName: 'مورد دوّر',
-          driverName: 'خالد محمد',
-          driverPhone: '0791234567',
-          driverRating: 4.9,
-          driverVehicle: 'بيك آب',
-          reward: 8.5,
-          weightKg: 45.0,
-          distanceKm: 2.1,
-          eta: '١٢ دقيقة',
-          createdAt:
-              DateTime.now().subtract(const Duration(minutes: 18)),
-          acceptedAt:
-              DateTime.now().subtract(const Duration(minutes: 12)),
-        ),
-        // ORD-S02: pending → visible to supplier + in driver feed
-        Order(
-          id: 'ORD-S02',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.glass],
-          pickupAddress: 'شارع الجامعة، عمّان',
-          dropoffAddress: 'أقرب مركز تدوير',
-          status: OrderStatus.pending,
-          supplierName: 'مورد دوّر',
-          reward: 0,
-          distanceKm: 2.1,
-          createdAt: DateTime.now().subtract(const Duration(hours: 2)),
-        ),
-
-        // ── External pending pickups (driver feed) ─────────────────────────
-        Order(
-          id: 'ORD-001',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.paper, WasteType.plastic],
-          pickupAddress: 'شارع الملكة نور، الجبيهة',
-          dropoffAddress: 'شركة الأفق الخضراء، الزرقاء',
-          status: OrderStatus.pending,
-          supplierName: 'مطعم الأصيل',
-          reward: 8.5,
-          distanceKm: 3.2,
-          createdAt:
-              DateTime.now().subtract(const Duration(minutes: 12)),
-        ),
-        Order(
-          id: 'ORD-002',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.metal, WasteType.glass],
-          pickupAddress: 'منطقة الوحدات، عمّان',
-          dropoffAddress: 'شركة الإعادة الوطنية، صويلح',
-          status: OrderStatus.pending,
-          supplierName: 'محل البقالة الكبير',
-          reward: 12.0,
-          distanceKm: 5.8,
-          createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
-        ),
-        Order(
-          id: 'ORD-003',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.electronics],
-          pickupAddress: 'شارع المدينة المنورة، عمّان',
-          dropoffAddress: 'مركز تدوير التقنية، الأردن',
-          status: OrderStatus.pending,
-          supplierName: 'أحمد العلي',
-          reward: 18.0,
-          distanceKm: 7.1,
-          createdAt: DateTime.now().subtract(const Duration(hours: 1)),
-        ),
-
-        // ── Company incoming (other driver, already accepted) ──────────────
-        Order(
-          id: 'INC-001',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.metal],
-          pickupAddress: 'محل قطع الغيار، الزرقاء',
-          dropoffAddress: 'شركة دوّر للتدوير',
-          status: OrderStatus.accepted,
-          supplierName: 'محل قطع الغيار',
-          driverName: 'سالم عبدالله',
-          driverPhone: '0795555555',
-          driverRating: 4.6,
-          reward: 15.0,
-          weightKg: 80.0,
-          distanceKm: 6.2,
-          eta: '٢٥ دقيقة',
-          createdAt: DateTime.now().subtract(const Duration(hours: 1)),
-          acceptedAt:
-              DateTime.now().subtract(const Duration(minutes: 45)),
-        ),
-
-        // ── Company collection jobs ────────────────────────────────────────
-        Order(
-          id: 'JOB-001',
-          type: OrderType.collection,
-          wasteTypes: [WasteType.plastic, WasteType.paper],
-          pickupAddress: 'منطقة الرابية، عمّان',
-          dropoffAddress: 'شركة دوّر للتدوير',
-          status: OrderStatus.pending,
-          reward: 20.0,
-          weightKg: 100.0,
-          distanceKm: 4.5,
-          createdAt: DateTime.now().subtract(const Duration(hours: 3)),
-        ),
-        Order(
-          id: 'JOB-002',
-          type: OrderType.collection,
-          wasteTypes: [WasteType.electronics],
-          pickupAddress: 'مجمع الإلكترونيات، الصويفية',
-          dropoffAddress: 'شركة دوّر للتدوير',
-          status: OrderStatus.accepted,
-          driverName: 'محمد فارس',
-          driverPhone: '0799001122',
-          driverRating: 4.7,
-          reward: 35.0,
-          weightKg: 60.0,
-          distanceKm: 3.8,
-          createdAt: DateTime.now().subtract(const Duration(days: 1)),
-          acceptedAt:
-              DateTime.now().subtract(const Duration(hours: 22)),
-        ),
-
-        // ── Driver history seeds (completed by our mock driver) ────────────
-        Order(
-          id: 'ORD-H01',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.plastic],
-          pickupAddress: 'شارع الحمزة، عمّان',
-          dropoffAddress: 'شركة الأفق الخضراء',
-          status: OrderStatus.completed,
-          reward: 7.5,
-          distanceKm: 3.1,
-          createdAt: DateTime.now().subtract(const Duration(days: 1)),
-          acceptedAt: DateTime.now()
-              .subtract(const Duration(days: 1, hours: 1)),
-        ),
-        Order(
-          id: 'ORD-H02',
-          type: OrderType.collection,
-          wasteTypes: [WasteType.metal],
-          pickupAddress: 'العبدلي، عمّان',
-          dropoffAddress: 'مركز إعادة التدوير',
-          status: OrderStatus.completed,
-          reward: 11.0,
-          distanceKm: 2.9,
-          createdAt: DateTime.now().subtract(const Duration(days: 2)),
-          acceptedAt: DateTime.now()
-              .subtract(const Duration(days: 2, minutes: 40)),
-        ),
-      ];
-
-  static List<Order> _initialMarketItems() => [
-        Order(
-          id: 'MKT-001',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.metal, WasteType.electronics],
-          pickupAddress: 'شارع الملك عبدالله، عمّان',
-          dropoffAddress: '',
-          status: OrderStatus.pending,
-          pickupTarget: PickupTarget.riderBuy,
-          itemPrice: 15.0,
-          reward: 0,
-          weightCategory: WeightCategory.medium,
-          wasteForm: WasteForm.solid,
-          distanceKm: 4.2,
-          createdAt:
-              DateTime.now().subtract(const Duration(hours: 2)),
-          supplierName: 'مطعم الديوان',
-          supplierNotes:
-              'أجهزة مطبخ قديمة بحالة جيدة، تشمل خلاط كهربائي وفرن ميكروويف ومجموعة أواني طهي.',
-          images: [
-            'https://picsum.photos/seed/mkt001a/600/400',
-            'https://picsum.photos/seed/mkt001b/600/400',
-            'https://picsum.photos/seed/mkt001c/600/400',
-          ],
-        ),
-        Order(
-          id: 'MKT-002',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.furniture],
-          pickupAddress: 'الصويفية، عمّان',
-          dropoffAddress: '',
-          status: OrderStatus.pending,
-          pickupTarget: PickupTarget.riderBuy,
-          itemPrice: 25.0,
-          reward: 0,
-          weightCategory: WeightCategory.heavy,
-          wasteForm: WasteForm.solid,
-          distanceKm: 8.5,
-          createdAt:
-              DateTime.now().subtract(const Duration(hours: 5)),
-          supplierName: 'شركة الأمل للأثاث',
-          supplierNotes:
-              'طاولات وكراسي مكتبية — ١٢ قطعة بحالة ممتازة. تحتاج إلى سيارة بيك أب.',
-          images: [
-            'https://picsum.photos/seed/mkt002a/600/400',
-            'https://picsum.photos/seed/mkt002b/600/400',
-          ],
-        ),
-        Order(
-          id: 'MKT-003',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.oil],
-          pickupAddress: 'منطقة الوحدات، عمّان',
-          dropoffAddress: '',
-          status: OrderStatus.pending,
-          pickupTarget: PickupTarget.riderBuy,
-          itemPrice: 8.0,
-          reward: 0,
-          weightCategory: WeightCategory.medium,
-          wasteForm: WasteForm.liquid,
-          distanceKm: 3.1,
-          createdAt:
-              DateTime.now().subtract(const Duration(hours: 8)),
-          supplierName: 'كراج أبو خالد',
-          supplierNotes:
-              'زيت محركات مستعمل — ٤ جالونات محكمة الإغلاق. صالح للتكرير.',
-          images: [
-            'https://picsum.photos/seed/mkt003a/600/400',
-          ],
-        ),
-        Order(
-          id: 'MKT-004',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.paper, WasteType.plastic],
-          pickupAddress: 'الجبيهة، شارع الجامعة',
-          dropoffAddress: '',
-          status: OrderStatus.pending,
-          pickupTarget: PickupTarget.riderBuy,
-          itemPrice: 3.5,
-          reward: 0,
-          weightCategory: WeightCategory.light,
-          wasteForm: WasteForm.mixed,
-          distanceKm: 5.7,
-          createdAt:
-              DateTime.now().subtract(const Duration(minutes: 45)),
-          supplierName: 'سوبرماركت الخير',
-          supplierNotes:
-              'مواد ورقية وبلاستيكية مفروزة ومضغوطة، جاهزة للتسليم الفوري.',
-          images: [
-            'https://picsum.photos/seed/mkt004a/600/400',
-            'https://picsum.photos/seed/mkt004b/600/400',
-          ],
-        ),
-        Order(
-          id: 'MKT-005',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.tires, WasteType.rubber],
-          pickupAddress: 'طريق المطار، عمّان',
-          dropoffAddress: '',
-          status: OrderStatus.pending,
-          pickupTarget: PickupTarget.riderBuy,
-          itemPrice: 20.0,
-          reward: 0,
-          weightCategory: WeightCategory.veryHeavy,
-          wasteForm: WasteForm.solid,
-          distanceKm: 12.3,
-          createdAt: DateTime.now().subtract(const Duration(days: 1)),
-          supplierName: 'محل إطارات الشرق',
-          supplierNotes:
-              'إطارات سيارات مستعملة — ٢٠ قطعة بمقاسات متنوعة. تحتاج شاحنة متوسطة.',
-          images: [
-            'https://picsum.photos/seed/mkt005a/600/400',
-            'https://picsum.photos/seed/mkt005b/600/400',
-          ],
-        ),
-      ];
 }

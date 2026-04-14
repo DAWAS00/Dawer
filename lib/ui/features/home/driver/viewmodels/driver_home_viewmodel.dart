@@ -27,7 +27,6 @@ class DriverHomeViewModel extends ChangeNotifier {
     id: 'DRV-19842',
     name: 'سائق دوّر',
     role: 'سائق',
-    phone: '+962 79 XXX XXXX',
     rating: 4.8,
   );
 
@@ -40,6 +39,7 @@ class DriverHomeViewModel extends ChangeNotifier {
   List<Order> get available => _store.driverFeed;
   Order? get active => _store.driverActiveOrder;
   List<Order> get history => _store.driverHistory;
+  List<Order> get collectionSaleOrders => _store.collectionSalesFor(_user.name);
 
   double get totalEarnings => _store.driverHistory
       .fold(0.0, (sum, o) => sum + o.reward);
@@ -83,6 +83,9 @@ class DriverHomeViewModel extends ChangeNotifier {
   void completeOrder(Order order) {
     _store.completeOrder(order);
   }
+
+  String? cancelCollectionSale(String saleId) =>
+      _store.cancelOrder(saleId);
 
   Order createListing({
     required List<WasteType> wasteTypes,

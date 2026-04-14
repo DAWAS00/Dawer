@@ -7,9 +7,10 @@ import 'viewmodels/supplier_home_viewmodel.dart';
 import 'tabs/supplier_home_tab.dart';
 import 'tabs/supplier_orders_tab.dart';
 import 'tabs/supplier_profile_tab.dart';
-import 'widgets/supplier_nav_item.dart';
+import 'widgets/supplier_bottom_nav.dart';
 import '../shared/tabs/marketplace_tab.dart';
 import '../shared/viewmodels/marketplace_viewmodel.dart';
+import '../shared/views/collection_sale_detail_view.dart';
 import '../shared/widgets/pickup_fab.dart';
 import '../shared/widgets/post_to_market_sheet.dart';
 
@@ -49,15 +50,25 @@ class _SupplierHomeBody extends StatelessWidget {
       SupplierHomeTab(userName: userName, supplierType: supplierType),
       MarketplaceTab(
         role: UserRole.supplier,
+        currentUserName: userName,
         onSupplierPurchaseConfirmed: (purchasedOrder) {
           vm.addOrder(purchasedOrder);
           vm.setTab(2);
+        },
+        onJobAccepted: (sale) {
+          vm.setTab(2);
+          if (sale != null) {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => CollectionSaleDetailView(sale: sale),
+            ));
+          }
         },
       ),
       SupplierOrdersTab(
         activeOrders: vm.activeOrders,
         completedOrders: vm.completedOrders,
         cancelledOrders: vm.cancelledOrders,
+        collectionSaleOrders: vm.collectionSaleOrders,
         onCancelOrder: vm.cancelOrder,
       ),
       SupplierProfileTab(
@@ -81,7 +92,10 @@ class _SupplierHomeBody extends StatelessWidget {
           ? PickupFab(onPressed: () => _showPostToMarketSheet(context, vm, marketVm))
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      bottomNavigationBar: _buildBottomNav(context, vm),
+      bottomNavigationBar: SupplierBottomNav(
+        currentTab: vm.currentTab,
+        onTabChanged: vm.setTab,
+      ),
     );
   }
 
@@ -122,52 +136,4 @@ class _SupplierHomeBody extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomNav(BuildContext context, SupplierHomeViewModel vm) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.07),
-            blurRadius: 12,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              SupplierNavItem(
-                icon: Icons.home_rounded,
-                label: 'الرئيسية',
-                isSelected: vm.currentTab == 0,
-                onTap: () => vm.setTab(0),
-              ),
-              SupplierNavItem(
-                icon: Icons.storefront_rounded,
-                label: 'السوق',
-                isSelected: vm.currentTab == 1,
-                onTap: () => vm.setTab(1),
-              ),
-              SupplierNavItem(
-                icon: Icons.receipt_long_rounded,
-                label: 'طلباتي',
-                isSelected: vm.currentTab == 2,
-                onTap: () => vm.setTab(2),
-              ),
-              SupplierNavItem(
-                icon: Icons.person_rounded,
-                label: 'حسابي',
-                isSelected: vm.currentTab == 3,
-                onTap: () => vm.setTab(3),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }

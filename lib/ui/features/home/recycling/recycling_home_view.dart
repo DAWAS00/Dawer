@@ -44,7 +44,7 @@ class _RecyclingHomeBody extends StatelessWidget {
         incoming: vm.incoming,
         jobs: vm.jobs,
       ),
-      const MarketplaceTab(role: UserRole.recyclingCo),
+      MarketplaceTab(role: UserRole.recyclingCo, currentUserName: userName),
       RecyclingOrdersTab(incoming: vm.incoming, jobs: vm.jobs),
       RecyclingProfileTab(userName: userName),
     ];

@@ -17,7 +17,7 @@ class User {
     required this.id,
     required this.name,
     required this.role,
-    this.phone = '+962 79 XXX XXXX',
+    this.phone = '',
     this.rating = 4.8,
     this.vehicleModel,
     this.vehicleColor,
