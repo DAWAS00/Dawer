@@ -201,7 +201,8 @@ class IndividualSupplierHomeTab extends StatelessWidget {
             ),
             const Icon(Icons.chevron_left_rounded, color: AppColors.statusInTransitText, size: 20),
             const Spacer(),
-            Column(
+            Flexible(
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Row(
@@ -244,6 +245,7 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                   ],
                 ),
               ],
+            ),
             ),
             const SizedBox(width: 12),
             Container(
