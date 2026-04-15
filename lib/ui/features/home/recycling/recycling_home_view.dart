@@ -52,7 +52,7 @@ class _RecyclingHomeBody extends StatelessWidget {
     final marketVm = context.watch<MarketplaceViewModel>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: IndexedStack(
         index: vm.currentTab,
         children: tabs,
@@ -72,7 +72,7 @@ class _RecyclingHomeBody extends StatelessWidget {
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      bottomNavigationBar: _buildBottomNav(vm),
+      bottomNavigationBar: _buildBottomNav(context, vm),
     );
   }
 
@@ -113,10 +113,10 @@ class _RecyclingHomeBody extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomNav(RecyclingHomeViewModel vm) {
+  Widget _buildBottomNav(BuildContext context, RecyclingHomeViewModel vm) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.07),
@@ -159,6 +159,9 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final selectedColor = theme.primaryColor;
+    
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -170,16 +173,14 @@ class _NavItem extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
               color: isSelected
-                  ? const Color(0xFF14401F).withValues(alpha: 0.1)
+                  ? selectedColor.withValues(alpha: 0.1)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Icon(
               icon,
               size: 24,
-              color: isSelected
-                  ? const Color(0xFF14401F)
-                  : const Color(0xFF9CA3AF),
+              color: isSelected ? selectedColor : const Color(0xFF9CA3AF),
             ),
           ),
           const SizedBox(height: 2),
@@ -188,9 +189,7 @@ class _NavItem extends StatelessWidget {
             style: GoogleFonts.cairo(
               fontSize: 11,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected
-                  ? const Color(0xFF14401F)
-                  : const Color(0xFF9CA3AF),
+              color: isSelected ? selectedColor : const Color(0xFF9CA3AF),
             ),
           ),
         ],

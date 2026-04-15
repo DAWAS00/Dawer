@@ -17,18 +17,23 @@ class DriverProfileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.fromLTRB(24, 0, 24, 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
+        border: isDark ? Border.all(color: theme.colorScheme.outline) : null,
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
+          if (!isDark)
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
         ],
       ),
       child: Row(
@@ -37,10 +42,10 @@ class DriverProfileTile extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: const Color(0xFF06402B).withValues(alpha: 0.08),
+              color: theme.primaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, size: 20, color: const Color(0xFF06402B)),
+            child: Icon(icon, size: 20, color: theme.primaryColor),
           ),
           const SizedBox(width: 14),
           Text(
@@ -48,7 +53,7 @@ class DriverProfileTile extends StatelessWidget {
             style: GoogleFonts.cairo(
               fontSize: 15,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF002819),
+              color: theme.textTheme.bodyLarge?.color,
             ),
           ),
           const Spacer(),
@@ -58,13 +63,13 @@ class DriverProfileTile extends StatelessWidget {
               textDirection: TextDirection.ltr,
               style: GoogleFonts.cairo(
                 fontSize: 14,
-                color: const Color(0xFF717973),
+                color: theme.textTheme.bodyMedium?.color,
                 fontWeight: FontWeight.w600,
               ),
             ),
           if (showArrow) ...[
             if (value.isNotEmpty) const SizedBox(width: 12),
-            const Icon(Icons.chevron_left_rounded, color: Color(0xFFC0C9C1), size: 20),
+            Icon(Icons.chevron_left_rounded, color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5), size: 20),
           ]
         ],
       ),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../../../../data/models/user.dart';
+import '../../../../../core/services/app_theme_notifier.dart';
+import '../../../../common/theme_mode_sheet.dart';
 import '../../../../features/auth/views/login_view.dart';
 import '../../../../features/auth/viewmodels/login_viewmodel.dart';
 import '../views/rewards_view.dart';
@@ -143,18 +146,20 @@ class SupplierProfileTab extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(16),
+                      border: Theme.of(context).brightness == Brightness.dark ? Border.all(color: Theme.of(context).colorScheme.outline) : null,
                       boxShadow: [
-                        BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4)),
+                        if (Theme.of(context).brightness != Brightness.dark)
+                          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4)),
                       ],
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Row(
                       children: [
-                        _buildStatItem(totalPoints.toString(), 'نقاط التدوير'),
-                        Container(width: 1, height: 40, color: const Color(0xFFE6E9E7)),
-                        _buildStatItem(totalOrders.toString(), 'إجمالي الطلبات'),
+                        _buildStatItem(totalPoints.toString(), 'نقاط التدوير', context),
+                        Container(width: 1, height: 40, color: Theme.of(context).dividerColor),
+                        _buildStatItem(totalOrders.toString(), 'إجمالي الطلبات', context),
                       ],
                     ),
                   ),
@@ -164,30 +169,49 @@ class SupplierProfileTab extends StatelessWidget {
               // Personal info section
               Row(
                 children: [
-                  _buildSectionTitle('المعلومات الشخصية'),
+                  _buildSectionTitle('المعلومات الشخصية', context),
                   const Spacer(),
                   TextButton.icon(
                     onPressed: () => _showEditProfileSheet(context),
-                    icon: const Icon(Icons.edit_rounded, size: 16, color: Color(0xFF1E5C35)),
-                    label: Text('تعديل', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: const Color(0xFF1E5C35))),
+                    icon: Icon(Icons.edit_rounded, size: 16, color: Theme.of(context).primaryColor),
+                    label: Text('تعديل', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor)),
                   ),
                   const SizedBox(width: 24),
                 ],
               ),
-              _buildProfileTile(Icons.phone_rounded, 'رقم الهاتف', user.phone),
-              _buildProfileTile(Icons.location_on_rounded, 'العنوان', user.address ?? 'أضف العنوان'),
+              _buildProfileTile(Icons.phone_rounded, 'رقم الهاتف', user.phone, context),
+              _buildProfileTile(Icons.location_on_rounded, 'العنوان', user.address ?? 'أضف العنوان', context),
               _buildProfileTile(
                 Icons.badge_rounded,
                 'الهوية',
                 user.isVerified ? 'تم التحقق' : 'لم يتم التحقق',
+                context,
                 valueColor: user.isVerified ? const Color(0xFF166534) : const Color(0xFFC8860A),
               ),
 
               const SizedBox(height: 24),
-              _buildSectionTitle('إعدادات التطبيق'),
-              _buildProfileTile(Icons.language_rounded, 'لغة التطبيق', 'العربية'),
-              _buildProfileTile(Icons.dark_mode_rounded, 'المظهر', 'فاتح'),
-              _buildProfileTile(Icons.notifications_active_rounded, 'الإشعارات', 'مفعلة'),
+              _buildSectionTitle('إعدادات التطبيق', context),
+              _buildProfileTile(Icons.language_rounded, 'لغة التطبيق', 'العربية', context),
+              
+              Consumer<AppThemeNotifier>(
+                builder: (context, themeNotifier, _) {
+                  String modeLabel = 'تلقائي';
+                  if (themeNotifier.mode == ThemeMode.light) modeLabel = 'فاتح';
+                  if (themeNotifier.mode == ThemeMode.dark) modeLabel = 'داكن';
+                  
+                  return InkWell(
+                    onTap: () => showThemeModeSheet(context),
+                    child: _buildProfileTile(
+                      Icons.dark_mode_rounded,
+                      'المظهر',
+                      modeLabel,
+                      context,
+                    ),
+                  );
+                },
+              ),
+              
+              _buildProfileTile(Icons.notifications_active_rounded, 'الإشعارات', 'مفعلة', context),
 
               const SizedBox(height: 32),
               _buildActionTile(context, 'مكافآتي', Icons.emoji_events_rounded, const Color(0xFFD97706), () {
@@ -208,40 +232,45 @@ class SupplierProfileTab extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(String value, String label) {
+  Widget _buildStatItem(String value, String label, BuildContext context) {
     return Expanded(
       child: Column(
         children: [
-          Text(value, style: GoogleFonts.dmSans(fontSize: 24, fontWeight: FontWeight.bold, color: const Color(0xFF002819))),
+          Text(value, style: GoogleFonts.dmSans(fontSize: 24, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color)),
           const SizedBox(height: 4),
-          Text(label, style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF717973))),
+          Text(label, style: GoogleFonts.cairo(fontSize: 13, color: Theme.of(context).textTheme.bodyMedium?.color)),
         ],
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Align(
         alignment: Alignment.centerRight,
         child: Text(
           title,
-          style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
+          style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
         ),
       ),
     );
   }
 
-  Widget _buildProfileTile(IconData icon, String label, String value, {Color? valueColor}) {
+  Widget _buildProfileTile(IconData icon, String label, String value, BuildContext context, {Color? valueColor}) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
+        border: isDark ? Border.all(color: theme.colorScheme.outline) : null,
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2)),
+          if (!isDark)
+            BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2)),
         ],
       ),
       child: Row(
@@ -250,17 +279,17 @@ class SupplierProfileTab extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: const Color(0xFF1E5C35).withValues(alpha: 0.1),
+              color: theme.primaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, size: 18, color: const Color(0xFF1E5C35)),
+            child: Icon(icon, size: 18, color: theme.primaryColor),
           ),
           const SizedBox(width: 10),
-          Text(label, style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF002819))),
+          Text(label, style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color)),
           const Spacer(),
           Text(
             value,
-            style: GoogleFonts.cairo(fontSize: 14, color: valueColor ?? const Color(0xFF404943), fontWeight: FontWeight.w600),
+            style: GoogleFonts.cairo(fontSize: 14, color: valueColor ?? theme.textTheme.bodyMedium?.color, fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -268,6 +297,13 @@ class SupplierProfileTab extends StatelessWidget {
   }
 
   Widget _buildActionTile(BuildContext context, String title, IconData icon, Color color, VoidCallback onTap) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    // Use an adapted color for text if dark mode, else use provided color.
+    // Assuming color is usually dark, so in dark mode we can use white or a lighter color.
+    final textColor = isDark ? theme.textTheme.bodyLarge?.color : color;
+    
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -276,9 +312,9 @@ class SupplierProfileTab extends StatelessWidget {
           children: [
             Icon(icon, color: color, size: 22),
             const SizedBox(width: 16),
-            Text(title, style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: color)),
+            Text(title, style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: textColor)),
             const Spacer(),
-            Icon(Icons.chevron_left_rounded, color: color.withValues(alpha: 0.5), size: 20),
+            Icon(Icons.chevron_left_rounded, color: textColor?.withValues(alpha: 0.5), size: 20),
           ],
         ),
       ),

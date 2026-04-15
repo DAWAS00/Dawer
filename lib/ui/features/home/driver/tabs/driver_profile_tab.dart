@@ -6,6 +6,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../features/auth/views/login_view.dart';
+import '../../../../common/theme_mode_sheet.dart';
+import '../../../../../core/services/app_theme_notifier.dart';
 import '../viewmodels/driver_home_viewmodel.dart';
 import '../widgets/driver_profile_tile.dart';
 
@@ -71,7 +73,7 @@ class DriverProfileTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildHeader(context, user),
-              _buildStatsRow(vm),
+              _buildStatsRow(vm, context),
               const SizedBox(height: 24),
               Row(
                 children: [
@@ -82,7 +84,7 @@ class DriverProfileTab extends StatelessWidget {
                     label: Text('تعديل', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: const Color(0xFF06402B))),
                   ),
                   const Spacer(),
-                  _buildSectionTitle('المعلومات الشخصية والمركبة'),
+                  _buildSectionTitle('المعلومات الشخصية والمركبة', context),
                 ],
               ),
               DriverProfileTile(icon: Icons.phone_rounded, label: 'رقم الهاتف', value: user.phone, showArrow: true),
@@ -103,13 +105,31 @@ class DriverProfileTab extends StatelessWidget {
                 ),
               
               const SizedBox(height: 24),
-              _buildSectionTitle('إعدادات التطبيق'),
+              _buildSectionTitle('إعدادات التطبيق', context),
               const DriverProfileTile(icon: Icons.language_rounded, label: 'لغة التطبيق', value: 'العربية', showArrow: true),
-              const DriverProfileTile(icon: Icons.dark_mode_rounded, label: 'المظهر', value: 'فاتح', showArrow: true),
+              
+              Consumer<AppThemeNotifier>(
+                builder: (context, themeNotifier, _) {
+                  String modeLabel = 'تلقائي';
+                  if (themeNotifier.mode == ThemeMode.light) modeLabel = 'فاتح';
+                  if (themeNotifier.mode == ThemeMode.dark) modeLabel = 'داكن';
+                  
+                  return InkWell(
+                    onTap: () => showThemeModeSheet(context),
+                    child: DriverProfileTile(
+                      icon: Icons.dark_mode_rounded,
+                      label: 'المظهر',
+                      value: modeLabel,
+                      showArrow: true,
+                    ),
+                  );
+                },
+              ),
+              
               const DriverProfileTile(icon: Icons.notifications_active_rounded, label: 'الإشعارات', value: 'مفعلة', showArrow: true),
 
               const SizedBox(height: 24),
-              _buildSectionTitle('المساعدة والدعم'),
+              _buildSectionTitle('المساعدة والدعم', context),
               InkWell(
                 onTap: _launchHelpCenter,
                 child: const DriverProfileTile(icon: Icons.help_center_rounded, label: 'تواصل مع الدعم الفني', value: '', showArrow: true),
@@ -185,17 +205,22 @@ class DriverProfileTab extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsRow(DriverHomeViewModel vm) {
+  Widget _buildStatsRow(DriverHomeViewModel vm, BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Transform.translate(
       offset: const Offset(0, -20),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
+            border: isDark ? Border.all(color: theme.colorScheme.outline) : null,
             boxShadow: [
-              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4)),
+              if (!isDark)
+                BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4)),
             ],
           ),
           padding: const EdgeInsets.symmetric(vertical: 20),
@@ -206,24 +231,24 @@ class DriverProfileTab extends StatelessWidget {
                   children: [
                     Text(
                       vm.totalCompletedRides.toString(),
-                      style: GoogleFonts.dmSans(fontSize: 24, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
+                      style: GoogleFonts.dmSans(fontSize: 24, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color),
                     ),
                     const SizedBox(height: 4),
-                    Text('إجمالي الرحلات', style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF717973))),
+                    Text('إجمالي الرحلات', style: GoogleFonts.cairo(fontSize: 13, color: theme.textTheme.bodyMedium?.color)),
                   ],
                 ),
               ),
-              Container(width: 1, height: 40, color: const Color(0xFFE6E9E7)),
+              Container(width: 1, height: 40, color: theme.dividerColor),
               Expanded(
                 child: Column(
                   children: [
                     Text(
                       '${vm.totalEarnings.toStringAsFixed(1)} د.أ',
                       textDirection: TextDirection.ltr,
-                      style: GoogleFonts.dmSans(fontSize: 24, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
+                      style: GoogleFonts.dmSans(fontSize: 24, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color),
                     ),
                     const SizedBox(height: 4),
-                    Text('إجمالي الأرباح', style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF717973))),
+                    Text('إجمالي الأرباح', style: GoogleFonts.cairo(fontSize: 13, color: theme.textTheme.bodyMedium?.color)),
                   ],
                 ),
               ),
@@ -234,7 +259,7 @@ class DriverProfileTab extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Text(
@@ -243,13 +268,17 @@ class DriverProfileTab extends StatelessWidget {
         style: GoogleFonts.cairo(
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: const Color(0xFF002819),
+          color: Theme.of(context).textTheme.bodyLarge?.color,
         ),
       ),
     );
   }
 
   Widget _buildActionTile(BuildContext context, String title, IconData icon, Color color, VoidCallback onTap) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final textColor = isDark ? theme.textTheme.bodyLarge?.color : color;
+    
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -263,11 +292,11 @@ class DriverProfileTab extends StatelessWidget {
               style: GoogleFonts.cairo(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
-                color: color,
+                color: textColor,
               ),
             ),
             const Spacer(),
-            Icon(Icons.chevron_left_rounded, color: color.withValues(alpha: 0.5), size: 20),
+            Icon(Icons.chevron_left_rounded, color: textColor?.withValues(alpha: 0.5), size: 20),
           ],
         ),
       ),

@@ -17,6 +17,9 @@ class SupplierNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final selectedColor = theme.primaryColor;
+    
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -28,14 +31,14 @@ class SupplierNavItem extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
               color: isSelected
-                  ? const Color(0xFF1E5C35).withValues(alpha: 0.1)
+                  ? selectedColor.withValues(alpha: 0.1)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Icon(
               icon,
               size: 24,
-              color: isSelected ? const Color(0xFF1E5C35) : const Color(0xFF9CA3AF),
+              color: isSelected ? selectedColor : const Color(0xFF9CA3AF),
             ),
           ),
           const SizedBox(height: 2),
@@ -44,7 +47,7 @@ class SupplierNavItem extends StatelessWidget {
             style: GoogleFonts.cairo(
               fontSize: 11,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? const Color(0xFF1E5C35) : const Color(0xFF9CA3AF),
+              color: isSelected ? selectedColor : const Color(0xFF9CA3AF),
             ),
           ),
         ],

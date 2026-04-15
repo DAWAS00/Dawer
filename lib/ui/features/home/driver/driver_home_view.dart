@@ -126,7 +126,7 @@ class _DriverHomeBody extends StatelessWidget {
     final marketVm = context.watch<MarketplaceViewModel>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7F5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: IndexedStack(
         index: vm.currentTab,
         children: tabs,
@@ -188,7 +188,7 @@ class _DriverHomeBody extends StatelessWidget {
       BuildContext context, DriverHomeViewModel vm) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.08),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../../../../../core/services/app_theme_notifier.dart';
+import '../../../../common/theme_mode_sheet.dart';
 import '../../../../features/auth/views/login_view.dart';
 import '../viewmodels/recycling_home_viewmodel.dart';
 
@@ -174,7 +176,24 @@ class RecyclingProfileTab extends StatelessWidget {
               const SizedBox(height: 24),
               _buildSectionTitle('إعدادات التطبيق', withPadding: true),
               _buildProfileTile(Icons.language_rounded, 'لغة التطبيق', 'العربية'),
-              _buildProfileTile(Icons.dark_mode_rounded, 'المظهر', 'فاتح'),
+              
+              Consumer<AppThemeNotifier>(
+                builder: (context, themeNotifier, _) {
+                  String modeLabel = 'تلقائي';
+                  if (themeNotifier.mode == ThemeMode.light) modeLabel = 'فاتح';
+                  if (themeNotifier.mode == ThemeMode.dark) modeLabel = 'داكن';
+                  
+                  return InkWell(
+                    onTap: () => showThemeModeSheet(context),
+                    child: _buildProfileTile(
+                      Icons.dark_mode_rounded,
+                      'المظهر',
+                      modeLabel,
+                    ),
+                  );
+                },
+              ),
+              
               _buildProfileTile(Icons.notifications_active_rounded, 'الإشعارات', 'مفعلة'),
 
               const SizedBox(height: 32),
@@ -270,6 +289,10 @@ class RecyclingProfileTab extends StatelessWidget {
   }
 
   Widget _buildActionTile(BuildContext context, String title, IconData icon, Color color, VoidCallback onTap) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final textColor = isDark ? theme.textTheme.bodyLarge?.color : color;
+    
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -278,9 +301,9 @@ class RecyclingProfileTab extends StatelessWidget {
           children: [
             Icon(icon, color: color, size: 22),
             const SizedBox(width: 16),
-            Text(title, style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: color)),
+            Text(title, style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: textColor)),
             const Spacer(),
-            Icon(Icons.chevron_left_rounded, color: color.withValues(alpha: 0.5), size: 20),
+            Icon(Icons.chevron_left_rounded, color: textColor?.withValues(alpha: 0.5), size: 20),
           ],
         ),
       ),

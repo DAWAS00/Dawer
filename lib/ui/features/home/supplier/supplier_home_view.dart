@@ -85,7 +85,7 @@ class _SupplierHomeBody extends StatelessWidget {
     final marketVm = context.watch<MarketplaceViewModel>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: IndexedStack(
         index: vm.currentTab,
         children: tabs,

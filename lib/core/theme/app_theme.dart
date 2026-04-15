@@ -85,6 +85,113 @@ class AppTheme {
     );
   }
 
+  static ThemeData get darkTheme {
+    final baseTextTheme = GoogleFonts.cairoTextTheme(ThemeData.dark().textTheme);
+    
+    const textPrimary = Color(0xFFF0F7F2);
+    const textSecondary = Color(0xFF94A3B8);
+
+    return ThemeData(
+      brightness: Brightness.dark,
+      primaryColor: AppColors.shamrock400,
+      scaffoldBackgroundColor: AppColors.shamrock1300,
+      colorScheme: const ColorScheme.dark(
+        primary: AppColors.shamrock400,
+        secondary: Color(0xFFFBBF24), // Lighter accent amber for dark mode
+        surface: AppColors.shamrock1200,
+        error: Color(0xFFF87171),
+        onSurface: textPrimary,
+        outline: AppColors.shamrock1000,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.shamrock1200,
+        foregroundColor: textPrimary,
+        elevation: 0,
+        centerTitle: true,
+      ),
+      textTheme: baseTextTheme.copyWith(
+        displayLarge: GoogleFonts.cairo(
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+          color: textPrimary,
+        ),
+        displayMedium: GoogleFonts.cairo(
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+          color: textPrimary,
+        ),
+        titleLarge: GoogleFonts.cairo(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: textPrimary,
+        ),
+        bodyLarge: GoogleFonts.cairo(
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+          color: textPrimary,
+        ),
+        bodyMedium: GoogleFonts.cairo(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          color: textSecondary,
+        ),
+        labelLarge: GoogleFonts.cairo(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: textPrimary,
+        ),
+        labelSmall: GoogleFonts.cairo(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: textSecondary,
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.shamrock400,
+          foregroundColor: AppColors.shamrock1300,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          textStyle: GoogleFonts.cairo(
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.shamrock1100,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        hintStyle: GoogleFonts.cairo(
+          fontSize: 18,
+          fontWeight: FontWeight.w400,
+          color: textSecondary,
+        ),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: AppColors.shamrock1200,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: AppColors.shamrock1200,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: AppColors.shamrock1000, width: 1),
+        ),
+      ),
+    );
+  }
+
   static TextStyle dmSans(TextStyle style) {
     return GoogleFonts.dmSans(textStyle: style);
   }
