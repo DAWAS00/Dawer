@@ -115,24 +115,27 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
             ),
           ),
           const Spacer(),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                'السوق',
-                style: GoogleFonts.cairo(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-              Text(
-                _segment == 0
-                    ? 'تصفّح المواد المعروضة للبيع'
-                    : 'وظائف التجميع من شركات التدوير',
-                style:
-                    GoogleFonts.cairo(fontSize: 12, color: Colors.white70),
-              ),
-            ],
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'السوق',
+                  style: GoogleFonts.cairo(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+                Text(
+                  _segment == 0
+                      ? 'تصفّح المواد المعروضة للبيع'
+                      : 'وظائف التجميع من شركات التدوير',
+                  overflow: TextOverflow.ellipsis,
+                  style:
+                      GoogleFonts.cairo(fontSize: 12, color: Colors.white70),
+                ),
+              ],
+            ),
           ),
           const SizedBox(width: 12),
           CircleAvatar(
