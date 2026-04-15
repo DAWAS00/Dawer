@@ -134,15 +134,19 @@ class DawaChatViewModel extends ChangeNotifier {
           mlSource: result.category,
         );
       }
-    } catch (_) {
+    } catch (e) {
       _isScanning = false;
       notifyListeners();
+      final detail = e is DawaImageScanException ? e.message : e.toString();
       _addBotMessage(
-        const DawaEntry(
+        DawaEntry(
           id: 'ml_error',
-          keywords: [],
-          response: 'تعذّر تحليل الصورة النموذجية.',
-          followUpIds: ['recycle_oil', 'recycle_wood'],
+          keywords: const [],
+          response:
+              'تعذّر قراءة الصورة النموذجية.\n'
+              'السبب: $detail\n\n'
+              'اختر المادة يدوياً:',
+          followUpIds: const ['recycle_oil', 'recycle_wood'],
         ),
       );
     }
@@ -232,15 +236,19 @@ class DawaChatViewModel extends ChangeNotifier {
         );
         _addBotMessage(enriched, mlSource: result.category);
       }
-    } catch (_) {
+    } catch (e) {
       _isScanning = false;
       notifyListeners();
+      final detail = e is DawaImageScanException ? e.message : e.toString();
       _addBotMessage(
-        const DawaEntry(
+        DawaEntry(
           id: 'ml_error',
-          keywords: [],
-          response: 'تعذّر تحليل الصورة. يرجى المحاولة مرة أخرى.',
-          followUpIds: ['recycle_oil', 'recycle_wood'],
+          keywords: const [],
+          response:
+              'تعذّر قراءة الصورة.\n'
+              'السبب: $detail\n\n'
+              'يمكنك اختيار المادة يدوياً أدناه:',
+          followUpIds: const ['recycle_oil', 'recycle_wood', 'waste_types'],
         ),
       );
     }

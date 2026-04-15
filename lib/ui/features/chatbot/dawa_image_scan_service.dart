@@ -1,6 +1,15 @@
 import 'dart:io';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 
+/// Thrown by [DawaImageScanService.classify] when the ML Kit model is
+/// unavailable or the image cannot be processed.
+class DawaImageScanException implements Exception {
+  final String message;
+  const DawaImageScanException(this.message);
+  @override
+  String toString() => 'DawaImageScanException: $message';
+}
+
 /// Returned by [DawaImageScanService.classify].
 class DawaImageScanResult {
   /// Normalized category: `'oil'`, `'wood'`, or `'unknown'`.
@@ -29,17 +38,23 @@ class DawaImageScanResult {
 class DawaImageScanService {
   DawaImageScanService._();
 
-  static const double _threshold = 0.35;
+  /// Low threshold — we apply our own category filter on top, so we want
+  /// every label the model returns, even low-confidence ones.
+  static const double _threshold = 0.10;
 
   /// Classifies [imageFile] using the on-device ML Kit base model.
   ///
-  /// Always closes the labeler, even on error.
+  /// Throws a [DawaImageScanException] with an Arabic message when the model
+  /// is unavailable or the image cannot be decoded, so callers can surface it.
   static Future<DawaImageScanResult> classify(File imageFile) async {
+    if (!imageFile.existsSync()) {
+      throw DawaImageScanException('الملف غير موجود: ${imageFile.path}');
+    }
     final labeler = ImageLabeler(
       options: ImageLabelerOptions(confidenceThreshold: _threshold),
     );
     try {
-      final input = InputImage.fromFile(imageFile);
+      final input = InputImage.fromFilePath(imageFile.path);
       final labels = await labeler.processImage(input);
 
       final topLabel = labels.isEmpty ? '' : labels.first.label;
@@ -50,6 +65,11 @@ class DawaImageScanService {
         category: category,
         topLabel: topLabel,
         confidence: topConf,
+      );
+    } catch (e) {
+      if (e is DawaImageScanException) rethrow;
+      throw DawaImageScanException(
+        'تعذّر تشغيل نموذج التعرف. تفاصيل: $e',
       );
     } finally {
       await labeler.close();
