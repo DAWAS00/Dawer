@@ -254,9 +254,9 @@ class DawaChatbotService {
       followUpIds: [
         'marketplace',
         'market_listings',
-        'market_collection_jobs',
+        'scan_oil_sample',
+        'scan_wood_sample',
         'market_roles',
-        'market_search',
       ],
     ),
 
@@ -1242,6 +1242,22 @@ class DawaChatbotService {
         'market_payment_model',
         'market_item_details',
       ],
+    ),
+
+    // ── Bundled sample scan chips ────────────────────────────────
+
+    const DawaEntry(
+      id: 'scan_oil_sample',
+      keywords: ['عينة الزيت', 'اختبار زيت', 'مسح زيت', 'sample oil'],
+      response: '🛢️ تحليل عينة زيت مستعمل',
+      followUpIds: ['recycle_oil'],
+    ),
+
+    const DawaEntry(
+      id: 'scan_wood_sample',
+      keywords: ['عينة الخشب', 'اختبار خشب', 'مسح خشب', 'sample wood'],
+      response: '🪵 تحليل عينة خشب بناء',
+      followUpIds: ['recycle_wood'],
     ),
 
     // ── Image-scan recycling knowledge ────────────────────────────

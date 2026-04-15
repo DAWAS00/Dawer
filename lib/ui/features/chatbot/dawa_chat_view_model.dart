@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dawa_chatbot_service.dart';
 import 'dawa_image_scan_service.dart';
@@ -65,17 +66,86 @@ class DawaChatViewModel extends ChangeNotifier {
   // ──────────────────────────────────────────────
 
   /// Called when the user taps a follow-up chip below a bot message.
-  void handleFollowUpTap(String entryId) {
+  ///
+  /// `scan_oil_sample` / `scan_wood_sample` trigger ML Kit on bundled assets.
+  Future<void> handleFollowUpTap(String entryId) async {
+    if (entryId == 'scan_oil_sample') {
+      await _handleAssetScan('assets/images/sample_oil.jpg', 'زيت مستعمل');
+      return;
+    }
+    if (entryId == 'scan_wood_sample') {
+      await _handleAssetScan('assets/images/sample_wood.jpg', 'خشب بناء');
+      return;
+    }
     final entry = DawaChatbotService.entryById(entryId);
-
-    // Show the first line of the entry as a user-bubble label.
     _messages.add(DawaMessage(
       text: entry.response.split('\n').first,
       isUser: true,
     ));
     notifyListeners();
-
     _addBotMessage(entry);
+  }
+
+  /// Loads a bundled asset image, writes it to a temp file, runs ML Kit,
+  /// and shows the same enriched recycling response as [handleImagePick].
+  Future<void> _handleAssetScan(String assetKey, String displayName) async {
+    _isScanning = true;
+    notifyListeners();
+    try {
+      final data = await rootBundle.load(assetKey);
+      final bytes = data.buffer.asUint8List();
+      final tempPath =
+          '${Directory.systemTemp.path}/dawer_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final tempFile = File(tempPath);
+      await tempFile.writeAsBytes(bytes);
+      _messages.add(DawaMessage(
+        text: 'تحليل عينة: $displayName',
+        isUser: true,
+        imagePath: tempPath,
+      ));
+      notifyListeners();
+      final result = await DawaImageScanService.classify(tempFile);
+      _isScanning = false;
+      if (result.category == 'unknown') {
+        final confPct = (result.confidence * 100).toStringAsFixed(0);
+        _addBotMessage(
+          DawaEntry(
+            id: 'ml_not_recognized',
+            keywords: const [],
+            response: 'لم أتعرف على المادة في الصورة النموذجية.\n'
+                'أعلى تسمية رُصدت: "${result.topLabel}" ($confPct%)\n\n'
+                'اختر مادتك يدوياً:',
+            followUpIds: const ['recycle_oil', 'recycle_wood'],
+          ),
+          mlSource: result.topLabel,
+        );
+      } else {
+        final entry = DawaChatbotService.matchFromMlLabel(result.category);
+        final ar = result.category == 'oil' ? 'زيت مستعمل' : 'خشب بناء';
+        final pct = (result.confidence * 100).toStringAsFixed(0);
+        _addBotMessage(
+          DawaEntry(
+            id: entry.id,
+            keywords: entry.keywords,
+            response: 'تم التعرف على: $ar (دقة: $pct%)\n\n${entry.response}',
+            followUpIds: entry.followUpIds,
+            mlLabel: entry.mlLabel,
+          ),
+          mlSource: result.category,
+        );
+      }
+    } catch (_) {
+      _isScanning = false;
+      notifyListeners();
+      _addBotMessage(
+        const DawaEntry(
+          id: 'ml_error',
+          keywords: [],
+          response: 'تعذّر تحليل الصورة النموذجية.',
+          followUpIds: ['recycle_oil', 'recycle_wood'],
+        ),
+      );
+    }
   }
 
   // ──────────────────────────────────────────────
