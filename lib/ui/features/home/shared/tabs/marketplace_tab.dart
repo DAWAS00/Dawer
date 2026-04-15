@@ -153,9 +153,9 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
             child: IconButton(
               padding: EdgeInsets.zero,
               icon: const Icon(
-                Icons.chat_bubble_outline_rounded,
+                Icons.smart_toy_rounded,
                 color: Colors.white,
-                size: 20,
+                size: 22,
               ),
               onPressed: () => _openChatbot(context),
             ),
