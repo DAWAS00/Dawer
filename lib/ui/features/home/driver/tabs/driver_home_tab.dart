@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order.dart';
+import 'package:dwaar/ui/common/map/order_route_map.dart';
 import 'package:provider/provider.dart';
 import '../../shared/order_card.dart';
 import '../../shared/order_details_view.dart';
@@ -356,6 +357,22 @@ class DriverHomeTab extends StatelessWidget {
     );
   }
 
+  double _simulatedDriverLat(Order order) {
+    final f = _progressFraction(order);
+    return order.pickupLat! + (order.dropoffLat! - order.pickupLat!) * f;
+  }
+
+  double _simulatedDriverLng(Order order) {
+    final f = _progressFraction(order);
+    return order.pickupLng! + (order.dropoffLng! - order.pickupLng!) * f;
+  }
+
+  double _progressFraction(Order order) {
+    if (order.inTransitAt == null) return 0.1;
+    final elapsed = DateTime.now().difference(order.inTransitAt!).inSeconds;
+    return (elapsed / 600).clamp(0.05, 0.95);
+  }
+
   Widget _buildActiveBanner(BuildContext context) {
     final order = active!;
     return Container(
@@ -428,6 +445,27 @@ class DriverHomeTab extends StatelessWidget {
             style: GoogleFonts.cairo(fontSize: 13, color: Colors.white70),
           ),
           const SizedBox(height: 12),
+          if (order.pickupLat != null && order.dropoffLat != null)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: OrderRouteMap(
+                pickupLat: order.pickupLat!,
+                pickupLng: order.pickupLng!,
+                dropoffLat: order.dropoffLat!,
+                dropoffLng: order.dropoffLng!,
+                driverLat: order.status == OrderStatus.inTransit
+                    ? _simulatedDriverLat(order)
+                    : null,
+                driverLng: order.status == OrderStatus.inTransit
+                    ? _simulatedDriverLng(order)
+                    : null,
+                height: 120,
+                interactive: false,
+                showLabels: false,
+              ),
+            ),
+          if (order.pickupLat != null && order.dropoffLat != null)
+            const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: TextButton(

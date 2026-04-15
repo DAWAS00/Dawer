@@ -166,6 +166,10 @@ class AppOrderStore extends ChangeNotifier {
     PickupTarget? pickupTarget,
     double? itemPrice,
     DateTime? scheduledAt,
+    double? pickupLat,
+    double? pickupLng,
+    double? dropoffLat,
+    double? dropoffLng,
   }) {
     final orderId =
         'ORD-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
@@ -189,6 +193,10 @@ class AppOrderStore extends ChangeNotifier {
       pickupTarget: pickupTarget,
       itemPrice: itemPrice,
       scheduledAt: scheduledAt,
+      pickupLat: pickupLat,
+      pickupLng: pickupLng,
+      dropoffLat: dropoffLat,
+      dropoffLng: dropoffLng,
     );
     _orders.insert(0, order);
     notifyListeners();
@@ -394,6 +402,92 @@ class AppOrderStore extends ChangeNotifier {
     _orders.insert(0, sale);
     notifyListeners();
     return null;
+  }
+
+  /// Driver/supplier signals they have collected the material and are heading to
+  /// the recycling facility. Moves collectionSale from pending → inTransit.
+  /// Returns an error string on failure, null on success.
+  String? markCollectionSaleInTransit(String saleId) {
+    final idx = _orders.indexWhere(
+      (o) => o.id == saleId && o.type == OrderType.collectionSale,
+    );
+    if (idx == -1) return 'الالتزام غير موجود';
+    final current = _orders[idx];
+    if (current.status != OrderStatus.pending) {
+      return 'لا يمكن تغيير الحالة — الالتزام ليس في حالة انتظار';
+    }
+    _orders[idx] = current.copyWith(
+      status: OrderStatus.inTransit,
+      inTransitAt: DateTime.now(),
+    );
+    notifyListeners();
+    return null;
+  }
+
+  /// Driver/supplier confirms delivery to the recycling facility.
+  /// [actualWeightKg] is optional — used when paymentModel == perKg so the
+  /// final earnings can be calculated later.
+  /// Returns an error string on failure, null on success.
+  String? completeCollectionSale(String saleId, {double? actualWeightKg}) {
+    final idx = _orders.indexWhere(
+      (o) => o.id == saleId && o.type == OrderType.collectionSale,
+    );
+    if (idx == -1) return 'الالتزام غير موجود';
+    final current = _orders[idx];
+    if (current.status != OrderStatus.inTransit) {
+      return 'يجب بدء التجميع أولاً قبل تأكيد التسليم';
+    }
+    _orders[idx] = current.copyWith(
+      status: OrderStatus.completed,
+      completedAt: DateTime.now(),
+      weightKg: actualWeightKg ?? current.weightKg,
+    );
+    notifyListeners();
+    return null;
+  }
+
+  /// Cancel a collection sale commitment. Only allowed when status == pending.
+  /// Once inTransit or completed, cancellation is blocked — the user must
+  /// contact the company directly.
+  /// Returns an error string on failure, null on success.
+  String? cancelCollectionSale(String saleId) {
+    final idx = _orders.indexWhere(
+      (o) => o.id == saleId && o.type == OrderType.collectionSale,
+    );
+    if (idx == -1) return 'الالتزام غير موجود';
+    final status = _orders[idx].status;
+    if (status == OrderStatus.inTransit) {
+      return 'لا يمكن الإلغاء بعد بدء التجميع — تواصل مع الشركة مباشرة';
+    }
+    if (status == OrderStatus.completed) {
+      return 'لا يمكن إلغاء التزام مكتمل';
+    }
+    if (status == OrderStatus.cancelled) {
+      return 'هذا الالتزام ملغى مسبقاً';
+    }
+    _orders[idx] = _orders[idx].copyWith(status: OrderStatus.cancelled);
+    notifyListeners();
+    return null;
+  }
+
+  /// All collectionSale commitments linked to jobs owned by [companyName].
+  /// Used by RecyclingHomeTab to show acceptor count + status per job.
+  List<Order> salesForCompanyJobs(String companyName) {
+    final companyJobIds = _orders
+        .where(
+          (o) => o.type == OrderType.collection && o.supplierName == companyName,
+        )
+        .map((o) => o.id)
+        .toSet();
+
+    return _orders
+        .where(
+          (o) =>
+              o.type == OrderType.collectionSale &&
+              o.linkedJobId != null &&
+              companyJobIds.contains(o.linkedJobId),
+        )
+        .toList();
   }
 
   // ─────────────────────────────────────────────────────────────────────────

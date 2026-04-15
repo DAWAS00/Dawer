@@ -26,7 +26,7 @@ class OrderDetailsView extends StatelessWidget {
         slivers: [
           OrderDetailsAppBar(order: order),
           SliverToBoxAdapter(
-            child: OrderMapSection(hasDriver: order.driverName != null),
+            child: OrderMapSection(order: order, hasDriver: order.driverName != null),
           ),
           SliverToBoxAdapter(
             child: OrderStatusTimeline(order: order),

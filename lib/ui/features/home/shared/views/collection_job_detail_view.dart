@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../data/models/user.dart';
+import 'package:dwaar/ui/common/map/order_route_map.dart';
 import '../../../../features/auth/viewmodels/login_viewmodel.dart';
 import '../viewmodels/marketplace_viewmodel.dart';
 import '../../recycling/widgets/edit_collection_job_sheet.dart';
@@ -71,6 +72,8 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
+                  if (_job.pickupLat != null && _job.dropoffLat != null) ...
+                    [_buildMapSection(), const SizedBox(height: 16)],
                   if (_job.isEdited) _buildEditedBanner(),
                   _buildCompanyCard(),
                   const SizedBox(height: 16),
@@ -86,6 +89,21 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
         ],
       ),
       bottomSheet: _buildActionBar(context),
+    );
+  }
+
+  Widget _buildMapSection() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: OrderRouteMap(
+        pickupLat: _job.pickupLat!,
+        pickupLng: _job.pickupLng!,
+        dropoffLat: _job.dropoffLat!,
+        dropoffLng: _job.dropoffLng!,
+        height: 180,
+        interactive: false,
+        showLabels: true,
+      ),
     );
   }
 

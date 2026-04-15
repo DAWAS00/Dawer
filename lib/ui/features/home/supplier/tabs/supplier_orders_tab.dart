@@ -4,12 +4,107 @@ import '../../../../../data/models/order.dart';
 import '../../shared/widgets/collection_sale_card.dart';
 import '../widgets/supplier_order_card.dart';
 
+void _handleStartTransit(
+  BuildContext context,
+  Order sale,
+  String? Function(String saleId) onStartTransit,
+) {
+  final error = onStartTransit(sale.id);
+  if (error != null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(error, style: GoogleFonts.cairo(color: Colors.white)),
+        backgroundColor: const Color(0xFF991B1B),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+}
+
+void _showCompleteDialog(
+  BuildContext context,
+  Order sale,
+  String? Function(String saleId, {double? actualWeightKg}) onComplete,
+) {
+  final weightController = TextEditingController();
+  showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: Text('تأكيد التسليم',
+          textAlign: TextAlign.right,
+          style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text('هل وصلت إلى المنشأة وسلّمت المواد؟',
+              textAlign: TextAlign.right,
+              style: GoogleFonts.cairo()),
+          if (sale.paymentModel == PaymentModel.perKg) ...[
+            const SizedBox(height: 16),
+            TextField(
+              controller: weightController,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              textAlign: TextAlign.right,
+              decoration: InputDecoration(
+                labelText: 'الوزن الفعلي (كغ) — اختياري',
+                labelStyle: GoogleFonts.cairo(),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+          ],
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx),
+          child: Text('إلغاء', style: GoogleFonts.cairo()),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(ctx);
+            final weightText = weightController.text.trim();
+            final weight =
+                weightText.isEmpty ? null : double.tryParse(weightText);
+            final error =
+                onComplete(sale.id, actualWeightKg: weight);
+            if (error != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(error,
+                      style: GoogleFonts.cairo(color: Colors.white)),
+                  backgroundColor: const Color(0xFF991B1B),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF1E40AF),
+            foregroundColor: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)),
+          ),
+          child: Text('تأكيد',
+              style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        ),
+      ],
+    ),
+  );
+}
+
 class SupplierOrdersTab extends StatelessWidget {
   final List<Order> activeOrders;
   final List<Order> completedOrders;
   final List<Order> cancelledOrders;
   final List<Order> collectionSaleOrders;
   final String? Function(String orderId) onCancelOrder;
+  final String? Function(String saleId)? onStartTransit;
+  final String? Function(String saleId, {double? actualWeightKg})? onComplete;
 
   const SupplierOrdersTab({
     super.key,
@@ -18,6 +113,8 @@ class SupplierOrdersTab extends StatelessWidget {
     required this.cancelledOrders,
     this.collectionSaleOrders = const [],
     required this.onCancelOrder,
+    this.onStartTransit,
+    this.onComplete,
   });
 
   @override
@@ -122,6 +219,12 @@ class SupplierOrdersTab extends StatelessWidget {
               sale: sales[i],
               onCancel: sales[i].status == OrderStatus.pending
                   ? () => onCancelOrder(sales[i].id)
+                  : null,
+              onStartTransit: sales[i].status == OrderStatus.pending && onStartTransit != null
+                  ? () => _handleStartTransit(ctx, sales[i], onStartTransit!)
+                  : null,
+              onComplete: sales[i].status == OrderStatus.inTransit && onComplete != null
+                  ? () => _showCompleteDialog(ctx, sales[i], onComplete!)
                   : null,
             ),
           ),

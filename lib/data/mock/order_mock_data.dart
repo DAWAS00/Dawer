@@ -20,6 +20,11 @@ class OrderMockData {
           eta: '١٢ دقيقة',
           createdAt: DateTime.now().subtract(const Duration(minutes: 18)),
           acceptedAt: DateTime.now().subtract(const Duration(minutes: 12)),
+          inTransitAt: DateTime.now().subtract(const Duration(minutes: 6)),
+          pickupLat: 32.0167,
+          pickupLng: 35.8722,
+          dropoffLat: 31.9992,
+          dropoffLng: 36.0025,
         ),
         Order(
           id: 'ORD-S02',
@@ -32,6 +37,10 @@ class OrderMockData {
           reward: 0,
           distanceKm: 2.1,
           createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+          pickupLat: 32.0167,
+          pickupLng: 35.8722,
+          dropoffLat: 31.9720,
+          dropoffLng: 35.9305,
         ),
 
         // ── External pending pickups (driver feed) ─────────────────────────
@@ -46,6 +55,10 @@ class OrderMockData {
           reward: 8.5,
           distanceKm: 3.2,
           createdAt: DateTime.now().subtract(const Duration(minutes: 12)),
+          pickupLat: 32.0142,
+          pickupLng: 35.8614,
+          dropoffLat: 32.0760,
+          dropoffLng: 36.0930,
         ),
         Order(
           id: 'ORD-002',
@@ -58,6 +71,10 @@ class OrderMockData {
           reward: 12.0,
           distanceKm: 5.8,
           createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
+          pickupLat: 31.9854,
+          pickupLng: 35.9154,
+          dropoffLat: 31.9641,
+          dropoffLng: 35.8789,
         ),
         Order(
           id: 'ORD-003',
@@ -70,6 +87,10 @@ class OrderMockData {
           reward: 18.0,
           distanceKm: 7.1,
           createdAt: DateTime.now().subtract(const Duration(hours: 1)),
+          pickupLat: 31.9596,
+          pickupLng: 35.8590,
+          dropoffLat: 31.9992,
+          dropoffLng: 36.0025,
         ),
 
         // ── Company incoming (other driver, already accepted) ──────────────
@@ -89,6 +110,10 @@ class OrderMockData {
           eta: '٢٥ دقيقة',
           createdAt: DateTime.now().subtract(const Duration(hours: 1)),
           acceptedAt: DateTime.now().subtract(const Duration(minutes: 45)),
+          pickupLat: 32.0760,
+          pickupLng: 36.0930,
+          dropoffLat: 31.9992,
+          dropoffLng: 36.0025,
         ),
 
         // ── Company collection jobs ────────────────────────────────────────
@@ -103,6 +128,10 @@ class OrderMockData {
           weightKg: 100.0,
           distanceKm: 4.5,
           createdAt: DateTime.now().subtract(const Duration(hours: 3)),
+          pickupLat: 32.0142,
+          pickupLng: 35.8614,
+          dropoffLat: 31.9992,
+          dropoffLng: 36.0025,
         ),
         Order(
           id: 'JOB-002',
@@ -118,6 +147,10 @@ class OrderMockData {
           distanceKm: 3.8,
           createdAt: DateTime.now().subtract(const Duration(days: 1)),
           acceptedAt: DateTime.now().subtract(const Duration(hours: 22)),
+          pickupLat: 31.9641,
+          pickupLng: 35.8789,
+          dropoffLat: 31.9992,
+          dropoffLng: 36.0025,
         ),
 
         // ── Driver history seeds (completed by our mock driver) ────────────
@@ -132,6 +165,10 @@ class OrderMockData {
           distanceKm: 3.1,
           createdAt: DateTime.now().subtract(const Duration(days: 1)),
           acceptedAt: DateTime.now().subtract(const Duration(days: 1, hours: 1)),
+          pickupLat: 31.9720,
+          pickupLng: 35.9305,
+          dropoffLat: 32.0760,
+          dropoffLng: 36.0930,
         ),
         Order(
           id: 'ORD-H02',
@@ -144,6 +181,10 @@ class OrderMockData {
           distanceKm: 2.9,
           createdAt: DateTime.now().subtract(const Duration(days: 2)),
           acceptedAt: DateTime.now().subtract(const Duration(days: 2, minutes: 40)),
+          pickupLat: 31.9854,
+          pickupLng: 35.9154,
+          dropoffLat: 31.9992,
+          dropoffLng: 36.0025,
         ),
       ];
 

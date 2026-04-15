@@ -31,11 +31,28 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
   // ── Local state ───────────────────────────────────────────────────────────
 
   int _currentTab = 0;
+  double? _pickupLat;
+  double? _pickupLng;
 
   // ── Getters ───────────────────────────────────────────────────────────────
 
   int get currentTab => _currentTab;
   User get user => _user;
+  double? get pickupLat => _pickupLat;
+  double? get pickupLng => _pickupLng;
+  bool get isPickupLocationSet => _pickupLat != null && _pickupLng != null;
+
+  void setPickupLocation(double lat, double lng) {
+    _pickupLat = lat;
+    _pickupLng = lng;
+    notifyListeners();
+  }
+
+  void clearPickupLocation() {
+    _pickupLat = null;
+    _pickupLng = null;
+    notifyListeners();
+  }
 
   List<Order> get orders => _store.supplierOrdersFor(_user.name);
   List<Order> get collectionSaleOrders => _store.collectionSalesFor(_user.name);
@@ -93,6 +110,10 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
         pickupTarget: pickupTarget,
         itemPrice: itemPrice,
         scheduledAt: scheduledAt,
+        pickupLat: _pickupLat,
+        pickupLng: _pickupLng,
+        dropoffLat: 31.9992,
+        dropoffLng: 36.0025,
       );
 
   /// Builds a marketplace listing Order and returns it.
@@ -127,6 +148,18 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
       itemPrice: itemPrice,
     );
   }
+
+  /// Move a collectionSale to inTransit. Returns error string or null.
+  String? startCollectionSaleTransit(String saleId) =>
+      _store.markCollectionSaleInTransit(saleId);
+
+  /// Complete a collectionSale.
+  String? completeCollectionSale(String saleId, {double? actualWeightKg}) =>
+      _store.completeCollectionSale(saleId, actualWeightKg: actualWeightKg);
+
+  /// Cancel a pending collectionSale.
+  String? cancelCollectionSale(String saleId) =>
+      _store.cancelCollectionSale(saleId);
 
   String? cancelOrder(String orderId) => _store.cancelOrder(orderId);
 

@@ -68,6 +68,8 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
         cancelledOrders: vm.cancelledOrders,
         collectionSaleOrders: vm.collectionSaleOrders,
         onCancelOrder: vm.cancelOrder,
+        onStartTransit: vm.startCollectionSaleTransit,
+        onComplete: vm.completeCollectionSale,
       ),
       SupplierProfileTab(
         user: vm.user,

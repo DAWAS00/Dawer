@@ -84,8 +84,17 @@ class DriverHomeViewModel extends ChangeNotifier {
     _store.completeOrder(order);
   }
 
+  /// Move a collectionSale to inTransit. Returns error string or null.
+  String? startCollectionSaleTransit(String saleId) =>
+      _store.markCollectionSaleInTransit(saleId);
+
+  /// Complete a collectionSale. [actualWeightKg] used for per-kg payment calculation.
+  String? completeCollectionSale(String saleId, {double? actualWeightKg}) =>
+      _store.completeCollectionSale(saleId, actualWeightKg: actualWeightKg);
+
+  /// Cancel a pending collectionSale. Returns error string or null.
   String? cancelCollectionSale(String saleId) =>
-      _store.cancelOrder(saleId);
+      _store.cancelCollectionSale(saleId);
 
   Order createListing({
     required List<WasteType> wasteTypes,

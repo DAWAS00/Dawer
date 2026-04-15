@@ -127,4 +127,119 @@ void main() {
       expect(order.scheduledAt, scheduled);
     });
   });
+
+  group('AppOrderStore – collection sale lifecycle', () {
+    AppOrderStore storeWithSale({PaymentModel? paymentModel}) {
+      final s = AppOrderStore();
+      s.createCollectionJob(
+        wasteTypes: [WasteType.plastic],
+        pickupAddress: 'منطقة الرابية',
+        companyName: 'شركة اختبار',
+      );
+      final jobId = s.pendingCollectionJobs.first.id;
+      s.createCollectionSale(
+        jobId: jobId,
+        acceptorName: 'مورد اختبار',
+        collectionArea: 'منطقة الرابية',
+        wasteTypes: [WasteType.plastic],
+        paymentModel: paymentModel,
+      );
+      return s;
+    }
+
+    test('markCollectionSaleInTransit succeeds from pending', () {
+      final s = storeWithSale();
+      final saleId = s.collectionSalesFor('مورد اختبار').first.id;
+      final error = s.markCollectionSaleInTransit(saleId);
+      expect(error, isNull);
+      final sale = s.collectionSalesFor('مورد اختبار').first;
+      expect(sale.status, OrderStatus.inTransit);
+      expect(sale.inTransitAt, isNotNull);
+    });
+
+    test('markCollectionSaleInTransit fails if already inTransit', () {
+      final s = storeWithSale();
+      final saleId = s.collectionSalesFor('مورد اختبار').first.id;
+      s.markCollectionSaleInTransit(saleId);
+      final error = s.markCollectionSaleInTransit(saleId);
+      expect(error, isNotNull);
+    });
+
+    test('markCollectionSaleInTransit fails for wrong id', () {
+      final s = storeWithSale();
+      final error = s.markCollectionSaleInTransit('SALE-NONEXISTENT');
+      expect(error, isNotNull);
+    });
+
+    test('completeCollectionSale succeeds from inTransit', () {
+      final s = storeWithSale();
+      final saleId = s.collectionSalesFor('مورد اختبار').first.id;
+      s.markCollectionSaleInTransit(saleId);
+      final error = s.completeCollectionSale(saleId);
+      expect(error, isNull);
+      final sale = s.collectionSalesFor('مورد اختبار').first;
+      expect(sale.status, OrderStatus.completed);
+      expect(sale.completedAt, isNotNull);
+    });
+
+    test('completeCollectionSale fails if still pending', () {
+      final s = storeWithSale();
+      final saleId = s.collectionSalesFor('مورد اختبار').first.id;
+      final error = s.completeCollectionSale(saleId);
+      expect(error, isNotNull);
+    });
+
+    test('completeCollectionSale stores actualWeightKg', () {
+      final s = storeWithSale(paymentModel: PaymentModel.perKg);
+      final saleId = s.collectionSalesFor('مورد اختبار').first.id;
+      s.markCollectionSaleInTransit(saleId);
+      final error = s.completeCollectionSale(saleId, actualWeightKg: 42.5);
+      expect(error, isNull);
+      final sale = s.collectionSalesFor('مورد اختبار').first;
+      expect(sale.weightKg, 42.5);
+    });
+
+    test('cancelCollectionSale succeeds from pending', () {
+      final s = storeWithSale();
+      final saleId = s.collectionSalesFor('مورد اختبار').first.id;
+      final error = s.cancelCollectionSale(saleId);
+      expect(error, isNull);
+      final sale = s.collectionSalesFor('مورد اختبار').first;
+      expect(sale.status, OrderStatus.cancelled);
+    });
+
+    test('cancelCollectionSale blocked when inTransit', () {
+      final s = storeWithSale();
+      final saleId = s.collectionSalesFor('مورد اختبار').first.id;
+      s.markCollectionSaleInTransit(saleId);
+      final error = s.cancelCollectionSale(saleId);
+      expect(error, isNotNull);
+      final sale = s.collectionSalesFor('مورد اختبار').first;
+      expect(sale.status, OrderStatus.inTransit);
+    });
+
+    test('cancelCollectionSale blocked when completed', () {
+      final s = storeWithSale();
+      final saleId = s.collectionSalesFor('مورد اختبار').first.id;
+      s.markCollectionSaleInTransit(saleId);
+      s.completeCollectionSale(saleId);
+      final error = s.cancelCollectionSale(saleId);
+      expect(error, isNotNull);
+      final sale = s.collectionSalesFor('مورد اختبار').first;
+      expect(sale.status, OrderStatus.completed);
+    });
+
+    test('salesForCompanyJobs returns only sales for that company', () {
+      final s = storeWithSale();
+      final sales = s.salesForCompanyJobs('شركة اختبار');
+      expect(sales.length, 1);
+      expect(sales.first.supplierName, 'مورد اختبار');
+    });
+
+    test('salesForCompanyJobs returns empty for company with no jobs', () {
+      final s = storeWithSale();
+      final sales = s.salesForCompanyJobs('شركة وهمية');
+      expect(sales, isEmpty);
+    });
+  });
 }

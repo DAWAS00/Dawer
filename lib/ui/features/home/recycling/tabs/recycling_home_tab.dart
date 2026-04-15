@@ -88,10 +88,18 @@ class RecyclingHomeTab extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
-                  (context, i) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: OrderCard(order: jobs[i], mode: OrderCardMode.companyJob),
-                  ),
+                  (context, i) {
+                    final sales = vm.salesForJob(jobs[i].id);
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Column(
+                        children: [
+                          OrderCard(order: jobs[i], mode: OrderCardMode.companyJob),
+                          if (sales.isNotEmpty) _buildAcceptorRow(sales),
+                        ],
+                      ),
+                    );
+                  },
                   childCount: jobs.length,
                 ),
               ),
@@ -211,6 +219,108 @@ class RecyclingHomeTab extends StatelessWidget {
             minQuantityKg: minQuantityKg,
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildAcceptorRow(List<Order> sales) {
+    Color chipBg(OrderStatus s) => switch (s) {
+          OrderStatus.pending => const Color(0xFFFEF3C7),
+          OrderStatus.accepted => const Color(0xFFD1FAE5),
+          OrderStatus.inTransit => const Color(0xFFDBEAFE),
+          OrderStatus.completed => const Color(0xFFDCFCE7),
+          OrderStatus.cancelled => const Color(0xFFFEE2E2),
+        };
+    Color chipText(OrderStatus s) => switch (s) {
+          OrderStatus.pending => const Color(0xFFC8860A),
+          OrderStatus.accepted => const Color(0xFF1E5C35),
+          OrderStatus.inTransit => const Color(0xFF1E40AF),
+          OrderStatus.completed => const Color(0xFF166534),
+          OrderStatus.cancelled => const Color(0xFF991B1B),
+        };
+
+    const maxChips = 3;
+    final shown = sales.length <= maxChips ? sales : sales.sublist(0, maxChips);
+    final overflow = sales.length - maxChips;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
+      margin: const EdgeInsets.only(top: 0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(16),
+          bottomRight: Radius.circular(16),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Divider(height: 1, color: const Color(0xFFE2E8F0)),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Wrap(
+                  spacing: 4,
+                  runSpacing: 4,
+                  alignment: WrapAlignment.end,
+                  children: [
+                    if (overflow > 0)
+                      Container(
+                        height: 20,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3F4F6),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '+$overflow آخرون',
+                          style: GoogleFonts.cairo(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF717973)),
+                        ),
+                      ),
+                    ...shown.map((s) => Container(
+                          height: 20,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                            color: chipBg(s.status),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            s.status.label,
+                            style: GoogleFonts.cairo(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: chipText(s.status)),
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 4),
+              Text('الملتزمون:',
+                  style: GoogleFonts.cairo(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF404943))),
+              const SizedBox(width: 4),
+              Icon(Icons.group_rounded, size: 14, color: const Color(0xFF9CA3AF)),
+            ],
+          ),
+        ],
       ),
     );
   }

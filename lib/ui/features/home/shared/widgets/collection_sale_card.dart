@@ -8,11 +8,15 @@ import '../views/collection_sale_detail_view.dart';
 class CollectionSaleCard extends StatelessWidget {
   final Order sale;
   final VoidCallback? onCancel;
+  final VoidCallback? onStartTransit;
+  final VoidCallback? onComplete;
 
   const CollectionSaleCard({
     super.key,
     required this.sale,
     this.onCancel,
+    this.onStartTransit,
+    this.onComplete,
   });
 
   double? get _price => sale.pricePerKg ?? sale.itemPrice;
@@ -99,9 +103,13 @@ class CollectionSaleCard extends StatelessWidget {
               ),
             ),
           ],
-          if (sale.status == OrderStatus.pending && onCancel != null) ...[
+          if (sale.status == OrderStatus.pending) ...[
             const SizedBox(height: 12),
-            _buildCancelButton(context),
+            _buildPendingActions(context),
+          ],
+          if (sale.status == OrderStatus.inTransit && onComplete != null) ...[
+            const SizedBox(height: 12),
+            _buildInTransitAction(),
           ],
         ],
       ),
@@ -307,20 +315,70 @@ class CollectionSaleCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCancelButton(BuildContext context) {
+  Widget _buildPendingActions(BuildContext context) {
+    return Row(
+      children: [
+        if (onCancel != null)
+          Expanded(
+            child: SizedBox(
+              height: 40,
+              child: OutlinedButton.icon(
+                onPressed: () => _showCancelDialog(context),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFFDC2626),
+                  side: const BorderSide(color: Color(0xFFDC2626)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  elevation: 0,
+                ),
+                icon: const Icon(Icons.cancel_outlined, size: 16),
+                label: Text('إلغاء الالتزام',
+                    style: GoogleFonts.cairo(
+                        fontWeight: FontWeight.bold, fontSize: 13)),
+              ),
+            ),
+          ),
+        if (onCancel != null && onStartTransit != null)
+          const SizedBox(width: 10),
+        if (onStartTransit != null)
+          Expanded(
+            child: SizedBox(
+              height: 40,
+              child: ElevatedButton.icon(
+                onPressed: onStartTransit,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF14401F),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+                icon: const Icon(Icons.local_shipping_rounded, size: 16),
+                label: Text('بدء التجميع',
+                    style: GoogleFonts.cairo(
+                        fontWeight: FontWeight.bold, fontSize: 13)),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildInTransitAction() {
     return SizedBox(
       width: double.infinity,
       height: 40,
-      child: OutlinedButton.icon(
-        onPressed: () => _showCancelDialog(context),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.red.shade700,
-          side: BorderSide(color: Colors.red.shade200),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ElevatedButton.icon(
+        onPressed: onComplete,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF1E40AF),
+          foregroundColor: Colors.white,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12)),
         ),
-        icon: const Icon(Icons.cancel_outlined, size: 16),
-        label: Text('إلغاء الالتزام',
+        icon: const Icon(Icons.check_circle_rounded, size: 16),
+        label: Text('تأكيد التسليم',
             style: GoogleFonts.cairo(
                 fontWeight: FontWeight.bold, fontSize: 13)),
       ),

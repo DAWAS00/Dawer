@@ -117,6 +117,8 @@ class _DriverHomeBody extends StatelessWidget {
         collectionSaleOrders: vm.collectionSaleOrders,
         onCompleteOrder: vm.completeOrder,
         onCancelSale: (id) => vm.cancelCollectionSale(id),
+        onStartTransit: vm.startCollectionSaleTransit,
+        onComplete: vm.completeCollectionSale,
       ),
       const DriverProfileTab(),
     ];

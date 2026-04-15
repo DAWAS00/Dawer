@@ -160,6 +160,10 @@ class Order {
   final String? linkedJobId;
   final CollectionDeliveryMethod? collectionDeliveryMethod;
   final CollectionTransactionType? collectionTransactionType;
+  final double? pickupLat;
+  final double? pickupLng;
+  final double? dropoffLat;
+  final double? dropoffLng;
 
   const Order({
     required this.id,
@@ -206,6 +210,10 @@ class Order {
     this.linkedJobId,
     this.collectionDeliveryMethod,
     this.collectionTransactionType,
+    this.pickupLat,
+    this.pickupLng,
+    this.dropoffLat,
+    this.dropoffLng,
   });
 
   Order copyWith({
@@ -253,6 +261,10 @@ class Order {
     String? linkedJobId,
     CollectionDeliveryMethod? collectionDeliveryMethod,
     CollectionTransactionType? collectionTransactionType,
+    double? pickupLat,
+    double? pickupLng,
+    double? dropoffLat,
+    double? dropoffLng,
   }) {
     return Order(
       id: id ?? this.id,
@@ -299,6 +311,10 @@ class Order {
       linkedJobId: linkedJobId ?? this.linkedJobId,
       collectionDeliveryMethod: collectionDeliveryMethod ?? this.collectionDeliveryMethod,
       collectionTransactionType: collectionTransactionType ?? this.collectionTransactionType,
+      pickupLat: pickupLat ?? this.pickupLat,
+      pickupLng: pickupLng ?? this.pickupLng,
+      dropoffLat: dropoffLat ?? this.dropoffLat,
+      dropoffLng: dropoffLng ?? this.dropoffLng,
     );
   }
 

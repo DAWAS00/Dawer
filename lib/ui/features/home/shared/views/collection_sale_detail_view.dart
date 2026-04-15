@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order.dart';
+import 'package:dwaar/ui/common/map/order_route_map.dart';
 
 /// Full-screen detail view for a [OrderType.collectionSale] commitment.
 /// Shows drop-off location, delivery method, transaction type, and status.
@@ -34,6 +35,10 @@ class CollectionSaleDetailView extends StatelessWidget {
         children: [
           _buildStatusRow(),
           const SizedBox(height: 16),
+          if (sale.pickupLat != null && sale.dropoffLat != null) ...[
+            _buildMapSection(),
+            const SizedBox(height: 12),
+          ],
           _buildDropoffCard(),
           const SizedBox(height: 12),
           if (sale.collectionDeliveryMethod != null ||
@@ -51,6 +56,43 @@ class CollectionSaleDetailView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildMapSection() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: OrderRouteMap(
+        pickupLat: sale.pickupLat!,
+        pickupLng: sale.pickupLng!,
+        dropoffLat: sale.dropoffLat!,
+        dropoffLng: sale.dropoffLng!,
+        driverLat: sale.status == OrderStatus.inTransit && sale.inTransitAt != null
+            ? _interpolateLat()
+            : null,
+        driverLng: sale.status == OrderStatus.inTransit && sale.inTransitAt != null
+            ? _interpolateLng()
+            : null,
+        height: 180,
+        interactive: false,
+        showLabels: true,
+      ),
+    );
+  }
+
+  double _interpolateLat() {
+    final f = _progressFraction();
+    return sale.pickupLat! + (sale.dropoffLat! - sale.pickupLat!) * f;
+  }
+
+  double _interpolateLng() {
+    final f = _progressFraction();
+    return sale.pickupLng! + (sale.dropoffLng! - sale.pickupLng!) * f;
+  }
+
+  double _progressFraction() {
+    if (sale.inTransitAt == null) return 0.1;
+    final elapsed = DateTime.now().difference(sale.inTransitAt!).inSeconds;
+    return (elapsed / 600).clamp(0.05, 0.95);
   }
 
   Widget _buildStatusRow() {

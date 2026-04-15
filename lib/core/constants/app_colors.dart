@@ -42,4 +42,10 @@ class AppColors {
   static const Color shamrock1100 = Color(0xFF244A3C);
   static const Color shamrock1200 = Color(0xFF17352A);
   static const Color shamrock1300 = Color(0xFF0B2219);
+
+  // Map Tokens
+  static const Color mapPickupPin = Color(0xFF06402B);
+  static const Color mapDropoffPin = Color(0xFFE53935);
+  static const Color mapRouteLine = Color(0xFF1E5C35);
+  static const Color mapSurface = Color(0xFFE8F5E9);
 }
