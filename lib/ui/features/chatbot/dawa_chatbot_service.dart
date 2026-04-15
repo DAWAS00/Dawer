@@ -93,15 +93,18 @@ class DawaChatbotService {
   /// The greeting entry shown when the chat first opens.
   static DawaEntry get greeting => entryById('greeting');
 
-  /// Called by Google ML Kit integration when a waste-type image label is
-  /// detected. Returns the most relevant entry for that waste category.
+  /// Called after Google ML Kit classifies a recycling image.
   ///
-  /// [mlLabel] examples: 'plastic', 'metal', 'oil', 'electronics', 'organic'
+  /// Routes the two primary scan categories ('oil', 'wood') to the detailed
+  /// recycling knowledge entries. All other labels fall back to keyword match.
   static DawaEntry matchFromMlLabel(String mlLabel) {
     final normalised = mlLabel.toLowerCase().trim();
+    // Preferred: detailed recycling entries for the two supported materials
+    if (normalised == 'oil')  return entryById('recycle_oil');
+    if (normalised == 'wood') return entryById('recycle_wood');
+    // Fall back to mlLabel-tagged entries (plastic, metal, glass…)
     final byLabel = _entries.where((e) => e.mlLabel == normalised).toList();
     if (byLabel.isNotEmpty) return byLabel.first;
-    // Fall back to keyword matching on the label itself
     return match(mlLabel);
   }
 
@@ -1239,6 +1242,81 @@ class DawaChatbotService {
         'market_payment_model',
         'market_item_details',
       ],
+    ),
+
+    // ── Image-scan recycling knowledge ────────────────────────────
+
+    const DawaEntry(
+      id: 'recycle_oil',
+      keywords: [
+        'تدوير الزيت', 'ماذا يحدث بالزيت', 'فائدة تدوير الزيت',
+        'زيت مستعمل تدوير', 'oil recycling', 'used oil recycle',
+      ],
+      response:
+          '♻️ تدوير الزيت المستعمل 🛢️\n\n'
+          '🔬 ماذا يحدث للزيت بعد التجميع؟\n'
+          '1. الترشيح — إزالة الجسيمات الصلبة والماء\n'
+          '2. إزالة الرواسب — فصل الشوائب المعدنية الثقيلة\n'
+          '3. إعادة التكرير — تقطير تحت ضغط منخفض لاستخلاص زيت القاعدة\n'
+          '4. المعالجة بالهيدروجين — تنقية وتحسين الجودة للوصول لمعايير API\n\n'
+          '💰 الفائدة الاقتصادية\n'
+          '• لتر واحد من الزيت المستعمل → 800 مل زيت محرك معاد تكريره\n'
+          '• مقابل ذلك يحتاج نفس الإنتاج 33 لتراً من النفط الخام!\n'
+          '• تكلفة إعادة التكرير أقل بـ50٪ من تكرير النفط الخام\n\n'
+          '🏭 ماذا يُصنع منه؟\n'
+          '• زيوت محرك وتشحيم جديدة (API SN Plus)\n'
+          '• زيوت هيدروليكية لآلات البناء والمصانع\n'
+          '• زيوت ناقل حركة وعلبة التروس\n'
+          '• وقود صناعي ثقيل (HFO) للسفن والمصانع\n'
+          '• الإسفلت ومواد رصف الطرق (Asphalt Flux)\n\n'
+          '🌱 الأثر البيئي\n'
+          '• يمنع تلوث مليون لتر ماء لكل لتر لا يصل للمجاري\n'
+          '• يقلل انبعاثات CO₂ بـ85٪ مقارنة بتكرير النفط الخام\n'
+          '• يحمي التربة من الرصاص والكادميوم والزرنيخ',
+      followUpIds: [
+        'how_to_post_request',
+        'recycle_wood',
+        'market_listings',
+        'waste_types',
+      ],
+      mlLabel: 'oil',
+    ),
+
+    const DawaEntry(
+      id: 'recycle_wood',
+      keywords: [
+        'تدوير الخشب', 'خشب بناء', 'ماذا يحدث بالخشب',
+        'فائدة تدوير الخشب', 'wood recycling', 'construction wood recycle',
+      ],
+      response:
+          '♻️ تدوير خشب البناء 🪵\n\n'
+          '🔬 ماذا يحدث للخشب بعد التجميع؟\n'
+          '1. الفرز — تصنيف حسب الحالة والنوع (صنوبر / بلوط / خشب رقائقي)\n'
+          '2. التنظيف — إزالة المسامير والمواد اللاصقة والطلاء\n'
+          '3. التشريح — تقطيع إلى قطع أصغر قابلة للمعالجة\n'
+          '4. الطحن — تحويل إلى نشارة أو رقائق حسب الاستخدام النهائي\n\n'
+          '💰 الفائدة الاقتصادية\n'
+          '• طن واحد من الخشب المُعاد تدويره = 17 شجرة محمية من القطع\n'
+          '• يوفر 60٪ من تكلفة إنتاج الألواح مقارنة بالخشب الطازج\n'
+          '• ينتج 2–3 أضعاف كمية المنتجات من نفس الحجم\n\n'
+          '🏭 ماذا يُصنع منه؟\n'
+          '• ألواح الجسيمات (Particle Board) للأثاث والخزائن\n'
+          '• ألواح الألياف MDF للديكور والأبواب الداخلية\n'
+          '• نشارة الخشب: فراش حيوانات + تحسين تربة زراعية\n'
+          '• حبيبات الوقود الحيوي (Biomass Pellets) للتدفئة\n'
+          '• ألواح عازلة للصوت للقاعات والاستوديوهات\n'
+          '• أرضيات خشبية معاد تصنيعها (Reclaimed Flooring)\n\n'
+          '🌱 الأثر البيئي\n'
+          '• كل طن مُعاد تدويره = توفير 1.49 طن CO₂\n'
+          '• يقلل النفايات الصلبة في المكبّات بنسبة 30٪\n'
+          '• يمنع انبعاث غاز الميثان الناتج عن تحلل الخشب (25× أقوى من CO₂)',
+      followUpIds: [
+        'how_to_post_request',
+        'recycle_oil',
+        'market_listings',
+        'waste_types',
+      ],
+      mlLabel: 'wood',
     ),
 
     // ── Google ML Kit ─────────────────────────────────────────────

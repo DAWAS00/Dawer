@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'dawa_chat_view_model.dart';
 
@@ -56,6 +58,62 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
     _scrollToBottom();
   }
 
+  void _showImagePicker(DawaChatViewModel vm) {
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 12),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 12),
+            ListTile(
+              leading: const Icon(
+                Icons.camera_alt_rounded,
+                color: Color(0xFF1E5C35),
+              ),
+              title: const Text(
+                'التقاط صورة بالكاميرا',
+                style: TextStyle(fontFamily: 'Cairo'),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                vm.handleImagePick(ImageSource.camera).then((_) => _scrollToBottom());
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.photo_library_rounded,
+                color: Color(0xFF1E5C35),
+              ),
+              title: const Text(
+                'اختيار من المعرض',
+                style: TextStyle(fontFamily: 'Cairo'),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                vm.handleImagePick(ImageSource.gallery).then((_) => _scrollToBottom());
+              },
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -105,10 +163,50 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
               ),
             ),
 
+            // Scanning indicator
+            if (vm.isScanning)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: const Color(0xFF1E5C35),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'جاري تحليل الصورة...',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
             _InputBar(
               controller: _controller,
               theme: theme,
               onSend: () => _send(vm),
+              onImagePick: () => _showImagePicker(vm),
             ),
           ],
         ),
@@ -229,7 +327,7 @@ class _MessageBubble extends StatelessWidget {
               ),
             ),
 
-          // Bubble
+          // Bubble (with optional image thumbnail inside)
           Align(
             alignment:
                 isUser ? Alignment.centerLeft : Alignment.centerRight,
@@ -248,14 +346,32 @@ class _MessageBubble extends StatelessWidget {
                   bottomRight: Radius.circular(isUser ? 16 : 4),
                 ),
               ),
-              child: Text(
-                message.text,
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 14,
-                  color: textColor,
-                  height: 1.6,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Image thumbnail
+                  if (message.imagePath != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.file(
+                          File(message.imagePath!),
+                          height: 160,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  Text(
+                    message.text,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 14,
+                      color: textColor,
+                      height: 1.6,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -313,11 +429,13 @@ class _InputBar extends StatelessWidget {
   final TextEditingController controller;
   final ThemeData theme;
   final VoidCallback onSend;
+  final VoidCallback onImagePick;
 
   const _InputBar({
     required this.controller,
     required this.theme,
     required this.onSend,
+    required this.onImagePick,
   });
 
   @override
@@ -336,12 +454,29 @@ class _InputBar extends StatelessWidget {
         top: false,
         child: Row(
           children: [
+            // Camera / image pick button
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: onImagePick,
+                customBorder: const CircleBorder(),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Icon(
+                    Icons.add_photo_alternate_rounded,
+                    color: primaryGreen,
+                    size: 26,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 4),
             Expanded(
               child: TextField(
                 controller: controller,
                 textDirection: TextDirection.rtl,
                 decoration: InputDecoration(
-                  hintText: 'اكتب سؤالك هنا...',
+                  hintText: 'اكتب سؤالك أو أرسل صورة...',
                   hintStyle: TextStyle(
                     fontFamily: 'Cairo',
                     color: theme.hintColor,

@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'dawa_chatbot_service.dart';
+import 'dawa_image_scan_service.dart';
 
 /// Represents a single chat bubble in the Dawa support conversation.
 class DawaMessage {
@@ -10,11 +13,15 @@ class DawaMessage {
   /// When non-null, this message was triggered by an ML Kit image result.
   final String? mlSource;
 
+  /// When non-null, displays an image thumbnail above the text bubble.
+  final String? imagePath;
+
   const DawaMessage({
     required this.text,
     required this.isUser,
     this.followUps = const [],
     this.mlSource,
+    this.imagePath,
   });
 }
 
@@ -28,6 +35,9 @@ class DawaMessage {
 class DawaChatViewModel extends ChangeNotifier {
   final List<DawaMessage> _messages = [];
   List<DawaMessage> get messages => List.unmodifiable(_messages);
+
+  bool _isScanning = false;
+  bool get isScanning => _isScanning;
 
   DawaChatViewModel() {
     final greeting = DawaChatbotService.greeting;
@@ -92,6 +102,78 @@ class DawaChatViewModel extends ChangeNotifier {
 
     final entry = DawaChatbotService.matchFromMlLabel(mlLabel);
     _addBotMessage(entry, mlSource: mlLabel);
+  }
+
+  /// Lets the user pick an image from [source], runs ML Kit, and replies
+  /// with detailed recycling information for oil or construction wood.
+  Future<void> handleImagePick(ImageSource source) async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: source, imageQuality: 85);
+    if (picked == null) return;
+
+    final imagePath = picked.path;
+    _messages.add(DawaMessage(
+      text: '📸 صورة للتحليل',
+      isUser: true,
+      imagePath: imagePath,
+    ));
+    _isScanning = true;
+    notifyListeners();
+
+    try {
+      final result = await DawaImageScanService.classify(File(imagePath));
+      _isScanning = false;
+
+      if (result.category == 'unknown') {
+        final confPct = (result.confidence * 100).toStringAsFixed(0);
+        _addBotMessage(
+          DawaEntry(
+            id: 'ml_not_recognized',
+            keywords: const [],
+            response:
+                '🔍 لم أتعرف على المادة في صورتك.\n'
+                'أعلى تسمية رُصدت: "${result.topLabel}" ($confPct%)\n\n'
+                'تأكد من:\n'
+                '• إضاءة جيدة وصورة واضحة\n'
+                '• أن تكون المادة في مقدمة الصورة\n\n'
+                'اختر مادتك يدوياً:',
+            followUpIds: const [
+              'recycle_oil',
+              'recycle_wood',
+              'waste_types',
+              'how_to_post_request',
+            ],
+          ),
+          mlSource: result.topLabel,
+        );
+      } else {
+        final entry = DawaChatbotService.matchFromMlLabel(result.category);
+        final categoryAr =
+            result.category == 'oil' ? 'زيت مستعمل 🛢️' : 'خشب بناء 🪵';
+        final confPct = (result.confidence * 100).toStringAsFixed(0);
+        final header =
+            '✅ تم التعرف على: $categoryAr (دقة: $confPct%)';
+        final enriched = DawaEntry(
+          id: entry.id,
+          keywords: entry.keywords,
+          response: '$header\n\n${entry.response}',
+          followUpIds: entry.followUpIds,
+          mlLabel: entry.mlLabel,
+        );
+        _addBotMessage(enriched, mlSource: result.category);
+      }
+    } catch (_) {
+      _isScanning = false;
+      notifyListeners();
+      _addBotMessage(
+        const DawaEntry(
+          id: 'ml_error',
+          keywords: [],
+          response: 'تعذّر تحليل الصورة. يرجى المحاولة مرة أخرى.',
+          followUpIds: ['recycle_oil', 'recycle_wood'],
+        ),
+      );
+    }
   }
 
   // ──────────────────────────────────────────────
