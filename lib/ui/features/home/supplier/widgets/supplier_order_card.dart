@@ -73,6 +73,7 @@ class SupplierOrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => OrderDetailsView(order: order)),
@@ -80,7 +81,7 @@ class SupplierOrderCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cs.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -113,10 +114,10 @@ class SupplierOrderCard extends StatelessWidget {
                         style: GoogleFonts.dmSans(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF002819))),
+                            color: cs.onSurface)),
                     Text(DateFormatter.relative(order.createdAt),
                         style: GoogleFonts.cairo(
-                            fontSize: 11, color: const Color(0xFF717973))),
+                            fontSize: 11, color: cs.onSurfaceVariant)),
                   ],
                 ),
               ],
@@ -132,13 +133,13 @@ class SupplierOrderCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                                color: const Color(0xFFF2F4F2),
+                                color: cs.onSurface.withValues(alpha: 0.08),
                                 borderRadius: BorderRadius.circular(8)),
                             child: Text(t.label,
                                 style: GoogleFonts.cairo(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF404943))),
+                                    color: cs.onSurface.withValues(alpha: 0.78))),
                           ))
                       .toList(),
                 ),
@@ -165,7 +166,7 @@ class SupplierOrderCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                    color: const Color(0xFFF8FAF8),
+                    color: cs.onSurface.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12)),
                 child: Row(
                   children: [
@@ -183,7 +184,7 @@ class SupplierOrderCard extends StatelessWidget {
                             style: GoogleFonts.cairo(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFF002819))),
+                                color: cs.onSurface)),
                         if (order.driverRating != null)
                           Row(mainAxisSize: MainAxisSize.min, children: [
                             Text(order.driverRating.toString(),

@@ -164,6 +164,7 @@ class Order {
   final double? pickupLng;
   final double? dropoffLat;
   final double? dropoffLng;
+  final int? etaMinutes;
 
   const Order({
     required this.id,
@@ -214,6 +215,7 @@ class Order {
     this.pickupLng,
     this.dropoffLat,
     this.dropoffLng,
+    this.etaMinutes,
   });
 
   Order copyWith({
@@ -265,6 +267,7 @@ class Order {
     double? pickupLng,
     double? dropoffLat,
     double? dropoffLng,
+    int? etaMinutes,
   }) {
     return Order(
       id: id ?? this.id,
@@ -315,6 +318,7 @@ class Order {
       pickupLng: pickupLng ?? this.pickupLng,
       dropoffLat: dropoffLat ?? this.dropoffLat,
       dropoffLng: dropoffLng ?? this.dropoffLng,
+      etaMinutes: etaMinutes ?? this.etaMinutes,
     );
   }
 

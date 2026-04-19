@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../data/services/app_order_store.dart';
 import '../../shared/widgets/collection_sale_card.dart';
+import '../../shared/widgets/rate_driver_sheet.dart';
 import '../widgets/supplier_order_card.dart';
 
-
-class SupplierOrdersTab extends StatelessWidget {
+class SupplierOrdersTab extends StatefulWidget {
   final List<Order> activeOrders;
   final List<Order> completedOrders;
   final List<Order> cancelledOrders;
@@ -28,139 +30,335 @@ class SupplierOrdersTab extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final hasOrders = activeOrders.isNotEmpty || completedOrders.isNotEmpty || cancelledOrders.isNotEmpty || collectionSaleOrders.isNotEmpty;
+  State<SupplierOrdersTab> createState() => _SupplierOrdersTabState();
+}
 
-    return CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top + 20, 20, 16),
-            child: Text(
-              'طلباتي',
-              textAlign: TextAlign.right,
-              style: GoogleFonts.cairo(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
-            ),
-          ),
-        ),
-        if (!hasOrders)
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1E5C35).withValues(alpha: 0.05),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.receipt_long_rounded, size: 64, color: Color(0xFF1E5C35)),
-                  ),
-                  const SizedBox(height: 24),
-                  Text('لا توجد طلبات بعد', style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFF002819))),
-                  const SizedBox(height: 8),
-                  Text('أنشئ طلب استلام جديد من الصفحة الرئيسية', style: GoogleFonts.cairo(fontSize: 14, color: const Color(0xFF717973))),
+class _SupplierOrdersTabState extends State<SupplierOrdersTab> {
+  String _filterActiveType     = 'الكل';
+  String _filterActiveStatus   = 'الكل';
+  String _filterHistoryPeriod  = 'الكل';
+  String _filterHistoryWasteType = 'الكل';
+
+  @override
+  Widget build(BuildContext context) {
+    final activeCollectionSales = widget.collectionSaleOrders
+        .where((s) =>
+            s.status == OrderStatus.accepted ||
+            s.status == OrderStatus.inTransit)
+        .toList();
+
+    final activeCount =
+        widget.activeOrders.length + activeCollectionSales.length;
+
+    String tabLabel(String base, int count) =>
+        count > 0 ? '$base ($count)' : base;
+
+    return DefaultTabController(
+      length: 2,
+      child: Column(
+        children: [
+          Builder(builder: (ctx) {
+            final cs = Theme.of(ctx).colorScheme;
+            return Container(
+              height: 52,
+              margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+              decoration: BoxDecoration(
+                color: cs.onSurface.withValues(alpha: 0.06),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: TabBar(
+                indicator: BoxDecoration(
+                  color: const Color(0xFF06402B),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicatorPadding: const EdgeInsets.all(4),
+                dividerColor: Colors.transparent,
+                labelColor: Colors.white,
+                unselectedLabelColor: cs.onSurface.withValues(alpha: 0.6),
+                labelStyle: GoogleFonts.cairo(
+                    fontSize: 13, fontWeight: FontWeight.bold),
+                unselectedLabelStyle: GoogleFonts.cairo(fontSize: 13),
+                tabs: [
+                  Tab(text: tabLabel('النشطة', activeCount)),
+                  const Tab(text: 'السجل'),
                 ],
               ),
+            );
+          }),
+          Expanded(
+            child: TabBarView(
+              children: [
+                _buildActiveTab(context, activeCollectionSales),
+                _buildHistoryTab(context),
+              ],
             ),
-          )
-        else ...[
-          if (collectionSaleOrders.isNotEmpty) ...[
-            _buildSectionHeader('التزامات التجميع', collectionSaleOrders.length, const Color(0xFF14401F)),
-            _buildCollectionSalesList(context, collectionSaleOrders),
-          ],
-          if (activeOrders.isNotEmpty) ...[
-            _buildSectionHeader('الطلبات النشطة', activeOrders.length, const Color(0xFF1E5C35)),
-            _buildOrdersList(context, activeOrders, canCancel: true),
-          ],
-          if (completedOrders.isNotEmpty) ...[
-            _buildSectionHeader('الطلبات المكتملة', completedOrders.length, const Color(0xFF166534)),
-            _buildOrdersList(context, completedOrders),
-          ],
-          if (cancelledOrders.isNotEmpty) ...[
-            _buildSectionHeader('الطلبات الملغاة', cancelledOrders.length, const Color(0xFF991B1B)),
-            _buildOrdersList(context, cancelledOrders),
-          ],
-          const SliverToBoxAdapter(child: SizedBox(height: 100)),
+          ),
         ],
+      ),
+    );
+  }
+
+  // ── Tab 1 — النشطة ───────────────────────────────────────────────────────
+
+  Widget _buildActiveTab(
+      BuildContext context, List<Order> activeCollectionSales) {
+    final allItems = <_ActiveItem>[
+      ...widget.activeOrders.map(_ActiveItem.fromOrder),
+      ...activeCollectionSales.map(_ActiveItem.fromSale),
+    ]..sort((a, b) => b.order.createdAt.compareTo(a.order.createdAt));
+
+    final filtered = allItems.where((item) {
+      final typeOk = switch (_filterActiveType) {
+        'طلب استلام'    => !item.isSale,
+        'التزام تجميع' => item.isSale,
+        _              => true,
+      };
+      final statusOk = switch (_filterActiveStatus) {
+        'قيد الانتظار' => item.order.status == OrderStatus.pending,
+        'تم القبول'    => item.order.status == OrderStatus.accepted,
+        'في الطريق'    => item.order.status == OrderStatus.inTransit,
+        _              => true,
+      };
+      return typeOk && statusOk;
+    }).toList();
+
+    return Column(
+      children: [
+        _filterRow(
+          chips: ['الكل', 'طلب استلام', 'التزام تجميع'],
+          selected: _filterActiveType,
+          onSelected: (v) => setState(() => _filterActiveType = v),
+        ),
+        _filterRow(
+          chips: ['الكل', 'قيد الانتظار', 'تم القبول', 'في الطريق'],
+          selected: _filterActiveStatus,
+          onSelected: (v) => setState(() => _filterActiveStatus = v),
+        ),
+        Expanded(
+          child: filtered.isEmpty
+              ? _emptyState('لا توجد طلبات نشطة.')
+              : ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+                  itemCount: filtered.length,
+                  itemBuilder: (ctx, i) {
+                    final item = filtered[i];
+                    final order = item.order;
+                    if (item.isSale) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: CollectionSaleCard(
+                          sale: order,
+                          onStartTransit: order.status == OrderStatus.accepted
+                              ? () => widget.onStartTransit?.call(order.id)
+                              : null,
+                          onComplete: order.status == OrderStatus.inTransit
+                              ? () => widget.onComplete?.call(order.id)
+                              : null,
+                          onCancel: (order.status == OrderStatus.accepted ||
+                                  order.status == OrderStatus.inTransit)
+                              ? () => widget.onCancelSale?.call(order.id)
+                              : null,
+                        ),
+                      );
+                    } else {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: SupplierOrderCard(
+                          order: order,
+                          canCancel: order.status == OrderStatus.pending,
+                          onCancelOrder: widget.onCancelOrder,
+                        ),
+                      );
+                    }
+                  },
+                ),
+        ),
       ],
     );
   }
 
-  static SliverToBoxAdapter _buildSectionHeader(String title, int count, Color color) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                '$count',
-                style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: color),
-              ),
-            ),
-            const Spacer(),
-            Text(
-              title,
-              style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
-            ),
-          ],
+  // ── Tab 2 — السجل ────────────────────────────────────────────────────────
+
+  Widget _buildHistoryTab(BuildContext context) {
+    final now = DateTime.now();
+    final allHistory = [...widget.completedOrders, ...widget.cancelledOrders];
+
+    // Collect unique WasteType labels for dynamic chips
+    final wasteLabels = <String>{};
+    for (final o in allHistory) {
+      for (final t in o.wasteTypes) {
+        wasteLabels.add(t.label);
+      }
+    }
+    final wasteChips = ['الكل', ...wasteLabels.toList()..sort()];
+
+    bool periodMatch(DateTime dt) => switch (_filterHistoryPeriod) {
+          'اليوم' =>
+            dt.year == now.year && dt.month == now.month && dt.day == now.day,
+          'هذا الأسبوع' => now.difference(dt).inDays < 7,
+          'هذا الشهر'   => now.difference(dt).inDays < 30,
+          _             => true,
+        };
+
+    final filtered = allHistory.where((o) {
+      if (!periodMatch(o.createdAt)) return false;
+      if (_filterHistoryWasteType != 'الكل') {
+        if (!o.wasteTypes.any((t) => t.label == _filterHistoryWasteType)) {
+          return false;
+        }
+      }
+      return true;
+    }).toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    return Column(
+      children: [
+        _filterRow(
+          chips: ['الكل', 'اليوم', 'هذا الأسبوع', 'هذا الشهر'],
+          selected: _filterHistoryPeriod,
+          onSelected: (v) => setState(() => _filterHistoryPeriod = v),
         ),
-      ),
+        _filterRow(
+          chips: wasteChips,
+          selected: _filterHistoryWasteType,
+          onSelected: (v) => setState(() => _filterHistoryWasteType = v),
+        ),
+        Expanded(
+          child: filtered.isEmpty
+              ? _emptyState('لا يوجد سجل طلبات بعد')
+              : ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+                  itemCount: filtered.length,
+                  itemBuilder: (ctx, i) {
+                    final order = filtered[i];
+                    final canRate = order.status == OrderStatus.completed &&
+                        order.driverName != null &&
+                        order.driverRating == null;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SupplierOrderCard(
+                            order: order,
+                            canCancel: false,
+                            onCancelOrder: widget.onCancelOrder,
+                          ),
+                          if (canRate)
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton.icon(
+                                onPressed: () => RateDriverSheet.show(
+                                  ctx,
+                                  order: order,
+                                  onSubmit: (rating) => context
+                                      .read<AppOrderStore>()
+                                      .submitDriverRating(order.id, rating),
+                                ),
+                                icon: const Icon(
+                                  Icons.star_rounded,
+                                  size: 16,
+                                  color: Color(0xFFC8860A),
+                                ),
+                                label: Text(
+                                  'تقييم السائق',
+                                  style: GoogleFonts.cairo(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFFC8860A),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+        ),
+      ],
     );
   }
 
-  SliverPadding _buildCollectionSalesList(
-      BuildContext context, List<Order> sales) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (ctx, i) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: CollectionSaleCard(
-              sale: sales[i],
-              onCancel: (sales[i].status == OrderStatus.accepted ||
-                         sales[i].status == OrderStatus.inTransit)
-                  ? () => onCancelSale?.call(sales[i].id)
-                  : null,
-              onStartTransit: sales[i].status == OrderStatus.accepted && onStartTransit != null
-                  ? () { onStartTransit!(sales[i].id); }
-                  : null,
-              onComplete: sales[i].status == OrderStatus.inTransit && onComplete != null
-                  ? () { onComplete!(sales[i].id); }
-                  : null,
-            ),
+  // ── Shared helpers ────────────────────────────────────────────────────────
+
+  Widget _filterRow({
+    required List<String> chips,
+    required String selected,
+    required ValueChanged<String> onSelected,
+  }) {
+    return Builder(builder: (context) {
+      final cs = Theme.of(context).colorScheme;
+      return SizedBox(
+        height: 44,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          child: Row(
+            children: chips.map((chip) {
+              final isSelected = chip == selected;
+              return Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: GestureDetector(
+                  onTap: () => onSelected(chip),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? const Color(0xFF06402B)
+                          : cs.onSurface.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(
+                        color: isSelected
+                            ? const Color(0xFF06402B)
+                            : cs.onSurface.withValues(alpha: 0.12),
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      chip,
+                      style: GoogleFonts.cairo(
+                        fontSize: 12,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                        color: isSelected
+                            ? Colors.white
+                            : cs.onSurface.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
-          childCount: sales.length,
         ),
-      ),
-    );
+      );
+    });
   }
 
-  SliverPadding _buildOrdersList(BuildContext context, List<Order> orders, {bool canCancel = false}) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (ctx, i) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: SupplierOrderCard(
-              order: orders[i],
-              canCancel: canCancel && orders[i].status == OrderStatus.pending,
-              onCancelOrder: onCancelOrder,
-            ),
-          ),
-          childCount: orders.length,
-        ),
+  Widget _emptyState(String message) {
+    return Center(
+      child: Text(
+        message,
+        style: GoogleFonts.cairo(
+            fontSize: 14, color: const Color(0xFF717973)),
       ),
     );
   }
+}
+
+// ── Helper data class ─────────────────────────────────────────────────────────
+
+class _ActiveItem {
+  final Order order;
+  final bool isSale;
+
+  const _ActiveItem._(this.order, this.isSale);
+
+  factory _ActiveItem.fromOrder(Order o) => _ActiveItem._(o, false);
+  factory _ActiveItem.fromSale(Order s)  => _ActiveItem._(s, true);
 }

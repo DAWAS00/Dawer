@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/utils/date_formatter.dart';
 import '../../../../../data/models/order.dart';
 import '../../shared/order_card.dart';
 import '../../shared/views/collection_sale_detail_view.dart';
 
-class RecyclingOrdersTab extends StatelessWidget {
+class RecyclingOrdersTab extends StatefulWidget {
   final List<Order> incoming;
   final List<Order> jobs;
   final List<Order> Function(String jobId) salesForJob;
@@ -17,7 +18,50 @@ class RecyclingOrdersTab extends StatelessWidget {
   });
 
   @override
+  State<RecyclingOrdersTab> createState() => _RecyclingOrdersTabState();
+}
+
+class _RecyclingOrdersTabState extends State<RecyclingOrdersTab> {
+  String _filterIncomingStatus    = 'الكل';
+  String _filterIncomingType      = 'الكل';
+  String _filterJobsHasAcceptors  = 'الكل';
+  String _filterJobsPayment       = 'الكل';
+
+  @override
   Widget build(BuildContext context) {
+    // ── Derived filtered lists ────────────────────────────────────────────
+    final wasteLabels = <String>{};
+    for (final o in widget.incoming) {
+      for (final t in o.wasteTypes) { wasteLabels.add(t.label); }
+    }
+    final incomingWasteChips = ['الكل', ...wasteLabels.toList()..sort()];
+
+    final filteredIncoming = widget.incoming.where((o) {
+      final statusOk = switch (_filterIncomingStatus) {
+        'تم القبول' => o.status == OrderStatus.accepted,
+        'في الطريق' => o.status == OrderStatus.inTransit,
+        _           => true,
+      };
+      final typeOk = _filterIncomingType == 'الكل' ||
+          o.wasteTypes.any((t) => t.label == _filterIncomingType);
+      return statusOk && typeOk;
+    }).toList();
+
+    final filteredJobs = widget.jobs.where((o) {
+      final hasAcceptors = widget.salesForJob(o.id).isNotEmpty;
+      final acceptorOk = switch (_filterJobsHasAcceptors) {
+        'لديه ملتزمون'    => hasAcceptors,
+        'لا يوجد ملتزمون' => !hasAcceptors,
+        _                  => true,
+      };
+      final paymentOk = switch (_filterJobsPayment) {
+        'مبلغ ثابت' => o.paymentModel == PaymentModel.flatFee,
+        'بالكيلو'   => o.paymentModel == PaymentModel.perKg,
+        _           => true,
+      };
+      return acceptorOk && paymentOk;
+    }).toList();
+
     return DefaultTabController(
       length: 2,
       child: Column(
@@ -58,20 +102,112 @@ class RecyclingOrdersTab extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 4),
           Expanded(
             child: TabBarView(
               children: [
-                _RecyclingOrderList(orders: incoming, mode: OrderCardMode.companyIncoming),
-                _RecyclingOrderList(
-                  orders: jobs,
-                  mode: OrderCardMode.companyJob,
-                  salesForJob: salesForJob,
+                // ── Tab 1 — الشحنات القادمة ───────────────────────────────
+                Column(
+                  children: [
+                    _filterRow(
+                      chips: ['الكل', 'تم القبول', 'في الطريق'],
+                      selected: _filterIncomingStatus,
+                      onSelected: (v) =>
+                          setState(() => _filterIncomingStatus = v),
+                    ),
+                    _filterRow(
+                      chips: incomingWasteChips,
+                      selected: _filterIncomingType,
+                      onSelected: (v) =>
+                          setState(() => _filterIncomingType = v),
+                    ),
+                    Expanded(
+                      child: _RecyclingOrderList(
+                        orders: filteredIncoming,
+                        mode: OrderCardMode.companyIncoming,
+                      ),
+                    ),
+                  ],
+                ),
+                // ── Tab 2 — وظائف التجميع ────────────────────────────────
+                Column(
+                  children: [
+                    _filterRow(
+                      chips: ['الكل', 'لديه ملتزمون', 'لا يوجد ملتزمون'],
+                      selected: _filterJobsHasAcceptors,
+                      onSelected: (v) =>
+                          setState(() => _filterJobsHasAcceptors = v),
+                    ),
+                    _filterRow(
+                      chips: ['الكل', 'مبلغ ثابت', 'بالكيلو'],
+                      selected: _filterJobsPayment,
+                      onSelected: (v) =>
+                          setState(() => _filterJobsPayment = v),
+                    ),
+                    Expanded(
+                      child: _RecyclingOrderList(
+                        orders: filteredJobs,
+                        mode: OrderCardMode.companyJob,
+                        salesForJob: widget.salesForJob,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _filterRow({
+    required List<String> chips,
+    required String selected,
+    required ValueChanged<String> onSelected,
+  }) {
+    return SizedBox(
+      height: 48,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          children: chips.map((chip) {
+            final isSelected = chip == selected;
+            return Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: GestureDetector(
+                onTap: () => onSelected(chip),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? const Color(0xFF06402B)
+                        : const Color(0xFFF2F4F2),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: isSelected
+                          ? const Color(0xFF06402B)
+                          : const Color(0xFFE6E9E7),
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    chip,
+                    style: GoogleFonts.cairo(
+                      fontSize: 12,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                      color:
+                          isSelected ? Colors.white : const Color(0xFF404943),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
@@ -136,11 +272,11 @@ class _RecyclingOrderList extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 2),
               child: Text(
-                '+ $overflow آخر',
+                '+$overflow آخر',
                 textAlign: TextAlign.right,
                 style: GoogleFonts.cairo(
                   fontSize: 12,
-                  color: const Color(0xFF1E5C35),
+                  color: const Color(0xFF717973),
                 ),
               ),
             ),
@@ -165,15 +301,14 @@ class _RecyclingOrderList extends StatelessWidget {
           OrderStatus.cancelled => const Color(0xFF991B1B),
         };
 
-    final d = sale.createdAt;
-    final dateStr = '${d.day}/${d.month}/${d.year}';
+    final dateStr = DateFormatter.date(sale.createdAt);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        color: const Color(0xFFF0F9F4),
+        border: Border.all(color: const Color(0xFFD1FAE5)),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

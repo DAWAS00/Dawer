@@ -88,18 +88,16 @@ class RecyclingHomeTab extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
-                  (context, i) {
-                    final sales = vm.salesForJob(jobs[i].id);
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Column(
-                        children: [
-                          OrderCard(order: jobs[i], mode: OrderCardMode.companyJob),
-                          if (sales.isNotEmpty) _buildAcceptorRow(sales),
-                        ],
-                      ),
-                    );
-                  },
+                  (context, i) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        OrderCard(order: jobs[i], mode: OrderCardMode.companyJob),
+                        _buildAcceptorRow(context, vm, jobs[i].id),
+                      ],
+                    ),
+                  ),
                   childCount: jobs.length,
                 ),
               ),
@@ -223,104 +221,90 @@ class RecyclingHomeTab extends StatelessWidget {
     );
   }
 
-  Widget _buildAcceptorRow(List<Order> sales) {
-    Color chipBg(OrderStatus s) => switch (s) {
-          OrderStatus.pending => const Color(0xFFFEF3C7),
-          OrderStatus.accepted => const Color(0xFFD1FAE5),
-          OrderStatus.inTransit => const Color(0xFFDBEAFE),
-          OrderStatus.completed => const Color(0xFFDCFCE7),
-          OrderStatus.cancelled => const Color(0xFFFEE2E2),
-        };
-    Color chipText(OrderStatus s) => switch (s) {
-          OrderStatus.pending => const Color(0xFFC8860A),
-          OrderStatus.accepted => const Color(0xFF1E5C35),
-          OrderStatus.inTransit => const Color(0xFF1E40AF),
-          OrderStatus.completed => const Color(0xFF166534),
-          OrderStatus.cancelled => const Color(0xFF991B1B),
-        };
+  Widget _buildAcceptorRow(BuildContext context, RecyclingHomeViewModel vm, String jobId) {
+    final sales = vm.salesForJob(jobId);
+    if (sales.isEmpty) return const SizedBox.shrink();
 
-    const maxChips = 3;
-    final shown = sales.length <= maxChips ? sales : sales.sublist(0, maxChips);
-    final overflow = sales.length - maxChips;
+    final bool hasOverflow = sales.length > 3;
+    final shownSales = hasOverflow ? sales.take(2).toList() : sales.toList();
+    final overflowCount = sales.length - 2;
 
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
-      margin: const EdgeInsets.only(top: 0),
+      margin: const EdgeInsets.only(top: 4, bottom: 8, left: 16, right: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(16),
-          bottomRight: Radius.circular(16),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: const Color(0xFFF0F9F4),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFD1FAE5)),
       ),
-      child: Column(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Divider(height: 1, color: const Color(0xFFE2E8F0)),
-          const SizedBox(height: 8),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Expanded(
-                child: Wrap(
-                  spacing: 4,
-                  runSpacing: 4,
-                  alignment: WrapAlignment.end,
-                  children: [
-                    if (overflow > 0)
-                      Container(
-                        height: 20,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF3F4F6),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '+$overflow آخرون',
-                          style: GoogleFonts.cairo(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF717973)),
-                        ),
-                      ),
-                    ...shown.map((s) => Container(
-                          height: 20,
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: chipBg(s.status),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            s.status.label,
-                            style: GoogleFonts.cairo(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: chipText(s.status)),
-                          ),
-                        )),
-                  ],
+              const Icon(Icons.people_alt_rounded, size: 16, color: Color(0xFF1E5C35)),
+              const SizedBox(width: 6),
+              Text(
+                'الملتزمون: ${sales.length}',
+                style: GoogleFonts.cairo(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF1E5C35),
                 ),
               ),
-              const SizedBox(width: 4),
-              Text('الملتزمون:',
-                  style: GoogleFonts.cairo(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF404943))),
-              const SizedBox(width: 4),
-              Icon(Icons.group_rounded, size: 14, color: const Color(0xFF9CA3AF)),
+            ],
+          ),
+          Row(
+            children: [
+              ...shownSales.map((sale) => _buildMiniChip(sale.status)),
+              if (hasOverflow)
+                Container(
+                  margin: const EdgeInsets.only(right: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE2E8F0),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '+$overflowCount',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 11,
+                      color: const Color(0xFF717973),
+                    ),
+                  ),
+                ),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMiniChip(OrderStatus status) {
+    final bgColor = switch (status) {
+      OrderStatus.pending => const Color(0xFFFEF3C7),
+      OrderStatus.accepted => const Color(0xFFD1FAE5),
+      OrderStatus.inTransit => const Color(0xFFDBEAFE),
+      OrderStatus.completed => const Color(0xFFDCFCE7),
+      OrderStatus.cancelled => const Color(0xFFFEE2E2),
+    };
+    final textColor = switch (status) {
+      OrderStatus.pending => const Color(0xFFC8860A),
+      OrderStatus.accepted => const Color(0xFF1E5C35),
+      OrderStatus.inTransit => const Color(0xFF1E40AF),
+      OrderStatus.completed => const Color(0xFF166534),
+      OrderStatus.cancelled => const Color(0xFF991B1B),
+    };
+    return Container(
+      margin: const EdgeInsets.only(right: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        status.label,
+        style: GoogleFonts.cairo(fontSize: 10, color: textColor),
       ),
     );
   }

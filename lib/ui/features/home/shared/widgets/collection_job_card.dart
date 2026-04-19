@@ -18,11 +18,12 @@ class CollectionJobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-        color: Colors.white,
+        color: cs.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: const Color(0xFF14401F).withValues(alpha: 0.12),
@@ -37,27 +38,28 @@ class CollectionJobCard extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(14),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          _buildTopRow(),
-          const SizedBox(height: 10),
-          _buildWasteChips(),
-          const SizedBox(height: 10),
-          _buildPriceRow(),
-          if (job.jobDescription != null &&
-              job.jobDescription!.isNotEmpty) ...[
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            _buildTopRow(context),
             const SizedBox(height: 10),
-            _buildDescription(),
+            _buildWasteChips(),
+            const SizedBox(height: 10),
+            _buildPriceRow(),
+            if (job.jobDescription != null &&
+                job.jobDescription!.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              _buildDescription(context),
+            ],
+            const SizedBox(height: 12),
+            _buildFooter(context),
           ],
-          const SizedBox(height: 12),
-          _buildFooter(context),
-        ],
+        ),
       ),
-    ),
     );
   }
 
-  Widget _buildTopRow() {
+  Widget _buildTopRow(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Row(
       children: [
         Column(
@@ -102,7 +104,7 @@ class CollectionJobCard extends StatelessWidget {
               style: GoogleFonts.cairo(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF002819),
+                color: cs.onSurface,
               ),
             ),
             Text(
@@ -202,12 +204,13 @@ class CollectionJobCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDescription() {
+  Widget _buildDescription(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FAF8),
+        color: cs.onSurface.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -217,7 +220,7 @@ class CollectionJobCard extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         style: GoogleFonts.cairo(
           fontSize: 12,
-          color: const Color(0xFF404943),
+          color: cs.onSurface.withValues(alpha: 0.78),
           height: 1.5,
         ),
       ),

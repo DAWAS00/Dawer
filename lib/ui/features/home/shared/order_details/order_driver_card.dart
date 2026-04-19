@@ -36,11 +36,12 @@ class OrderDriverCard extends StatelessWidget {
         .join();
     final rating = order.driverRating ?? 5.0;
     
+    final vehicleType = order.driverVehicle;
     final vehicleModel = order.driverVehicleModel;
     final vehicleColor = order.driverVehicleColor;
     final licensePlate = order.driverLicensePlate;
     
-    final hasVehicleInfo = vehicleModel != null || licensePlate != null;
+    final hasVehicleInfo = vehicleType != null || vehicleModel != null || licensePlate != null;
 
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 16, 20, 0),
@@ -183,7 +184,7 @@ class OrderDriverCard extends StatelessWidget {
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              '${vehicleModel ?? 'غير محدد'} ${vehicleColor != null ? '($vehicleColor)' : ''}',
+                              [if (vehicleType != null) vehicleType, vehicleModel ?? 'غير محدد', if (vehicleColor != null) '($vehicleColor)'].join(' '),
                               style: GoogleFonts.cairo(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,

@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/date_formatter.dart';
 import '../../../../../data/models/order.dart';
+import '../order_details_view.dart';
 
 class OrderInfoSection extends StatelessWidget {
   final Order order;
+  final OrderDetailsViewerRole viewerRole;
 
-  const OrderInfoSection({super.key, required this.order});
+  const OrderInfoSection({
+    super.key,
+    required this.order,
+    this.viewerRole = OrderDetailsViewerRole.supplier,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +87,7 @@ class OrderInfoSection extends StatelessWidget {
             value: order.dropoffAddress,
           ),
           const SizedBox(height: 16),
+          // ── meta chips ───────────────────────────────────────────────────
           Row(
             children: [
               if (order.distanceKm != null) ...[
@@ -103,6 +111,139 @@ class OrderInfoSection extends StatelessWidget {
                   highlight: true,
                 ),
             ],
+          ),
+          // ── extended details ─────────────────────────────────────────────
+          if (_hasExtended) ..._buildExtended(),
+        ],
+      ),
+    );
+  }
+
+  bool get _hasExtended =>
+      (viewerRole != OrderDetailsViewerRole.supplier && order.supplierName != null) ||
+      order.wasteForm != null ||
+      order.weightCategory != null ||
+      (order.estimatedWeightKg != null && order.weightKg == null) ||
+      order.scheduledAt != null ||
+      order.pricePerKg != null ||
+      order.itemPrice != null ||
+      order.minQuantityKg != null ||
+      order.pickupTarget != null ||
+      (order.supplierNotes != null && order.supplierNotes!.isNotEmpty) ||
+      (order.jobDescription != null && order.jobDescription!.isNotEmpty);
+
+  List<Widget> _buildExtended() {
+    return [
+      const Divider(height: 28, color: Color(0xFFE6E9E7)),
+      if (viewerRole != OrderDetailsViewerRole.supplier && order.supplierName != null)
+        _detailRow(
+          Icons.person_outline_rounded,
+          viewerRole == OrderDetailsViewerRole.driver ? 'مقدم الطلب' : 'المورد',
+          order.supplierName!,
+        ),
+      if (order.wasteForm != null)
+        _detailRow(Icons.layers_outlined, 'شكل المواد', order.wasteForm!.label),
+      if (order.weightCategory != null)
+        _detailRow(Icons.scale_outlined, 'تصنيف الوزن', order.weightCategory!.label),
+      if (order.estimatedWeightKg != null && order.weightKg == null)
+        _detailRow(Icons.scale_rounded, 'الوزن التقديري',
+            '${order.estimatedWeightKg!.toStringAsFixed(1)} كغ'),
+      if (order.scheduledAt != null)
+        _detailRow(
+          Icons.calendar_today_rounded,
+          'موعد الاستلام',
+          '${DateFormatter.date(order.scheduledAt!)}  ${DateFormatter.time(order.scheduledAt!)}',
+        ),
+      if (order.pricePerKg != null)
+        _detailRow(Icons.payments_outlined, 'السعر لكل كغ',
+            '${order.pricePerKg!.toStringAsFixed(2)} د.أ/كغ'),
+      if (order.itemPrice != null)
+        _detailRow(
+          Icons.payments_outlined,
+          order.pickupTarget == PickupTarget.riderBuy ? 'سعر الإدراج' : 'الأجر الثابت',
+          '${order.itemPrice!.toStringAsFixed(2)} د.أ',
+        ),
+      if (order.minQuantityKg != null)
+        _detailRow(Icons.storage_rounded, 'الحد الأدنى للكمية',
+            '${order.minQuantityKg!.toStringAsFixed(1)} كغ'),
+      if (order.pickupTarget != null)
+        _detailRow(Icons.flag_outlined, 'نوع الاستلام', order.pickupTarget!.label),
+      if (order.supplierNotes != null && order.supplierNotes!.isNotEmpty)
+        _notesBlock(Icons.notes_rounded, 'ملاحظات', order.supplierNotes!),
+      if (order.jobDescription != null && order.jobDescription!.isNotEmpty)
+        _notesBlock(Icons.work_outline_rounded, 'وصف الوظيفة', order.jobDescription!),
+    ];
+  }
+
+  Widget _detailRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Icon(icon, size: 14, color: const Color(0xFF9CA3AF)),
+          const SizedBox(width: 8),
+          Text(
+            '$label: ',
+            style: GoogleFonts.cairo(
+              fontSize: 12,
+              color: const Color(0xFF717973),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.cairo(
+                fontSize: 13,
+                color: const Color(0xFF404943),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _notesBlock(IconData icon, String label, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 14, color: const Color(0xFF9CA3AF)),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: GoogleFonts.cairo(
+                  fontSize: 12,
+                  color: const Color(0xFF717973),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAF8),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFFE6E9E7)),
+            ),
+            child: Text(
+              text,
+              textAlign: TextAlign.right,
+              style: GoogleFonts.cairo(
+                fontSize: 12,
+                color: const Color(0xFF404943),
+              ),
+            ),
           ),
         ],
       ),

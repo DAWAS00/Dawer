@@ -42,6 +42,7 @@ class CollectionSaleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () => Navigator.of(context).push(
@@ -52,7 +53,7 @@ class CollectionSaleCard extends StatelessWidget {
       child: Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cs.surface,
         borderRadius: BorderRadius.circular(16),
         border:
             Border.all(color: const Color(0xFF14401F).withValues(alpha: 0.15)),
@@ -66,9 +67,9 @@ class CollectionSaleCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          _buildTopRow(),
+          _buildTopRow(cs),
           const SizedBox(height: 12),
-          _buildDropoffRow(),
+          _buildDropoffRow(cs),
           const SizedBox(height: 10),
           _buildWasteChips(),
           if (sale.collectionDeliveryMethod != null ||
@@ -78,7 +79,7 @@ class CollectionSaleCard extends StatelessWidget {
           ],
           if (_price != null) ...[
             const SizedBox(height: 10),
-            _buildPriceRow(),
+            _buildPriceRow(cs),
           ],
           if (sale.jobDescription != null &&
               sale.jobDescription!.isNotEmpty) ...[
@@ -118,7 +119,7 @@ class CollectionSaleCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTopRow() {
+  Widget _buildTopRow(ColorScheme cs) {
     return Row(
       children: [
         Row(
@@ -160,7 +161,7 @@ class CollectionSaleCard extends StatelessWidget {
                 style: GoogleFonts.dmSans(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF002819))),
+                    color: cs.onSurface)),
             Text(_formatAge(sale.createdAt),
                 style: GoogleFonts.cairo(
                     fontSize: 10, color: const Color(0xFF9CA3AF))),
@@ -181,7 +182,7 @@ class CollectionSaleCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDropoffRow() {
+  Widget _buildDropoffRow(ColorScheme cs) {
     return Row(
       children: [
         const Icon(Icons.location_on_rounded,
@@ -190,14 +191,14 @@ class CollectionSaleCard extends StatelessWidget {
         Flexible(
           child: Text(sale.dropoffAddress,
               style: GoogleFonts.cairo(
-                  fontSize: 12, color: const Color(0xFF717973))),
+                  fontSize: 12, color: cs.onSurface.withValues(alpha: 0.6))),
         ),
         const SizedBox(width: 6),
         Text('موقع التسليم:',
             style: GoogleFonts.cairo(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF404943))),
+                color: cs.onSurface.withValues(alpha: 0.78))),
       ],
     );
   }
@@ -288,7 +289,7 @@ class CollectionSaleCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceRow() {
+  Widget _buildPriceRow(ColorScheme cs) {
     final unitLabel =
         sale.paymentModel == PaymentModel.perKg ? 'د.أ / كغ' : 'د.أ';
     return Row(
@@ -311,7 +312,7 @@ class CollectionSaleCard extends StatelessWidget {
             style: GoogleFonts.cairo(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF404943))),
+                color: cs.onSurface.withValues(alpha: 0.78))),
       ],
     );
   }
