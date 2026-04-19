@@ -157,8 +157,8 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
   String? completeCollectionSale(String saleId, {double? actualWeightKg}) =>
       _store.completeCollectionSale(saleId, actualWeightKg: actualWeightKg);
 
-  /// Cancel a pending collectionSale.
-  String? cancelCollectionSale(String saleId) =>
+  /// Cancel a pending collectionSale. Silently ignored if inTransit/completed.
+  void cancelCollectionSale(String saleId) =>
       _store.cancelCollectionSale(saleId);
 
   String? cancelOrder(String orderId) => _store.cancelOrder(orderId);

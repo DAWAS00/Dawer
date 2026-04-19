@@ -386,7 +386,7 @@ class AppOrderStore extends ChangeNotifier {
       wasteTypes: wasteTypes,
       pickupAddress: 'موقعك الحالي',
       dropoffAddress: collectionArea,
-      status: OrderStatus.pending,
+      status: OrderStatus.accepted,
       reward: pricePerKg ?? itemPrice ?? 0,
       createdAt: DateTime.now(),
       supplierName: acceptorName,
@@ -413,8 +413,8 @@ class AppOrderStore extends ChangeNotifier {
     );
     if (idx == -1) return 'الالتزام غير موجود';
     final current = _orders[idx];
-    if (current.status != OrderStatus.pending) {
-      return 'لا يمكن تغيير الحالة — الالتزام ليس في حالة انتظار';
+    if (current.status != OrderStatus.accepted) {
+      return 'لا يمكن تغيير الحالة — الالتزام ليس في حالة مقبولة';
     }
     _orders[idx] = current.copyWith(
       status: OrderStatus.inTransit,
@@ -447,27 +447,21 @@ class AppOrderStore extends ChangeNotifier {
   }
 
   /// Cancel a collection sale commitment. Only allowed when status == pending.
-  /// Once inTransit or completed, cancellation is blocked — the user must
-  /// contact the company directly.
-  /// Returns an error string on failure, null on success.
-  String? cancelCollectionSale(String saleId) {
+  /// Once inTransit or completed, cancellation is silently ignored — the user
+  /// must contact the company directly.
+  void cancelCollectionSale(String saleId) {
     final idx = _orders.indexWhere(
       (o) => o.id == saleId && o.type == OrderType.collectionSale,
     );
-    if (idx == -1) return 'الالتزام غير موجود';
+    if (idx == -1) return;
     final status = _orders[idx].status;
-    if (status == OrderStatus.inTransit) {
-      return 'لا يمكن الإلغاء بعد بدء التجميع — تواصل مع الشركة مباشرة';
-    }
-    if (status == OrderStatus.completed) {
-      return 'لا يمكن إلغاء التزام مكتمل';
-    }
-    if (status == OrderStatus.cancelled) {
-      return 'هذا الالتزام ملغى مسبقاً';
+    if (status == OrderStatus.inTransit ||
+        status == OrderStatus.completed ||
+        status == OrderStatus.cancelled) {
+      return;
     }
     _orders[idx] = _orders[idx].copyWith(status: OrderStatus.cancelled);
     notifyListeners();
-    return null;
   }
 
   /// All collectionSale commitments linked to jobs owned by [companyName].

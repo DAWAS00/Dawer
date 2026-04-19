@@ -5,95 +5,18 @@ import '../../shared/order_card.dart';
 import '../../shared/order_details_view.dart';
 import '../../shared/widgets/collection_sale_card.dart';
 
-void _handleStartTransit(
+void _showWeightDialog(
   BuildContext context,
-  Order sale,
-  String? Function(String saleId) onStartTransit,
-) {
-  final error = onStartTransit(sale.id);
-  if (error != null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(error, style: GoogleFonts.cairo(color: Colors.white)),
-        backgroundColor: const Color(0xFF991B1B),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-}
-
-void _showCompleteDialog(
-  BuildContext context,
-  Order sale,
+  String saleId,
   String? Function(String saleId, {double? actualWeightKg}) onComplete,
 ) {
-  final weightController = TextEditingController();
   showDialog<void>(
     context: context,
-    builder: (ctx) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Text('تأكيد التسليم',
-          textAlign: TextAlign.right,
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text('هل وصلت إلى المنشأة وسلّمت المواد؟',
-              textAlign: TextAlign.right,
-              style: GoogleFonts.cairo()),
-          if (sale.paymentModel == PaymentModel.perKg) ...[
-            const SizedBox(height: 16),
-            TextField(
-              controller: weightController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              textAlign: TextAlign.right,
-              decoration: InputDecoration(
-                labelText: 'الوزن الفعلي (كغ) — اختياري',
-                labelStyle: GoogleFonts.cairo(),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12)),
-              ),
-            ),
-          ],
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(ctx),
-          child: Text('إلغاء', style: GoogleFonts.cairo()),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pop(ctx);
-            final weightText = weightController.text.trim();
-            final weight =
-                weightText.isEmpty ? null : double.tryParse(weightText);
-            final error =
-                onComplete(sale.id, actualWeightKg: weight);
-            if (error != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(error,
-                      style: GoogleFonts.cairo(color: Colors.white)),
-                  backgroundColor: const Color(0xFF991B1B),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF1E40AF),
-            foregroundColor: Colors.white,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
-          ),
-          child: Text('تأكيد',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        ),
-      ],
+    builder: (_) => _WeightEntryDialog(
+      onConfirm: (double? kg) {
+        Navigator.pop(context);
+        onComplete(saleId, actualWeightKg: kg);
+      },
     ),
   );
 }
@@ -257,14 +180,15 @@ class DriverOrdersTab extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 12),
               child: CollectionSaleCard(
                 sale: collectionSaleOrders[i],
-                onCancel: collectionSaleOrders[i].status == OrderStatus.pending
+                onCancel: (collectionSaleOrders[i].status == OrderStatus.accepted ||
+                            collectionSaleOrders[i].status == OrderStatus.inTransit)
                     ? () => onCancelSale?.call(collectionSaleOrders[i].id)
                     : null,
-                onStartTransit: collectionSaleOrders[i].status == OrderStatus.pending && onStartTransit != null
-                    ? () => _handleStartTransit(ctx, collectionSaleOrders[i], onStartTransit!)
+                onStartTransit: collectionSaleOrders[i].status == OrderStatus.accepted && onStartTransit != null
+                    ? () { onStartTransit!(collectionSaleOrders[i].id); }
                     : null,
                 onComplete: collectionSaleOrders[i].status == OrderStatus.inTransit && onComplete != null
-                    ? () => _showCompleteDialog(ctx, collectionSaleOrders[i], onComplete!)
+                    ? () => _showWeightDialog(ctx, collectionSaleOrders[i].id, onComplete!)
                     : null,
               ),
             ),
@@ -273,5 +197,84 @@ class DriverOrdersTab extends StatelessWidget {
         ),
       ),
     ];
+  }
+}
+
+class _WeightEntryDialog extends StatefulWidget {
+  final void Function(double?) onConfirm;
+
+  const _WeightEntryDialog({required this.onConfirm});
+
+  @override
+  State<_WeightEntryDialog> createState() => _WeightEntryDialogState();
+}
+
+class _WeightEntryDialogState extends State<_WeightEntryDialog> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: Text(
+        'تأكيد التسليم',
+        textAlign: TextAlign.right,
+        style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 18),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            'أدخل الوزن الفعلي (اختياري)',
+            textAlign: TextAlign.right,
+            style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF9CA3AF)),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _controller,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            textAlign: TextAlign.left,
+            style: GoogleFonts.dmSans(),
+            decoration: InputDecoration(
+              suffixText: 'كغ',
+              suffixStyle: GoogleFonts.cairo(),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text('إلغاء',
+              style: GoogleFonts.cairo(color: const Color(0xFF9CA3AF))),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final weightText = _controller.text.trim();
+            final kg = weightText.isEmpty ? null : double.tryParse(weightText);
+            Navigator.of(context).pop();
+            widget.onConfirm(kg);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF1E5C35),
+            foregroundColor: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)),
+          ),
+          child: Text('تأكيد',
+              style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        ),
+      ],
+    );
   }
 }

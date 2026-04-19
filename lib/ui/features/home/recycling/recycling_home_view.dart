@@ -45,7 +45,7 @@ class _RecyclingHomeBody extends StatelessWidget {
         jobs: vm.jobs,
       ),
       MarketplaceTab(role: UserRole.recyclingCo, currentUserName: userName),
-      RecyclingOrdersTab(incoming: vm.incoming, jobs: vm.jobs),
+      RecyclingOrdersTab(incoming: vm.incoming, jobs: vm.jobs, salesForJob: vm.salesForJob),
       RecyclingProfileTab(userName: userName),
     ];
 

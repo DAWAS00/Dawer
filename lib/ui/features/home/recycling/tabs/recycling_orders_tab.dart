@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order.dart';
 import '../../shared/order_card.dart';
+import '../../shared/views/collection_sale_detail_view.dart';
 
 class RecyclingOrdersTab extends StatelessWidget {
   final List<Order> incoming;
   final List<Order> jobs;
+  final List<Order> Function(String jobId) salesForJob;
 
   const RecyclingOrdersTab({
     super.key,
     required this.incoming,
     required this.jobs,
+    required this.salesForJob,
   });
 
   @override
@@ -60,7 +63,11 @@ class RecyclingOrdersTab extends StatelessWidget {
             child: TabBarView(
               children: [
                 _RecyclingOrderList(orders: incoming, mode: OrderCardMode.companyIncoming),
-                _RecyclingOrderList(orders: jobs, mode: OrderCardMode.companyJob),
+                _RecyclingOrderList(
+                  orders: jobs,
+                  mode: OrderCardMode.companyJob,
+                  salesForJob: salesForJob,
+                ),
               ],
             ),
           ),
@@ -73,16 +80,171 @@ class RecyclingOrdersTab extends StatelessWidget {
 class _RecyclingOrderList extends StatelessWidget {
   final List<Order> orders;
   final OrderCardMode mode;
+  final List<Order> Function(String jobId)? salesForJob;
 
-  const _RecyclingOrderList({required this.orders, required this.mode});
+  const _RecyclingOrderList({
+    required this.orders,
+    required this.mode,
+    this.salesForJob,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
       itemCount: orders.length,
-      separatorBuilder: (context, sep) => const SizedBox(height: 12),
-      itemBuilder: (_, i) => OrderCard(order: orders[i], mode: mode),
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (ctx, i) {
+        final order = orders[i];
+        if (mode == OrderCardMode.companyJob && salesForJob != null) {
+          final sales = salesForJob!(order.id);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              OrderCard(order: order, mode: mode),
+              if (sales.isNotEmpty) _buildAcceptorSection(ctx, sales),
+            ],
+          );
+        }
+        return OrderCard(order: order, mode: mode);
+      },
+    );
+  }
+
+  Widget _buildAcceptorSection(BuildContext context, List<Order> sales) {
+    const maxShown = 3;
+    final shown = sales.length <= maxShown ? sales : sales.sublist(0, maxShown);
+    final overflow = sales.length - maxShown;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            'الملتزمون (${sales.length})',
+            textAlign: TextAlign.right,
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF717973),
+            ),
+          ),
+          const SizedBox(height: 6),
+          ...shown.map((sale) => _buildAcceptorRow(context, sale)),
+          if (overflow > 0)
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(
+                '+ $overflow آخر',
+                textAlign: TextAlign.right,
+                style: GoogleFonts.cairo(
+                  fontSize: 12,
+                  color: const Color(0xFF1E5C35),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAcceptorRow(BuildContext context, Order sale) {
+    Color chipBg(OrderStatus s) => switch (s) {
+          OrderStatus.pending => const Color(0xFFFEF3C7),
+          OrderStatus.accepted => const Color(0xFFD1FAE5),
+          OrderStatus.inTransit => const Color(0xFFDBEAFE),
+          OrderStatus.completed => const Color(0xFFDCFCE7),
+          OrderStatus.cancelled => const Color(0xFFFEE2E2),
+        };
+    Color chipText(OrderStatus s) => switch (s) {
+          OrderStatus.pending => const Color(0xFFC8860A),
+          OrderStatus.accepted => const Color(0xFF1E5C35),
+          OrderStatus.inTransit => const Color(0xFF1E40AF),
+          OrderStatus.completed => const Color(0xFF166534),
+          OrderStatus.cancelled => const Color(0xFF991B1B),
+        };
+
+    final d = sale.createdAt;
+    final dateStr = '${d.day}/${d.month}/${d.year}';
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          TextButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => CollectionSaleDetailView(sale: sale),
+              ),
+            ),
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              'عرض التفاصيل',
+              style: GoogleFonts.cairo(
+                fontSize: 12,
+                color: const Color(0xFF1E5C35),
+              ),
+            ),
+          ),
+          const Spacer(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    sale.supplierName ?? '',
+                    style: GoogleFonts.cairo(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF002819),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    height: 20,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: chipBg(sale.status),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      sale.status.label,
+                      style: GoogleFonts.cairo(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: chipText(sale.status),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 2),
+              Text(
+                dateStr,
+                style: GoogleFonts.dmSans(
+                  fontSize: 11,
+                  color: const Color(0xFF9CA3AF),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

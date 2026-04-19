@@ -92,8 +92,8 @@ class DriverHomeViewModel extends ChangeNotifier {
   String? completeCollectionSale(String saleId, {double? actualWeightKg}) =>
       _store.completeCollectionSale(saleId, actualWeightKg: actualWeightKg);
 
-  /// Cancel a pending collectionSale. Returns error string or null.
-  String? cancelCollectionSale(String saleId) =>
+  /// Cancel a pending collectionSale. Silently ignored if inTransit/completed.
+  void cancelCollectionSale(String saleId) =>
       _store.cancelCollectionSale(saleId);
 
   Order createListing({

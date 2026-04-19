@@ -103,13 +103,14 @@ class CollectionSaleCard extends StatelessWidget {
               ),
             ),
           ],
-          if (sale.status == OrderStatus.pending) ...[
+          if (sale.status == OrderStatus.accepted) ...[
             const SizedBox(height: 12),
             _buildPendingActions(context),
           ],
-          if (sale.status == OrderStatus.inTransit && onComplete != null) ...[
+          if (sale.status == OrderStatus.inTransit &&
+              (onComplete != null || onCancel != null)) ...[
             const SizedBox(height: 12),
-            _buildInTransitAction(),
+            _buildInTransitAction(context),
           ],
         ],
       ),
@@ -364,24 +365,52 @@ class CollectionSaleCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInTransitAction() {
-    return SizedBox(
-      width: double.infinity,
-      height: 40,
-      child: ElevatedButton.icon(
-        onPressed: onComplete,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF1E40AF),
-          foregroundColor: Colors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
-        ),
-        icon: const Icon(Icons.check_circle_rounded, size: 16),
-        label: Text('تأكيد التسليم',
-            style: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold, fontSize: 13)),
-      ),
+  Widget _buildInTransitAction(BuildContext context) {
+    return Row(
+      children: [
+        if (onCancel != null)
+          Expanded(
+            child: SizedBox(
+              height: 40,
+              child: OutlinedButton.icon(
+                onPressed: () => _showCancelDialog(context),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFFDC2626),
+                  side: const BorderSide(color: Color(0xFFDC2626)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  elevation: 0,
+                ),
+                icon: const Icon(Icons.cancel_outlined, size: 16),
+                label: Text('إلغاء الالتزام',
+                    style: GoogleFonts.cairo(
+                        fontWeight: FontWeight.bold, fontSize: 13)),
+              ),
+            ),
+          ),
+        if (onCancel != null && onComplete != null)
+          const SizedBox(width: 10),
+        if (onComplete != null)
+          Expanded(
+            child: SizedBox(
+              height: 40,
+              child: ElevatedButton.icon(
+                onPressed: onComplete,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF166534),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+                icon: const Icon(Icons.check_circle_rounded, size: 16),
+                label: Text('تأكيد التسليم',
+                    style: GoogleFonts.cairo(
+                        fontWeight: FontWeight.bold, fontSize: 13)),
+              ),
+            ),
+          ),
+      ],
     );
   }
 

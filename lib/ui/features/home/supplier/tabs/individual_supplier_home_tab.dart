@@ -220,18 +220,24 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                         ),
                       ),
                     const SizedBox(width: 8),
-                    Text(
-                      'السائق في الطريق إليك',
-                      style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
+                    Flexible(
+                      child: Text(
+                        'السائق في الطريق إليك',
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Text(
-                      order.driverName ?? '',
-                      style: GoogleFonts.cairo(fontSize: 13, color: AppColors.mutedText),
+                    Flexible(
+                      child: Text(
+                        order.driverName ?? '',
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.cairo(fontSize: 13, color: AppColors.mutedText),
+                      ),
                     ),
                     const SizedBox(width: 8),
                     if (order.driverRating != null) ...[
