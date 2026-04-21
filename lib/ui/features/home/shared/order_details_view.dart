@@ -12,19 +12,11 @@ import 'order_details/order_action_buttons.dart';
 import 'order_details/order_completion_section.dart';
 import 'order_details/order_proof_section.dart';
 
-enum OrderDetailsViewerRole { driver, supplier, company }
-
 class OrderDetailsView extends StatelessWidget {
   final Order order;
   final void Function(Order)? onCompleteOrder;
-  final OrderDetailsViewerRole viewerRole;
 
-  const OrderDetailsView({
-    super.key,
-    required this.order,
-    this.onCompleteOrder,
-    this.viewerRole = OrderDetailsViewerRole.supplier,
-  });
+  const OrderDetailsView({super.key, required this.order, this.onCompleteOrder});
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +28,12 @@ class OrderDetailsView extends StatelessWidget {
           SliverToBoxAdapter(
             child: OrderMapSection(order: order, hasDriver: order.driverName != null),
           ),
-          if (viewerRole != OrderDetailsViewerRole.driver)
-            SliverToBoxAdapter(
-              child: OrderStatusTimeline(order: order),
-            ),
+          SliverToBoxAdapter(
+            child: OrderStatusTimeline(order: order),
+          ),
           if (order.driverName != null)
             SliverToBoxAdapter(child: OrderDriverCard(order: order)),
-          SliverToBoxAdapter(child: OrderInfoSection(order: order, viewerRole: viewerRole)),
+          SliverToBoxAdapter(child: OrderInfoSection(order: order)),
           
           if (order.status == OrderStatus.completed && order.proofImagePath != null)
             SliverToBoxAdapter(

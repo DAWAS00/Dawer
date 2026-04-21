@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/utils/date_formatter.dart';
 import '../../../../data/models/order.dart';
 import '../../../../data/models/order_labels.dart';
 import '../../../../l10n/l10n.dart';
@@ -26,108 +25,39 @@ class OrderCard extends StatelessWidget {
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context);
     return GestureDetector(
-      onTap: (mode == OrderCardMode.driverAvailable ||
-              mode == OrderCardMode.driverHistory)
+      onTap: (mode == OrderCardMode.driverAvailable || mode == OrderCardMode.driverHistory)
           ? () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => OrderDetailsView(
-                    order: order,
-                    viewerRole: OrderDetailsViewerRole.driver,
-                  ),
+                  builder: (_) => OrderDetailsView(order: order),
                 ),
               )
           : null,
       child: Container(
         decoration: BoxDecoration(
-          color: cs.surface,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-              color: cs.onSurface.withValues(alpha: isDark ? 0.12 : 0.07)),
-          boxShadow: isDark
-              ? null
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildHeader(l10n),
             Padding(
-              padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: statusBg,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      statusLabel,
-                      style: GoogleFonts.cairo(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: statusText),
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    dateStr,
-                    style: GoogleFonts.dmSans(
-                        fontSize: 11,
-                        color: cs.onSurface.withValues(alpha: 0.45),
-                        letterSpacing: 0.3),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 6),
-                    width: 1,
-                    height: 10,
-                    color: cs.onSurface.withValues(alpha: 0.2),
-                  ),
-                  Icon(
-                    order.type == OrderType.pickup
-                        ? Icons.upload_rounded
-                        : Icons.download_rounded,
-                    size: 13,
-                    color: cs.onSurface.withValues(alpha: 0.4),
-                  ),
-                  const SizedBox(width: 3),
-                  Text(
-                    '#${order.id}',
-                    style: GoogleFonts.dmSans(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: cs.onSurface.withValues(alpha: 0.65),
-                        letterSpacing: 0.3),
-                  ),
-                ],
-              ),
-            ),
-            Divider(
-                height: 1,
-                thickness: 1,
-                color: cs.onSurface.withValues(alpha: 0.07)),
-            // ── Body ────────────────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   _buildWasteChips(locale),
                   const SizedBox(height: 10),
-                  _buildAddressRow(context),
-                  if (mode == OrderCardMode.driverActive)
-                    _buildTimeElapsedRow(),
+                  _buildAddressRow(),
                   const SizedBox(height: 12),
                   _buildFooterRow(context),
-                  if (mode == OrderCardMode.driverAvailable)
-                    _buildDriverAvailableExtras(),
                 ],
               ),
             ),
@@ -206,14 +136,14 @@ class OrderCard extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: cs.onSurface.withValues(alpha: 0.08),
+            color: const Color(0xFFF2F4F2),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
             t.labelFor(locale),
             style: GoogleFonts.cairo(
               fontSize: 12,
-              color: cs.onSurface.withValues(alpha: 0.78),
+              color: const Color(0xFF404943),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -222,8 +152,7 @@ class OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildAddressRow(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget _buildAddressRow() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -237,7 +166,7 @@ class OrderCard extends StatelessWidget {
           child: Container(
             width: 1,
             height: 16,
-            color: cs.onSurface.withValues(alpha: 0.18),
+            color: const Color(0xFFC0C9C1),
           ),
         ),
         _AddressLine(
@@ -264,20 +193,6 @@ class OrderCard extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        if (mode == OrderCardMode.supplierActive &&
-            order.status == OrderStatus.inTransit &&
-            order.etaMinutes != null) ...
-          [
-            _badge(
-              'وصول خلال ${order.etaMinutes} دقيقة',
-              const Color(0xFFDBEAFE),
-              const Color(0xFF1E40AF),
-              useDmSans: true,
-              bold: true,
-              hPad: 8,
-            ),
-            const SizedBox(width: 8),
-          ],
         if (isDriverAccepted && order.acceptedAt != null) ...[
           // Show timer since accepted
           Column(
@@ -287,7 +202,7 @@ class OrderCard extends StatelessWidget {
                 context.l10n.orderWaitingTime,
                 style: GoogleFonts.cairo(
                   fontSize: 10,
-                  color: cs.onSurface.withValues(alpha: 0.55),
+                  color: const Color(0xFF717973),
                 ),
               ),
               const SizedBox(height: 2),
@@ -303,22 +218,22 @@ class OrderCard extends StatelessWidget {
                   l10n.orderArrivalTime,
                   style: GoogleFonts.cairo(
                     fontSize: 10,
-                    color: cs.onSurface.withValues(alpha: 0.55),
+                    color: const Color(0xFF717973),
                   ),
                 ),
                 const SizedBox(height: 2),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.timer_rounded,
-                        size: 14, color: cs.onSurface.withValues(alpha: 0.65)),
+                    const Icon(Icons.timer_rounded,
+                        size: 14, color: Color(0xFF404943)),
                     const SizedBox(width: 4),
                     Text(
                       order.eta!,
                       style: GoogleFonts.cairo(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: cs.onSurface.withValues(alpha: 0.75),
+                        color: const Color(0xFF404943),
                       ),
                     ),
                   ],
@@ -335,7 +250,7 @@ class OrderCard extends StatelessWidget {
                   l10n.orderEarningsLabel,
                   style: GoogleFonts.cairo(
                     fontSize: 10,
-                    color: cs.onSurface.withValues(alpha: 0.55),
+                    color: const Color(0xFF717973),
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -364,16 +279,6 @@ class OrderCard extends StatelessWidget {
               ],
             ),
         ],
-
-        if (mode == OrderCardMode.supplierActive) ...
-          [
-            const SizedBox(width: 8),
-            _badge(
-              DateFormatter.relative(order.createdAt),
-              const Color(0xFFF4F6F5),
-              const Color(0xFF717973),
-            ),
-          ],
 
         // Spacer to push the action button to the far left
         if (hasAction) const Spacer(),
@@ -484,7 +389,7 @@ class _AddressLine extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.cairo(
               fontSize: 13,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.78),
+              color: const Color(0xFF404943),
             ),
           ),
         ),

@@ -83,7 +83,7 @@ class SupplierOrderCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: cs.surface,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -116,10 +116,10 @@ class SupplierOrderCard extends StatelessWidget {
                         style: GoogleFonts.dmSans(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: cs.onSurface)),
+                            color: const Color(0xFF002819))),
                     Text(DateFormatter.relative(order.createdAt),
                         style: GoogleFonts.cairo(
-                            fontSize: 11, color: cs.onSurfaceVariant)),
+                            fontSize: 11, color: const Color(0xFF717973))),
                   ],
                 ),
               ],
@@ -135,13 +135,13 @@ class SupplierOrderCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                                color: cs.onSurface.withValues(alpha: 0.08),
+                                color: const Color(0xFFF2F4F2),
                                 borderRadius: BorderRadius.circular(8)),
                             child: Text(t.labelFor(locale),
                                 style: GoogleFonts.cairo(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
-                                    color: cs.onSurface.withValues(alpha: 0.78))),
+                                    color: const Color(0xFF404943))),
                           ))
                       .toList(),
                 ),
@@ -168,7 +168,7 @@ class SupplierOrderCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                    color: cs.onSurface.withValues(alpha: 0.05),
+                    color: const Color(0xFFF8FAF8),
                     borderRadius: BorderRadius.circular(12)),
                 child: Row(
                   children: [
@@ -186,7 +186,7 @@ class SupplierOrderCard extends StatelessWidget {
                             style: GoogleFonts.cairo(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: cs.onSurface)),
+                                color: const Color(0xFF002819))),
                         if (order.driverRating != null)
                           Row(mainAxisSize: MainAxisSize.min, children: [
                             Text(order.driverRating.toString(),

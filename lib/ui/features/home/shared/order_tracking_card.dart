@@ -12,11 +12,10 @@ class OrderTrackingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       decoration: BoxDecoration(
-        color: cs.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -195,7 +194,7 @@ class OrderTrackingCard extends StatelessWidget {
                 style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: cs.onSurface,
+                  color: const Color(0xFF002819),
                 ),
               ),
               const SizedBox(width: 8),
@@ -246,7 +245,7 @@ class OrderTrackingCard extends StatelessWidget {
                   vehicle,
                   style: GoogleFonts.cairo(
                     fontSize: 11,
-                    color: cs.onSurface.withValues(alpha: 0.78),
+                    color: const Color(0xFF404943),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -263,7 +262,7 @@ class OrderTrackingCard extends StatelessWidget {
                 style: GoogleFonts.dmSans(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
-                  color: cs.onSurface,
+                  color: const Color(0xFF002819),
                 ),
               ),
               const SizedBox(width: 3),
@@ -278,7 +277,7 @@ class OrderTrackingCard extends StatelessWidget {
             style: GoogleFonts.cairo(
               fontSize: 15,
               fontWeight: FontWeight.bold,
-              color: cs.onSurface,
+              color: const Color(0xFF002819),
             ),
           ),
           const SizedBox(width: 10),
@@ -302,7 +301,7 @@ class OrderTrackingCard extends StatelessWidget {
 
   // ── Route Row ────────────────────────────────────────────────────────────────
 
-  Widget _buildRouteRow(ColorScheme cs) {
+  Widget _buildRouteRow() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Column(
@@ -319,7 +318,7 @@ class OrderTrackingCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.cairo(
                     fontSize: 13,
-                    color: cs.onSurface.withValues(alpha: 0.78),
+                    color: const Color(0xFF404943),
                   ),
                 ),
               ),
@@ -327,7 +326,7 @@ class OrderTrackingCard extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(right: 6, top: 2, bottom: 2),
-            child: Container(width: 1, height: 12, color: cs.onSurface.withValues(alpha: 0.15)),
+            child: Container(width: 1, height: 12, color: const Color(0xFFC0C9C1)),
           ),
           Row(
             children: [
@@ -340,7 +339,7 @@ class OrderTrackingCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.cairo(
                     fontSize: 13,
-                    color: cs.onSurface.withValues(alpha: 0.78),
+                    color: const Color(0xFF404943),
                   ),
                 ),
               ),
@@ -384,9 +383,9 @@ class OrderTrackingCard extends StatelessWidget {
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
-  Widget _buildDivider(ColorScheme cs) => Container(
+  Widget _buildDivider() => Container(
         height: 1,
-        color: cs.onSurface.withValues(alpha: 0.08),
+        color: const Color(0xFFF0F2F1),
         margin: const EdgeInsets.symmetric(horizontal: 16),
       );
 

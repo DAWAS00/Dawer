@@ -44,7 +44,6 @@ class CollectionSaleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () => Navigator.of(context).push(
@@ -55,7 +54,7 @@ class CollectionSaleCard extends StatelessWidget {
       child: Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: cs.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border:
             Border.all(color: const Color(0xFF14401F).withValues(alpha: 0.15)),
@@ -106,12 +105,11 @@ class CollectionSaleCard extends StatelessWidget {
               ),
             ),
           ],
-          if (sale.status == OrderStatus.accepted) ...[
+          if (sale.status == OrderStatus.pending) ...[
             const SizedBox(height: 12),
             _buildPendingActions(context),
           ],
-          if (sale.status == OrderStatus.inTransit &&
-              (onComplete != null || onCancel != null)) ...[
+          if (sale.status == OrderStatus.inTransit && onComplete != null) ...[
             const SizedBox(height: 12),
             _buildInTransitAction(context),
           ],
@@ -194,14 +192,14 @@ class CollectionSaleCard extends StatelessWidget {
         Flexible(
           child: Text(sale.dropoffAddress,
               style: GoogleFonts.cairo(
-                  fontSize: 12, color: cs.onSurface.withValues(alpha: 0.6))),
+                  fontSize: 12, color: const Color(0xFF717973))),
         ),
         const SizedBox(width: 6),
         Text(context.l10n.collectionSaleDeliveryLocation,
             style: GoogleFonts.cairo(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: cs.onSurface.withValues(alpha: 0.78))),
+                color: const Color(0xFF404943))),
       ],
     );
   }
@@ -315,7 +313,7 @@ class CollectionSaleCard extends StatelessWidget {
             style: GoogleFonts.cairo(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: cs.onSurface.withValues(alpha: 0.78))),
+                color: const Color(0xFF404943))),
       ],
     );
   }

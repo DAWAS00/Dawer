@@ -20,12 +20,11 @@ class CollectionJobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-        color: cs.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: const Color(0xFF14401F).withValues(alpha: 0.12),
@@ -50,19 +49,13 @@ class CollectionJobCard extends StatelessWidget {
           if (job.jobDescription != null &&
               job.jobDescription!.isNotEmpty) ...[
             const SizedBox(height: 10),
-            _buildWasteChips(),
-            const SizedBox(height: 10),
-            _buildPriceRow(),
-            if (job.jobDescription != null &&
-                job.jobDescription!.isNotEmpty) ...[
-              const SizedBox(height: 10),
-              _buildDescription(context),
-            ],
-            const SizedBox(height: 12),
-            _buildFooter(context),
+            _buildDescription(),
           ],
-        ),
+          const SizedBox(height: 12),
+          _buildFooter(context),
+        ],
       ),
+    ),
     );
   }
 
@@ -112,7 +105,7 @@ class CollectionJobCard extends StatelessWidget {
               style: GoogleFonts.cairo(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: cs.onSurface,
+                color: const Color(0xFF002819),
               ),
             ),
             Text(
@@ -215,13 +208,12 @@ class CollectionJobCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDescription(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget _buildDescription() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: cs.onSurface.withValues(alpha: 0.05),
+        color: const Color(0xFFF8FAF8),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -231,7 +223,7 @@ class CollectionJobCard extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         style: GoogleFonts.cairo(
           fontSize: 12,
-          color: cs.onSurface.withValues(alpha: 0.78),
+          color: const Color(0xFF404943),
           height: 1.5,
         ),
       ),

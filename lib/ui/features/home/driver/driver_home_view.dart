@@ -112,7 +112,15 @@ class _DriverHomeBody extends StatelessWidget {
           }
         },
       ),
-      const DriverOrdersTab(),
+      DriverOrdersTab(
+        history: vm.history,
+        active: vm.active,
+        collectionSaleOrders: vm.collectionSaleOrders,
+        onCompleteOrder: vm.completeOrder,
+        onCancelSale: (id) => vm.cancelCollectionSale(id),
+        onStartTransit: vm.startCollectionSaleTransit,
+        onComplete: vm.completeCollectionSale,
+      ),
       const DriverProfileTab(),
     ];
 

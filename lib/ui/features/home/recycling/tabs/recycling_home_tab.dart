@@ -240,22 +240,34 @@ class RecyclingHomeTab extends StatelessWidget {
           OrderStatus.cancelled => const Color(0xFF991B1B),
         };
 
-    final bool hasOverflow = sales.length > 3;
-    final shownSales = hasOverflow ? sales.take(2).toList() : sales.toList();
-    final overflowCount = sales.length - 2;
+    const maxChips = 3;
+    final shown = sales.length <= maxChips ? sales : sales.sublist(0, maxChips);
+    final overflow = sales.length - maxChips;
 
     return Container(
-      margin: const EdgeInsets.only(top: 4, bottom: 8, left: 16, right: 16),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
+      margin: const EdgeInsets.only(top: 0),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0F9F4),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFD1FAE5)),
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(16),
+          bottomRight: Radius.circular(16),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
+          Divider(height: 1, color: const Color(0xFFE2E8F0)),
+          const SizedBox(height: 8),
           Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Expanded(
                 child: Wrap(
@@ -310,35 +322,6 @@ class RecyclingHomeTab extends StatelessWidget {
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildMiniChip(OrderStatus status) {
-    final bgColor = switch (status) {
-      OrderStatus.pending => const Color(0xFFFEF3C7),
-      OrderStatus.accepted => const Color(0xFFD1FAE5),
-      OrderStatus.inTransit => const Color(0xFFDBEAFE),
-      OrderStatus.completed => const Color(0xFFDCFCE7),
-      OrderStatus.cancelled => const Color(0xFFFEE2E2),
-    };
-    final textColor = switch (status) {
-      OrderStatus.pending => const Color(0xFFC8860A),
-      OrderStatus.accepted => const Color(0xFF1E5C35),
-      OrderStatus.inTransit => const Color(0xFF1E40AF),
-      OrderStatus.completed => const Color(0xFF166534),
-      OrderStatus.cancelled => const Color(0xFF991B1B),
-    };
-    return Container(
-      margin: const EdgeInsets.only(right: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        status.label,
-        style: GoogleFonts.cairo(fontSize: 10, color: textColor),
       ),
     );
   }
