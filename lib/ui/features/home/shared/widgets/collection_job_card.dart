@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order_labels.dart';
+import '../../../../../l10n/l10n.dart';
 
 class CollectionJobCard extends StatelessWidget {
   final Order job;
@@ -39,11 +41,11 @@ class CollectionJobCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          _buildTopRow(),
+          _buildTopRow(context),
           const SizedBox(height: 10),
-          _buildWasteChips(),
+          _buildWasteChips(context),
           const SizedBox(height: 10),
-          _buildPriceRow(),
+          _buildPriceRow(context),
           if (job.jobDescription != null &&
               job.jobDescription!.isNotEmpty) ...[
             const SizedBox(height: 10),
@@ -57,7 +59,8 @@ class CollectionJobCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTopRow() {
+  Widget _buildTopRow(BuildContext context) {
+    final l10n = context.l10n;
     return Row(
       children: [
         Column(
@@ -81,7 +84,7 @@ class CollectionJobCard extends StatelessWidget {
                         size: 10, color: Color(0xFF92400E)),
                     const SizedBox(width: 3),
                     Text(
-                      'تم التعديل',
+                      l10n.collectionJobEdited,
                       style: GoogleFonts.cairo(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -98,7 +101,7 @@ class CollectionJobCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              job.supplierName ?? 'شركة تدوير',
+              job.supplierName ?? l10n.collectionJobRecyclingCoLabel,
               style: GoogleFonts.cairo(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -106,7 +109,7 @@ class CollectionJobCard extends StatelessWidget {
               ),
             ),
             Text(
-              _formatAge(job.createdAt),
+              _formatAge(context, job.createdAt),
               style: GoogleFonts.cairo(
                 fontSize: 11,
                 color: const Color(0xFF717973),
@@ -132,7 +135,8 @@ class CollectionJobCard extends StatelessWidget {
     );
   }
 
-  Widget _buildWasteChips() {
+  Widget _buildWasteChips(BuildContext context) {
+    final locale = Localizations.localeOf(context);
     return Wrap(
       spacing: 6,
       runSpacing: 4,
@@ -147,7 +151,7 @@ class CollectionJobCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                t.label,
+                t.labelFor(locale),
                 style: GoogleFonts.cairo(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
@@ -160,7 +164,9 @@ class CollectionJobCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceRow() {
+  Widget _buildPriceRow(BuildContext context) {
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context);
     final payModel = job.paymentModel;
     final price = job.pricePerKg ?? job.itemPrice;
 
@@ -169,7 +175,7 @@ class CollectionJobCard extends StatelessWidget {
         if (job.minQuantityKg != null && payModel == PaymentModel.perKg)
           _InfoChip(
             icon: Icons.scale_rounded,
-            label: 'من ${job.minQuantityKg!.toStringAsFixed(0)} كغ',
+            label: l10n.collectionJobMinQtyFrom(job.minQuantityKg!.toStringAsFixed(0)),
             color: const Color(0xFF7C3AED),
           ),
         const Spacer(),
@@ -178,13 +184,13 @@ class CollectionJobCard extends StatelessWidget {
             icon: payModel == PaymentModel.perKg
                 ? Icons.scale_rounded
                 : Icons.payments_rounded,
-            label: payModel.label,
+            label: payModel.labelFor(locale),
             color: const Color(0xFF14401F),
           ),
         if (price != null) ...[
           const SizedBox(width: 8),
           Text(
-            '$price ${payModel?.unitLabel ?? 'د.أ'}',
+            '$price ${payModel?.unitLabelFor(locale) ?? 'JD'}',
             style: GoogleFonts.dmSans(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -225,6 +231,7 @@ class CollectionJobCard extends StatelessWidget {
   }
 
   Widget _buildFooter(BuildContext context) {
+    final l10n = context.l10n;
     return Row(
       children: [
         if (showClaimButton && onClaim != null)
@@ -233,7 +240,7 @@ class CollectionJobCard extends StatelessWidget {
               onPressed: onClaim,
               icon: const Icon(Icons.check_circle_outline_rounded, size: 16),
               label: Text(
-                'قبول الوظيفة',
+                l10n.collectionJobAcceptButton,
                 style: GoogleFonts.cairo(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
@@ -259,7 +266,7 @@ class CollectionJobCard extends StatelessWidget {
                     size: 14, color: Color(0xFF717973)),
                 const SizedBox(width: 4),
                 Text(
-                  'عرض التفاصيل',
+                  l10n.driverViewDetails,
                   style: GoogleFonts.cairo(
                     fontSize: 12,
                     color: const Color(0xFF717973),
@@ -285,11 +292,12 @@ class CollectionJobCard extends StatelessWidget {
     );
   }
 
-  String _formatAge(DateTime dt) {
+  String _formatAge(BuildContext context, DateTime dt) {
+    final l10n = context.l10n;
     final diff = DateTime.now().difference(dt);
-    if (diff.inDays > 0) return 'منذ ${diff.inDays} يوم';
-    if (diff.inHours > 0) return 'منذ ${diff.inHours} ساعة';
-    return 'منذ ${diff.inMinutes} دقيقة';
+    if (diff.inDays > 0) return l10n.timeAgoDays(diff.inDays);
+    if (diff.inHours > 0) return l10n.timeAgoHours(diff.inHours);
+    return l10n.timeAgoMinutes(diff.inMinutes);
   }
 }
 
@@ -308,7 +316,7 @@ class _JobBadge extends StatelessWidget {
           const Icon(Icons.work_rounded, size: 12, color: Color(0xFF14401F)),
           const SizedBox(width: 4),
           Text(
-            'وظيفة تجميع',
+            context.l10n.collectionJobBadge,
             style: GoogleFonts.cairo(
               fontSize: 11,
               fontWeight: FontWeight.bold,

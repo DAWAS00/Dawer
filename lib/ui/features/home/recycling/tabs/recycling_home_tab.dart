@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../l10n/l10n.dart';
 import '../../shared/order_card.dart';
 import '../../shared/order_tracking_card.dart';
 import '../../shared/viewmodels/marketplace_viewmodel.dart';
@@ -41,14 +42,14 @@ class RecyclingHomeTab extends StatelessWidget {
             SliverToBoxAdapter(child: _buildHeader(context)),
             if (tracked != null)
               SliverToBoxAdapter(child: OrderTrackingCard(order: tracked)),
-            SliverToBoxAdapter(child: _buildStatsRow()),
+            SliverToBoxAdapter(child: _buildStatsRow(context)),
             SliverToBoxAdapter(child: _buildActionCards(context)),
             if (myListings.isNotEmpty) ..._buildMyListingsSection(context, myListings, marketVm),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
                 child: Text(
-                  'الشحنات القادمة',
+                  context.l10n.recyclingIncomingShipments,
                   textAlign: TextAlign.right,
                   style: GoogleFonts.cairo(
                     fontSize: 17,
@@ -74,7 +75,7 @@ class RecyclingHomeTab extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
                 child: Text(
-                  'وظائف التجميع النشطة',
+                  context.l10n.recyclingActiveCollectionJobs,
                   textAlign: TextAlign.right,
                   style: GoogleFonts.cairo(
                     fontSize: 17,
@@ -95,7 +96,7 @@ class RecyclingHomeTab extends StatelessWidget {
                       child: Column(
                         children: [
                           OrderCard(order: jobs[i], mode: OrderCardMode.companyJob),
-                          if (sales.isNotEmpty) _buildAcceptorRow(sales),
+                          if (sales.isNotEmpty) _buildAcceptorRow(context, sales),
                         ],
                       ),
                     );
@@ -136,7 +137,7 @@ class RecyclingHomeTab extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                'منشوراتي في السوق',
+                context.l10n.recyclingMyListings,
                 textAlign: TextAlign.right,
                 style: GoogleFonts.cairo(
                   fontSize: 17,
@@ -173,19 +174,19 @@ class RecyclingHomeTab extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('سحب الإعلان', textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        content: Text('هل تريد سحب هذا الإعلان من السوق؟', textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+        title: Text(ctx.l10n.withdrawListing, textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        content: Text(ctx.l10n.withdrawListingConfirm, textAlign: TextAlign.right, style: GoogleFonts.cairo()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('لا', style: GoogleFonts.cairo(color: const Color(0xFF717973))),
+            child: Text(ctx.l10n.no, style: GoogleFonts.cairo(color: const Color(0xFF717973))),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               marketVm.removeListing(orderId);
             },
-            child: Text('نعم، سحب', style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
+            child: Text(ctx.l10n.yesWithdraw, style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -223,7 +224,7 @@ class RecyclingHomeTab extends StatelessWidget {
     );
   }
 
-  Widget _buildAcceptorRow(List<Order> sales) {
+  Widget _buildAcceptorRow(BuildContext context, List<Order> sales) {
     Color chipBg(OrderStatus s) => switch (s) {
           OrderStatus.pending => const Color(0xFFFEF3C7),
           OrderStatus.accepted => const Color(0xFFD1FAE5),
@@ -284,7 +285,7 @@ class RecyclingHomeTab extends StatelessWidget {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          '+$overflow آخرون',
+                          context.l10n.recyclingAndOthers(overflow),
                           style: GoogleFonts.cairo(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
@@ -311,7 +312,7 @@ class RecyclingHomeTab extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              Text('الملتزمون:',
+              Text(context.l10n.recyclingCommitted,
                   style: GoogleFonts.cairo(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -357,7 +358,7 @@ class RecyclingHomeTab extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'شركة إعادة تدوير',
+                    context.l10n.recyclingCompanyLabel,
                     style: GoogleFonts.cairo(
                       fontSize: 12,
                       color: Colors.white.withValues(alpha: 0.75),
@@ -390,7 +391,7 @@ class RecyclingHomeTab extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        isOpen ? 'مفتوح للاستلام' : 'مغلق مؤقتاً',
+                        isOpen ? context.l10n.recyclingOpenForReceipt : context.l10n.recyclingClosedTemp,
                         style: GoogleFonts.cairo(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -408,7 +409,7 @@ class RecyclingHomeTab extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsRow() {
+  Widget _buildStatsRow(BuildContext context) {
     final inTransitCount = incoming.where((o) => o.status == OrderStatus.inTransit).length;
     final totalWeight = incoming.fold<double>(0, (sum, o) => sum + (o.weightKg ?? 0));
 
@@ -416,13 +417,13 @@ class RecyclingHomeTab extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: Row(
         children: [
-          Expanded(child: _StatCard(value: '${incoming.length}', label: 'شحنات اليوم', icon: Icons.local_shipping_rounded, color: AppColors.statusInTransitText)),
+          Expanded(child: _StatCard(value: '${incoming.length}', label: context.l10n.recyclingTodayShipments, icon: Icons.local_shipping_rounded, color: AppColors.statusInTransitText)),
           const SizedBox(width: 8),
-          Expanded(child: _StatCard(value: '${totalWeight.toStringAsFixed(0)}كغ', label: 'الوزن الكلي', icon: Icons.scale_rounded, color: AppColors.accentAmber)),
+          Expanded(child: _StatCard(value: context.l10n.orderWeightKgLabel(totalWeight.toStringAsFixed(0)), label: context.l10n.recyclingTotalWeight, icon: Icons.scale_rounded, color: AppColors.accentAmber)),
           const SizedBox(width: 8),
-          Expanded(child: _StatCard(value: '${jobs.length}', label: 'وظائف نشطة', icon: Icons.work_rounded, color: AppColors.statusCompletedText)),
+          Expanded(child: _StatCard(value: '${jobs.length}', label: context.l10n.recyclingActiveJobsLabel, icon: Icons.work_rounded, color: AppColors.statusCompletedText)),
           const SizedBox(width: 8),
-          Expanded(child: _StatCard(value: '$inTransitCount', label: 'سائقون قيد التنفيذ', icon: Icons.directions_car_rounded, color: const Color(0xFF7C3AED))),
+          Expanded(child: _StatCard(value: '$inTransitCount', label: context.l10n.recyclingDriversInProgress, icon: Icons.directions_car_rounded, color: const Color(0xFF7C3AED))),
         ],
       ),
     );
@@ -460,7 +461,7 @@ class RecyclingHomeTab extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'نشر وظيفة تجميع',
+                      context.l10n.recyclingPostJob,
                       style: GoogleFonts.cairo(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
@@ -468,7 +469,7 @@ class RecyclingHomeTab extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'أطلب من سائق جمع المخلفات من منطقة محددة',
+                      context.l10n.recyclingPostJobSubtitle,
                       textAlign: TextAlign.right,
                       style: GoogleFonts.cairo(
                         fontSize: 12,

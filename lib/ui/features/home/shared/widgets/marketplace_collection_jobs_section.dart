@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../l10n/l10n.dart';
 import 'package:provider/provider.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../data/models/user.dart';
@@ -32,9 +33,9 @@ class CollectionJobsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverMainAxisGroup(
       slivers: [
-        SliverToBoxAdapter(child: _buildSectionHeader()),
+        SliverToBoxAdapter(child: _buildSectionHeader(context)),
         if (jobs.isEmpty)
-          SliverToBoxAdapter(child: _buildEmptyState())
+          SliverToBoxAdapter(child: _buildEmptyState(context))
         else
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
@@ -59,7 +60,8 @@ class CollectionJobsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader() {
+  Widget _buildSectionHeader(BuildContext context) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 28, 20, 12),
       child: Row(
@@ -89,7 +91,7 @@ class CollectionJobsSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              'من شركات التدوير',
+              l10n.marketJobsFromCompanies,
               style: GoogleFonts.cairo(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
@@ -99,7 +101,7 @@ class CollectionJobsSection extends StatelessWidget {
           ),
           const Spacer(),
           Text(
-            'وظائف التجميع',
+            l10n.marketSegmentJobs,
             style: GoogleFonts.cairo(
               fontSize: 17,
               fontWeight: FontWeight.bold,
@@ -111,7 +113,8 @@ class CollectionJobsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
       child: Container(
@@ -127,7 +130,7 @@ class CollectionJobsSection extends StatelessWidget {
                 size: 36, color: Color(0xFFD1D5DB)),
             const SizedBox(height: 8),
             Text(
-              'لا توجد وظائف تجميع حالياً',
+              l10n.marketNoJobs,
               style: GoogleFonts.cairo(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,

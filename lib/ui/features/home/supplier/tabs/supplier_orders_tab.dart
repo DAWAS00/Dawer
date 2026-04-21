@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../../l10n/l10n.dart';
 import '../../shared/widgets/collection_sale_card.dart';
 import '../widgets/supplier_order_card.dart';
 
@@ -31,14 +32,14 @@ void _showCompleteDialog(
     context: context,
     builder: (ctx) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Text('تأكيد التسليم',
+      title: Text(context.l10n.orderDeliveryConfirmTitle,
           textAlign: TextAlign.right,
           style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text('هل وصلت إلى المنشأة وسلّمت المواد؟',
+          Text(context.l10n.orderDeliveryConfirmMsg,
               textAlign: TextAlign.right,
               style: GoogleFonts.cairo()),
           if (sale.paymentModel == PaymentModel.perKg) ...[
@@ -49,7 +50,7 @@ void _showCompleteDialog(
                   const TextInputType.numberWithOptions(decimal: true),
               textAlign: TextAlign.right,
               decoration: InputDecoration(
-                labelText: 'الوزن الفعلي (كغ) — اختياري',
+                labelText: context.l10n.orderActualWeight,
                 labelStyle: GoogleFonts.cairo(),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -61,7 +62,7 @@ void _showCompleteDialog(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: Text('إلغاء', style: GoogleFonts.cairo()),
+          child: Text(context.l10n.cancel, style: GoogleFonts.cairo()),
         ),
         ElevatedButton(
           onPressed: () {
@@ -89,7 +90,7 @@ void _showCompleteDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12)),
           ),
-          child: Text('تأكيد',
+          child: Text(context.l10n.confirm,
               style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
         ),
       ],
@@ -127,7 +128,7 @@ class SupplierOrdersTab extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top + 20, 20, 16),
             child: Text(
-              'طلباتي',
+              context.l10n.ordersTabTitle,
               textAlign: TextAlign.right,
               style: GoogleFonts.cairo(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
             ),
@@ -149,28 +150,28 @@ class SupplierOrdersTab extends StatelessWidget {
                     child: const Icon(Icons.receipt_long_rounded, size: 64, color: Color(0xFF1E5C35)),
                   ),
                   const SizedBox(height: 24),
-                  Text('لا توجد طلبات بعد', style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFF002819))),
+                  Text(context.l10n.ordersNoOrdersYet, style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFF002819))),
                   const SizedBox(height: 8),
-                  Text('أنشئ طلب استلام جديد من الصفحة الرئيسية', style: GoogleFonts.cairo(fontSize: 14, color: const Color(0xFF717973))),
+                  Text(context.l10n.ordersCreateFromHome, style: GoogleFonts.cairo(fontSize: 14, color: const Color(0xFF717973))),
                 ],
               ),
             ),
           )
         else ...[
           if (collectionSaleOrders.isNotEmpty) ...[
-            _buildSectionHeader('التزامات التجميع', collectionSaleOrders.length, const Color(0xFF14401F)),
+            _buildSectionHeader(context.l10n.ordersCollectionSection, collectionSaleOrders.length, const Color(0xFF14401F)),
             _buildCollectionSalesList(context, collectionSaleOrders),
           ],
           if (activeOrders.isNotEmpty) ...[
-            _buildSectionHeader('الطلبات النشطة', activeOrders.length, const Color(0xFF1E5C35)),
+            _buildSectionHeader(context.l10n.ordersActiveSection, activeOrders.length, const Color(0xFF1E5C35)),
             _buildOrdersList(context, activeOrders, canCancel: true),
           ],
           if (completedOrders.isNotEmpty) ...[
-            _buildSectionHeader('الطلبات المكتملة', completedOrders.length, const Color(0xFF166534)),
+            _buildSectionHeader(context.l10n.ordersCompletedSection, completedOrders.length, const Color(0xFF166534)),
             _buildOrdersList(context, completedOrders),
           ],
           if (cancelledOrders.isNotEmpty) ...[
-            _buildSectionHeader('الطلبات الملغاة', cancelledOrders.length, const Color(0xFF991B1B)),
+            _buildSectionHeader(context.l10n.ordersCancelledSection, cancelledOrders.length, const Color(0xFF991B1B)),
             _buildOrdersList(context, cancelledOrders),
           ],
           const SliverToBoxAdapter(child: SizedBox(height: 100)),

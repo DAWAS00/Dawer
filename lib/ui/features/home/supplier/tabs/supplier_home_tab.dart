@@ -8,6 +8,7 @@ import '../../shared/order_card.dart';
 import '../../shared/order_details_view.dart';
 import '../../shared/viewmodels/marketplace_viewmodel.dart';
 import '../../shared/widgets/market_listing_card.dart';
+import '../../../../../l10n/l10n.dart';
 import '../viewmodels/supplier_home_viewmodel.dart';
 
 class SupplierHomeTab extends StatelessWidget {
@@ -25,19 +26,19 @@ class SupplierHomeTab extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('سحب الإعلان', textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        content: Text('هل تريد سحب هذا الإعلان من السوق؟', textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+        title: Text(ctx.l10n.withdrawListing, textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        content: Text(ctx.l10n.withdrawListingConfirm, textAlign: TextAlign.right, style: GoogleFonts.cairo()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('لا', style: GoogleFonts.cairo(color: const Color(0xFF717973))),
+            child: Text(ctx.l10n.no, style: GoogleFonts.cairo(color: const Color(0xFF717973))),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               context.read<MarketplaceViewModel>().removeListing(orderId);
             },
-            child: Text('نعم، سحب', style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
+            child: Text(ctx.l10n.yesWithdraw, style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -81,7 +82,7 @@ class SupplierHomeTab extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
-                    'طلباتي النشطة',
+                    context.l10n.supplierActiveOrders,
                     textAlign: TextAlign.right,
                     style: GoogleFonts.cairo(
                       fontSize: 17,
@@ -143,7 +144,7 @@ class SupplierHomeTab extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                'منشوراتي في السوق',
+                context.l10n.supplierMyListings,
                 textAlign: TextAlign.right,
                 style: GoogleFonts.cairo(
                   fontSize: 17,
@@ -203,11 +204,11 @@ class SupplierHomeTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'مرحباً، ${userName.split(' ').first}',
+                context.l10n.supplierGreeting(userName.split(' ').first),
                 style: GoogleFonts.cairo(fontSize: 14, color: Colors.white.withValues(alpha: 0.8)),
               ),
               Text(
-                isStore ? 'مورد متجر' : 'مورد فردي',
+                isStore ? context.l10n.supplierStoreType : context.l10n.supplierIndividualType,
                 style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ],
@@ -226,7 +227,7 @@ class SupplierHomeTab extends StatelessWidget {
                   style: GoogleFonts.dmSans(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.accentAmber),
                 ),
                 Text(
-                  'نقطة',
+                  context.l10n.supplierPoints,
                   style: GoogleFonts.cairo(fontSize: 10, color: AppColors.accentAmber),
                 ),
               ],
@@ -276,7 +277,7 @@ class SupplierHomeTab extends StatelessWidget {
                       ),
                     const SizedBox(width: 8),
                     Text(
-                      'السائق في الطريق إليك',
+                      context.l10n.supplierDriverOnWay,
                       style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ],

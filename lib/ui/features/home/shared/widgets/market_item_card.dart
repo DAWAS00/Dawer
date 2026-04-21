@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order_labels.dart';
+import '../../../../../l10n/l10n.dart';
 
 class MarketItemCard extends StatelessWidget {
   final Order item;
@@ -14,12 +16,14 @@ class MarketItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context);
     final timeDiff = DateTime.now().difference(item.createdAt);
     final timeLabel = timeDiff.inDays > 0
-        ? 'منذ ${timeDiff.inDays} يوم'
+        ? l10n.timeAgoDays(timeDiff.inDays)
         : timeDiff.inHours > 0
-            ? 'منذ ${timeDiff.inHours} ساعة'
-            : 'منذ ${timeDiff.inMinutes} دقيقة';
+            ? l10n.timeAgoHours(timeDiff.inHours)
+            : l10n.timeAgoMinutes(timeDiff.inMinutes);
 
     return GestureDetector(
       onTap: onTap,
@@ -77,7 +81,7 @@ class MarketItemCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            type.label,
+                            type.labelFor(locale),
                             style: GoogleFonts.cairo(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
@@ -99,7 +103,7 @@ class MarketItemCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    item.supplierName ?? 'بائع مجهول',
+                    item.supplierName ?? l10n.marketItemUnknownSeller,
                     style: GoogleFonts.cairo(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -155,7 +159,7 @@ class MarketItemCard extends StatelessWidget {
                     Icon(Icons.fitness_center_rounded, size: 13, color: const Color(0xFF717973)),
                     const SizedBox(width: 3),
                     Text(
-                      item.weightCategory!.shortLabel,
+                      item.weightCategory!.shortLabelFor(locale),
                       style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF717973)),
                     ),
                     const SizedBox(width: 12),
@@ -164,7 +168,7 @@ class MarketItemCard extends StatelessWidget {
                     Icon(Icons.category_rounded, size: 13, color: const Color(0xFF717973)),
                     const SizedBox(width: 3),
                     Text(
-                      item.wasteForm!.label,
+                      item.wasteForm!.labelFor(locale),
                       style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF717973)),
                     ),
                   ],

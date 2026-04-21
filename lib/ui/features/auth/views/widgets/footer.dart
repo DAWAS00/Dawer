@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../l10n/l10n.dart';
 
 class LoginFooter extends StatelessWidget {
   const LoginFooter({super.key});
 
-  void _showPolicySheet(BuildContext context, String title) {
+  void _showPolicySheet(BuildContext context, String title, String body) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -48,12 +49,7 @@ class LoginFooter extends StatelessWidget {
                     child: SingleChildScrollView(
                       controller: scrollController,
                       child: Text(
-                        'هذا النص هو نص تجريبي يوضح الشروط والأحكام وسياسة الخصوصية الخاصة بالتطبيق. سيتم تحديث هذا النص لاحقاً ليعكس السياسات الحقيقية والقانونية المعتمدة.\n\n'
-                        '• يلتزم المستخدم بجميع القوانين والأنظمة المعمول بها.\n'
-                        '• يحق للتطبيق الاحتفاظ ببعض البيانات الأساسية لتحسين الخدمة المقدمة.\n'
-                        '• نحتفظ بالحق في تعديل هذه الشروط في أي وقت مع إشعار المستخدمين.\n'
-                        '• خصوصية بياناتك تهمنا، ولن نقوم بمشاركتها مع أطراف ثالثة دون موافقتك الصريحة.\n'
-                        '• باستخدامك لهذا التطبيق، فإنك توافق على جميع الشروط والأحكام المذكورة هنا.\n\n' * 3,
+                        body,
                         style: GoogleFonts.cairo(
                           fontSize: 14,
                           height: 1.8,
@@ -75,7 +71,7 @@ class LoginFooter extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                       child: Text(
-                        'حسناً، فهمت',
+                        context.l10n.footerPolicyOk,
                         style: GoogleFonts.cairo(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -95,6 +91,7 @@ class LoginFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.only(bottom: 32, top: 16),
       child: Column(
@@ -103,9 +100,9 @@ class LoginFooter extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
-                onTap: () => _showPolicySheet(context, 'شروط الخدمة'),
+                onTap: () => _showPolicySheet(context, l10n.footerTerms, l10n.footerPolicyBody),
                 child: Text(
-                  'شروط الخدمة',
+                  l10n.footerTerms,
                   style: GoogleFonts.cairo(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -126,9 +123,9 @@ class LoginFooter extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () => _showPolicySheet(context, 'سياسة الخصوصية'),
+                onTap: () => _showPolicySheet(context, l10n.footerPrivacy, l10n.footerPolicyBody),
                 child: Text(
-                  'سياسة الخصوصية',
+                  l10n.footerPrivacy,
                   style: GoogleFonts.cairo(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -142,7 +139,7 @@ class LoginFooter extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'DIGITAL INFRASTRUCTURE BY GOVERNMENT',
+            l10n.footerInfra,
             textAlign: TextAlign.center,
             style: GoogleFonts.dmSans(
               fontSize: 12,
@@ -153,7 +150,7 @@ class LoginFooter extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'فكرة من عقول الشباب الأردني',
+            l10n.footerIdea,
             textAlign: TextAlign.center,
             style: GoogleFonts.cairo(
               fontSize: 14,

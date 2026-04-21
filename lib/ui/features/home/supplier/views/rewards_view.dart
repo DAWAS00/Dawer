@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/utils/date_formatter.dart';
 import '../../../../../data/models/reward_transaction.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Phase 10 — Rewards Redemption UI.
 /// Shows the supplier's points balance, progress to next tier,
@@ -16,33 +17,34 @@ class RewardsView extends StatelessWidget {
     this.transactions = const [],
   });
 
-  static const _tiers = [
-    (0, 'برونزي', Color(0xFFB45309)),
-    (100, 'فضي', Color(0xFF6B7280)),
-    (300, 'ذهبي', Color(0xFFD97706)),
-    (600, 'بلاتيني', Color(0xFF1E40AF)),
+  List<(int, String, Color)> _tiers(BuildContext context) => [
+    (0, context.l10n.tierBronze, const Color(0xFFB45309)),
+    (100, context.l10n.tierSilver, const Color(0xFF6B7280)),
+    (300, context.l10n.tierGold, const Color(0xFFD97706)),
+    (600, context.l10n.tierPlatinum, const Color(0xFF1E40AF)),
   ];
 
-  (String, Color, int) get _currentTier {
-    for (int i = _tiers.length - 1; i >= 0; i--) {
-      if (totalPoints >= _tiers[i].$1) {
-        return (_tiers[i].$2, _tiers[i].$3, _tiers[i].$1);
+  (String, Color, int) _currentTier(BuildContext context) {
+    final tiers = _tiers(context);
+    for (int i = tiers.length - 1; i >= 0; i--) {
+      if (totalPoints >= tiers[i].$1) {
+        return (tiers[i].$2, tiers[i].$3, tiers[i].$1);
       }
     }
-    return (_tiers[0].$2, _tiers[0].$3, _tiers[0].$1);
+    return (tiers[0].$2, tiers[0].$3, tiers[0].$1);
   }
 
-  int get _nextTierThreshold {
-    for (final tier in _tiers) {
+  int _nextTierThreshold(BuildContext context) {
+    for (final tier in _tiers(context)) {
       if (totalPoints < tier.$1) return tier.$1;
     }
-    return _tiers.last.$1;
+    return _tiers(context).last.$1;
   }
 
   @override
   Widget build(BuildContext context) {
-    final (tierName, tierColor, tierStart) = _currentTier;
-    final nextThreshold = _nextTierThreshold;
+    final (tierName, tierColor, tierStart) = _currentTier(context);
+    final nextThreshold = _nextTierThreshold(context);
     final progress = nextThreshold > tierStart
         ? (totalPoints - tierStart) / (nextThreshold - tierStart)
         : 1.0;
@@ -52,7 +54,7 @@ class RewardsView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF06402B),
         foregroundColor: Colors.white,
-        title: Text('مكافآتي',
+        title: Text(context.l10n.rewardsTitle,
             style: GoogleFonts.cairo(
                 fontWeight: FontWeight.bold, color: Colors.white)),
         centerTitle: true,
@@ -60,12 +62,12 @@ class RewardsView extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          _buildBalanceCard(tierName, tierColor, progress, nextThreshold),
+          _buildBalanceCard(context, tierName, tierColor, progress, nextThreshold),
           const SizedBox(height: 20),
           _buildRedemptionSection(context),
           const SizedBox(height: 20),
           if (transactions.isNotEmpty) ...[
-            Text('سجل المكافآت',
+            Text(context.l10n.rewardsHistoryTitle,
                 textAlign: TextAlign.right,
                 style: GoogleFonts.cairo(
                     fontSize: 16,
@@ -80,7 +82,7 @@ class RewardsView extends StatelessWidget {
                   const Icon(Icons.emoji_events_outlined,
                       size: 64, color: Color(0xFFD97706)),
                   const SizedBox(height: 12),
-                  Text('لا يوجد سجل مكافآت بعد',
+                  Text(context.l10n.rewardsNoHistory,
                       style: GoogleFonts.cairo(
                           fontSize: 14, color: const Color(0xFF717973))),
                 ],
@@ -92,7 +94,7 @@ class RewardsView extends StatelessWidget {
   }
 
   Widget _buildBalanceCard(
-      String tierName, Color tierColor, double progress, int nextThreshold) {
+      BuildContext context, String tierName, Color tierColor, double progress, int nextThreshold) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -135,7 +137,7 @@ class RewardsView extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 color: Colors.white),
           ),
-          Text('نقطة',
+          Text(context.l10n.rewardsPointsLabel,
               style: GoogleFonts.cairo(
                   fontSize: 14, color: Colors.white.withValues(alpha: 0.8))),
           const SizedBox(height: 16),
@@ -151,7 +153,7 @@ class RewardsView extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            '$totalPoints / $nextThreshold نقطة للمستوى التالي',
+            context.l10n.rewardsProgressText(totalPoints, nextThreshold),
             style: GoogleFonts.cairo(
                 fontSize: 11, color: Colors.white.withValues(alpha: 0.7)),
           ),
@@ -161,15 +163,15 @@ class RewardsView extends StatelessWidget {
   }
 
   Widget _buildRedemptionSection(BuildContext context) {
-    const options = [
-      (Icons.discount_rounded, 'خصم على الطلبات', '50 نقطة'),
-      (Icons.card_giftcard_rounded, 'كرت هدية', '100 نقطة'),
-      (Icons.local_shipping_rounded, 'توصيل مجاني', '30 نقطة'),
+    final options = [
+      (Icons.discount_rounded, context.l10n.rewardsDiscountOrders, context.l10n.rewards50Points),
+      (Icons.card_giftcard_rounded, context.l10n.rewardsGiftCard, context.l10n.rewards100Points),
+      (Icons.local_shipping_rounded, context.l10n.rewardsFreeDelivery, context.l10n.rewards30Points),
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text('استبدل نقاطك',
+        Text(context.l10n.rewardsRedeem,
             textAlign: TextAlign.right,
             style: GoogleFonts.cairo(
                 fontSize: 16,
@@ -184,7 +186,7 @@ class RewardsView extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('هذه الميزة قريباً!',
+                      content: Text(context.l10n.rewardsComingSoon,
                           style: GoogleFonts.cairo()),
                       behavior: SnackBarBehavior.floating,
                     ),

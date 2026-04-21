@@ -1,0 +1,516 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Dawar",
+  "appTagline": "Turn Waste Into Value",
+  "appSystemTitle": "Smart Waste Recycling Management System",
+
+  "ok": "OK",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "saveChanges": "Save Changes",
+  "saveEdits": "Save Edits",
+  "edit": "Edit",
+  "delete": "Delete",
+  "yes": "Yes",
+  "no": "No",
+  "or": "or",
+  "logout": "Logout",
+  "logoutConfirm": "Are you sure you want to logout?",
+  "logoutExit": "Exit",
+  "alert": "Alert",
+  "available": "Available",
+  "unavailable": "Unavailable",
+  "greeting": "Hello, {name}",
+  "@greeting": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "navHome": "Home",
+  "navMarket": "Market",
+  "navMyOrders": "My Orders",
+  "navProfile": "Profile",
+  "navOrders": "Orders",
+  "navAccount": "My Account",
+
+  "languageArabic": "العربية",
+  "languageEnglish": "English",
+  "languagePickerTitle": "Language",
+
+  "themeTitle": "Theme",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeAutoFull": "Auto (Phone System)",
+  "themeAutoShort": "Auto",
+
+  "loginMethodEmail": "Email",
+  "loginMethodPhone": "Phone Number",
+  "loginPhoneLabel": "Phone Number",
+  "loginEmailLabel": "Email Address",
+  "loginEmailHint": "example@domain.com",
+  "loginButton": "Login",
+  "loginNoAccount": "Don't have an account?",
+  "loginSignUpNow": "Register Now",
+  "loginCountrySearch": "Search",
+  "loginCountrySearchHint": "Search for country",
+
+  "roleSelectTitle": "Choose Account Type",
+  "roleDriver": "Driver",
+  "roleSupplier": "Supplier",
+  "roleRecyclingCo": "Recycling Company",
+
+  "supplierTypeLabel": "Supplier Type",
+  "supplierTypeIndividual": "Individual",
+  "supplierTypeStore": "Store / Restaurant",
+
+  "footerTerms": "Terms of Service",
+  "footerPrivacy": "Privacy Policy",
+  "footerInfra": "DIGITAL INFRASTRUCTURE BY GOVERNMENT",
+  "footerIdea": "An Idea from Jordanian Youth Minds",
+  "footerPolicyOk": "OK, I Understand",
+  "footerPolicyBody": "This text is a placeholder describing the Terms & Conditions and Privacy Policy of the application. It will be updated later to reflect the actual legal policies.\n\n• The user agrees to comply with all applicable laws and regulations.\n• The app may retain certain basic data to improve the provided service.\n• We reserve the right to modify these terms at any time with user notification.\n• Your data privacy matters to us; we will not share it with third parties without your explicit consent.\n• By using this application, you agree to all Terms & Conditions stated herein.",
+
+  "signupTitle": "Create Account",
+  "signupCreateButton": "Create Account",
+  "signupSubtitle": "Complete your data to join the Dawar platform",
+  "signupSectionBusiness": "Organization Info",
+  "signupCompanyName": "Company Name",
+  "signupStoreName": "Store / Restaurant Name",
+  "signupCompanyNameHint": "Green Environment Company",
+  "signupStoreNameHint": "Al-Aseel Restaurant",
+  "signupManagerName": "Manager Name",
+  "signupStoreOwnerName": "Store Owner Name",
+  "signupExampleName": "Mohammad Ahmad Al-Abdallah",
+  "signupCoverageArea": "Service Area",
+  "signupCoverageHint": "Amman, Zarqa, Irbid...",
+  "signupSectionPersonal": "Personal Information",
+  "signupFullName": "Full Name",
+  "signupFullNameHint": "Ahmad Mohammad Al-Abdallah",
+  "signupNationality": "Nationality",
+  "signupJordanian": "Jordanian",
+  "signupOther": "Other",
+  "signupSectionDocuments": "Official Documents",
+  "signupSectionContact": "Contact Information",
+  "signupContactRequired": "At least one is required",
+  "signupPhone": "Phone Number",
+  "signupPhoneHint": "7X XXX XXXX",
+  "signupEmailLabel": "Email Address",
+  "signupEmailHint": "example@domain.com",
+
+  "verificationTitle": "Verification",
+  "verificationCodeSent": "We sent a 6-digit code",
+  "verificationEnterCode": "Enter Verification Code",
+  "verificationResendAfter": "Resend after",
+  "verificationResend": "Resend",
+  "verificationButton": "Verify",
+  "verificationSecureTitle": "Secure Verification",
+  "verificationSecureSubtitle": "Verification code is secret and protected",
+  "verificationSecureFooter": "Secure and Trusted Verification",
+
+  "driverTitle": "Dawar Driver",
+  "driverActiveOrdersLabel": "Active Order",
+  "driverCompletedOrdersLabel": "Completed Orders",
+  "driverEarningsLabel": "Earnings (JD)",
+  "driverUnavailableTitle": "You are currently unavailable",
+  "driverUnavailableSubtitle": "Change your status to available above to receive new orders",
+  "driverAvailableOrders": "Available Orders",
+  "driverNoAvailableOrders": "No available orders currently",
+  "driverMyListings": "My Market Listings",
+  "driverCurrentTrip": "Your Current Trip",
+  "driverViewDetails": "View Details",
+  "driverPublishToMarket": "Publish to Market",
+  "driverOrdersHistory": "Orders History",
+  "driverNoOrders": "No Orders",
+  "driverNoOrdersYet": "You haven't accepted any orders yet",
+  "driverCollectionCommitments": "Collection Commitments",
+
+  "withdrawListing": "Withdraw Listing",
+  "withdrawListingConfirm": "Do you want to withdraw this listing from the market?",
+  "yesWithdraw": "Yes, Withdraw",
+
+  "profilePersonalAndVehicle": "Personal & Vehicle Info",
+  "profilePhone": "Phone Number",
+  "profileVehicle": "Vehicle",
+  "profileLicensePlate": "License Plate",
+  "profileAddLicensePlate": "Add License Plate",
+  "profileAddVehicleInfo": "Add Vehicle Info",
+  "profileAppSettings": "App Settings",
+  "profileLanguage": "App Language",
+  "profileTheme": "Theme",
+  "profileNotifications": "Notifications",
+  "profileNotificationsEnabled": "Enabled",
+  "profileHelpSupport": "Help & Support",
+  "profileContactSupport": "Contact Technical Support",
+  "profileEditProfile": "Edit Profile",
+  "profileDeleteAccount": "Delete Account",
+  "profileTotalTrips": "Total Trips",
+  "profileTotalEarnings": "Total Earnings",
+  "profileTapToAddPhoto": "Tap to add a photo",
+  "profileEditVehicle": "Edit Vehicle Info",
+  "profileVehicleTypeModel": "Vehicle Type and Model",
+  "profileVehicleTypeModelHint": "Example: Toyota Prius",
+  "profileVehicleColor": "Vehicle Color",
+  "profileVehicleColorHint": "Example: White",
+  "profileVehiclePhoto": "Vehicle Photo",
+
+  "supplierStoreType": "Store Supplier",
+  "supplierIndividualType": "Individual Supplier",
+  "supplierActiveOrders": "My Active Orders",
+  "supplierMyListings": "My Market Listings",
+  "supplierNoOrdersYet": "No active orders",
+  "supplierCreateFromHome": "Tap the + button at the bottom to create a new order",
+  "supplierGreeting": "Hello, {name}",
+  "@supplierGreeting": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "supplierDriverOnWay": "Driver is on the way",
+  "supplierPoints": "Points",
+  "supplierRecyclingPoints": "Recycling Points",
+  "supplierTotalOrders": "Total Orders",
+  "supplierAddress": "Address",
+  "supplierAddAddress": "Add Address",
+  "supplierIdentity": "Identity",
+  "supplierVerified": "Verified",
+  "supplierNotVerified": "Not Verified",
+  "supplierPersonalInfo": "Personal Information",
+  "supplierMyRewards": "My Rewards",
+  "supplierNameLabel": "Name",
+  "supplierNameHint": "Enter your name",
+  "supplierPhoneHint": "+962 7X XXX XXXX",
+  "supplierAddressLabel": "Address",
+  "supplierAddressHint": "Enter your address",
+
+  "ordersTabTitle": "My Orders",
+  "ordersNoOrdersYet": "No orders yet",
+  "ordersCreateFromHome": "Create a new pickup order from the home page",
+  "ordersActiveSection": "Active Orders",
+  "ordersCompletedSection": "Completed Orders",
+  "ordersCancelledSection": "Cancelled Orders",
+  "ordersCollectionSection": "Collection Commitments",
+  "orderDeliveryConfirmTitle": "Confirm Delivery",
+  "orderDeliveryConfirmMsg": "Did you reach the facility and deliver the materials?",
+  "orderActualWeight": "Actual Weight (kg) — Optional",
+  "orderScheduledAt": "Scheduled",
+  "cancelOrderTitle": "Cancel Order",
+  "cancelOrderConfirm": "Are you sure you want to cancel this order?",
+  "yesCancelOrder": "Yes, Cancel",
+
+  "recyclingCompanyLabel": "Recycling Company",
+  "recyclingOpenForReceipt": "Open for Receipt",
+  "recyclingClosedTemp": "Temporarily Closed",
+  "recyclingTodayShipments": "Today's Shipments",
+  "recyclingTotalWeight": "Total Weight",
+  "recyclingActiveJobsLabel": "Active Jobs",
+  "recyclingDriversInProgress": "Drivers in Progress",
+  "recyclingPostJob": "Post Collection Job",
+  "recyclingPostJobSubtitle": "Request a driver to collect waste from a specific area",
+  "recyclingIncomingShipments": "Incoming Shipments",
+  "recyclingActiveCollectionJobs": "Active Collection Jobs",
+  "recyclingMyListings": "My Market Listings",
+  "recyclingCommitted": "Committed:",
+  "recyclingCompanyInfo": "Company Info",
+  "recyclingCompanyPhone": "Contact Number",
+  "recyclingCompanyEmail": "Email Address",
+  "recyclingServiceArea": "Service Area",
+  "recyclingWorkingHours": "Working Hours",
+  "recyclingLicense": "Business License",
+  "recyclingReceivedShipments": "Received Shipments",
+  "recyclingProcessedWeight": "Processed Weight (kg)",
+  "recyclingEditCompany": "Edit Company Data",
+  "recyclingCompanyNameLabel": "Company Name",
+  "recyclingCompanyNameHint": "Enter company name",
+  "recyclingPhoneLabel": "Contact Number",
+  "recyclingPhoneHint": "+962 6X XXX XXXX",
+  "recyclingEmailLabel": "Email Address",
+  "recyclingEmailHint": "info@company.jo",
+  "recyclingAreaLabel": "Service Area",
+  "recyclingAreaHint": "Amman, Zarqa...",
+  "recyclingHoursLabel": "Working Hours",
+  "recyclingHoursHint": "7:00 AM - 5:00 PM",
+  "recyclingLicenseVerified": "Verified",
+  "recyclingLicenseNotVerified": "Not Verified",
+
+  "marketDriverRole": "Receive and Sell",
+  "marketSupplierRole": "Buy and Deliver",
+  "marketRecyclingRole": "Receive at your Facility",
+  "marketTitle": "Market",
+  "marketBrowse": "Browse Materials for Sale",
+  "marketCollectionJobsSubtitle": "Collection Jobs from Recycling Companies",
+  "marketSearch": "Search for materials, seller, or area...",
+  "marketAvailableOffers": "Available Offers",
+  "marketNoOffers": "No offers currently",
+
+  "collectionSaleNew": "New",
+  "collectionSaleJobNumber": "Job No: {id}",
+  "@collectionSaleJobNumber": {
+    "placeholders": {
+      "id": { "type": "String" }
+    }
+  },
+  "collectionSaleDeliveryLocation": "Delivery Location:",
+  "collectionSaleAgreedPrice": "Agreed Price:",
+  "collectionSaleCancelCommitment": "Cancel Commitment",
+  "collectionSaleStartCollection": "Start Collection",
+  "collectionSaleConfirmDelivery": "Confirm Delivery",
+  "collectionSaleCancelTitle": "Cancel Commitment",
+  "collectionSaleCancelConfirm": "Are you sure you want to cancel your commitment to this job?",
+
+  "postMarketTitle": "Post to Market",
+  "postMarketSubtitle": "Add details of the materials you want to sell",
+  "postMarketWasteTypeLabel": "Material Type *",
+  "postMarketWasteFormLabel": "Material Condition",
+  "postMarketPriceLabel": "Asking Price (JD) — Optional",
+  "postMarketImagesLabel": "Material Photos — Optional",
+  "postMarketSubmitButton": "Publish Listing",
+
+  "collectionJobTitle": "Collection Job Details",
+  "collectionJobCollectionArea": "Collection Area: ",
+  "collectionJobDeleteTitle": "Delete Job",
+  "collectionJobDeleteConfirm": "Are you sure? This action cannot be undone.",
+  "collectionJobAccepted": "Job accepted — check your orders",
+  "collectionJobAcceptButton": "Accept Job",
+  "collectionJobAcceptSellButton": "Accept and Sell Waste",
+  "collectionJobRequiredMaterials": "Required Material Types",
+  "collectionJobPricingTitle": "Pricing and Payment",
+  "collectionJobDescTitle": "Job Description",
+  "collectionJobRecyclingCoLabel": "Recycling Co",
+
+  "marketItemSellerLabel": "Seller",
+  "marketItemPickupAddressLabel": "Pickup Address",
+  "marketItemDistanceLabel": "Estimated Distance",
+  "marketItemDistanceValue": "{distance} km from your location",
+  "@marketItemDistanceValue": {
+    "placeholders": {
+      "distance": { "type": "String" }
+    }
+  },
+  "marketItemConditionLabel": "Condition",
+  "marketItemWeightLabel": "Weight",
+  "marketItemPublishDateLabel": "Publish Date",
+  "marketItemUnknown": "Unspecified",
+  "marketItemUnknownSeller": "Unknown Seller",
+  "marketItemDriverReceive": "Receive Item",
+  "marketItemBuyNow": "Buy Now",
+  "marketItemCompanyReceive": "Receive at Facility",
+  "marketItemPurchasedPickup": "Purchased! You can pick up from the market.",
+  "marketItemReceived": "Item received successfully!",
+  "marketItemPurchasedDriver": "Purchased! A driver will be sent for pickup.",
+  "marketItemFacilityReceived": "Receipt registered at facility!",
+
+  "rateDriverTitle": "Rate Driver",
+  "rateDriverSubmit": "Submit Rating",
+  "rateDriverSkip": "Skip",
+
+  "rewardsTitle": "My Rewards",
+  "rewardsHistoryTitle": "Rewards History",
+  "rewardsNoHistory": "No rewards history yet",
+  "rewardsPointsLabel": "Points",
+  "rewardsRedeem": "Redeem Your Points",
+  "rewardsComingSoon": "This feature is coming soon!",
+  "rewardsProgressText": "{points} / {threshold} points to next level",
+  "@rewardsProgressText": {
+    "placeholders": {
+      "points": { "type": "int" },
+      "threshold": { "type": "int" }
+    }
+  },
+  "rewardsDiscountOrders": "Order Discount",
+  "rewardsGiftCard": "Gift Card",
+  "rewardsFreeDelivery": "Free Delivery",
+  "rewards50Points": "50 Points",
+  "rewards100Points": "100 Points",
+  "rewards30Points": "30 Points",
+  "tierBronze": "Bronze",
+  "tierSilver": "Silver",
+  "tierGold": "Gold",
+  "tierPlatinum": "Platinum",
+
+  "mapsComingSoon": "Google Maps will be connected soon",
+
+  "marketSegmentJobs": "Collection Jobs",
+  "marketJobsFromCompanies": "From Recycling Companies",
+  "marketNoJobs": "No collection jobs currently",
+  "collectionJobBadge": "Collection Job",
+  "collectionJobEdited": "Edited",
+  "collectionJobEditedAt": "This job was edited {time}",
+  "@collectionJobEditedAt": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "collectionJobMinQtyChip": "Minimum: {n} kg",
+  "@collectionJobMinQtyChip": {
+    "placeholders": {
+      "n": { "type": "String" }
+    }
+  },
+  "recyclingAndOthers": "+{count} others",
+  "@recyclingAndOthers": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "collectionJobMinQtyFrom": "From {min} kg",
+  "@collectionJobMinQtyFrom": {
+    "placeholders": {
+      "min": { "type": "String" }
+    }
+  },
+  "timeAgoDays": "{n}d ago",
+  "@timeAgoDays": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "timeAgoHours": "{n}h ago",
+  "@timeAgoHours": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "timeAgoMinutes": "{n}m ago",
+  "@timeAgoMinutes": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "marketListingStatusPending": "Awaiting Buyer",
+  "marketListingStatusAccepted": "Purchased",
+  "marketListingStatusInTransit": "In Delivery",
+  "marketListingStatusCompleted": "Completed",
+  "marketListingStatusCancelled": "Cancelled",
+
+  "orderStatusPending": "Awaiting",
+  "orderStatusAccepted": "Accepted",
+  "orderStatusInTransit": "In Transit",
+  "orderStatusCompleted": "Completed",
+  "orderStatusCancelled": "Cancelled",
+  "orderWaitingTime": "Waiting Time",
+  "orderArrivalTime": "Arrival Time",
+  "orderEarningsLabel": "Earnings",
+  "orderCurrencyJD": "JD",
+  "orderAcceptButton": "Accept Order",
+  "orderViewRoute": "View Route",
+
+  "orderDriverOnWay": "Driver is on the way to you",
+  "orderChatButton": "Chat",
+  "orderWhatsAppButton": "WhatsApp",
+  "orderChatComingSoon": "Chat with driver coming soon",
+  "orderWhatsAppFailed": "Could not open WhatsApp",
+
+  "orderStatusTitle": "Order Status",
+  "orderStatusStepPending": "Awaiting",
+  "orderStatusStepAccepted": "Accepted",
+  "orderStatusStepInTransit": "In Transit",
+  "orderStatusStepCompleted": "Completed",
+
+  "orderDetailsTitle": "Order Details",
+  "orderFromLabel": "From",
+  "orderToLabel": "To",
+  "orderDistKm": "{d} km",
+  "@orderDistKm": {
+    "placeholders": {
+      "d": { "type": "String" }
+    }
+  },
+  "orderWeightKgLabel": "{w} kg",
+  "@orderWeightKgLabel": {
+    "placeholders": {
+      "w": { "type": "String" }
+    }
+  },
+  "orderRewardJD": "{r} JD",
+  "@orderRewardJD": {
+    "placeholders": {
+      "r": { "type": "String" }
+    }
+  },
+
+  "orderDriverSection": "Driver",
+  "orderDriverArrives": "Arrives in {eta}",
+  "@orderDriverArrives": {
+    "placeholders": {
+      "eta": { "type": "String" }
+    }
+  },
+
+  "orderCompletionTitle": "Complete Trip",
+  "orderPhotoCamera": "Take Photo",
+  "orderPhotoGallery": "Choose from Gallery",
+  "orderCompleteDialogTitle": "Complete Order",
+  "orderCompleteDialogMsg": "Are you sure you have delivered the order and received the payment?\nUpon completion, you will be able to receive new orders.",
+  "orderConfirmComplete": "Confirm Completion",
+  "orderProofPhotoHint": "Take proof of receipt photo (optional)",
+  "orderAmountLabel": "Amount to collect:",
+  "orderFinishButton": "Finish Order",
+
+  "orderProofTitle": "Proof of Receipt & Delivery",
+  "orderProofLinkBroken": "Link points to a temporarily unavailable file",
+  "orderRateDriver": "Rate Driver",
+  "orderWhatsAppWaiting": "Hello, I am waiting to be picked up.",
+
+  "marketItemPriceLabel": "Material Price",
+  "marketItemNegotiable": "Negotiable",
+  "marketItemDescriptionLabel": "Product Description",
+  "marketListingPrice": "{price} JD",
+  "@marketListingPrice": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+
+  "collectionSaleDetailTitle": "Commitment Details",
+  "collectionSaleDeliveryLocationNoColon": "Delivery Location",
+  "collectionSaleAgreedPriceNoColon": "Agreed Price",
+  "collectionSaleAgreementTitle": "Agreement Details",
+  "collectionSaleDeliveryMethodLabel": "Delivery Method",
+  "collectionSaleTransactionTypeLabel": "Transaction Type",
+  "collectionSaleWasteTypesLabel": "Waste Types",
+  "collectionSaleCompanyNote": "Company: {note}",
+  "@collectionSaleCompanyNote": {
+    "placeholders": {
+      "note": { "type": "String" }
+    }
+  },
+  "collectionSaleCommitmentNumber": "Commitment No.",
+  "collectionSaleJobNumberLabel": "Job No.",
+  "collectionSaleAcceptedAt": "Accepted",
+
+  "orderTrackButton": "Track",
+
+  "rateDriverExperience": "How was your experience with the driver?",
+  "rateDriverPickLabel": "Choose your rating",
+  "rateDriverPoor": "Poor",
+  "rateDriverFair": "Fair",
+  "rateDriverGood": "Good",
+  "rateDriverExcellent": "Excellent",
+
+  "imagePickerCamera": "Camera",
+  "imagePickerGallery": "Gallery",
+  "imagePickerSourceTitle": "Choose Image Source",
+  "imagePickerAddPhoto": "Add Photo",
+
+  "newOrderSelectButton": "Select",
+  "newOrderTapToSelectLocation": "Tap to select location on the map",
+  "newOrderCurrentAddress": "My Current Address",
+  "newOrderTitle": "New Pickup Request",
+  "newOrderSubtitle": "Add details of the waste you want to dispose of",
+  "newOrderWasteTypeLabel": "Waste Type *",
+  "newOrderWasteFormLabel": "Waste Condition",
+  "newOrderWeightCategoryLabel": "Quantity Size *",
+  "newOrderPickupAddressLabel": "Pickup Address",
+  "newOrderImagesLabel": "Waste Photos — Optional",
+  "newOrderPickupTargetLabel": "Waste Destination *",
+  "newOrderPriceLabel": "Material Price (JD) — Optional",
+  "newOrderPriceHintDriver": "The price you want for selling materials to the driver",
+  "newOrderPriceHintCompany": "The price you want for selling materials to the company",
+  "newOrderNotesLabel": "Notes — Optional",
+  "newOrderNotesHint": "Example: Approx. 20 plastic bags...",
+  "newOrderDeliveryFeeLabel": "Delivery Fee",
+  "newOrderDeliveryFeeSubtitle": "Calculated automatically by distance and size",
+  "newOrderSubmitButton": "Submit Request"
+}

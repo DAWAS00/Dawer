@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../l10n/l10n.dart';
 import 'supplier_nav_item.dart';
 
 /// Shared bottom navigation bar used by both [SupplierHomeView] and
@@ -14,15 +15,15 @@ class SupplierBottomNav extends StatelessWidget {
     required this.onTabChanged,
   });
 
-  static const _items = [
-    (Icons.home_rounded, 'الرئيسية'),
-    (Icons.storefront_rounded, 'السوق'),
-    (Icons.receipt_long_rounded, 'طلباتي'),
-    (Icons.person_rounded, 'حسابي'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final items = [
+      (Icons.home_rounded, l10n.navHome),
+      (Icons.storefront_rounded, l10n.navMarket),
+      (Icons.receipt_long_rounded, l10n.navMyOrders),
+      (Icons.person_rounded, l10n.navProfile),
+    ];
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -40,10 +41,10 @@ class SupplierBottomNav extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              for (int i = 0; i < _items.length; i++)
+              for (int i = 0; i < items.length; i++)
                 SupplierNavItem(
-                  icon: _items[i].$1,
-                  label: _items[i].$2,
+                  icon: items[i].$1,
+                  label: items[i].$2,
                   isSelected: currentTab == i,
                   onTap: () => onTabChanged(i),
                 ),

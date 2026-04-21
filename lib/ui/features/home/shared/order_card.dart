@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../data/models/order.dart';
+import '../../../../data/models/order_labels.dart';
+import '../../../../l10n/l10n.dart';
 import 'order_details_view.dart';
 
 enum OrderCardMode { driverAvailable, driverHistory, driverActive, supplierActive, companyIncoming, companyJob }
@@ -20,6 +22,8 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context);
     return GestureDetector(
       onTap: (mode == OrderCardMode.driverAvailable || mode == OrderCardMode.driverHistory)
           ? () => Navigator.of(context).push(
@@ -43,13 +47,13 @@ class OrderCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildHeader(),
+            _buildHeader(l10n),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  _buildWasteChips(),
+                  _buildWasteChips(locale),
                   const SizedBox(height: 10),
                   _buildAddressRow(),
                   const SizedBox(height: 12),
@@ -63,8 +67,8 @@ class OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
-    final (Color bg, Color text, String label) = _statusStyle();
+  Widget _buildHeader(AppLocalizations l10n) {
+    final (Color bg, Color text, String label) = _statusStyle(l10n);
     final dateString = '${order.createdAt.day.toString().padLeft(2, '0')}/${order.createdAt.month.toString().padLeft(2, '0')}/${order.createdAt.year}';
     
     return Container(
@@ -123,7 +127,7 @@ class OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildWasteChips() {
+  Widget _buildWasteChips(Locale locale) {
     return Wrap(
       spacing: 6,
       runSpacing: 4,
@@ -136,7 +140,7 @@ class OrderCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
-            t.label,
+            t.labelFor(locale),
             style: GoogleFonts.cairo(
               fontSize: 12,
               color: const Color(0xFF404943),
@@ -175,6 +179,7 @@ class OrderCard extends StatelessWidget {
   }
 
   Widget _buildFooterRow(BuildContext context) {
+    final l10n = context.l10n;
     // If it's a driver viewing an accepted order, they need to see the timer and start button
     final isDriverAccepted = mode == OrderCardMode.driverActive &&
         order.status == OrderStatus.accepted;
@@ -194,7 +199,7 @@ class OrderCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'وقت الانتظار',
+                context.l10n.orderWaitingTime,
                 style: GoogleFonts.cairo(
                   fontSize: 10,
                   color: const Color(0xFF717973),
@@ -204,14 +209,13 @@ class OrderCard extends StatelessWidget {
               _TimerSinceAccepted(acceptedAt: order.acceptedAt!),
             ],
           ),
-        ] else ...[
-          // Regular ETA or Reward Display
+        ] else ...[          // Regular ETA or Reward Display
           if (order.eta != null) ...[
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'وقت الوصول',
+                  l10n.orderArrivalTime,
                   style: GoogleFonts.cairo(
                     fontSize: 10,
                     color: const Color(0xFF717973),
@@ -243,7 +247,7 @@ class OrderCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'العائد',
+                  l10n.orderEarningsLabel,
                   style: GoogleFonts.cairo(
                     fontSize: 10,
                     color: const Color(0xFF717973),
@@ -264,7 +268,7 @@ class OrderCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'دينار',
+                      l10n.orderCurrencyJD,
                       style: GoogleFonts.cairo(
                         fontSize: 10,
                         color: AppColors.statusActiveText,
@@ -283,13 +287,13 @@ class OrderCard extends StatelessWidget {
         if (mode == OrderCardMode.driverAvailable)
           SizedBox(
             width: 110,
-            child: _ActionButton(label: 'اقبل الطلب', onTap: onAction ?? () {}),
+            child: _ActionButton(label: context.l10n.orderAcceptButton, onTap: onAction ?? () {}),
           ),
         if (mode == OrderCardMode.companyJob)
           SizedBox(
             width: 110,
             child: _ActionButton(
-              label: 'عرض التفاصيل',
+              label: context.l10n.driverViewDetails,
               outlined: true,
               onTap: onAction ??
                   () => Navigator.of(context).push(
@@ -303,7 +307,7 @@ class OrderCard extends StatelessWidget {
           SizedBox(
             width: 110,
             child: _ActionButton(
-              label: 'عرض التفاصيل',
+              label: context.l10n.driverViewDetails,
               outlined: true,
               onTap: onAction ??
                   () => Navigator.of(context).push(
@@ -317,7 +321,7 @@ class OrderCard extends StatelessWidget {
           SizedBox(
             width: 110,
             child: _ActionButton(
-              label: isDriverAccepted ? 'عرض المسار' : 'عرض التفاصيل',
+              label: isDriverAccepted ? context.l10n.orderViewRoute : context.l10n.driverViewDetails,
               outlined: !isDriverAccepted,
               onTap: onAction ??
                   () => Navigator.of(context).push(
@@ -331,7 +335,7 @@ class OrderCard extends StatelessWidget {
           SizedBox(
             width: 110,
             child: _ActionButton(
-              label: 'عرض التفاصيل',
+              label: context.l10n.driverViewDetails,
               outlined: true,
               onTap: onAction ??
                   () => Navigator.of(context).push(
@@ -345,18 +349,18 @@ class OrderCard extends StatelessWidget {
     );
   }
 
-  (Color, Color, String) _statusStyle() {
+  (Color, Color, String) _statusStyle(AppLocalizations l10n) {
     switch (order.status) {
       case OrderStatus.pending:
-        return (AppColors.statusPendingBg, AppColors.statusPendingText, 'قيد الانتظار');
+        return (AppColors.statusPendingBg, AppColors.statusPendingText, l10n.orderStatusPending);
       case OrderStatus.accepted:
-        return (AppColors.statusActiveBg, AppColors.statusActiveText, 'تم القبول');
+        return (AppColors.statusActiveBg, AppColors.statusActiveText, l10n.orderStatusAccepted);
       case OrderStatus.inTransit:
-        return (AppColors.statusInTransitBg, AppColors.statusInTransitText, 'في الطريق');
+        return (AppColors.statusInTransitBg, AppColors.statusInTransitText, l10n.orderStatusInTransit);
       case OrderStatus.completed:
-        return (AppColors.statusCompletedBg, AppColors.statusCompletedText, 'مكتمل');
+        return (AppColors.statusCompletedBg, AppColors.statusCompletedText, l10n.orderStatusCompleted);
       case OrderStatus.cancelled:
-        return (AppColors.statusCancelledBg, AppColors.statusCancelledText, 'ملغي');
+        return (AppColors.statusCancelledBg, AppColors.statusCancelledText, l10n.orderStatusCancelled);
     }
   }
 }

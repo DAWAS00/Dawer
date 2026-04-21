@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../l10n/l10n.dart';
 import 'image_picker_grid.dart';
 
 class NewOrderSheet extends StatefulWidget {
@@ -97,7 +98,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
     final price = double.tryParse(_priceCtrl.text.trim());
     widget.onSubmit(
       wasteTypes: _selected.toList(),
-      pickupAddress: 'عنواني الحالي',
+      pickupAddress: context.l10n.newOrderCurrentAddress,
       images: List.from(_images),
       notes: _notesCtrl.text.trim().isNotEmpty ? _notesCtrl.text.trim() : null,
       wasteForm: _wasteForm,
@@ -147,11 +148,11 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'طلب استلام جديد',
+                      context.l10n.newOrderTitle,
                       style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
                     ),
                     Text(
-                      'أضف تفاصيل المخلفات التي تريد التخلص منها',
+                      context.l10n.newOrderSubtitle,
                       style: GoogleFonts.cairo(fontSize: 12, color: const Color(0xFF717973)),
                     ),
                   ],
@@ -161,7 +162,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 1. Waste type selection ──
-            _buildSectionLabel('نوع المخلفات *'),
+            _buildSectionLabel(context.l10n.newOrderWasteTypeLabel),
             const SizedBox(height: 10),
             Wrap(
               spacing: 8,
@@ -204,7 +205,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 2. Waste form ──
-            _buildSectionLabel('حالة المخلفات'),
+            _buildSectionLabel(context.l10n.newOrderWasteFormLabel),
             const SizedBox(height: 10),
             Row(
               children: _wasteFormOptions.reversed.map((entry) {
@@ -246,7 +247,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 3. Weight category ──
-            _buildSectionLabel('حجم الكمية *'),
+            _buildSectionLabel(context.l10n.newOrderWeightCategoryLabel),
             const SizedBox(height: 10),
             ...WeightCategory.values.map((cat) {
               final isSelected = _weightCategory == cat;
@@ -312,13 +313,13 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 4. Pickup address (Google Maps placeholder) ──
-            _buildSectionLabel('عنوان الاستلام'),
+            _buildSectionLabel(context.l10n.newOrderPickupAddressLabel),
             const SizedBox(height: 8),
             GestureDetector(
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('سيتم ربط خرائط جوجل قريباً', style: GoogleFonts.cairo()),
+                    content: Text(context.l10n.mapsComingSoon, style: GoogleFonts.cairo()),
                     backgroundColor: const Color(0xFF1E5C35),
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -342,7 +343,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        'تحديد',
+                        context.l10n.newOrderSelectButton,
                         style: GoogleFonts.cairo(fontSize: 12, fontWeight: FontWeight.bold, color: const Color(0xFF06402B)),
                       ),
                     ),
@@ -351,11 +352,11 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          'عنواني الحالي',
+                          context.l10n.newOrderCurrentAddress,
                           style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
                         ),
                         Text(
-                          'اضغط لتحديد الموقع على الخريطة',
+                          context.l10n.newOrderTapToSelectLocation,
                           style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF717973)),
                         ),
                       ],
@@ -377,7 +378,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 5. Images ──
-            _buildSectionLabel('صور المخلفات — اختياري'),
+            _buildSectionLabel(context.l10n.newOrderImagesLabel),
             const SizedBox(height: 8),
             ImagePickerGrid(
               imagePaths: _images,
@@ -387,7 +388,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 6. Pickup target (company vs rider buy) ──
-            _buildSectionLabel('وجهة المخلفات *'),
+            _buildSectionLabel(context.l10n.newOrderPickupTargetLabel),
             const SizedBox(height: 10),
             Row(
               children: PickupTarget.values.reversed.map((target) {
@@ -440,12 +441,12 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 7. Item price ──
-            _buildSectionLabel('سعر المواد (د.أ) — اختياري'),
+            _buildSectionLabel(context.l10n.newOrderPriceLabel),
             const SizedBox(height: 4),
             Text(
               _pickupTarget == PickupTarget.riderBuy
-                  ? 'السعر الذي تريده مقابل بيع المواد للسائق'
-                  : 'السعر الذي تريده مقابل بيع المواد للشركة',
+                  ? context.l10n.newOrderPriceHintDriver
+                  : context.l10n.newOrderPriceHintCompany,
               style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF717973)),
             ),
             const SizedBox(height: 8),
@@ -467,7 +468,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                   contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                   suffixIcon: Padding(
                     padding: const EdgeInsets.only(left: 14),
-                    child: Text('د.أ', style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF717973))),
+                    child: Text(context.l10n.orderCurrencyJD, style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF717973))),
                   ),
                   suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
                   prefixIcon: Icon(
@@ -481,7 +482,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 8. Notes ──
-            _buildSectionLabel('ملاحظات — اختياري'),
+            _buildSectionLabel(context.l10n.newOrderNotesLabel),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
@@ -494,7 +495,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                 textAlign: TextAlign.right,
                 style: GoogleFonts.cairo(fontSize: 14, color: const Color(0xFF191C1B)),
                 decoration: InputDecoration(
-                  hintText: 'مثال: الكميّة تقريباً ٢٠ كيس بلاستيك...',
+                  hintText: context.l10n.newOrderNotesHint,
                   hintStyle: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF6B7280).withValues(alpha: 0.5)),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.all(14),
@@ -515,7 +516,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
               child: Row(
                 children: [
                   Text(
-                    '${_deliveryFee.toStringAsFixed(1)} د.أ',
+                    '${_deliveryFee.toStringAsFixed(1)} ${context.l10n.orderCurrencyJD}',
                     style: GoogleFonts.dmSans(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFFC8860A)),
                   ),
                   const Spacer(),
@@ -523,11 +524,11 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        'رسوم التوصيل',
+                        context.l10n.newOrderDeliveryFeeLabel,
                         style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF92400E)),
                       ),
                       Text(
-                        'تُحسب تلقائياً حسب المسافة والحجم',
+                        context.l10n.newOrderDeliveryFeeSubtitle,
                         style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFFB45309)),
                       ),
                     ],
@@ -555,7 +556,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'إرسال الطلب',
+                      context.l10n.newOrderSubmitButton,
                       style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                     const SizedBox(width: 8),

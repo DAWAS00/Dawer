@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../../l10n/l10n.dart';
 import '../../shared/order_card.dart';
 import '../../shared/order_details_view.dart';
 import '../../shared/widgets/collection_sale_card.dart';
@@ -32,14 +33,14 @@ void _showCompleteDialog(
     context: context,
     builder: (ctx) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Text('تأكيد التسليم',
+      title: Text(context.l10n.orderDeliveryConfirmTitle,
           textAlign: TextAlign.right,
           style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text('هل وصلت إلى المنشأة وسلّمت المواد؟',
+          Text(context.l10n.orderDeliveryConfirmMsg,
               textAlign: TextAlign.right,
               style: GoogleFonts.cairo()),
           if (sale.paymentModel == PaymentModel.perKg) ...[
@@ -50,7 +51,7 @@ void _showCompleteDialog(
                   const TextInputType.numberWithOptions(decimal: true),
               textAlign: TextAlign.right,
               decoration: InputDecoration(
-                labelText: 'الوزن الفعلي (كغ) — اختياري',
+                labelText: context.l10n.orderActualWeight,
                 labelStyle: GoogleFonts.cairo(),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -62,7 +63,7 @@ void _showCompleteDialog(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: Text('إلغاء', style: GoogleFonts.cairo()),
+          child: Text(context.l10n.cancel, style: GoogleFonts.cairo()),
         ),
         ElevatedButton(
           onPressed: () {
@@ -90,7 +91,7 @@ void _showCompleteDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12)),
           ),
-          child: Text('تأكيد',
+          child: Text(context.l10n.confirm,
               style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
         ),
       ],
@@ -130,7 +131,7 @@ class DriverOrdersTab extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(
                 20, MediaQuery.of(context).padding.top + 20, 20, 16),
             child: Text(
-              'سجل الطلبات',
+              context.l10n.driverOrdersHistory,
               textAlign: TextAlign.right,
               style: GoogleFonts.cairo(
                 fontSize: 20,
@@ -161,7 +162,7 @@ class DriverOrdersTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'لا توجد طلبات',
+                    context.l10n.driverNoOrders,
                     style: GoogleFonts.cairo(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -170,7 +171,7 @@ class DriverOrdersTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'لم تقم بقبول أي طلبات بعد',
+                    context.l10n.driverNoOrdersYet,
                     style: GoogleFonts.cairo(
                       fontSize: 14,
                       color: const Color(0xFF717973),
@@ -239,7 +240,7 @@ class DriverOrdersTab extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                'التزامات التجميع',
+                context.l10n.driverCollectionCommitments,
                 style: GoogleFonts.cairo(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

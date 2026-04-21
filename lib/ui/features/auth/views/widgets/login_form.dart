@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:country_picker/country_picker.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../common/green_button.dart';
+import '../../../../../l10n/l10n.dart';
 import '../../viewmodels/login_viewmodel.dart';
 import '../signup_view.dart';
 import 'supplier_sub_type_selector.dart';
@@ -15,6 +16,7 @@ class LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<LoginViewModel>();
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -49,7 +51,7 @@ class LoginForm extends StatelessWidget {
                           : null,
                     ),
                     child: Text(
-                      'بريد إلكتروني',
+                      l10n.loginMethodEmail,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.cairo(
                         fontSize: 14,
@@ -83,7 +85,7 @@ class LoginForm extends StatelessWidget {
                           : null,
                     ),
                     child: Text(
-                      'رقم الهاتف',
+                      l10n.loginMethodPhone,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.cairo(
                         fontSize: 14,
@@ -110,7 +112,7 @@ class LoginForm extends StatelessWidget {
           _buildInputField(
             context: context,
             isPhone: true,
-            label: 'رقم الهاتف',
+            label: l10n.loginPhoneLabel,
             hintText: '',
             onChanged: viewModel.setPhoneNumber,
             countryCode: viewModel.selectedCountryCode,
@@ -121,8 +123,8 @@ class LoginForm extends StatelessWidget {
           _buildInputField(
             context: context,
             isPhone: false,
-            label: 'البريد الإلكتروني',
-            hintText: 'example@domain.com',
+            label: l10n.loginEmailLabel,
+            hintText: l10n.loginEmailHint,
             onChanged: viewModel.setEmail,
             countryCode: '',
             dialCode: '',
@@ -142,7 +144,7 @@ class LoginForm extends StatelessWidget {
         ],
         const SizedBox(height: 24),
         GreenButton(
-          text: 'تسجيل الدخول',
+          text: l10n.loginButton,
           onPressed: () => viewModel.sendVerificationCode(),
           isLoading: viewModel.isLoading,
           borderRadius: 14,
@@ -172,7 +174,7 @@ class LoginForm extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'ليس لديك حساب؟',
+                  l10n.loginNoAccount,
                   style: GoogleFonts.cairo(
                     fontSize: 16,
                     color: const Color(0xFF717973),
@@ -180,7 +182,7 @@ class LoginForm extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  'سجّل الآن',
+                  l10n.loginSignUpNow,
                   style: GoogleFonts.cairo(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -207,6 +209,7 @@ class LoginForm extends StatelessWidget {
     required String dialCode,
     required Function(String code, String dialCode) onCountryChanged,
   }) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -241,8 +244,8 @@ class LoginForm extends StatelessWidget {
                           topRight: Radius.circular(20.0),
                         ),
                         inputDecoration: InputDecoration(
-                          labelText: 'بحث',
-                          hintText: 'ابحث عن الدولة',
+                          labelText: l10n.loginCountrySearch,
+                          hintText: l10n.loginCountrySearchHint,
                           prefixIcon: const Icon(Icons.search),
                           border: OutlineInputBorder(
                             borderSide: BorderSide(

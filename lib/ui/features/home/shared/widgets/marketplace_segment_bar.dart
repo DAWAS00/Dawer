@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Sticky segment selector for the marketplace tab.
 /// Shows two tabs: seller listings and collection jobs.
@@ -19,6 +20,7 @@ class MarketplaceSegmentBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       color: const Color(0xFFF4F6F4),
       padding: const EdgeInsets.fromLTRB(15, 5, 15, 10),
@@ -38,7 +40,7 @@ class MarketplaceSegmentBar extends StatelessWidget {
         child: Row(
           children: [
             _SegmentOption(
-              label: 'وظائف التجميع',
+              label: l10n.marketSegmentJobs,
               icon: Icons.work_rounded,
               count: jobsCount,
               isSelected: selectedIndex == 1,
@@ -47,7 +49,7 @@ class MarketplaceSegmentBar extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             _SegmentOption(
-              label: 'العروض المتاحة',
+              label: l10n.marketAvailableOffers,
               icon: Icons.storefront_rounded,
               count: listingsCount,
               isSelected: selectedIndex == 0,

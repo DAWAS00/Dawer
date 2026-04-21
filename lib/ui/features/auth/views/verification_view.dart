@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/login_viewmodel.dart';
 import '../viewmodels/verification_viewmodel.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../common/green_button.dart';
 import '../../home/home_router.dart';
 
@@ -201,7 +202,7 @@ class _VerificationScreenState extends State<_VerificationScreen> {
         ),
       ),
       title: Text(
-        'التحقق',
+        context.l10n.verificationTitle,
         style: GoogleFonts.manrope(
           fontSize: 18,
           fontWeight: FontWeight.w600,
@@ -242,7 +243,7 @@ class _VerificationScreenState extends State<_VerificationScreen> {
         ),
         const SizedBox(height: 4),
         Text(
-          'أرسلنا رمزاً مكوناً من 6 أرقام',
+          context.l10n.verificationCodeSent,
           textAlign: TextAlign.center,
           style: GoogleFonts.cairo(
             fontSize: 14,
@@ -276,7 +277,7 @@ class _VerificationScreenState extends State<_VerificationScreen> {
         children: [
           // Label row
           Text(
-            'أدخل رمز التحقق',
+            context.l10n.verificationEnterCode,
             textAlign: TextAlign.right,
             style: GoogleFonts.cairo(
               fontSize: 20,
@@ -346,7 +347,7 @@ class _VerificationScreenState extends State<_VerificationScreen> {
                 const SizedBox(width: 8),
                 if (!viewModel.canResend) ...[
                   Text(
-                    'إعادة الإرسال بعد',
+                    context.l10n.verificationResendAfter,
                     style: GoogleFonts.cairo(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -369,7 +370,7 @@ class _VerificationScreenState extends State<_VerificationScreen> {
                       _clearAll();
                     },
                     child: Text(
-                      'إعادة الإرسال',
+                      context.l10n.verificationResend,
                       style: GoogleFonts.cairo(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -400,7 +401,7 @@ class _VerificationScreenState extends State<_VerificationScreen> {
 
           // Verify button
           GreenButton(
-            text: 'تحقق',
+            text: context.l10n.verificationButton,
             onPressed: () => context.read<VerificationViewModel>().verify(),
             isLoading: viewModel.isLoading,
             height: 58,
@@ -431,7 +432,7 @@ class _VerificationScreenState extends State<_VerificationScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'تحقق آمن',
+                  context.l10n.verificationSecureTitle,
                   textAlign: TextAlign.right,
                   style: GoogleFonts.cairo(
                     fontSize: 14,
@@ -441,7 +442,7 @@ class _VerificationScreenState extends State<_VerificationScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'رمز التحقق سري ومحمي',
+                  context.l10n.verificationSecureSubtitle,
                   textAlign: TextAlign.right,
                   style: GoogleFonts.cairo(
                     fontSize: 12,
@@ -490,7 +491,7 @@ class _VerificationScreenState extends State<_VerificationScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'تحقق آمن وموثوق',
+                    context.l10n.verificationSecureFooter,
                     style: GoogleFonts.cairo(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,

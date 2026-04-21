@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order_labels.dart';
+import '../../../../../l10n/l10n.dart';
 import '../views/collection_sale_detail_view.dart';
 
 /// Card shown in a driver's or supplier's orders list for a collection-sale
@@ -66,9 +68,9 @@ class CollectionSaleCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          _buildTopRow(),
+          _buildTopRow(context),
           const SizedBox(height: 12),
-          _buildDropoffRow(),
+          _buildDropoffRow(context),
           const SizedBox(height: 10),
           _buildWasteChips(),
           if (sale.collectionDeliveryMethod != null ||
@@ -78,7 +80,7 @@ class CollectionSaleCard extends StatelessWidget {
           ],
           if (_price != null) ...[
             const SizedBox(height: 10),
-            _buildPriceRow(),
+            _buildPriceRow(context),
           ],
           if (sale.jobDescription != null &&
               sale.jobDescription!.isNotEmpty) ...[
@@ -97,7 +99,7 @@ class CollectionSaleCard extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'رقم الوظيفة: ${sale.linkedJobId}',
+                context.l10n.collectionSaleJobNumber(sale.linkedJobId ?? ''),
                 style: GoogleFonts.dmSans(
                     fontSize: 10, color: const Color(0xFFBBBFBD)),
               ),
@@ -109,7 +111,7 @@ class CollectionSaleCard extends StatelessWidget {
           ],
           if (sale.status == OrderStatus.inTransit && onComplete != null) ...[
             const SizedBox(height: 12),
-            _buildInTransitAction(),
+            _buildInTransitAction(context),
           ],
         ],
       ),
@@ -117,7 +119,8 @@ class CollectionSaleCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTopRow() {
+  Widget _buildTopRow(BuildContext context) {
+    final l10n = context.l10n;
     return Row(
       children: [
         Row(
@@ -130,7 +133,7 @@ class CollectionSaleCard extends StatelessWidget {
                   color: const Color(0xFF14401F),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text('جديد',
+                child: Text(l10n.collectionSaleNew,
                     style: GoogleFonts.cairo(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -160,7 +163,7 @@ class CollectionSaleCard extends StatelessWidget {
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF002819))),
-            Text(_formatAge(sale.createdAt),
+            Text(_formatAge(context, sale.createdAt),
                 style: GoogleFonts.cairo(
                     fontSize: 10, color: const Color(0xFF9CA3AF))),
           ],
@@ -180,7 +183,7 @@ class CollectionSaleCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDropoffRow() {
+  Widget _buildDropoffRow(BuildContext context) {
     return Row(
       children: [
         const Icon(Icons.location_on_rounded,
@@ -192,7 +195,7 @@ class CollectionSaleCard extends StatelessWidget {
                   fontSize: 12, color: const Color(0xFF717973))),
         ),
         const SizedBox(width: 6),
-        Text('موقع التسليم:',
+        Text(context.l10n.collectionSaleDeliveryLocation,
             style: GoogleFonts.cairo(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
@@ -287,9 +290,9 @@ class CollectionSaleCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceRow() {
-    final unitLabel =
-        sale.paymentModel == PaymentModel.perKg ? 'د.أ / كغ' : 'د.أ';
+  Widget _buildPriceRow(BuildContext context) {
+    final l10n = context.l10n;
+    final unitLabel = sale.paymentModel?.unitLabelFor(Localizations.localeOf(context)) ?? l10n.orderCurrencyJD;
     return Row(
       children: [
         Container(
@@ -306,7 +309,7 @@ class CollectionSaleCard extends StatelessWidget {
                   color: const Color(0xFF14401F))),
         ),
         const Spacer(),
-        Text('السعر المتفق عليه:',
+        Text(l10n.collectionSaleAgreedPrice,
             style: GoogleFonts.cairo(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
@@ -316,6 +319,7 @@ class CollectionSaleCard extends StatelessWidget {
   }
 
   Widget _buildPendingActions(BuildContext context) {
+    final l10n = context.l10n;
     return Row(
       children: [
         if (onCancel != null)
@@ -332,7 +336,7 @@ class CollectionSaleCard extends StatelessWidget {
                   elevation: 0,
                 ),
                 icon: const Icon(Icons.cancel_outlined, size: 16),
-                label: Text('إلغاء الالتزام',
+                label: Text(l10n.collectionSaleCancelCommitment,
                     style: GoogleFonts.cairo(
                         fontWeight: FontWeight.bold, fontSize: 13)),
               ),
@@ -354,7 +358,7 @@ class CollectionSaleCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12)),
                 ),
                 icon: const Icon(Icons.local_shipping_rounded, size: 16),
-                label: Text('بدء التجميع',
+                label: Text(l10n.collectionSaleStartCollection,
                     style: GoogleFonts.cairo(
                         fontWeight: FontWeight.bold, fontSize: 13)),
               ),
@@ -364,7 +368,8 @@ class CollectionSaleCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInTransitAction() {
+  Widget _buildInTransitAction(BuildContext context) {
+    final l10n = context.l10n;
     return SizedBox(
       width: double.infinity,
       height: 40,
@@ -378,7 +383,7 @@ class CollectionSaleCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(12)),
         ),
         icon: const Icon(Icons.check_circle_rounded, size: 16),
-        label: Text('تأكيد التسليم',
+        label: Text(l10n.collectionSaleConfirmDelivery,
             style: GoogleFonts.cairo(
                 fontWeight: FontWeight.bold, fontSize: 13)),
       ),
@@ -386,28 +391,29 @@ class CollectionSaleCard extends StatelessWidget {
   }
 
   void _showCancelDialog(BuildContext context) {
+    final l10n = context.l10n;
     showDialog<void>(
       context: context,
       builder: (_) => AlertDialog(
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('إلغاء الالتزام',
+        title: Text(l10n.collectionSaleCancelTitle,
             textAlign: TextAlign.right,
             style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
         content: Text(
-            'هل أنت متأكد أنك تريد إلغاء التزامك بهذه الوظيفة؟',
+            l10n.collectionSaleCancelConfirm,
             textAlign: TextAlign.right,
             style: GoogleFonts.cairo()),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('لا', style: GoogleFonts.cairo())),
+              child: Text(l10n.no, style: GoogleFonts.cairo())),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               onCancel?.call();
             },
-            child: Text('نعم، إلغاء',
+            child: Text(l10n.yesCancelOrder,
                 style: GoogleFonts.cairo(
                     color: Colors.red, fontWeight: FontWeight.bold)),
           ),
@@ -416,10 +422,11 @@ class CollectionSaleCard extends StatelessWidget {
     );
   }
 
-  String _formatAge(DateTime dt) {
+  String _formatAge(BuildContext context, DateTime dt) {
     final diff = DateTime.now().difference(dt);
-    if (diff.inDays > 0) return 'منذ ${diff.inDays} يوم';
-    if (diff.inHours > 0) return 'منذ ${diff.inHours} ساعة';
-    return 'منذ ${diff.inMinutes} دقيقة';
+    final l10n = context.l10n;
+    if (diff.inDays > 0) return l10n.timeAgoDays(diff.inDays);
+    if (diff.inHours > 0) return l10n.timeAgoHours(diff.inHours);
+    return l10n.timeAgoMinutes(diff.inMinutes);
   }
 }

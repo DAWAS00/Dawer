@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../data/models/order.dart';
+import '../../../../data/models/order_labels.dart';
 import '../../../../data/models/user.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../features/auth/viewmodels/login_viewmodel.dart';
 import 'viewmodels/marketplace_viewmodel.dart';
 import 'market_item_details/widgets/market_item_description_card.dart';
@@ -27,6 +29,8 @@ class MarketItemDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context);
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F5),
       body: CustomScrollView(
@@ -74,23 +78,23 @@ class MarketItemDetailsView extends StatelessWidget {
                     MarketItemPhotoGallery(images: item.images),
                   ],
                   const SizedBox(height: 16),
-                  MarketItemInfoCard(icon: Icons.person_rounded, title: 'البائع', value: item.supplierName ?? 'بائع مجهول'),
+                  MarketItemInfoCard(icon: Icons.person_rounded, title: l10n.marketItemSellerLabel, value: item.supplierName ?? l10n.marketItemUnknownSeller),
                   const SizedBox(height: 12),
-                  MarketItemInfoCard(icon: Icons.location_on_rounded, title: 'عنوان الاستلام', value: item.pickupAddress),
+                  MarketItemInfoCard(icon: Icons.location_on_rounded, title: l10n.marketItemPickupAddressLabel, value: item.pickupAddress),
                   const SizedBox(height: 12),
                   if (item.distanceKm != null) ...[
-                    MarketItemInfoCard(icon: Icons.straighten_rounded, title: 'المسافة التقديرية', value: '${item.distanceKm!.toStringAsFixed(1)} كم من موقعك'),
+                    MarketItemInfoCard(icon: Icons.straighten_rounded, title: l10n.marketItemDistanceLabel, value: l10n.marketItemDistanceValue(item.distanceKm!.toStringAsFixed(1))),
                     const SizedBox(height: 12),
                   ],
                   Row(
                     children: [
-                      Expanded(child: MarketItemInfoCard(icon: Icons.category_rounded, title: 'الحالة', value: item.wasteForm?.label ?? 'غير محدد')),
+                      Expanded(child: MarketItemInfoCard(icon: Icons.category_rounded, title: l10n.marketItemConditionLabel, value: item.wasteForm?.labelFor(locale) ?? l10n.marketItemUnknown)),
                       const SizedBox(width: 12),
-                      Expanded(child: MarketItemInfoCard(icon: Icons.fitness_center_rounded, title: 'الوزن', value: item.weightCategory?.shortLabel ?? 'غير محدد')),
+                      Expanded(child: MarketItemInfoCard(icon: Icons.fitness_center_rounded, title: l10n.marketItemWeightLabel, value: item.weightCategory?.shortLabelFor(locale) ?? l10n.marketItemUnknown)),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  MarketItemInfoCard(icon: Icons.access_time_rounded, title: 'تاريخ النشر', value: _formatTime(item.createdAt)),
+                  MarketItemInfoCard(icon: Icons.access_time_rounded, title: l10n.marketItemPublishDateLabel, value: _formatTime(context, item.createdAt)),
                   const SizedBox(height: 100),
                 ],
               ),
@@ -131,7 +135,7 @@ class MarketItemDetailsView extends StatelessWidget {
     Navigator.pop(context); // close details
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('تم الشراء! يمكنك الاستلام من السوق.', style: GoogleFonts.cairo()),
+        content: Text(context.l10n.marketItemPurchasedPickup, style: GoogleFonts.cairo()),
         backgroundColor: const Color(0xFF1E5C35),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -142,19 +146,19 @@ class MarketItemDetailsView extends StatelessWidget {
   Widget _buildActionBar(BuildContext context) {
     final (label, icon, color, onTap) = switch (role) {
       UserRole.driver => (
-          'استلام العنصر',
+          context.l10n.marketItemDriverReceive,
           Icons.local_shipping_rounded,
           const Color(0xFF06402B),
           () => _handleDriverClaim(context),
         ),
       UserRole.supplier => (
-          'شراء الآن',
+          context.l10n.marketItemBuyNow,
           Icons.shopping_cart_rounded,
           const Color(0xFF06402B),
           () => _showSupplierPurchaseChoiceSheet(context),
         ),
       UserRole.recyclingCo => (
-          'استلام في المنشأة',
+          context.l10n.marketItemCompanyReceive,
           Icons.business_rounded,
           const Color(0xFF1E40AF),
           () => _handleCompanyReceive(context),
@@ -208,7 +212,7 @@ class MarketItemDetailsView extends StatelessWidget {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('تم استلام العنصر بنجاح!', style: GoogleFonts.cairo()),
+          content: Text(context.l10n.marketItemReceived, style: GoogleFonts.cairo()),
           backgroundColor: const Color(0xFF1E5C35),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -241,7 +245,7 @@ class MarketItemDetailsView extends StatelessWidget {
           Navigator.pop(context); // close details
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('تم الشراء! سيتم إرسال سائق للاستلام.', style: GoogleFonts.cairo()),
+              content: Text(context.l10n.marketItemPurchasedDriver, style: GoogleFonts.cairo()),
               backgroundColor: const Color(0xFF1E5C35),
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -259,7 +263,7 @@ class MarketItemDetailsView extends StatelessWidget {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('تم تسجيل الاستلام في المنشأة!', style: GoogleFonts.cairo()),
+          content: Text(context.l10n.marketItemFacilityReceived, style: GoogleFonts.cairo()),
           backgroundColor: const Color(0xFF1E40AF),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -268,10 +272,11 @@ class MarketItemDetailsView extends StatelessWidget {
     }
   }
 
-  String _formatTime(DateTime dt) {
+  String _formatTime(BuildContext context, DateTime dt) {
     final diff = DateTime.now().difference(dt);
-    if (diff.inDays > 0) return 'منذ ${diff.inDays} يوم';
-    if (diff.inHours > 0) return 'منذ ${diff.inHours} ساعة';
-    return 'منذ ${diff.inMinutes} دقيقة';
+    final l10n = context.l10n;
+    if (diff.inDays > 0) return l10n.timeAgoDays(diff.inDays);
+    if (diff.inHours > 0) return l10n.timeAgoHours(diff.inHours);
+    return l10n.timeAgoMinutes(diff.inMinutes);
   }
 }

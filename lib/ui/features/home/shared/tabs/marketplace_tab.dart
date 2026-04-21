@@ -11,6 +11,8 @@ import '../widgets/market_item_card.dart';
 import '../widgets/marketplace_collection_jobs_section.dart';
 import '../widgets/marketplace_segment_bar.dart';
 import '../market_item_details_view.dart';
+import '../../../../../data/models/order_labels.dart';
+import '../../../../../l10n/l10n.dart';
 
 class MarketplaceTab extends StatefulWidget {
   final UserRole role;
@@ -59,11 +61,11 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
 
         // ── Segment 0: seller listings ──
         if (_segment == 0) ...[
-          SliverToBoxAdapter(child: _buildSearchBar(vm)),
-          SliverToBoxAdapter(child: _buildCategoryChips(vm)),
-          SliverToBoxAdapter(child: _buildResultsCount(items.length)),
+          SliverToBoxAdapter(child: _buildSearchBar(context, vm)),
+          SliverToBoxAdapter(child: _buildCategoryChips(context, vm)),
+          SliverToBoxAdapter(child: _buildResultsCount(context, items.length)),
           if (items.isEmpty)
-            _buildEmptyListings()
+            _buildEmptyListings(context)
           else
             _buildItemsList(context, vm, items),
         ],
@@ -84,6 +86,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -104,10 +107,10 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
             ),
             child: Text(
               widget.role == UserRole.driver
-                  ? 'استلم وابيع'
+                  ? l10n.marketDriverRole
                   : widget.role == UserRole.supplier
-                      ? 'اشترِ وأوصل'
-                      : 'استلم في منشأتك',
+                      ? l10n.marketSupplierRole
+                      : l10n.marketRecyclingRole,
               style: GoogleFonts.cairo(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
@@ -120,7 +123,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'السوق',
+                  l10n.marketTitle,
                   style: GoogleFonts.cairo(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -128,8 +131,8 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
                 ),
                 Text(
                   _segment == 0
-                      ? 'تصفّح المواد المعروضة للبيع'
-                      : 'وظائف التجميع من شركات التدوير',
+                      ? l10n.marketBrowse
+                      : l10n.marketCollectionJobsSubtitle,
                   overflow: TextOverflow.ellipsis,
                   style:
                       GoogleFonts.cairo(fontSize: 12, color: Colors.white70),
@@ -180,7 +183,8 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
     );
   }
 
-  Widget _buildSearchBar(MarketplaceViewModel vm) {
+  Widget _buildSearchBar(BuildContext context, MarketplaceViewModel vm) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Container(
@@ -202,7 +206,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
           style: GoogleFonts.cairo(
               fontSize: 14, color: const Color(0xFF191C1B)),
           decoration: InputDecoration(
-            hintText: 'ابحث عن مواد، بائع، أو منطقة...',
+            hintText: l10n.marketSearch,
             hintStyle: GoogleFonts.cairo(
                 fontSize: 13, color: const Color(0xFF9CA3AF)),
             border: InputBorder.none,
@@ -216,7 +220,8 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
     );
   }
 
-  Widget _buildCategoryChips(MarketplaceViewModel vm) {
+  Widget _buildCategoryChips(BuildContext context, MarketplaceViewModel vm) {
+    final locale = Localizations.localeOf(context);
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: SizedBox(
@@ -257,7 +262,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      type.label,
+                      type.labelFor(locale),
                       style: GoogleFonts.cairo(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -282,7 +287,8 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
     );
   }
 
-  Widget _buildResultsCount(int count) {
+  Widget _buildResultsCount(BuildContext context, int count) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
       child: Row(
@@ -304,7 +310,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
           ),
           const Spacer(),
           Text(
-            'العروض المتاحة',
+            l10n.marketAvailableOffers,
             style: GoogleFonts.cairo(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -315,7 +321,8 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
     );
   }
 
-  SliverToBoxAdapter _buildEmptyListings() {
+  SliverToBoxAdapter _buildEmptyListings(BuildContext context) {
+    final l10n = context.l10n;
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
@@ -325,7 +332,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
                 size: 48, color: Color(0xFFD1D5DB)),
             const SizedBox(height: 10),
             Text(
-              'لا توجد عروض حالياً',
+            l10n.marketNoOffers,
               style: GoogleFonts.cairo(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,

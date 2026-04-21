@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../auth/views/login_view.dart';
+import '../../../../l10n/l10n.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -144,7 +145,7 @@ class _SplashViewState extends State<SplashView>
 
                       // Tagline
                       Text(
-                        'حوّل النفايات إلى قيمة',
+                        context.l10n.appTagline,
                         style: GoogleFonts.cairo(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,

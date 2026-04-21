@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../core/services/app_theme_notifier.dart';
 import '../../../../common/theme_mode_sheet.dart';
+import '../../../../../l10n/l10n.dart';
 import '../../../../features/auth/views/login_view.dart';
 import '../../../../features/auth/viewmodels/login_viewmodel.dart';
 import '../views/rewards_view.dart';
@@ -29,12 +30,12 @@ class SupplierProfileTab extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('تسجيل الخروج', textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        content: Text('هل أنت متأكد أنك تريد تسجيل الخروج؟', textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+        title: Text(context.l10n.logout, textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        content: Text(context.l10n.logoutConfirm, textAlign: TextAlign.right, style: GoogleFonts.cairo()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('إلغاء', style: GoogleFonts.cairo(color: const Color(0xFF717973))),
+            child: Text(context.l10n.cancel, style: GoogleFonts.cairo(color: const Color(0xFF717973))),
           ),
           TextButton(
             onPressed: () {
@@ -44,7 +45,7 @@ class SupplierProfileTab extends StatelessWidget {
                 (route) => false,
               );
             },
-            child: Text('خروج', style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
+            child: Text(context.l10n.logoutExit, style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -67,9 +68,7 @@ class SupplierProfileTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final isStore = supplierType == SupplierType.storeBusiness;
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: CustomScrollView(
+    return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Column(
@@ -122,7 +121,7 @@ class SupplierProfileTab extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            isStore ? 'مورد متجر' : 'مورد فردي',
+                            isStore ? context.l10n.supplierStoreType : context.l10n.supplierIndividualType,
                             style: GoogleFonts.cairo(fontSize: 12, color: Colors.white),
                           ),
                         ),
@@ -157,9 +156,9 @@ class SupplierProfileTab extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Row(
                       children: [
-                        _buildStatItem(totalPoints.toString(), 'نقاط التدوير', context),
+                        _buildStatItem(totalPoints.toString(), context.l10n.supplierRecyclingPoints, context),
                         Container(width: 1, height: 40, color: Theme.of(context).dividerColor),
-                        _buildStatItem(totalOrders.toString(), 'إجمالي الطلبات', context),
+                        _buildStatItem(totalOrders.toString(), context.l10n.supplierTotalOrders, context),
                       ],
                     ),
                   ),
@@ -169,41 +168,42 @@ class SupplierProfileTab extends StatelessWidget {
               // Personal info section
               Row(
                 children: [
-                  _buildSectionTitle('المعلومات الشخصية', context),
+                  _buildSectionTitle(context.l10n.supplierPersonalInfo, context),
                   const Spacer(),
                   TextButton.icon(
                     onPressed: () => _showEditProfileSheet(context),
                     icon: Icon(Icons.edit_rounded, size: 16, color: Theme.of(context).primaryColor),
-                    label: Text('تعديل', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor)),
+                    label: Text(context.l10n.edit, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor)),
                   ),
                   const SizedBox(width: 24),
                 ],
               ),
-              _buildProfileTile(Icons.phone_rounded, 'رقم الهاتف', user.phone, context),
-              _buildProfileTile(Icons.location_on_rounded, 'العنوان', user.address ?? 'أضف العنوان', context),
+              _buildProfileTile(Icons.phone_rounded, context.l10n.profilePhone, user.phone, context),
+              _buildProfileTile(Icons.location_on_rounded, context.l10n.supplierAddressLabel, user.address ?? context.l10n.supplierAddAddress, context),
               _buildProfileTile(
                 Icons.badge_rounded,
-                'الهوية',
-                user.isVerified ? 'تم التحقق' : 'لم يتم التحقق',
+                context.l10n.supplierIdentity,
+                user.isVerified ? context.l10n.supplierVerified : context.l10n.supplierNotVerified,
                 context,
                 valueColor: user.isVerified ? const Color(0xFF166534) : const Color(0xFFC8860A),
               ),
 
               const SizedBox(height: 24),
-              _buildSectionTitle('إعدادات التطبيق', context),
-              _buildProfileTile(Icons.language_rounded, 'لغة التطبيق', 'العربية', context),
+              _buildSectionTitle(context.l10n.profileAppSettings, context),
+              _buildProfileTile(Icons.language_rounded, context.l10n.profileLanguage,
+                Localizations.localeOf(context).languageCode == 'ar' ? context.l10n.languageArabic : context.l10n.languageEnglish, context),
               
               Consumer<AppThemeNotifier>(
                 builder: (context, themeNotifier, _) {
-                  String modeLabel = 'تلقائي';
-                  if (themeNotifier.mode == ThemeMode.light) modeLabel = 'فاتح';
-                  if (themeNotifier.mode == ThemeMode.dark) modeLabel = 'داكن';
+                  String modeLabel = context.l10n.themeAutoShort;
+                  if (themeNotifier.mode == ThemeMode.light) modeLabel = context.l10n.themeLight;
+                  if (themeNotifier.mode == ThemeMode.dark) modeLabel = context.l10n.themeDark;
                   
                   return InkWell(
                     onTap: () => showThemeModeSheet(context),
                     child: _buildProfileTile(
                       Icons.dark_mode_rounded,
-                      'المظهر',
+                      context.l10n.profileTheme,
                       modeLabel,
                       context,
                     ),
@@ -211,24 +211,23 @@ class SupplierProfileTab extends StatelessWidget {
                 },
               ),
               
-              _buildProfileTile(Icons.notifications_active_rounded, 'الإشعارات', 'مفعلة', context),
+              _buildProfileTile(Icons.notifications_active_rounded, context.l10n.profileNotifications, context.l10n.profileNotificationsEnabled, context),
 
               const SizedBox(height: 32),
-              _buildActionTile(context, 'مكافآتي', Icons.emoji_events_rounded, const Color(0xFFD97706), () {
+              _buildActionTile(context, context.l10n.supplierMyRewards, Icons.emoji_events_rounded, const Color(0xFFD97706), () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => RewardsView(totalPoints: totalPoints),
                 ));
               }),
-              _buildActionTile(context, 'تعديل الملف الشخصي', Icons.edit_rounded, const Color(0xFF002819), () => _showEditProfileSheet(context)),
-              _buildActionTile(context, 'تسجيل الخروج', Icons.logout_rounded, Colors.red.shade700, () => _showLogoutDialog(context)),
-              _buildActionTile(context, 'حذف الحساب', Icons.person_remove_rounded, Colors.red.shade700, () {}),
+              _buildActionTile(context, context.l10n.profileEditProfile, Icons.edit_rounded, const Color(0xFF002819), () => _showEditProfileSheet(context)),
+              _buildActionTile(context, context.l10n.logout, Icons.logout_rounded, Colors.red.shade700, () => _showLogoutDialog(context)),
+              _buildActionTile(context, context.l10n.profileDeleteAccount, Icons.person_remove_rounded, Colors.red.shade700, () {}),
 
               const SizedBox(height: 100),
             ],
           ),
         ),
       ],
-      ),
     );
   }
 
@@ -377,13 +376,13 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
           children: [
             Container(width: 40, height: 4, decoration: BoxDecoration(color: const Color(0xFFE6E9E7), borderRadius: BorderRadius.circular(2))),
             const SizedBox(height: 24),
-            Text('تعديل الملف الشخصي', style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF002819))),
+            Text(context.l10n.profileEditProfile, style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF002819))),
             const SizedBox(height: 24),
-            _buildField(label: 'الاسم', controller: _nameCtrl, hint: 'أدخل اسمك'),
+            _buildField(label: context.l10n.supplierNameLabel, controller: _nameCtrl, hint: context.l10n.supplierNameHint),
             const SizedBox(height: 16),
-            _buildField(label: 'رقم الهاتف', controller: _phoneCtrl, hint: '+962 7X XXX XXXX', textDirection: TextDirection.ltr),
+            _buildField(label: context.l10n.profilePhone, controller: _phoneCtrl, hint: context.l10n.supplierPhoneHint, textDirection: TextDirection.ltr),
             const SizedBox(height: 16),
-            _buildField(label: 'العنوان', controller: _addressCtrl, hint: 'أدخل عنوانك'),
+            _buildField(label: context.l10n.supplierAddressLabel, controller: _addressCtrl, hint: context.l10n.supplierAddressHint),
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
@@ -395,7 +394,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 0,
                 ),
-                child: Text('حفظ التغييرات', style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                child: Text(context.l10n.saveChanges, style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
               ),
             ),
           ],

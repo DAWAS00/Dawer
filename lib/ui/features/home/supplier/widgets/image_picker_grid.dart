@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../../l10n/l10n.dart';
 
 class ImagePickerGrid extends StatelessWidget {
   final List<String> imagePaths;
@@ -40,7 +41,7 @@ class ImagePickerGrid extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'اختر مصدر الصورة',
+                context.l10n.imagePickerSourceTitle,
                 style: GoogleFonts.cairo(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -58,7 +59,7 @@ class ImagePickerGrid extends StatelessWidget {
                   ),
                   child: const Icon(Icons.camera_alt_rounded, color: Color(0xFF06402B)),
                 ),
-                title: Text('الكاميرا', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                title: Text(ctx.l10n.imagePickerCamera, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
                 onTap: () => Navigator.pop(ctx, ImageSource.camera),
               ),
               ListTile(
@@ -71,7 +72,7 @@ class ImagePickerGrid extends StatelessWidget {
                   ),
                   child: const Icon(Icons.photo_library_rounded, color: Color(0xFF06402B)),
                 ),
-                title: Text('المعرض', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                title: Text(ctx.l10n.imagePickerGallery, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
                 onTap: () => Navigator.pop(ctx, ImageSource.gallery),
               ),
             ],
@@ -141,7 +142,7 @@ class _AddTile extends StatelessWidget {
             const Icon(Icons.add_a_photo_rounded, color: Color(0xFF06402B), size: 28),
             const SizedBox(height: 6),
             Text(
-              'إضافة صورة',
+              context.l10n.imagePickerAddPhoto,
               style: GoogleFonts.cairo(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,

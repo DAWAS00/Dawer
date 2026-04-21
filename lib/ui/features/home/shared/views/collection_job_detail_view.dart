@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order_labels.dart';
 import '../../../../../data/models/user.dart';
+import '../../../../../l10n/l10n.dart';
 import 'package:dwaar/ui/common/map/order_route_map.dart';
 import '../../../../features/auth/viewmodels/login_viewmodel.dart';
 import '../viewmodels/marketplace_viewmodel.dart';
@@ -119,7 +121,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
       flexibleSpace: FlexibleSpaceBar(
         titlePadding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
         title: Text(
-          'تفاصيل وظيفة التجميع',
+          context.l10n.collectionJobTitle,
           style: GoogleFonts.cairo(
               fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
         ),
@@ -137,7 +139,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
   }
 
   Widget _buildEditedBanner() {
-    final timeLabel = _job.editedAt != null ? _formatAge(_job.editedAt!) : '';
+    final timeLabel = _job.editedAt != null ? _formatAge(context, _job.editedAt!) : '';
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 16),
@@ -154,7 +156,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
             children: [
               const Spacer(),
               Text(
-                'تم تعديل هذه الوظيفة $timeLabel',
+                context.l10n.collectionJobEditedAt(timeLabel),
                 style: GoogleFonts.cairo(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
@@ -187,7 +189,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _formatAge(_job.createdAt),
+                _formatAge(context, _job.createdAt),
                 style: GoogleFonts.cairo(
                     fontSize: 11, color: const Color(0xFF9CA3AF)),
               ),
@@ -203,7 +205,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                _job.supplierName ?? 'شركة تدوير',
+                _job.supplierName ?? context.l10n.collectionJobRecyclingCoLabel,
                 style: GoogleFonts.cairo(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -217,7 +219,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  'شركة تدوير',
+                  context.l10n.collectionJobRecyclingCoLabel,
                   style: GoogleFonts.cairo(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
@@ -245,7 +247,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           _SectionTitle(
-              icon: Icons.category_rounded, label: 'أنواع المواد المطلوبة'),
+              icon: Icons.category_rounded, label: context.l10n.collectionJobRequiredMaterials),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
@@ -279,7 +281,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
                     fontSize: 12, color: const Color(0xFF717973)),
               ),
               const Spacer(),
-              Text('منطقة التجميع: ',
+              Text(context.l10n.collectionJobCollectionArea,
                   style: GoogleFonts.cairo(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -299,7 +301,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           _SectionTitle(
-              icon: Icons.payments_rounded, label: 'التسعيرة والدفع'),
+              icon: Icons.payments_rounded, label: context.l10n.collectionJobPricingTitle),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -315,7 +317,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
               ],
               if (price != null) ...[
                 Text(
-                  '$price ${model?.unitLabel ?? 'د.أ'}',
+                  '$price ${model?.unitLabelFor(Localizations.localeOf(context)) ?? context.l10n.orderCurrencyJD}',
                   style: GoogleFonts.dmSans(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -334,10 +336,9 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 _Chip(
-                    label:
-                        'الحد الأدنى: ${_job.minQuantityKg!.toStringAsFixed(0)} كغ',
-                    icon: Icons.scale_rounded,
-                    color: const Color(0xFF7C3AED)),
+                  label: context.l10n.collectionJobMinQtyChip(_job.minQuantityKg!.toStringAsFixed(0)),
+                  icon: Icons.scale_rounded,
+                  color: const Color(0xFF7C3AED)),
               ],
             ),
           ],
@@ -355,7 +356,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           _SectionTitle(
-              icon: Icons.description_rounded, label: 'وصف الوظيفة'),
+              icon: Icons.description_rounded, label: context.l10n.collectionJobDescTitle),
           const SizedBox(height: 10),
           Text(
             _job.jobDescription!,
@@ -385,7 +386,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
               child: OutlinedButton.icon(
                 onPressed: () => _showEditSheet(context),
                 icon: const Icon(Icons.edit_rounded, size: 16),
-                label: Text('تعديل',
+                label: Text(context.l10n.edit,
                     style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: const Color(0xFF14401F),
@@ -401,7 +402,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
               child: ElevatedButton.icon(
                 onPressed: () => _confirmDelete(context),
                 icon: const Icon(Icons.delete_rounded, size: 16),
-                label: Text('حذف الوظيفة',
+                label: Text(context.l10n.collectionJobDeleteTitle,
                     style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF991B1B),
@@ -429,8 +430,8 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
                     size: 18),
                 label: Text(
                     widget.role == UserRole.driver
-                        ? 'قبول الوظيفة'
-                        : 'قبول وبيع النفايات',
+                        ? context.l10n.collectionJobAcceptButton
+                        : context.l10n.collectionJobAcceptSellButton,
                     style: GoogleFonts.cairo(
                         fontSize: 15, fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
@@ -489,15 +490,15 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
     showDialog<void>(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('حذف الوظيفة',
+        title: Text(context.l10n.collectionJobDeleteTitle,
             style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
             textAlign: TextAlign.right),
-        content: Text('هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء.',
+        content: Text(context.l10n.collectionJobDeleteConfirm,
             style: GoogleFonts.cairo(), textAlign: TextAlign.right),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('إلغاء', style: GoogleFonts.cairo()),
+            child: Text(context.l10n.cancel, style: GoogleFonts.cairo()),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -508,7 +509,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
               Navigator.pop(context);
               Navigator.pop(context);
             },
-            child: Text('حذف',
+            child: Text(context.l10n.delete,
                 style: GoogleFonts.cairo(
                     color: Colors.white, fontWeight: FontWeight.bold)),
           ),
@@ -531,7 +532,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
           const Icon(Icons.check_circle_rounded,
               color: Color(0xFF14401F), size: 18),
           const SizedBox(width: 8),
-          Text('تم قبول الوظيفة — تحقق من طلباتك',
+          Text(context.l10n.collectionJobAccepted,
               style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -582,11 +583,12 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
     }
   }
 
-  String _formatAge(DateTime dt) {
+  String _formatAge(BuildContext ctx, DateTime dt) {
     final diff = DateTime.now().difference(dt);
-    if (diff.inDays > 0) return 'منذ ${diff.inDays} يوم';
-    if (diff.inHours > 0) return 'منذ ${diff.inHours} ساعة';
-    return 'منذ ${diff.inMinutes} دقيقة';
+    final l10n = ctx.l10n;
+    if (diff.inDays > 0) return l10n.timeAgoDays(diff.inDays);
+    if (diff.inHours > 0) return l10n.timeAgoHours(diff.inHours);
+    return l10n.timeAgoMinutes(diff.inMinutes);
   }
 }
 

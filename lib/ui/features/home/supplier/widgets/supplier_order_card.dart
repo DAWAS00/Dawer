@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/utils/date_formatter.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order_labels.dart'; // labelFor extensions
+import '../../../../../l10n/l10n.dart';
 import '../../shared/order_details_view.dart';
 
 /// Extracted from [SupplierOrdersTab] — renders a single supplier order card
@@ -39,15 +41,15 @@ class SupplierOrderCard extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('إلغاء الطلب',
+        title: Text(ctx.l10n.cancelOrderTitle,
             textAlign: TextAlign.right,
             style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        content: Text('هل أنت متأكد أنك تريد إلغاء هذا الطلب؟',
+        content: Text(ctx.l10n.cancelOrderConfirm,
             textAlign: TextAlign.right, style: GoogleFonts.cairo()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('لا',
+            child: Text(ctx.l10n.no,
                 style: GoogleFonts.cairo(color: const Color(0xFF717973))),
           ),
           TextButton(
@@ -62,7 +64,7 @@ class SupplierOrderCard extends StatelessWidget {
                 ));
               }
             },
-            child: Text('نعم، إلغاء',
+            child: Text(ctx.l10n.yesCancelOrder,
                 style: GoogleFonts.cairo(
                     color: Colors.red, fontWeight: FontWeight.bold)),
           ),
@@ -73,6 +75,7 @@ class SupplierOrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context);
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => OrderDetailsView(order: order)),
@@ -99,7 +102,7 @@ class SupplierOrderCard extends StatelessWidget {
                   decoration: BoxDecoration(
                       color: _statusBg,
                       borderRadius: BorderRadius.circular(20)),
-                  child: Text(order.status.label,
+                  child: Text(order.status.labelFor(locale),
                       style: GoogleFonts.cairo(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -134,7 +137,7 @@ class SupplierOrderCard extends StatelessWidget {
                             decoration: BoxDecoration(
                                 color: const Color(0xFFF2F4F2),
                                 borderRadius: BorderRadius.circular(8)),
-                            child: Text(t.label,
+                            child: Text(t.labelFor(locale),
                                 style: GoogleFonts.cairo(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
@@ -150,7 +153,7 @@ class SupplierOrderCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    'موعد مجدول: ${DateFormatter.date(order.scheduledAt!)} ${DateFormatter.time(order.scheduledAt!)}',
+                    '${context.l10n.orderScheduledAt}: ${DateFormatter.date(order.scheduledAt!)} ${DateFormatter.time(order.scheduledAt!)}',
                     style: GoogleFonts.cairo(
                         fontSize: 11, color: const Color(0xFF1E40AF)),
                   ),
@@ -223,7 +226,7 @@ class SupplierOrderCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12)),
                   ),
                   icon: const Icon(Icons.cancel_outlined, size: 18),
-                  label: Text('إلغاء الطلب',
+                  label: Text(context.l10n.cancelOrderTitle,
                       style: GoogleFonts.cairo(
                           fontWeight: FontWeight.bold, fontSize: 13)),
                 ),

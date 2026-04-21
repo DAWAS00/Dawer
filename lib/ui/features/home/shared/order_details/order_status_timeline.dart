@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/utils/date_formatter.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../l10n/l10n.dart';
 
 class OrderStatusTimeline extends StatelessWidget {
   final Order order;
@@ -10,11 +11,12 @@ class OrderStatusTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final steps = [
-      (OrderStatus.pending, 'انتظار', order.createdAt),
-      (OrderStatus.accepted, 'قُبل', order.acceptedAt),
-      (OrderStatus.inTransit, 'في الطريق', order.inTransitAt),
-      (OrderStatus.completed, 'مكتمل', order.completedAt),
+      (OrderStatus.pending, l10n.orderStatusStepPending, order.createdAt),
+      (OrderStatus.accepted, l10n.orderStatusStepAccepted, order.acceptedAt),
+      (OrderStatus.inTransit, l10n.orderStatusStepInTransit, order.inTransitAt),
+      (OrderStatus.completed, l10n.orderStatusStepCompleted, order.completedAt),
     ];
 
     final currentIndex = steps.indexWhere((s) => s.$1 == order.status);
@@ -37,7 +39,7 @@ class OrderStatusTimeline extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'حالة الطلب',
+            l10n.orderStatusTitle,
             style: GoogleFonts.cairo(
               fontSize: 15,
               fontWeight: FontWeight.bold,
