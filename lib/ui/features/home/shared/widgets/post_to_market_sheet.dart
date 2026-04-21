@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/waste_type_icons.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../l10n/l10n.dart';
 import '../../supplier/widgets/image_picker_grid.dart';
 
 class PostToMarketSheet extends StatefulWidget {
@@ -54,7 +55,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
     if (_selected.isEmpty) return;
     widget.onSubmit(
       wasteTypes: _selected.toList(),
-      pickupAddress: 'عنواني الحالي',
+      pickupAddress: context.l10n.newOrderCurrentAddress,
       images: List.from(_images),
       notes: _notesCtrl.text.trim().isNotEmpty ? _notesCtrl.text.trim() : null,
       wasteForm: _wasteForm,
@@ -110,7 +111,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        'نشر في السوق',
+                        context.l10n.postMarketTitle,
                         style: GoogleFonts.cairo(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -118,7 +119,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                         ),
                       ),
                       Text(
-                        'أضف تفاصيل المواد التي تريد بيعها',
+                        context.l10n.postMarketSubtitle,
                         style: GoogleFonts.cairo(fontSize: 12, color: const Color(0xFF717973)),
                       ),
                     ],
@@ -138,7 +139,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
               const SizedBox(height: 24),
 
               // ── 1. Waste type ──
-              _buildSectionLabel('نوع المواد *'),
+              _buildSectionLabel(context.l10n.postMarketWasteTypeLabel),
               const SizedBox(height: 10),
               Wrap(
                 spacing: 8,
@@ -181,7 +182,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
               const SizedBox(height: 24),
 
               // ── 2. Waste form ──
-              _buildSectionLabel('حالة المواد'),
+              _buildSectionLabel(context.l10n.postMarketWasteFormLabel),
               const SizedBox(height: 10),
               Row(
                 children: _wasteFormOptions.reversed.map((entry) {
@@ -221,7 +222,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
               const SizedBox(height: 24),
 
               // ── 3. Weight category ──
-              _buildSectionLabel('حجم الكمية *'),
+              _buildSectionLabel(context.l10n.newOrderWeightCategoryLabel),
               const SizedBox(height: 10),
               ...WeightCategory.values.map((cat) {
                 final isSelected = _weightCategory == cat;
@@ -287,7 +288,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
               const SizedBox(height: 24),
 
               // ── 4. Price ──
-              _buildSectionLabel('السعر المطلوب (د.أ) — اختياري'),
+              _buildSectionLabel(context.l10n.postMarketPriceLabel),
               const SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(
@@ -315,7 +316,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(left: 14),
                       child: Text(
-                        'د.أ',
+                        context.l10n.orderCurrencyJD,
                         style: GoogleFonts.cairo(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -331,7 +332,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
               const SizedBox(height: 24),
 
               // ── 5. Images ──
-              _buildSectionLabel('صور المواد — اختياري'),
+              _buildSectionLabel(context.l10n.postMarketImagesLabel),
               const SizedBox(height: 8),
               ImagePickerGrid(
                 imagePaths: _images,
@@ -341,12 +342,12 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
               const SizedBox(height: 24),
 
               // ── 6. Location ──
-              _buildSectionLabel('عنوان الاستلام'),
+              _buildSectionLabel(context.l10n.newOrderPickupAddressLabel),
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: () => ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('سيتم ربط خرائط جوجل قريباً', style: GoogleFonts.cairo()),
+                    content: Text(context.l10n.mapsComingSoon, style: GoogleFonts.cairo()),
                     backgroundColor: const Color(0xFF1E40AF),
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -369,7 +370,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          'تحديد',
+                          context.l10n.newOrderSelectButton,
                           style: GoogleFonts.cairo(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -382,7 +383,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            'عنواني الحالي',
+                            context.l10n.newOrderCurrentAddress,
                             style: GoogleFonts.cairo(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -390,7 +391,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                             ),
                           ),
                           Text(
-                            'اضغط لتحديد الموقع على الخريطة',
+                            context.l10n.newOrderTapToSelectLocation,
                             style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF717973)),
                           ),
                         ],
@@ -412,7 +413,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
               const SizedBox(height: 24),
 
               // ── 7. Notes ──
-              _buildSectionLabel('ملاحظات — اختياري'),
+              _buildSectionLabel(context.l10n.newOrderNotesLabel),
               const SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(
@@ -425,7 +426,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                   textAlign: TextAlign.right,
                   style: GoogleFonts.cairo(fontSize: 14, color: const Color(0xFF191C1B)),
                   decoration: InputDecoration(
-                    hintText: 'مثال: الكميّة تقريباً ٢٠ كيس بلاستيك...',
+                    hintText: context.l10n.newOrderNotesHint,
                     hintStyle: GoogleFonts.cairo(
                       fontSize: 13,
                       color: const Color(0xFF6B7280).withValues(alpha: 0.5),
@@ -453,7 +454,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'نشر الإعلان',
+                        context.l10n.postMarketSubmitButton,
                         style: GoogleFonts.cairo(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../l10n/l10n.dart';
 
 class OrderActionButtons extends StatelessWidget {
   final Order order;
@@ -18,7 +19,7 @@ class OrderActionButtons extends StatelessWidget {
         children: [
           Expanded(
             child: _ActionBtn(
-              label: 'تواصل',
+              label: context.l10n.orderChatButton,
               icon: Icons.chat_bubble_outline_rounded,
               color: const Color(0xFF06402B),
               onTap: () => _openChat(context),
@@ -27,7 +28,7 @@ class OrderActionButtons extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: _ActionBtn(
-              label: 'واتساب',
+              label: context.l10n.orderWhatsAppButton,
               icon: Icons.phone_rounded,
               color: const Color(0xFF25D366),
               onTap: () => _openWhatsApp(context),
@@ -42,7 +43,7 @@ class OrderActionButtons extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'المحادثة مع السائق قريباً',
+          context.l10n.orderChatComingSoon,
           textAlign: TextAlign.right,
           style: GoogleFonts.cairo(color: Colors.white),
         ),
@@ -68,7 +69,7 @@ class OrderActionButtons extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'تعذّر فتح واتساب',
+            context.l10n.orderWhatsAppFailed,
             textAlign: TextAlign.right,
             style: GoogleFonts.cairo(color: Colors.white),
           ),

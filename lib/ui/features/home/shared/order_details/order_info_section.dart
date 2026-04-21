@@ -3,7 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/date_formatter.dart';
 import '../../../../../data/models/order.dart';
-import '../order_details_view.dart';
+import '../../../../../data/models/order_labels.dart';
+import '../../../../../l10n/l10n.dart';
 
 class OrderInfoSection extends StatelessWidget {
   final Order order;
@@ -17,6 +18,8 @@ class OrderInfoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context);
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       padding: const EdgeInsets.all(16),
@@ -35,7 +38,7 @@ class OrderInfoSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'تفاصيل الطلب',
+            l10n.orderDetailsTitle,
             style: GoogleFonts.cairo(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -57,7 +60,7 @@ class OrderInfoSection extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      w.label,
+                      w.labelFor(locale),
                       style: GoogleFonts.cairo(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -72,7 +75,7 @@ class OrderInfoSection extends StatelessWidget {
           _InfoRow(
             icon: Icons.radio_button_checked,
             iconColor: const Color(0xFF06402B),
-            label: 'من',
+            label: l10n.orderFromLabel,
             value: order.pickupAddress,
           ),
           Padding(
@@ -83,7 +86,7 @@ class OrderInfoSection extends StatelessWidget {
           _InfoRow(
             icon: Icons.location_on_rounded,
             iconColor: Colors.red.shade400,
-            label: 'إلى',
+            label: l10n.orderToLabel,
             value: order.dropoffAddress,
           ),
           const SizedBox(height: 16),
@@ -93,21 +96,21 @@ class OrderInfoSection extends StatelessWidget {
               if (order.distanceKm != null) ...[
                 _MetaChip(
                   icon: Icons.straighten_rounded,
-                  value: '${order.distanceKm!.toStringAsFixed(1)} كم',
+                  value: l10n.orderDistKm(order.distanceKm!.toStringAsFixed(1)),
                 ),
                 const SizedBox(width: 8),
               ],
               if (order.weightKg != null) ...[
                 _MetaChip(
                   icon: Icons.scale_rounded,
-                  value: '${order.weightKg!.toStringAsFixed(0)} كغ',
+                  value: l10n.orderWeightKgLabel(order.weightKg!.toStringAsFixed(0)),
                 ),
                 const SizedBox(width: 8),
               ],
               if (order.reward > 0)
                 _MetaChip(
                   icon: Icons.monetization_on_outlined,
-                  value: '${order.reward.toStringAsFixed(1)} دينار',
+                  value: l10n.orderRewardJD(order.reward.toStringAsFixed(1)),
                   highlight: true,
                 ),
             ],

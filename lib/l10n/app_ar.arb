@@ -1,0 +1,516 @@
+{
+  "@@locale": "ar",
+
+  "appTitle": "دوّر",
+  "appTagline": "حوّل النفايات إلى قيمة",
+  "appSystemTitle": "نظام إدارة تدوير النفايات الذكي",
+
+  "ok": "حسناً",
+  "cancel": "إلغاء",
+  "confirm": "تأكيد",
+  "saveChanges": "حفظ التغييرات",
+  "saveEdits": "حفظ التعديلات",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "yes": "نعم",
+  "no": "لا",
+  "or": "أو",
+  "logout": "تسجيل الخروج",
+  "logoutConfirm": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+  "logoutExit": "خروج",
+  "alert": "تنبيه",
+  "available": "متاح",
+  "unavailable": "غير متاح",
+  "greeting": "مرحباً، {name}",
+  "@greeting": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "navHome": "الرئيسية",
+  "navMarket": "السوق",
+  "navMyOrders": "طلباتي",
+  "navProfile": "الملف",
+  "navOrders": "الطلبات",
+  "navAccount": "حسابي",
+
+  "languageArabic": "العربية",
+  "languageEnglish": "English",
+  "languagePickerTitle": "اللغة",
+
+  "themeTitle": "المظهر",
+  "themeLight": "فاتح",
+  "themeDark": "داكن",
+  "themeAutoFull": "تلقائي (نظام الهاتف)",
+  "themeAutoShort": "تلقائي",
+
+  "loginMethodEmail": "بريد إلكتروني",
+  "loginMethodPhone": "رقم الهاتف",
+  "loginPhoneLabel": "رقم الهاتف",
+  "loginEmailLabel": "البريد الإلكتروني",
+  "loginEmailHint": "example@domain.com",
+  "loginButton": "تسجيل الدخول",
+  "loginNoAccount": "ليس لديك حساب؟",
+  "loginSignUpNow": "سجّل الآن",
+  "loginCountrySearch": "بحث",
+  "loginCountrySearchHint": "ابحث عن الدولة",
+
+  "roleSelectTitle": "اختر نوع الحساب",
+  "roleDriver": "سائق",
+  "roleSupplier": "مورد",
+  "roleRecyclingCo": "شركة إعادة تدوير",
+
+  "supplierTypeLabel": "نوع المورد",
+  "supplierTypeIndividual": "فرد",
+  "supplierTypeStore": "متجر / مطعم",
+
+  "footerTerms": "شروط الخدمة",
+  "footerPrivacy": "سياسة الخصوصية",
+  "footerInfra": "DIGITAL INFRASTRUCTURE BY GOVERNMENT",
+  "footerIdea": "فكرة من عقول الشباب الأردني",
+  "footerPolicyOk": "حسناً، فهمت",
+  "footerPolicyBody": "هذا النص هو نص تجريبي يوضح الشروط والأحكام وسياسة الخصوصية الخاصة بالتطبيق. سيتم تحديث هذا النص لاحقاً ليعكس السياسات الحقيقية والقانونية المعتمدة.\n\n• يلتزم المستخدم بجميع القوانين والأنظمة المعمول بها.\n• يحق للتطبيق الاحتفاظ ببعض البيانات الأساسية لتحسين الخدمة المقدمة.\n• نحتفظ بالحق في تعديل هذه الشروط في أي وقت مع إشعار المستخدمين.\n• خصوصية بياناتك تهمنا، ولن نقوم بمشاركتها مع أطراف ثالثة دون موافقتك الصريحة.\n• باستخدامك لهذا التطبيق، فإنك توافق على جميع الشروط والأحكام المذكورة هنا.",
+
+  "signupTitle": "إنشاء حساب",
+  "signupCreateButton": "إنشاء الحساب",
+  "signupSubtitle": "أكمل بياناتك للانضمام إلى منصة دوّر",
+  "signupSectionBusiness": "معلومات الجهة",
+  "signupCompanyName": "اسم الشركة",
+  "signupStoreName": "اسم المتجر / المطعم",
+  "signupCompanyNameHint": "شركة البيئة الخضراء",
+  "signupStoreNameHint": "مطعم الأصيل",
+  "signupManagerName": "اسم المدير",
+  "signupStoreOwnerName": "اسم صاحب المتجر",
+  "signupExampleName": "محمد أحمد العبدالله",
+  "signupCoverageArea": "منطقة الخدمة",
+  "signupCoverageHint": "عمّان، الزرقاء، إربد...",
+  "signupSectionPersonal": "المعلومات الشخصية",
+  "signupFullName": "الاسم الكامل",
+  "signupFullNameHint": "أحمد محمد العبدالله",
+  "signupNationality": "الجنسية",
+  "signupJordanian": "أردني",
+  "signupOther": "غير ذلك",
+  "signupSectionDocuments": "المستندات الرسمية",
+  "signupSectionContact": "معلومات التواصل",
+  "signupContactRequired": "يجب إدخال واحد على الأقل",
+  "signupPhone": "رقم الهاتف",
+  "signupPhoneHint": "7X XXX XXXX",
+  "signupEmailLabel": "البريد الإلكتروني",
+  "signupEmailHint": "example@domain.com",
+
+  "verificationTitle": "التحقق",
+  "verificationCodeSent": "أرسلنا رمزاً مكوناً من 6 أرقام",
+  "verificationEnterCode": "أدخل رمز التحقق",
+  "verificationResendAfter": "إعادة الإرسال بعد",
+  "verificationResend": "إعادة الإرسال",
+  "verificationButton": "تحقق",
+  "verificationSecureTitle": "تحقق آمن",
+  "verificationSecureSubtitle": "رمز التحقق سري ومحمي",
+  "verificationSecureFooter": "تحقق آمن وموثوق",
+
+  "driverTitle": "سائق دوّر",
+  "driverActiveOrdersLabel": "طلب نشط",
+  "driverCompletedOrdersLabel": "الطلبات المكتملة",
+  "driverEarningsLabel": "الأرباح (د.أ)",
+  "driverUnavailableTitle": "أنت غير متاح حالياً",
+  "driverUnavailableSubtitle": "قم بتغيير حالتك إلى متاح بالأعلى لاستقبال طلبات جديدة",
+  "driverAvailableOrders": "الطلبات المتاحة",
+  "driverNoAvailableOrders": "لا توجد طلبات متاحة حالياً",
+  "driverMyListings": "منشوراتي في السوق",
+  "driverCurrentTrip": "رحلتك الحالية",
+  "driverViewDetails": "عرض التفاصيل",
+  "driverPublishToMarket": "نشر في السوق",
+  "driverOrdersHistory": "سجل الطلبات",
+  "driverNoOrders": "لا توجد طلبات",
+  "driverNoOrdersYet": "لم تقم بقبول أي طلبات بعد",
+  "driverCollectionCommitments": "التزامات التجميع",
+
+  "withdrawListing": "سحب الإعلان",
+  "withdrawListingConfirm": "هل تريد سحب هذا الإعلان من السوق؟",
+  "yesWithdraw": "نعم، سحب",
+
+  "profilePersonalAndVehicle": "المعلومات الشخصية والمركبة",
+  "profilePhone": "رقم الهاتف",
+  "profileVehicle": "المركبة",
+  "profileLicensePlate": "رقم اللوحة",
+  "profileAddLicensePlate": "أضف رقم اللوحة",
+  "profileAddVehicleInfo": "أضف معلومات المركبة",
+  "profileAppSettings": "إعدادات التطبيق",
+  "profileLanguage": "لغة التطبيق",
+  "profileTheme": "المظهر",
+  "profileNotifications": "الإشعارات",
+  "profileNotificationsEnabled": "مفعلة",
+  "profileHelpSupport": "المساعدة والدعم",
+  "profileContactSupport": "تواصل مع الدعم الفني",
+  "profileEditProfile": "تعديل الملف الشخصي",
+  "profileDeleteAccount": "حذف الحساب",
+  "profileTotalTrips": "إجمالي الرحلات",
+  "profileTotalEarnings": "إجمالي الأرباح",
+  "profileTapToAddPhoto": "اضغط لإضافة صورة",
+  "profileEditVehicle": "تعديل معلومات المركبة",
+  "profileVehicleTypeModel": "نوع المركبة وموديلها",
+  "profileVehicleTypeModelHint": "مثال: تويوتا بريوس",
+  "profileVehicleColor": "لون المركبة",
+  "profileVehicleColorHint": "مثال: أبيض",
+  "profileVehiclePhoto": "صورة المركبة",
+
+  "supplierStoreType": "مورد متجر",
+  "supplierIndividualType": "مورد فردي",
+  "supplierActiveOrders": "طلباتي النشطة",
+  "supplierMyListings": "منشوراتي في السوق",
+  "supplierNoOrdersYet": "لا توجد طلبات نشطة",
+  "supplierCreateFromHome": "اضغط على زر + أسفل الشاشة لإنشاء طلب جديد",
+  "supplierGreeting": "مرحباً، {name}",
+  "@supplierGreeting": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "supplierDriverOnWay": "السائق في الطريق إليك",
+  "supplierPoints": "نقطة",
+  "supplierRecyclingPoints": "نقاط التدوير",
+  "supplierTotalOrders": "إجمالي الطلبات",
+  "supplierAddress": "العنوان",
+  "supplierAddAddress": "أضف العنوان",
+  "supplierIdentity": "الهوية",
+  "supplierVerified": "تم التحقق",
+  "supplierNotVerified": "لم يتم التحقق",
+  "supplierPersonalInfo": "المعلومات الشخصية",
+  "supplierMyRewards": "مكافآتي",
+  "supplierNameLabel": "الاسم",
+  "supplierNameHint": "أدخل اسمك",
+  "supplierPhoneHint": "+962 7X XXX XXXX",
+  "supplierAddressLabel": "العنوان",
+  "supplierAddressHint": "أدخل عنوانك",
+
+  "ordersTabTitle": "طلباتي",
+  "ordersNoOrdersYet": "لا توجد طلبات بعد",
+  "ordersCreateFromHome": "أنشئ طلب استلام جديد من الصفحة الرئيسية",
+  "ordersActiveSection": "الطلبات النشطة",
+  "ordersCompletedSection": "الطلبات المكتملة",
+  "ordersCancelledSection": "الطلبات الملغاة",
+  "ordersCollectionSection": "التزامات التجميع",
+  "orderDeliveryConfirmTitle": "تأكيد التسليم",
+  "orderDeliveryConfirmMsg": "هل وصلت إلى المنشأة وسلّمت المواد؟",
+  "orderActualWeight": "الوزن الفعلي (كغ) — اختياري",
+  "orderScheduledAt": "موعد مجدول",
+  "cancelOrderTitle": "إلغاء الطلب",
+  "cancelOrderConfirm": "هل أنت متأكد أنك تريد إلغاء هذا الطلب؟",
+  "yesCancelOrder": "نعم، إلغاء",
+
+  "recyclingCompanyLabel": "شركة إعادة تدوير",
+  "recyclingOpenForReceipt": "مفتوح للاستلام",
+  "recyclingClosedTemp": "مغلق مؤقتاً",
+  "recyclingTodayShipments": "شحنات اليوم",
+  "recyclingTotalWeight": "الوزن الكلي",
+  "recyclingActiveJobsLabel": "وظائف نشطة",
+  "recyclingDriversInProgress": "سائقون قيد التنفيذ",
+  "recyclingPostJob": "نشر وظيفة تجميع",
+  "recyclingPostJobSubtitle": "أطلب من سائق جمع المخلفات من منطقة محددة",
+  "recyclingIncomingShipments": "الشحنات القادمة",
+  "recyclingActiveCollectionJobs": "وظائف التجميع النشطة",
+  "recyclingMyListings": "منشوراتي في السوق",
+  "recyclingCommitted": "الملتزمون:",
+  "recyclingCompanyInfo": "معلومات الشركة",
+  "recyclingCompanyPhone": "رقم التواصل",
+  "recyclingCompanyEmail": "البريد الإلكتروني",
+  "recyclingServiceArea": "منطقة الخدمة",
+  "recyclingWorkingHours": "ساعات العمل",
+  "recyclingLicense": "الترخيص التجاري",
+  "recyclingReceivedShipments": "شحنات مستلمة",
+  "recyclingProcessedWeight": "وزن معالج (كغ)",
+  "recyclingEditCompany": "تعديل بيانات الشركة",
+  "recyclingCompanyNameLabel": "اسم الشركة",
+  "recyclingCompanyNameHint": "أدخل اسم الشركة",
+  "recyclingPhoneLabel": "رقم التواصل",
+  "recyclingPhoneHint": "+962 6X XXX XXXX",
+  "recyclingEmailLabel": "البريد الإلكتروني",
+  "recyclingEmailHint": "info@company.jo",
+  "recyclingAreaLabel": "منطقة الخدمة",
+  "recyclingAreaHint": "عمّان، الزرقاء...",
+  "recyclingHoursLabel": "ساعات العمل",
+  "recyclingHoursHint": "٧:٠٠ ص - ٥:٠٠ م",
+  "recyclingLicenseVerified": "تم التحقق",
+  "recyclingLicenseNotVerified": "لم يتم التحقق",
+
+  "marketDriverRole": "استلم وابيع",
+  "marketSupplierRole": "اشترِ وأوصل",
+  "marketRecyclingRole": "استلم في منشأتك",
+  "marketTitle": "السوق",
+  "marketBrowse": "تصفّح المواد المعروضة للبيع",
+  "marketCollectionJobsSubtitle": "وظائف التجميع من شركات التدوير",
+  "marketSearch": "ابحث عن مواد، بائع، أو منطقة...",
+  "marketAvailableOffers": "العروض المتاحة",
+  "marketNoOffers": "لا توجد عروض حالياً",
+
+  "collectionSaleNew": "جديد",
+  "collectionSaleJobNumber": "رقم الوظيفة: {id}",
+  "@collectionSaleJobNumber": {
+    "placeholders": {
+      "id": { "type": "String" }
+    }
+  },
+  "collectionSaleDeliveryLocation": "موقع التسليم:",
+  "collectionSaleAgreedPrice": "السعر المتفق عليه:",
+  "collectionSaleCancelCommitment": "إلغاء الالتزام",
+  "collectionSaleStartCollection": "بدء التجميع",
+  "collectionSaleConfirmDelivery": "تأكيد التسليم",
+  "collectionSaleCancelTitle": "إلغاء الالتزام",
+  "collectionSaleCancelConfirm": "هل أنت متأكد أنك تريد إلغاء التزامك بهذه الوظيفة؟",
+
+  "postMarketTitle": "نشر في السوق",
+  "postMarketSubtitle": "أضف تفاصيل المواد التي تريد بيعها",
+  "postMarketWasteTypeLabel": "نوع المواد *",
+  "postMarketWasteFormLabel": "حالة المواد",
+  "postMarketPriceLabel": "السعر المطلوب (د.أ) — اختياري",
+  "postMarketImagesLabel": "صور المواد — اختياري",
+  "postMarketSubmitButton": "نشر الإعلان",
+
+  "collectionJobTitle": "تفاصيل وظيفة التجميع",
+  "collectionJobCollectionArea": "منطقة التجميع: ",
+  "collectionJobDeleteTitle": "حذف الوظيفة",
+  "collectionJobDeleteConfirm": "هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء.",
+  "collectionJobAccepted": "تم قبول الوظيفة — تحقق من طلباتك",
+  "collectionJobAcceptButton": "قبول الوظيفة",
+  "collectionJobAcceptSellButton": "قبول وبيع النفايات",
+  "collectionJobRequiredMaterials": "أنواع المواد المطلوبة",
+  "collectionJobPricingTitle": "التسعيرة والدفع",
+  "collectionJobDescTitle": "وصف الوظيفة",
+  "collectionJobRecyclingCoLabel": "شركة تدوير",
+
+  "marketItemSellerLabel": "البائع",
+  "marketItemPickupAddressLabel": "عنوان الاستلام",
+  "marketItemDistanceLabel": "المسافة التقديرية",
+  "marketItemDistanceValue": "{distance} كم من موقعك",
+  "@marketItemDistanceValue": {
+    "placeholders": {
+      "distance": { "type": "String" }
+    }
+  },
+  "marketItemConditionLabel": "الحالة",
+  "marketItemWeightLabel": "الوزن",
+  "marketItemPublishDateLabel": "تاريخ النشر",
+  "marketItemUnknown": "غير محدد",
+  "marketItemUnknownSeller": "بائع مجهول",
+  "marketItemDriverReceive": "استلام العنصر",
+  "marketItemBuyNow": "شراء الآن",
+  "marketItemCompanyReceive": "استلام في المنشأة",
+  "marketItemPurchasedPickup": "تم الشراء! يمكنك الاستلام من السوق.",
+  "marketItemReceived": "تم استلام العنصر بنجاح!",
+  "marketItemPurchasedDriver": "تم الشراء! سيتم إرسال سائق للاستلام.",
+  "marketItemFacilityReceived": "تم تسجيل الاستلام في المنشأة!",
+
+  "rateDriverTitle": "قيّم السائق",
+  "rateDriverSubmit": "إرسال التقييم",
+  "rateDriverSkip": "تخطّ",
+
+  "rewardsTitle": "مكافآتي",
+  "rewardsHistoryTitle": "سجل المكافآت",
+  "rewardsNoHistory": "لا يوجد سجل مكافآت بعد",
+  "rewardsPointsLabel": "نقطة",
+  "rewardsRedeem": "استبدل نقاطك",
+  "rewardsComingSoon": "هذه الميزة قريباً!",
+  "rewardsProgressText": "{points} / {threshold} نقطة للمستوى التالي",
+  "@rewardsProgressText": {
+    "placeholders": {
+      "points": { "type": "int" },
+      "threshold": { "type": "int" }
+    }
+  },
+  "rewardsDiscountOrders": "خصم على الطلبات",
+  "rewardsGiftCard": "كرت هدية",
+  "rewardsFreeDelivery": "توصيل مجاني",
+  "rewards50Points": "50 نقطة",
+  "rewards100Points": "100 نقطة",
+  "rewards30Points": "30 نقطة",
+  "tierBronze": "برونزي",
+  "tierSilver": "فضي",
+  "tierGold": "ذهبي",
+  "tierPlatinum": "بلاتيني",
+
+  "mapsComingSoon": "سيتم ربط خرائط جوجل قريباً",
+
+  "marketSegmentJobs": "وظائف التجميع",
+  "marketJobsFromCompanies": "من شركات التدوير",
+  "marketNoJobs": "لا توجد وظائف تجميع حالياً",
+  "collectionJobBadge": "وظيفة تجميع",
+  "collectionJobEdited": "تم تعديله",
+  "collectionJobEditedAt": "تم تعديل هذه الوظيفة {time}",
+  "@collectionJobEditedAt": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "collectionJobMinQtyChip": "الحد الأدنى: {n} كغ",
+  "@collectionJobMinQtyChip": {
+    "placeholders": {
+      "n": { "type": "String" }
+    }
+  },
+  "recyclingAndOthers": "+{count} آخرون",
+  "@recyclingAndOthers": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "collectionJobMinQtyFrom": "من {min} كغ",
+  "@collectionJobMinQtyFrom": {
+    "placeholders": {
+      "min": { "type": "String" }
+    }
+  },
+  "timeAgoDays": "منذ {n} يوم",
+  "@timeAgoDays": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "timeAgoHours": "منذ {n} ساعة",
+  "@timeAgoHours": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "timeAgoMinutes": "منذ {n} دقيقة",
+  "@timeAgoMinutes": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "marketListingStatusPending": "بانتظار مشتري",
+  "marketListingStatusAccepted": "تم الشراء",
+  "marketListingStatusInTransit": "قيد التوصيل",
+  "marketListingStatusCompleted": "مكتمل",
+  "marketListingStatusCancelled": "ملغي",
+
+  "orderStatusPending": "قيد الانتظار",
+  "orderStatusAccepted": "تم القبول",
+  "orderStatusInTransit": "في الطريق",
+  "orderStatusCompleted": "مكتمل",
+  "orderStatusCancelled": "ملغي",
+  "orderWaitingTime": "وقت الانتظار",
+  "orderArrivalTime": "وقت الوصول",
+  "orderEarningsLabel": "العائد",
+  "orderCurrencyJD": "دينار",
+  "orderAcceptButton": "اقبل الطلب",
+  "orderViewRoute": "عرض المسار",
+
+  "orderDriverOnWay": "السائق في الطريق إليك",
+  "orderChatButton": "تواصل",
+  "orderWhatsAppButton": "واتساب",
+  "orderChatComingSoon": "المحادثة مع السائق قريباً",
+  "orderWhatsAppFailed": "تعذّر فتح واتساب",
+
+  "orderStatusTitle": "حالة الطلب",
+  "orderStatusStepPending": "انتظار",
+  "orderStatusStepAccepted": "قُبل",
+  "orderStatusStepInTransit": "في الطريق",
+  "orderStatusStepCompleted": "مكتمل",
+
+  "orderDetailsTitle": "تفاصيل الطلب",
+  "orderFromLabel": "من",
+  "orderToLabel": "إلى",
+  "orderDistKm": "{d} كم",
+  "@orderDistKm": {
+    "placeholders": {
+      "d": { "type": "String" }
+    }
+  },
+  "orderWeightKgLabel": "{w} كغ",
+  "@orderWeightKgLabel": {
+    "placeholders": {
+      "w": { "type": "String" }
+    }
+  },
+  "orderRewardJD": "{r} د.أ",
+  "@orderRewardJD": {
+    "placeholders": {
+      "r": { "type": "String" }
+    }
+  },
+
+  "orderDriverSection": "السائق",
+  "orderDriverArrives": "يصل خلال {eta}",
+  "@orderDriverArrives": {
+    "placeholders": {
+      "eta": { "type": "String" }
+    }
+  },
+
+  "orderCompletionTitle": "إتمام الرحلة",
+  "orderPhotoCamera": "التقاط صورة",
+  "orderPhotoGallery": "اختيار من المعرض",
+  "orderCompleteDialogTitle": "إتمام الطلب",
+  "orderCompleteDialogMsg": "هل أنت متأكد من تسليم الطلب واستلام المبلغ؟\nعند إتمام الطلب، ستتمكن من استقبال طلبات جديدة.",
+  "orderConfirmComplete": "تأكيد الإتمام",
+  "orderProofPhotoHint": "التقط صورة إثبات الاستلام (اختياري)",
+  "orderAmountLabel": "المبلغ المطلوب تحصيله:",
+  "orderFinishButton": "إنهاء الطلب",
+
+  "orderProofTitle": "إثبات الاستلام والتسليم",
+  "orderProofLinkBroken": "الرابط يشير لملف غير متوفر مؤقتاً",
+  "orderRateDriver": "قيّم السائق",
+  "orderWhatsAppWaiting": "مرحباً، أنا في انتظار استلامي.",
+
+  "marketItemPriceLabel": "سعر المواد",
+  "marketItemNegotiable": "قابل للتفاوض",
+  "marketItemDescriptionLabel": "وصف المنتج",
+  "marketListingPrice": "{price} د.أ",
+  "@marketListingPrice": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+
+  "collectionSaleDetailTitle": "تفاصيل الالتزام",
+  "collectionSaleDeliveryLocationNoColon": "موقع التسليم",
+  "collectionSaleAgreedPriceNoColon": "السعر المتفق عليه",
+  "collectionSaleAgreementTitle": "تفاصيل الاتفاق",
+  "collectionSaleDeliveryMethodLabel": "طريقة التوصيل",
+  "collectionSaleTransactionTypeLabel": "نوع المعاملة",
+  "collectionSaleWasteTypesLabel": "أنواع النفايات",
+  "collectionSaleCompanyNote": "الشركة: {note}",
+  "@collectionSaleCompanyNote": {
+    "placeholders": {
+      "note": { "type": "String" }
+    }
+  },
+  "collectionSaleCommitmentNumber": "رقم الالتزام",
+  "collectionSaleJobNumberLabel": "رقم الوظيفة",
+  "collectionSaleAcceptedAt": "تاريخ القبول",
+
+  "orderTrackButton": "تتبع",
+
+  "rateDriverExperience": "كيف كانت تجربتك مع السائق؟",
+  "rateDriverPickLabel": "اختر تقييمك",
+  "rateDriverPoor": "سيئ",
+  "rateDriverFair": "متوسط",
+  "rateDriverGood": "جيد",
+  "rateDriverExcellent": "ممتاز",
+
+  "imagePickerCamera": "الكاميرا",
+  "imagePickerGallery": "المعرض",
+  "imagePickerSourceTitle": "اختر مصدر الصورة",
+  "imagePickerAddPhoto": "إضافة صورة",
+
+  "newOrderSelectButton": "تحديد",
+  "newOrderTapToSelectLocation": "اضغط لتحديد الموقع على الخريطة",
+  "newOrderCurrentAddress": "عنواني الحالي",
+  "newOrderTitle": "طلب استلام جديد",
+  "newOrderSubtitle": "أضف تفاصيل المخلفات التي تريد التخلص منها",
+  "newOrderWasteTypeLabel": "نوع المخلفات *",
+  "newOrderWasteFormLabel": "حالة المخلفات",
+  "newOrderWeightCategoryLabel": "حجم الكمية *",
+  "newOrderPickupAddressLabel": "عنوان الاستلام",
+  "newOrderImagesLabel": "صور المخلفات — اختياري",
+  "newOrderPickupTargetLabel": "وجهة المخلفات *",
+  "newOrderPriceLabel": "سعر المواد (د.أ) — اختياري",
+  "newOrderPriceHintDriver": "السعر الذي تريده مقابل بيع المواد للسائق",
+  "newOrderPriceHintCompany": "السعر الذي تريده مقابل بيع المواد للشركة",
+  "newOrderNotesLabel": "ملاحظات — اختياري",
+  "newOrderNotesHint": "مثال: الكميّة تقريباً ٢٠ كيس بلاستيك...",
+  "newOrderDeliveryFeeLabel": "رسوم التوصيل",
+  "newOrderDeliveryFeeSubtitle": "تُحسب تلقائياً حسب المسافة والحجم",
+  "newOrderSubmitButton": "إرسال الطلب"
+}

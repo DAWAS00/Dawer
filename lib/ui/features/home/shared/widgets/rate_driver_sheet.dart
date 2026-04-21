@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Bottom sheet shown to the supplier after an order is completed,
 /// letting them rate the driver 1–5 stars.
@@ -70,7 +71,7 @@ class _RateDriverSheetState extends State<RateDriverSheet> {
           ),
           const SizedBox(height: 12),
           Text(
-            widget.order.driverName ?? 'السائق',
+            widget.order.driverName ?? context.l10n.orderDriverSection,
             style: GoogleFonts.cairo(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -78,7 +79,7 @@ class _RateDriverSheetState extends State<RateDriverSheet> {
           ),
           const SizedBox(height: 4),
           Text(
-            'كيف كانت تجربتك مع السائق؟',
+            context.l10n.rateDriverExperience,
             style: GoogleFonts.cairo(
                 fontSize: 13, color: const Color(0xFF717973)),
           ),
@@ -103,14 +104,14 @@ class _RateDriverSheetState extends State<RateDriverSheet> {
           const SizedBox(height: 8),
           Text(
             _rating == 0
-                ? 'اختر تقييمك'
+                ? context.l10n.rateDriverPickLabel
                 : _rating <= 2
-                    ? 'سيئ'
+                    ? context.l10n.rateDriverPoor
                     : _rating == 3
-                        ? 'متوسط'
+                        ? context.l10n.rateDriverFair
                         : _rating == 4
-                            ? 'جيد'
-                            : 'ممتاز',
+                            ? context.l10n.rateDriverGood
+                            : context.l10n.rateDriverExcellent,
             style: GoogleFonts.cairo(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
@@ -134,7 +135,7 @@ class _RateDriverSheetState extends State<RateDriverSheet> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
               ),
-              child: Text('إرسال التقييم',
+              child: Text(context.l10n.rateDriverSubmit,
                   style: GoogleFonts.cairo(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -143,7 +144,7 @@ class _RateDriverSheetState extends State<RateDriverSheet> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('تخطّ',
+            child: Text(context.l10n.rateDriverSkip,
                 style:
                     GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF9099A2))),
           ),

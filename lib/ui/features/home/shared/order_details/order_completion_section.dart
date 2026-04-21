@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../l10n/l10n.dart';
 
 class OrderCompletionSection extends StatefulWidget {
   final Order order;
@@ -38,7 +39,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
               children: [
                 ListTile(
                   leading: const Icon(Icons.camera_alt_rounded, color: Color(0xFF06402B)),
-                  title: Text('التقاط صورة', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                  title: Text(context.l10n.orderPhotoCamera, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
                   onTap: () async {
                     Navigator.pop(context);
                     final picked = await _picker.pickImage(source: ImageSource.camera, imageQuality: 80);
@@ -47,7 +48,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.photo_library_rounded, color: Color(0xFF06402B)),
-                  title: Text('اختيار من المعرض', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                  title: Text(context.l10n.orderPhotoGallery, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
                   onTap: () async {
                     Navigator.pop(context);
                     final picked = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
@@ -68,7 +69,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'إتمام الطلب',
+          context.l10n.orderCompleteDialogTitle,
           textAlign: TextAlign.right,
           style: GoogleFonts.cairo(
             fontWeight: FontWeight.bold,
@@ -76,7 +77,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
           ),
         ),
         content: Text(
-          'هل أنت متأكد من تسليم الطلب واستلام المبلغ؟\nعند إتمام الطلب، ستتمكن من استقبال طلبات جديدة.',
+          context.l10n.orderCompleteDialogMsg,
           textAlign: TextAlign.right,
           style: GoogleFonts.cairo(
             fontSize: 14,
@@ -87,7 +88,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
-              'إلغاء',
+              context.l10n.cancel,
               style: GoogleFonts.cairo(
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF717973),
@@ -121,7 +122,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
               widget.onComplete(updatedOrder);
             },
             child: Text(
-              'تأكيد الإتمام',
+              context.l10n.orderConfirmComplete,
               style: GoogleFonts.cairo(
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF06402B),
@@ -154,7 +155,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'إتمام الرحلة',
+            context.l10n.orderCompletionTitle,
             style: GoogleFonts.cairo(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -212,7 +213,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'التقط صورة إثبات الاستلام (اختياري)',
+                          context.l10n.orderProofPhotoHint,
                           style: GoogleFonts.cairo(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -230,7 +231,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'المبلغ المطلوب تحصيله:',
+                context.l10n.orderAmountLabel,
                 style: GoogleFonts.cairo(
                   fontSize: 14,
                   color: const Color(0xFF404943),
@@ -248,7 +249,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'د.أ',
+                    context.l10n.orderCurrencyJD,
                     style: GoogleFonts.cairo(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -275,7 +276,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
                 elevation: 0,
               ),
               child: Text(
-                'إنهاء الطلب',
+                context.l10n.orderFinishButton,
                 style: GoogleFonts.cairo(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,

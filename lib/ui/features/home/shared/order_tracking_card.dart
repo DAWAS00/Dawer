@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../data/models/order.dart';
+import '../../../../l10n/l10n.dart';
 
 class OrderTrackingCard extends StatelessWidget {
   final Order order;
@@ -32,13 +33,13 @@ class OrderTrackingCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildMapPlaceholder(),
-          _buildStatusRow(cs),
-          _buildDivider(cs),
-          _buildDriverRow(context, cs),
-          _buildDivider(cs),
-          _buildRouteRow(cs),
-          _buildDivider(cs),
+          _buildMapPlaceholder(context),
+          _buildStatusRow(context),
+          _buildDivider(),
+          _buildDriverRow(context),
+          _buildDivider(),
+          _buildRouteRow(),
+          _buildDivider(),
           _buildActionButtons(context),
         ],
       ),
@@ -47,7 +48,7 @@ class OrderTrackingCard extends StatelessWidget {
 
   // ── Map Placeholder ──────────────────────────────────────────────────────────
 
-  Widget _buildMapPlaceholder() {
+  Widget _buildMapPlaceholder(BuildContext context) {
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       child: Container(
@@ -134,7 +135,7 @@ class OrderTrackingCard extends StatelessWidget {
                           size: 12, color: Color(0xFF06402B)),
                       const SizedBox(width: 5),
                       Text(
-                        'سيتم دمج الخريطة التفاعلية قريباً',
+                        context.l10n.mapsComingSoon,
                         style: GoogleFonts.cairo(
                           fontSize: 10,
                           color: const Color(0xFF06402B),
@@ -154,7 +155,7 @@ class OrderTrackingCard extends StatelessWidget {
 
   // ── Status Row ───────────────────────────────────────────────────────────────
 
-  Widget _buildStatusRow(ColorScheme cs) {
+  Widget _buildStatusRow(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
       child: Row(
@@ -190,7 +191,7 @@ class OrderTrackingCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'السائق في الطريق إليك',
+                context.l10n.orderDriverOnWay,
                 style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -208,11 +209,12 @@ class OrderTrackingCard extends StatelessWidget {
 
   // ── Driver Row ───────────────────────────────────────────────────────────────
 
-  Widget _buildDriverRow(BuildContext context, ColorScheme cs) {
-    final name = order.driverName ?? 'السائق';
+  Widget _buildDriverRow(BuildContext context) {
+    final l10n = context.l10n;
+    final name = order.driverName ?? l10n.orderDriverSection;
     final initials = name.trim().split(' ').map((w) => w.isNotEmpty ? w[0] : '').take(2).join();
     final rating = order.driverRating ?? 5.0;
-    final vehicle = order.driverVehicle ?? 'مركبة';
+    final vehicle = order.driverVehicle ?? l10n.profileVehicle;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
@@ -359,7 +361,7 @@ class OrderTrackingCard extends StatelessWidget {
           // Chat button
           Expanded(
             child: _ActionBtn(
-              label: 'تواصل',
+              label: context.l10n.orderChatButton,
               icon: Icons.chat_bubble_outline_rounded,
               color: const Color(0xFF06402B),
               onTap: () => _openChat(context),
@@ -369,7 +371,7 @@ class OrderTrackingCard extends StatelessWidget {
           // WhatsApp button
           Expanded(
             child: _ActionBtn(
-              label: 'واتساب',
+              label: context.l10n.orderWhatsAppButton,
               icon: Icons.phone_rounded,
               color: const Color(0xFF25D366),
               onTap: () => _openWhatsApp(context),
@@ -392,7 +394,7 @@ class OrderTrackingCard extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'المحادثة مع السائق قريباً',
+          context.l10n.orderChatComingSoon,
           textAlign: TextAlign.right,
           style: GoogleFonts.cairo(color: Colors.white),
         ),
@@ -415,7 +417,7 @@ class OrderTrackingCard extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'تعذّر فتح واتساب',
+            context.l10n.orderWhatsAppFailed,
             textAlign: TextAlign.right,
             style: GoogleFonts.cairo(color: Colors.white),
           ),

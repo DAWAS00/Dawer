@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order_labels.dart';
+import '../../../../../l10n/l10n.dart';
 
 class MarketListingCard extends StatelessWidget {
   final Order order;
@@ -30,16 +32,25 @@ class MarketListingCard extends StatelessWidget {
         OrderStatus.cancelled => const Color(0xFFFEE2E2),
       };
 
-  String get _statusLabel => switch (order.status) {
-        OrderStatus.pending => 'بانتظار مشتري',
-        OrderStatus.accepted => 'تم الشراء',
-        OrderStatus.inTransit => 'قيد التوصيل',
-        OrderStatus.completed => 'مكتمل',
-        OrderStatus.cancelled => 'ملغي',
+  String _statusLabel(AppLocalizations l10n) => switch (order.status) {
+        OrderStatus.pending => l10n.marketListingStatusPending,
+        OrderStatus.accepted => l10n.marketListingStatusAccepted,
+        OrderStatus.inTransit => l10n.marketListingStatusInTransit,
+        OrderStatus.completed => l10n.marketListingStatusCompleted,
+        OrderStatus.cancelled => l10n.marketListingStatusCancelled,
       };
+
+  String _formatAge(AppLocalizations l10n, DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inDays > 0) return l10n.timeAgoDays(diff.inDays);
+    if (diff.inHours > 0) return l10n.timeAgoHours(diff.inHours);
+    return l10n.timeAgoMinutes(diff.inMinutes);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -89,7 +100,7 @@ class MarketListingCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      _formatAge(order.createdAt),
+                      _formatAge(l10n, order.createdAt),
                       style: GoogleFonts.cairo(
                         fontSize: 11,
                         color: const Color(0xFF717973),
@@ -105,7 +116,7 @@ class MarketListingCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    _statusLabel,
+                    _statusLabel(l10n),
                     style: GoogleFonts.cairo(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -129,7 +140,7 @@ class MarketListingCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        t.label,
+                        t.labelFor(locale),
                         style: GoogleFonts.cairo(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
@@ -152,7 +163,7 @@ class MarketListingCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        order.weightCategory!.shortLabel,
+                        order.weightCategory!.shortLabelFor(locale),
                         style: GoogleFonts.cairo(
                           fontSize: 11,
                           color: const Color(0xFF717973),
@@ -183,10 +194,4 @@ class MarketListingCard extends StatelessWidget {
     );
   }
 
-  String _formatAge(DateTime dt) {
-    final diff = DateTime.now().difference(dt);
-    if (diff.inDays > 0) return 'منذ ${diff.inDays} يوم';
-    if (diff.inHours > 0) return 'منذ ${diff.inHours} ساعة';
-    return 'منذ ${diff.inMinutes} دقيقة';
-  }
 }

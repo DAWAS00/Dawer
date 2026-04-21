@@ -10,6 +10,7 @@ import '../../shared/viewmodels/marketplace_viewmodel.dart';
 import '../../shared/widgets/market_listing_card.dart';
 import '../viewmodels/driver_home_viewmodel.dart';
 import '../widgets/driver_stat_card.dart';
+import '../../../../../../l10n/l10n.dart';
 
 class DriverHomeTab extends StatelessWidget {
   final String userName;
@@ -42,7 +43,7 @@ class DriverHomeTab extends StatelessWidget {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(child: _buildHeader(context)),
-        SliverToBoxAdapter(child: _buildStatsRow()),
+        SliverToBoxAdapter(child: _buildStatsRow(context)),
         if (active != null)
           SliverToBoxAdapter(child: _buildActiveBanner(context)),
         if (myListings.isNotEmpty) ..._buildMyListingsSection(context, myListings, marketVm),
@@ -56,7 +57,7 @@ class DriverHomeTab extends StatelessWidget {
                   const Icon(Icons.cloud_off_rounded, size: 64, color: Color(0xFFC0C9C1)),
                   const SizedBox(height: 16),
                   Text(
-                    'أنت غير متاح حالياً',
+                    context.l10n.driverUnavailableTitle,
                     style: GoogleFonts.cairo(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -65,7 +66,7 @@ class DriverHomeTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'قم بتغيير حالتك إلى متاح بالأعلى لاستقبال طلبات جديدة',
+                    context.l10n.driverUnavailableSubtitle,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.cairo(
                       fontSize: 14,
@@ -81,7 +82,7 @@ class DriverHomeTab extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
               child: Text(
-                'الطلبات المتاحة',
+                context.l10n.driverAvailableOrders,
                 textAlign: TextAlign.right,
                 style: GoogleFonts.cairo(
                   fontSize: 17,
@@ -99,7 +100,7 @@ class DriverHomeTab extends StatelessWidget {
                       padding: const EdgeInsets.all(40),
                       child: Center(
                         child: Text(
-                          'لا توجد طلبات متاحة حالياً',
+                          context.l10n.driverNoAvailableOrders,
                           style: GoogleFonts.cairo(
                             fontSize: 14,
                             color: const Color(0xFF717973),
@@ -155,7 +156,7 @@ class DriverHomeTab extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '\u0645\u0646\u0634\u0648\u0631\u0627\u062a\u064a \u0641\u064a \u0627\u0644\u0633\u0648\u0642',
+                context.l10n.driverMyListings,
                 textAlign: TextAlign.right,
                 style: GoogleFonts.cairo(
                   fontSize: 17,
@@ -196,19 +197,19 @@ class DriverHomeTab extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('\u0633\u062d\u0628 \u0627\u0644\u0625\u0639\u0644\u0627\u0646', textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        content: Text('\u0647\u0644 \u062a\u0631\u064a\u062f \u0633\u062d\u0628 \u0647\u0630\u0627 \u0627\u0644\u0625\u0639\u0644\u0627\u0646 \u0645\u0646 \u0627\u0644\u0633\u0648\u0642\u061f', textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+        title: Text(context.l10n.withdrawListing, textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        content: Text(context.l10n.withdrawListingConfirm, textAlign: TextAlign.right, style: GoogleFonts.cairo()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('\u0644\u0627', style: GoogleFonts.cairo(color: const Color(0xFF717973))),
+            child: Text(context.l10n.no, style: GoogleFonts.cairo(color: const Color(0xFF717973))),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               marketVm.removeListing(orderId);
             },
-            child: Text('\u0646\u0639\u0645\u060c \u0633\u062d\u0628', style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
+            child: Text(context.l10n.yesWithdraw, style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -247,14 +248,14 @@ class DriverHomeTab extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'مرحباً، ${userName.split(' ').first}',
+                    context.l10n.greeting(userName.split(' ').first),
                     style: GoogleFonts.cairo(
                       fontSize: 14,
                       color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                   Text(
-                    'سائق دوّر',
+                    context.l10n.driverTitle,
                     style: GoogleFonts.cairo(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -289,7 +290,7 @@ class DriverHomeTab extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        isAvailable ? 'متاح' : 'غير متاح',
+                        isAvailable ? context.l10n.available : context.l10n.unavailable,
                         style: GoogleFonts.cairo(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -327,7 +328,7 @@ class DriverHomeTab extends StatelessWidget {
     return total;
   }
 
-  Widget _buildStatsRow() {
+  Widget _buildStatsRow(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: Row(
@@ -335,21 +336,21 @@ class DriverHomeTab extends StatelessWidget {
           Expanded(
               child: DriverStatCard(
                   value: _getActiveOrdersCount().toString(),
-                  label: 'طلب نشط',
+                  label: context.l10n.driverActiveOrdersLabel,
                   icon: Icons.local_shipping_rounded,
                   color: AppColors.statusInTransitText)),
           const SizedBox(width: 10),
           Expanded(
               child: DriverStatCard(
                   value: _getCompletedOrdersCount().toString(),
-                  label: 'الطلبات المكتملة',
+                  label: context.l10n.driverCompletedOrdersLabel,
                   icon: Icons.check_circle_rounded,
                   color: AppColors.statusCompletedText)),
           const SizedBox(width: 10),
           Expanded(
               child: DriverStatCard(
                   value: _getTotalEarnings().toStringAsFixed(1),
-                  label: 'الأرباح (د.أ)',
+                  label: context.l10n.driverEarningsLabel,
                   icon: Icons.account_balance_wallet_rounded,
                   color: AppColors.accentAmber)),
         ],
@@ -392,7 +393,7 @@ class DriverHomeTab extends StatelessWidget {
           Row(
             children: [
               Text(
-                'رحلتك الحالية',
+                context.l10n.driverCurrentTrip,
                 style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -486,7 +487,7 @@ class DriverHomeTab extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 10),
               ),
               child: Text(
-                'عرض التفاصيل',
+                context.l10n.driverViewDetails,
                 style: GoogleFonts.cairo(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,

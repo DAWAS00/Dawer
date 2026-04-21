@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../l10n/l10n.dart';
 
 class OrderDriverCard extends StatelessWidget {
   final Order order;
@@ -27,6 +28,7 @@ class OrderDriverCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final name = order.driverName!;
     final initials = name
         .trim()
@@ -64,7 +66,7 @@ class OrderDriverCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'السائق',
+                l10n.orderDriverSection,
                 style: GoogleFonts.cairo(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -84,7 +86,7 @@ class OrderDriverCard extends StatelessWidget {
                       const Icon(Icons.access_time_rounded, size: 12, color: Color(0xFF06402B)),
                       const SizedBox(width: 4),
                       Text(
-                        'يصل خلال ${order.eta!}',
+                        l10n.orderDriverArrives(order.eta!),
                         style: GoogleFonts.cairo(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -174,7 +176,7 @@ class OrderDriverCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'المركبة',
+                        l10n.profileVehicle,
                         style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF717973)),
                       ),
                       const SizedBox(height: 2),
@@ -184,7 +186,7 @@ class OrderDriverCard extends StatelessWidget {
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              [if (vehicleType != null) vehicleType, vehicleModel ?? 'غير محدد', if (vehicleColor != null) '($vehicleColor)'].join(' '),
+                              '${vehicleModel ?? l10n.marketItemUnknown} ${vehicleColor != null ? '($vehicleColor)' : ''}',
                               style: GoogleFonts.cairo(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
@@ -207,7 +209,7 @@ class OrderDriverCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'رقم اللوحة',
+                            l10n.profileLicensePlate,
                             style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF717973)),
                           ),
                           const SizedBox(height: 2),

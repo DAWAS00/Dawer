@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../viewmodels/login_viewmodel.dart';
 import '../viewmodels/signup_viewmodel.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../common/green_button.dart';
 import 'verification_view.dart';
 import 'widgets/footer.dart';
@@ -58,6 +59,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<SignUpViewModel>();
+    final l10n = context.l10n;
 
     if (vm.submitted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -99,7 +101,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
             _buildContactSection(context, vm),
             const SizedBox(height: 28),
             GreenButton(
-              text: 'إنشاء الحساب',
+              text: l10n.signupCreateButton,
               onPressed: () => context.read<SignUpViewModel>().submit(),
               isLoading: vm.isLoading,
               height: 58,
@@ -121,6 +123,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
   // ── AppBar ──────────────────────────────────────────────────────────────────
 
   PreferredSizeWidget _buildAppBar(BuildContext context, SignUpViewModel vm) {
+    final l10n = context.l10n;
     return AppBar(
       backgroundColor: const Color(0xFFF8FAFC),
       elevation: 0,
@@ -154,7 +157,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
         ),
       ),
       title: Text(
-        'إنشاء حساب',
+        l10n.signupTitle,
         style: GoogleFonts.manrope(
           fontSize: 18,
           fontWeight: FontWeight.w600,
@@ -168,6 +171,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
   // ── Hero ────────────────────────────────────────────────────────────────────
 
   Widget _buildHeroCard(BuildContext context, SignUpViewModel vm) {
+    final l10n = context.l10n;
     final (IconData icon, Color bg) = switch (vm.role) {
       UserRole.driver => (Icons.local_shipping_rounded, const Color(0xFFC3EAC4)),
       UserRole.supplier when vm.supplierType == SupplierType.storeBusiness =>
@@ -203,7 +207,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'أكمل بياناتك للانضمام إلى منصة دوّر',
+                  l10n.signupSubtitle,
                   textAlign: TextAlign.right,
                   style: GoogleFonts.cairo(
                     fontSize: 12,
@@ -247,20 +251,21 @@ class _SignUpScreenState extends State<_SignUpScreen> {
   // ── Info section (role-specific text fields) ─────────────────────────────
 
   Widget _buildInfoSection(BuildContext context, SignUpViewModel vm) {
+    final l10n = context.l10n;
     if (vm.isBusinessRole) {
       return _SectionCard(
-        title: 'معلومات الجهة',
+        title: l10n.signupSectionBusiness,
         icon: Icons.business_rounded,
         child: Column(
           children: [
             _InputField(
               controller: _businessNameCtrl,
               label: vm.role == UserRole.recyclingCo
-                  ? 'اسم الشركة'
-                  : 'اسم المتجر / المطعم',
+                  ? l10n.signupCompanyName
+                  : l10n.signupStoreName,
               hint: vm.role == UserRole.recyclingCo
-                  ? 'شركة البيئة الخضراء'
-                  : 'مطعم الأصيل',
+                  ? l10n.signupCompanyNameHint
+                  : l10n.signupStoreNameHint,
               error: vm.errors['businessName'],
               onChanged: (v) {
                 context.read<SignUpViewModel>().businessName = v;
@@ -270,8 +275,8 @@ class _SignUpScreenState extends State<_SignUpScreen> {
             const SizedBox(height: 16),
             _InputField(
               controller: _ownerManagerCtrl,
-              label: vm.role == UserRole.recyclingCo ? 'اسم المدير' : 'اسم صاحب المتجر',
-              hint: 'محمد أحمد العبدالله',
+              label: vm.role == UserRole.recyclingCo ? l10n.signupManagerName : l10n.signupStoreOwnerName,
+              hint: l10n.signupExampleName,
               error: vm.errors['ownerOrManagerName'],
               onChanged: (v) {
                 context.read<SignUpViewModel>().ownerOrManagerName = v;
@@ -282,8 +287,8 @@ class _SignUpScreenState extends State<_SignUpScreen> {
               const SizedBox(height: 16),
               _InputField(
                 controller: _coverageCtrl,
-                label: 'منطقة الخدمة',
-                hint: 'عمّان، الزرقاء، إربد...',
+                label: l10n.signupCoverageArea,
+                hint: l10n.signupCoverageHint,
                 isRequired: false,
                 onChanged: (v) {
                   context.read<SignUpViewModel>().coverageArea = v;
@@ -297,14 +302,14 @@ class _SignUpScreenState extends State<_SignUpScreen> {
 
     // Personal info (driver / individual supplier)
     return _SectionCard(
-      title: 'المعلومات الشخصية',
+      title: l10n.signupSectionPersonal,
       icon: Icons.person_rounded,
       child: Column(
         children: [
           _InputField(
             controller: _fullNameCtrl,
-            label: 'الاسم الكامل',
-            hint: 'أحمد محمد العبدالله',
+            label: l10n.signupFullName,
+            hint: l10n.signupFullNameHint,
             error: vm.errors['fullName'],
             onChanged: (v) {
               context.read<SignUpViewModel>().fullName = v;
@@ -320,7 +325,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    'الجنسية',
+                    l10n.signupNationality,
                     style: GoogleFonts.cairo(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -334,7 +339,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   _NationalityChip(
-                    label: 'غير ذلك',
+                    label: l10n.signupOther,
                     isSelected: vm.nationality == 'غير ذلك',
                     onTap: () => context
                         .read<SignUpViewModel>()
@@ -342,7 +347,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
                   ),
                   const SizedBox(width: 10),
                   _NationalityChip(
-                    label: 'أردني',
+                    label: l10n.signupJordanian,
                     isSelected: vm.nationality == 'أردني',
                     onTap: () => context
                         .read<SignUpViewModel>()
@@ -361,8 +366,9 @@ class _SignUpScreenState extends State<_SignUpScreen> {
   // ── Identity document section ─────────────────────────────────────────────
 
   Widget _buildIdentitySection(BuildContext context, SignUpViewModel vm) {
+    final l10n = context.l10n;
     return _SectionCard(
-      title: 'المستندات الرسمية',
+      title: l10n.signupSectionDocuments,
       icon: Icons.badge_rounded,
       child: IdentityUploadCard(
         document: vm.identityDocument,
@@ -379,16 +385,17 @@ class _SignUpScreenState extends State<_SignUpScreen> {
   // ── Contact section ──────────────────────────────────────────────────────
 
   Widget _buildContactSection(BuildContext context, SignUpViewModel vm) {
+    final l10n = context.l10n;
     return _SectionCard(
-      title: 'معلومات التواصل',
+      title: l10n.signupSectionContact,
       icon: Icons.contact_phone_rounded,
-      subtitle: 'يجب إدخال واحد على الأقل',
+      subtitle: l10n.signupContactRequired,
       child: Column(
         children: [
           _InputField(
             controller: _phoneCtrl,
-            label: 'رقم الهاتف',
-            hint: '7X XXX XXXX',
+            label: l10n.signupPhone,
+            hint: l10n.signupPhoneHint,
             keyboardType: TextInputType.phone,
             prefixText: '+962  ',
             isRequired: false,
@@ -404,7 +411,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Text(
-                  'أو',
+                  l10n.or,
                   style: GoogleFonts.cairo(
                     fontSize: 13,
                     color: const Color(0xFF717973),
@@ -417,8 +424,8 @@ class _SignUpScreenState extends State<_SignUpScreen> {
           const SizedBox(height: 16),
           _InputField(
             controller: _emailCtrl,
-            label: 'البريد الإلكتروني',
-            hint: 'example@domain.com',
+            label: l10n.signupEmailLabel,
+            hint: l10n.signupEmailHint,
             keyboardType: TextInputType.emailAddress,
             isRequired: false,
             onChanged: (v) {

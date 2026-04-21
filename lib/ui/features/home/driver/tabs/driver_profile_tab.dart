@@ -7,7 +7,10 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../features/auth/views/login_view.dart';
 import '../../../../common/theme_mode_sheet.dart';
+import '../../../../common/lang_picker_sheet.dart';
 import '../../../../../core/services/app_theme_notifier.dart';
+import '../../../../../core/services/app_lang_notifier.dart';
+import '../../../../../l10n/l10n.dart';
 import '../viewmodels/driver_home_viewmodel.dart';
 import '../widgets/driver_profile_tile.dart';
 
@@ -26,12 +29,12 @@ class DriverProfileTab extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('تسجيل الخروج', textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        content: Text('هل أنت متأكد أنك تريد تسجيل الخروج؟', textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+        title: Text(context.l10n.logout, textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        content: Text(context.l10n.logoutConfirm, textAlign: TextAlign.right, style: GoogleFonts.cairo()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('إلغاء', style: GoogleFonts.cairo(color: const Color(0xFF717973))),
+            child: Text(context.l10n.cancel, style: GoogleFonts.cairo(color: const Color(0xFF717973))),
           ),
           TextButton(
             onPressed: () {
@@ -41,7 +44,7 @@ class DriverProfileTab extends StatelessWidget {
                 (route) => false,
               );
             },
-            child: Text('خروج', style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
+            child: Text(context.l10n.logoutExit, style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -64,7 +67,7 @@ class DriverProfileTab extends StatelessWidget {
 
     final vehicleString = (user.vehicleModel?.isNotEmpty ?? false) || (user.vehicleColor?.isNotEmpty ?? false)
         ? '${user.vehicleModel ?? ''} - ${user.vehicleColor ?? ''}'.trim().replaceAll(RegExp(r'^-|-$'), '').trim()
-        : 'أضف معلومات المركبة';
+        : context.l10n.profileAddVehicleInfo;
 
     return CustomScrollView(
       slivers: [
@@ -81,15 +84,15 @@ class DriverProfileTab extends StatelessWidget {
                   TextButton.icon(
                     onPressed: () => _showEditVehicleBottomSheet(context, vm),
                     icon: const Icon(Icons.edit_rounded, size: 16, color: Color(0xFF06402B)),
-                    label: Text('تعديل', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: const Color(0xFF06402B))),
+                    label: Text(context.l10n.edit, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: const Color(0xFF06402B))),
                   ),
                   const Spacer(),
-                  _buildSectionTitle('المعلومات الشخصية والمركبة', context),
+                  _buildSectionTitle(context.l10n.profilePersonalAndVehicle, context),
                 ],
               ),
-              DriverProfileTile(icon: Icons.phone_rounded, label: 'رقم الهاتف', value: user.phone, showArrow: true),
-              DriverProfileTile(icon: Icons.directions_car_rounded, label: 'المركبة', value: vehicleString, showArrow: true),
-              DriverProfileTile(icon: Icons.pin_rounded, label: 'رقم اللوحة', value: user.licensePlate ?? 'أضف رقم اللوحة'),
+              DriverProfileTile(icon: Icons.phone_rounded, label: context.l10n.profilePhone, value: user.phone, showArrow: true),
+              DriverProfileTile(icon: Icons.directions_car_rounded, label: context.l10n.profileVehicle, value: vehicleString, showArrow: true),
+              DriverProfileTile(icon: Icons.pin_rounded, label: context.l10n.profileLicensePlate, value: user.licensePlate ?? context.l10n.profileAddLicensePlate),
               if (user.vehiclePhotoPath != null && user.vehiclePhotoPath!.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -105,40 +108,55 @@ class DriverProfileTab extends StatelessWidget {
                 ),
               
               const SizedBox(height: 24),
-              _buildSectionTitle('إعدادات التطبيق', context),
-              const DriverProfileTile(icon: Icons.language_rounded, label: 'لغة التطبيق', value: 'العربية', showArrow: true),
-              
+              _buildSectionTitle(context.l10n.profileAppSettings, context),
+              Consumer<AppLangNotifier>(
+                builder: (context, langNotifier, _) {
+                  final langLabel = langNotifier.locale.languageCode == 'ar'
+                      ? context.l10n.languageArabic
+                      : context.l10n.languageEnglish;
+                  return InkWell(
+                    onTap: () => showLangPickerSheet(context),
+                    child: DriverProfileTile(
+                      icon: Icons.language_rounded,
+                      label: context.l10n.profileLanguage,
+                      value: langLabel,
+                      showArrow: true,
+                    ),
+                  );
+                },
+              ),
+
               Consumer<AppThemeNotifier>(
                 builder: (context, themeNotifier, _) {
-                  String modeLabel = 'تلقائي';
-                  if (themeNotifier.mode == ThemeMode.light) modeLabel = 'فاتح';
-                  if (themeNotifier.mode == ThemeMode.dark) modeLabel = 'داكن';
-                  
+                  String modeLabel = context.l10n.themeAutoShort;
+                  if (themeNotifier.mode == ThemeMode.light) modeLabel = context.l10n.themeLight;
+                  if (themeNotifier.mode == ThemeMode.dark) modeLabel = context.l10n.themeDark;
+
                   return InkWell(
                     onTap: () => showThemeModeSheet(context),
                     child: DriverProfileTile(
                       icon: Icons.dark_mode_rounded,
-                      label: 'المظهر',
+                      label: context.l10n.profileTheme,
                       value: modeLabel,
                       showArrow: true,
                     ),
                   );
                 },
               ),
-              
-              const DriverProfileTile(icon: Icons.notifications_active_rounded, label: 'الإشعارات', value: 'مفعلة', showArrow: true),
+
+              DriverProfileTile(icon: Icons.notifications_active_rounded, label: context.l10n.profileNotifications, value: context.l10n.profileNotificationsEnabled, showArrow: true),
 
               const SizedBox(height: 24),
-              _buildSectionTitle('المساعدة والدعم', context),
+              _buildSectionTitle(context.l10n.profileHelpSupport, context),
               InkWell(
                 onTap: _launchHelpCenter,
-                child: const DriverProfileTile(icon: Icons.help_center_rounded, label: 'تواصل مع الدعم الفني', value: '', showArrow: true),
+                child: DriverProfileTile(icon: Icons.help_center_rounded, label: context.l10n.profileContactSupport, value: '', showArrow: true),
               ),
 
               const SizedBox(height: 32),
-              _buildActionTile(context, 'تعديل الملف الشخصي', Icons.edit_rounded, const Color(0xFF002819), () {}),
-              _buildActionTile(context, 'تسجيل الخروج', Icons.logout_rounded, Colors.red.shade700, () => _showLogoutDialog(context)),
-              _buildActionTile(context, 'حذف الحساب', Icons.person_remove_rounded, Colors.red.shade700, () {}),
+              _buildActionTile(context, context.l10n.profileEditProfile, Icons.edit_rounded, const Color(0xFF002819), () {}),
+              _buildActionTile(context, context.l10n.logout, Icons.logout_rounded, Colors.red.shade700, () => _showLogoutDialog(context)),
+              _buildActionTile(context, context.l10n.profileDeleteAccount, Icons.person_remove_rounded, Colors.red.shade700, () {}),
               
               const SizedBox(height: 100),
             ],
@@ -234,7 +252,7 @@ class DriverProfileTab extends StatelessWidget {
                       style: GoogleFonts.dmSans(fontSize: 24, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color),
                     ),
                     const SizedBox(height: 4),
-                    Text('إجمالي الرحلات', style: GoogleFonts.cairo(fontSize: 13, color: theme.textTheme.bodyMedium?.color)),
+                    Text(context.l10n.profileTotalTrips, style: GoogleFonts.cairo(fontSize: 13, color: theme.textTheme.bodyMedium?.color)),
                   ],
                 ),
               ),
@@ -248,7 +266,7 @@ class DriverProfileTab extends StatelessWidget {
                       style: GoogleFonts.dmSans(fontSize: 24, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color),
                     ),
                     const SizedBox(height: 4),
-                    Text('إجمالي الأرباح', style: GoogleFonts.cairo(fontSize: 13, color: theme.textTheme.bodyMedium?.color)),
+                    Text(context.l10n.profileTotalEarnings, style: GoogleFonts.cairo(fontSize: 13, color: theme.textTheme.bodyMedium?.color)),
                   ],
                 ),
               ),
@@ -371,13 +389,13 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
             Container(width: 40, height: 4, decoration: BoxDecoration(color: const Color(0xFFE6E9E7), borderRadius: BorderRadius.circular(2))),
             const SizedBox(height: 24),
             Text(
-              'تعديل معلومات المركبة',
+              context.l10n.profileEditVehicle,
               style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
             ),
             const SizedBox(height: 24),
-            _buildTextField(label: 'نوع المركبة وموديلها', controller: _modelController, hint: 'مثال: تويوتا بريوس'),
+            _buildTextField(label: context.l10n.profileVehicleTypeModel, controller: _modelController, hint: context.l10n.profileVehicleTypeModelHint),
             const SizedBox(height: 16),
-            _buildTextField(label: 'لون المركبة', controller: _colorController, hint: 'مثال: أبيض'),
+            _buildTextField(label: context.l10n.profileVehicleColor, controller: _colorController, hint: context.l10n.profileVehicleColorHint),
             const SizedBox(height: 16),
             _buildTextField(
               label: 'رقم اللوحة',
@@ -389,7 +407,7 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                'صورة المركبة',
+                context.l10n.profileVehiclePhoto,
                 style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF404943)),
               ),
             ),
@@ -411,7 +429,7 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
                         children: [
                           const Icon(Icons.add_a_photo_rounded, color: Color(0xFF717973), size: 32),
                           const SizedBox(height: 8),
-                          Text('اضغط لإضافة صورة', style: GoogleFonts.cairo(color: const Color(0xFF717973), fontSize: 14)),
+                          Text(context.l10n.profileTapToAddPhoto, style: GoogleFonts.cairo(color: const Color(0xFF717973), fontSize: 14)),
                         ],
                       ),
               ),
@@ -427,7 +445,7 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 0,
                 ),
-                child: Text('حفظ التغييرات', style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                child: Text(context.l10n.saveChanges, style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
               ),
             ),
           ],

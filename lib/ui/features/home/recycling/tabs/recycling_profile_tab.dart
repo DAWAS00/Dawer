@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/services/app_theme_notifier.dart';
+import '../../../../../l10n/l10n.dart';
 import '../../../../common/theme_mode_sheet.dart';
 import '../../../../features/auth/views/login_view.dart';
 import '../viewmodels/recycling_home_viewmodel.dart';
@@ -15,12 +16,12 @@ class RecyclingProfileTab extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('تسجيل الخروج', textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        content: Text('هل أنت متأكد أنك تريد تسجيل الخروج؟', textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+        title: Text(ctx.l10n.logout, textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        content: Text(ctx.l10n.logoutConfirm, textAlign: TextAlign.right, style: GoogleFonts.cairo()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('إلغاء', style: GoogleFonts.cairo(color: const Color(0xFF717973))),
+            child: Text(ctx.l10n.cancel, style: GoogleFonts.cairo(color: const Color(0xFF717973))),
           ),
           TextButton(
             onPressed: () {
@@ -30,7 +31,7 @@ class RecyclingProfileTab extends StatelessWidget {
                 (route) => false,
               );
             },
-            child: Text('خروج', style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
+            child: Text(ctx.l10n.logoutExit, style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -103,7 +104,7 @@ class RecyclingProfileTab extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            'شركة إعادة تدوير',
+                            context.l10n.recyclingCompanyLabel,
                             style: GoogleFonts.cairo(fontSize: 12, color: Colors.white),
                           ),
                         ),
@@ -136,11 +137,11 @@ class RecyclingProfileTab extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Row(
                       children: [
-                        _buildStatItem(vm.totalShipments.toString(), 'شحنات مستلمة'),
+                        _buildStatItem(vm.totalShipments.toString(), context.l10n.recyclingReceivedShipments),
                         Container(width: 1, height: 40, color: const Color(0xFFE6E9E7)),
-                        _buildStatItem(_formatNumber(vm.totalWeightProcessed), 'وزن معالج (كغ)'),
+                        _buildStatItem(_formatNumber(vm.totalWeightProcessed), context.l10n.recyclingProcessedWeight),
                         Container(width: 1, height: 40, color: const Color(0xFFE6E9E7)),
-                        _buildStatItem(vm.activeJobs.toString(), 'وظائف نشطة'),
+                        _buildStatItem(vm.activeJobs.toString(), context.l10n.recyclingActiveJobsLabel),
                       ],
                     ),
                   ),
@@ -152,54 +153,55 @@ class RecyclingProfileTab extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Row(
                   children: [
-                    _buildSectionTitle('معلومات الشركة'),
+                    _buildSectionTitle(context.l10n.recyclingCompanyInfo),
                     const Spacer(),
                     TextButton.icon(
                       onPressed: () => _showEditProfileSheet(context),
                       icon: const Icon(Icons.edit_rounded, size: 16, color: Color(0xFF14401F)),
-                      label: Text('تعديل', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: const Color(0xFF14401F))),
+                      label: Text(context.l10n.edit, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: const Color(0xFF14401F))),
                     ),
                   ],
                 ),
               ),
-              _buildProfileTile(Icons.phone_rounded, 'رقم التواصل', company.phone),
-              _buildProfileTile(Icons.email_rounded, 'البريد الإلكتروني', vm.email),
-              _buildProfileTile(Icons.location_on_rounded, 'منطقة الخدمة', vm.serviceArea),
-              _buildProfileTile(Icons.access_time_rounded, 'ساعات العمل', vm.workingHours),
+              _buildProfileTile(Icons.phone_rounded, context.l10n.recyclingCompanyPhone, company.phone),
+              _buildProfileTile(Icons.email_rounded, context.l10n.recyclingCompanyEmail, vm.email),
+              _buildProfileTile(Icons.location_on_rounded, context.l10n.recyclingServiceArea, vm.serviceArea),
+              _buildProfileTile(Icons.access_time_rounded, context.l10n.recyclingWorkingHours, vm.workingHours),
               _buildProfileTile(
                 Icons.badge_rounded,
-                'الترخيص التجاري',
-                company.isVerified ? 'تم التحقق  ·  ${vm.licenseNumber}' : 'لم يتم التحقق',
+                context.l10n.recyclingLicense,
+                company.isVerified ? '${context.l10n.recyclingLicenseVerified}  ·  ${vm.licenseNumber}' : context.l10n.recyclingLicenseNotVerified,
                 valueColor: company.isVerified ? const Color(0xFF166534) : const Color(0xFFC8860A),
               ),
 
               const SizedBox(height: 24),
-              _buildSectionTitle('إعدادات التطبيق', withPadding: true),
-              _buildProfileTile(Icons.language_rounded, 'لغة التطبيق', 'العربية'),
+              _buildSectionTitle(context.l10n.profileAppSettings, withPadding: true),
+              _buildProfileTile(Icons.language_rounded, context.l10n.profileLanguage,
+                Localizations.localeOf(context).languageCode == 'ar' ? context.l10n.languageArabic : context.l10n.languageEnglish),
               
               Consumer<AppThemeNotifier>(
                 builder: (context, themeNotifier, _) {
-                  String modeLabel = 'تلقائي';
-                  if (themeNotifier.mode == ThemeMode.light) modeLabel = 'فاتح';
-                  if (themeNotifier.mode == ThemeMode.dark) modeLabel = 'داكن';
+                  String modeLabel = context.l10n.themeAutoShort;
+                  if (themeNotifier.mode == ThemeMode.light) modeLabel = context.l10n.themeLight;
+                  if (themeNotifier.mode == ThemeMode.dark) modeLabel = context.l10n.themeDark;
                   
                   return InkWell(
                     onTap: () => showThemeModeSheet(context),
                     child: _buildProfileTile(
                       Icons.dark_mode_rounded,
-                      'المظهر',
+                      context.l10n.profileTheme,
                       modeLabel,
                     ),
                   );
                 },
               ),
               
-              _buildProfileTile(Icons.notifications_active_rounded, 'الإشعارات', 'مفعلة'),
+              _buildProfileTile(Icons.notifications_active_rounded, context.l10n.profileNotifications, context.l10n.profileNotificationsEnabled),
 
               const SizedBox(height: 32),
-              _buildActionTile(context, 'تعديل بيانات الشركة', Icons.edit_rounded, const Color(0xFF002819), () => _showEditProfileSheet(context)),
-              _buildActionTile(context, 'تسجيل الخروج', Icons.logout_rounded, Colors.red.shade700, () => _showLogoutDialog(context)),
-              _buildActionTile(context, 'حذف الحساب', Icons.delete_forever_rounded, Colors.red.shade700, () {}),
+              _buildActionTile(context, context.l10n.recyclingEditCompany, Icons.edit_rounded, const Color(0xFF002819), () => _showEditProfileSheet(context)),
+              _buildActionTile(context, context.l10n.logout, Icons.logout_rounded, Colors.red.shade700, () => _showLogoutDialog(context)),
+              _buildActionTile(context, context.l10n.profileDeleteAccount, Icons.delete_forever_rounded, Colors.red.shade700, () {}),
 
               const SizedBox(height: 100),
             ],
@@ -374,17 +376,17 @@ class _EditCompanyProfileSheetState extends State<_EditCompanyProfileSheet> {
           children: [
             Container(width: 40, height: 4, decoration: BoxDecoration(color: const Color(0xFFE6E9E7), borderRadius: BorderRadius.circular(2))),
             const SizedBox(height: 24),
-            Text('تعديل بيانات الشركة', style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF002819))),
+            Text(context.l10n.recyclingEditCompany, style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF002819))),
             const SizedBox(height: 24),
-            _buildField(label: 'اسم الشركة', controller: _nameCtrl, hint: 'أدخل اسم الشركة'),
+            _buildField(label: context.l10n.recyclingCompanyNameLabel, controller: _nameCtrl, hint: context.l10n.recyclingCompanyNameHint),
             const SizedBox(height: 16),
-            _buildField(label: 'رقم التواصل', controller: _phoneCtrl, hint: '+962 6X XXX XXXX', textDirection: TextDirection.ltr),
+            _buildField(label: context.l10n.recyclingPhoneLabel, controller: _phoneCtrl, hint: context.l10n.recyclingPhoneHint, textDirection: TextDirection.ltr),
             const SizedBox(height: 16),
-            _buildField(label: 'البريد الإلكتروني', controller: _emailCtrl, hint: 'info@company.jo', textDirection: TextDirection.ltr),
+            _buildField(label: context.l10n.recyclingEmailLabel, controller: _emailCtrl, hint: context.l10n.recyclingEmailHint, textDirection: TextDirection.ltr),
             const SizedBox(height: 16),
-            _buildField(label: 'منطقة الخدمة', controller: _areaCtrl, hint: 'عمّان، الزرقاء...'),
+            _buildField(label: context.l10n.recyclingAreaLabel, controller: _areaCtrl, hint: context.l10n.recyclingAreaHint),
             const SizedBox(height: 16),
-            _buildField(label: 'ساعات العمل', controller: _hoursCtrl, hint: '٧:٠٠ ص - ٥:٠٠ م'),
+            _buildField(label: context.l10n.recyclingHoursLabel, controller: _hoursCtrl, hint: context.l10n.recyclingHoursHint),
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
@@ -396,7 +398,7 @@ class _EditCompanyProfileSheetState extends State<_EditCompanyProfileSheet> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 0,
                 ),
-                child: Text('حفظ التغييرات', style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                child: Text(context.l10n.saveChanges, style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
               ),
             ),
           ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../viewmodels/login_viewmodel.dart';
+import '../../../../../l10n/l10n.dart';
 
 class SupplierSubTypeSelector extends StatelessWidget {
   const SupplierSubTypeSelector({super.key});
@@ -9,6 +10,7 @@ class SupplierSubTypeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<LoginViewModel>();
+    final l10n = context.l10n;
 
     return Container(
       decoration: BoxDecoration(
@@ -23,7 +25,7 @@ class SupplierSubTypeSelector extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Text(
-              'نوع المورد',
+              l10n.supplierTypeLabel,
               textAlign: TextAlign.right,
               style: GoogleFonts.cairo(
                 fontSize: 12,
@@ -41,18 +43,17 @@ class SupplierSubTypeSelector extends StatelessWidget {
               Expanded(
                 child: _buildTypeCard(
                   context: context,
-                  label: 'فرد',
+                  label: l10n.supplierTypeIndividual,
                   icon: Icons.person_outline_rounded,
                   type: SupplierType.individual,
                   isSelected: viewModel.supplierType == SupplierType.individual,
                 ),
               ),
               const SizedBox(width: 12),
-              // Store / Restaurant card
               Expanded(
                 child: _buildTypeCard(
                   context: context,
-                  label: 'متجر / مطعم',
+                  label: l10n.supplierTypeStore,
                   icon: Icons.storefront_rounded,
                   type: SupplierType.storeBusiness,
                   isSelected: viewModel.supplierType == SupplierType.storeBusiness,

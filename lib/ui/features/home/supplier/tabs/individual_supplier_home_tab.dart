@@ -5,6 +5,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order.dart';
 import '../../shared/order_card.dart';
 import '../../shared/order_details_view.dart';
+import '../../../../../l10n/l10n.dart';
 import '../viewmodels/individual_supplier_viewmodel.dart';
 
 class IndividualSupplierHomeTab extends StatelessWidget {
@@ -49,7 +50,7 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
-                    'طلباتي النشطة',
+                    context.l10n.supplierActiveOrders,
                     textAlign: TextAlign.right,
                     style: GoogleFonts.cairo(
                       fontSize: 17,
@@ -98,12 +99,12 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'لا توجد طلبات نشطة',
+                    context.l10n.supplierNoOrdersYet,
                     style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'اضغط على زر + أسفل الشاشة لإنشاء طلب جديد',
+                    context.l10n.supplierCreateFromHome,
                     style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF717973)),
                   ),
                 ],
@@ -140,11 +141,11 @@ class IndividualSupplierHomeTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'مرحباً، ${userName.split(' ').first}',
+                context.l10n.supplierGreeting(userName.split(' ').first),
                 style: GoogleFonts.cairo(fontSize: 14, color: Colors.white.withValues(alpha: 0.8)),
               ),
               Text(
-                'مورد فردي',
+                context.l10n.supplierIndividualType,
                 style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ],
@@ -163,7 +164,7 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                   style: GoogleFonts.dmSans(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.accentAmber),
                 ),
                 Text(
-                  'نقطة',
+                  context.l10n.supplierPoints,
                   style: GoogleFonts.cairo(fontSize: 10, color: AppColors.accentAmber),
                 ),
               ],
@@ -196,7 +197,7 @@ class IndividualSupplierHomeTab extends StatelessWidget {
         child: Row(
           children: [
             Text(
-              'تتبع',
+              context.l10n.orderTrackButton,
               style: GoogleFonts.cairo(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.statusInTransitText),
             ),
             const Icon(Icons.chevron_left_rounded, color: AppColors.statusInTransitText, size: 20),
@@ -220,12 +221,9 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                         ),
                       ),
                     const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        'السائق في الطريق إليك',
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
-                      ),
+                    Text(
+                      context.l10n.supplierDriverOnWay,
+                      style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
                     ),
                   ],
                 ),

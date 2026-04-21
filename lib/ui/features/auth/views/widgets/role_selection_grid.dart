@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../viewmodels/login_viewmodel.dart';
+import '../../../../../l10n/l10n.dart';
 
 class RoleSelectionGrid extends StatelessWidget {
   const RoleSelectionGrid({super.key});
@@ -9,12 +10,13 @@ class RoleSelectionGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<LoginViewModel>();
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'اختر نوع الحساب',
+          l10n.roleSelectTitle,
           textAlign: TextAlign.center,
           style: GoogleFonts.cairo(
             fontSize: 20,
@@ -28,7 +30,7 @@ class RoleSelectionGrid extends StatelessWidget {
           children: [
             _buildRoleCard(
               context: context,
-              title: 'سائق',
+              title: l10n.roleDriver,
               icon: Icons.local_shipping_rounded,
               role: UserRole.driver,
               isSelected: viewModel.selectedRole == UserRole.driver,
@@ -36,7 +38,7 @@ class RoleSelectionGrid extends StatelessWidget {
             const SizedBox(width: 12),
             _buildRoleCard(
               context: context,
-              title: 'مورد',
+              title: l10n.roleSupplier,
               icon: Icons.inventory_2_rounded,
               role: UserRole.supplier,
               isSelected: viewModel.selectedRole == UserRole.supplier,
@@ -44,7 +46,7 @@ class RoleSelectionGrid extends StatelessWidget {
             const SizedBox(width: 12),
             _buildRoleCard(
               context: context,
-              title: 'شركة إعادة تدوير',
+              title: l10n.roleRecyclingCo,
               icon: Icons.recycling_rounded,
               role: UserRole.recyclingCo,
               isSelected: viewModel.selectedRole == UserRole.recyclingCo,

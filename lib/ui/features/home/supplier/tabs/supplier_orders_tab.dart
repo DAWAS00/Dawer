@@ -2,12 +2,105 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../../data/models/order.dart';
-import '../../../../../data/services/app_order_store.dart';
+import '../../../../../../l10n/l10n.dart';
 import '../../shared/widgets/collection_sale_card.dart';
 import '../../shared/widgets/rate_driver_sheet.dart';
 import '../widgets/supplier_order_card.dart';
 
-class SupplierOrdersTab extends StatefulWidget {
+void _handleStartTransit(
+  BuildContext context,
+  Order sale,
+  String? Function(String saleId) onStartTransit,
+) {
+  final error = onStartTransit(sale.id);
+  if (error != null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(error, style: GoogleFonts.cairo(color: Colors.white)),
+        backgroundColor: const Color(0xFF991B1B),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+}
+
+void _showCompleteDialog(
+  BuildContext context,
+  Order sale,
+  String? Function(String saleId, {double? actualWeightKg}) onComplete,
+) {
+  final weightController = TextEditingController();
+  showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: Text(context.l10n.orderDeliveryConfirmTitle,
+          textAlign: TextAlign.right,
+          style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(context.l10n.orderDeliveryConfirmMsg,
+              textAlign: TextAlign.right,
+              style: GoogleFonts.cairo()),
+          if (sale.paymentModel == PaymentModel.perKg) ...[
+            const SizedBox(height: 16),
+            TextField(
+              controller: weightController,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              textAlign: TextAlign.right,
+              decoration: InputDecoration(
+                labelText: context.l10n.orderActualWeight,
+                labelStyle: GoogleFonts.cairo(),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+          ],
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx),
+          child: Text(context.l10n.cancel, style: GoogleFonts.cairo()),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(ctx);
+            final weightText = weightController.text.trim();
+            final weight =
+                weightText.isEmpty ? null : double.tryParse(weightText);
+            final error =
+                onComplete(sale.id, actualWeightKg: weight);
+            if (error != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(error,
+                      style: GoogleFonts.cairo(color: Colors.white)),
+                  backgroundColor: const Color(0xFF991B1B),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF1E40AF),
+            foregroundColor: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)),
+          ),
+          child: Text(context.l10n.confirm,
+              style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        ),
+      ],
+    ),
+  );
+}
+
+class SupplierOrdersTab extends StatelessWidget {
   final List<Order> activeOrders;
   final List<Order> completedOrders;
   final List<Order> cancelledOrders;
@@ -33,55 +126,37 @@ class SupplierOrdersTab extends StatefulWidget {
   State<SupplierOrdersTab> createState() => _SupplierOrdersTabState();
 }
 
-class _SupplierOrdersTabState extends State<SupplierOrdersTab> {
-  String _filterActiveType     = 'الكل';
-  String _filterActiveStatus   = 'الكل';
-  String _filterHistoryPeriod  = 'الكل';
-  String _filterHistoryWasteType = 'الكل';
-
-  @override
-  Widget build(BuildContext context) {
-    final activeCollectionSales = widget.collectionSaleOrders
-        .where((s) =>
-            s.status == OrderStatus.accepted ||
-            s.status == OrderStatus.inTransit)
-        .toList();
-
-    final activeCount =
-        widget.activeOrders.length + activeCollectionSales.length;
-
-    String tabLabel(String base, int count) =>
-        count > 0 ? '$base ($count)' : base;
-
-    return DefaultTabController(
-      length: 2,
-      child: Column(
-        children: [
-          Builder(builder: (ctx) {
-            final cs = Theme.of(ctx).colorScheme;
-            return Container(
-              height: 52,
-              margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-              decoration: BoxDecoration(
-                color: cs.onSurface.withValues(alpha: 0.06),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: TabBar(
-                indicator: BoxDecoration(
-                  color: const Color(0xFF06402B),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicatorPadding: const EdgeInsets.all(4),
-                dividerColor: Colors.transparent,
-                labelColor: Colors.white,
-                unselectedLabelColor: cs.onSurface.withValues(alpha: 0.6),
-                labelStyle: GoogleFonts.cairo(
-                    fontSize: 13, fontWeight: FontWeight.bold),
-                unselectedLabelStyle: GoogleFonts.cairo(fontSize: 13),
-                tabs: [
-                  Tab(text: tabLabel('النشطة', activeCount)),
-                  const Tab(text: 'السجل'),
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top + 20, 20, 16),
+            child: Text(
+              context.l10n.ordersTabTitle,
+              textAlign: TextAlign.right,
+              style: GoogleFonts.cairo(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
+            ),
+          ),
+        ),
+        if (!hasOrders)
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E5C35).withValues(alpha: 0.05),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.receipt_long_rounded, size: 64, color: Color(0xFF1E5C35)),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(context.l10n.ordersNoOrdersYet, style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFF002819))),
+                  const SizedBox(height: 8),
+                  Text(context.l10n.ordersCreateFromHome, style: GoogleFonts.cairo(fontSize: 14, color: const Color(0xFF717973))),
                 ],
               ),
             );
@@ -93,7 +168,25 @@ class _SupplierOrdersTabState extends State<SupplierOrdersTab> {
                 _buildHistoryTab(context),
               ],
             ),
-          ),
+          )
+        else ...[
+          if (collectionSaleOrders.isNotEmpty) ...[
+            _buildSectionHeader(context.l10n.ordersCollectionSection, collectionSaleOrders.length, const Color(0xFF14401F)),
+            _buildCollectionSalesList(context, collectionSaleOrders),
+          ],
+          if (activeOrders.isNotEmpty) ...[
+            _buildSectionHeader(context.l10n.ordersActiveSection, activeOrders.length, const Color(0xFF1E5C35)),
+            _buildOrdersList(context, activeOrders, canCancel: true),
+          ],
+          if (completedOrders.isNotEmpty) ...[
+            _buildSectionHeader(context.l10n.ordersCompletedSection, completedOrders.length, const Color(0xFF166534)),
+            _buildOrdersList(context, completedOrders),
+          ],
+          if (cancelledOrders.isNotEmpty) ...[
+            _buildSectionHeader(context.l10n.ordersCancelledSection, cancelledOrders.length, const Color(0xFF991B1B)),
+            _buildOrdersList(context, cancelledOrders),
+          ],
+          const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
       ),
     );
