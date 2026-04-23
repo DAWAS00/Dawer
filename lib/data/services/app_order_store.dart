@@ -1,7 +1,11 @@
-﻿import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
+import '../../backend_integration_locally/local_store.dart';
 import '../models/order.dart';
+import '../models/order_json.dart';
 import '../models/user.dart';
 import '../mock/order_mock_data.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
+import '../models/order_supabase_ext.dart';
 
 /// Singleton shared order store — the single source of truth for all orders
 /// across Driver, Supplier, and Recycling Company roles.
@@ -10,22 +14,92 @@ import '../mock/order_mock_data.dart';
 /// accept this store in their constructor and addListener to it so their own
 /// [notifyListeners] fires whenever the store changes.
 class AppOrderStore extends ChangeNotifier {
+  AppOrderStore({LocalStore? store}) : _store = store {
+    _bootstrap();
+  }
+
+  final LocalStore? _store;
+
   // ─────────────────────────────────────────────────────────────────────────
   // State
   // ─────────────────────────────────────────────────────────────────────────
 
   /// All regular orders — pickup requests (from suppliers) and collection jobs
   /// (posted by recycling companies). This is the canonical list.
-  final List<Order> _orders = OrderMockData.seedOrders();
+  late List<Order> _orders;
 
-  /// Marketplace items — materials listed for purchase/claim.
-  final List<Order> _market = OrderMockData.seedMarketItems();
 
   /// ID of the order currently active for our mock driver session.
   String? _activeOrderId;
 
   /// IDs of orders completed by our mock driver (their personal history).
   final List<String> _driverCompletedIds = ['ORD-H01', 'ORD-H02'];
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Bootstrap & persistence
+  // ─────────────────────────────────────────────────────────────────────────
+
+  void _bootstrap() {
+    final store = _store;
+    if (store == null) {
+      _orders = [...OrderMockData.seedOrders(), ...OrderMockData.seedMarketItems()];
+    } else {
+      if (store.isFirstLaunch) {
+        _orders = [...OrderMockData.seedOrders(), ...OrderMockData.seedMarketItems()];
+        store.writeOrders(_orders.map((o) => o.toJson()).toList());
+        store.markFirstLaunchDone();
+      } else {
+        _orders = store.readOrders().map(orderFromJson).toList();
+        final oldMarket = store.readMarket().map(orderFromJson).toList();
+        for (final m in oldMarket) {
+          if (!_orders.any((o) => o.id == m.id)) {
+            _orders.add(m.copyWith(isMarketplaceShared: true));
+          }
+        }
+      }
+    }
+
+    // SUPABASE INTEGRATION: Stream live orders and override the local mock _orders
+    try {
+      Supabase.instance.client
+          .from('orders')
+          .stream(primaryKey: ['id'])
+          .order('created_at', ascending: false)
+          .listen((data) {
+        if (data.isNotEmpty) {
+          final supabaseOrders = data.map((json) => orderFromSupabaseJson(json)).toList();
+          
+          for (var o in supabaseOrders) {
+             final idx = _orders.indexWhere((existing) => existing.id == o.id);
+             if (idx >= 0) {
+               _orders[idx] = o;
+             } else {
+               _orders.insert(0, o);
+             }
+          }
+          notifyListeners();
+        }
+      });
+    } catch (e) {
+      debugPrint("Supabase not initialized (or error): $e");
+    }
+  }
+
+  Future<void> _persistOrders() async {
+    final store = _store;
+    if (store == null) return;
+    await store.writeOrders(_orders.map((o) => o.toJson()).toList());
+  }
+
+
+  @override
+  void notifyListeners() {
+      // Auto-persist on every mutation. Fire-and-forget — a write failure does
+    // not block UI updates.
+    // ignore: discarded_futures
+    _persistOrders();
+    super.notifyListeners();
+  }
 
   // ─────────────────────────────────────────────────────────────────────────
   // Driver views
@@ -79,7 +153,8 @@ class AppOrderStore extends ChangeNotifier {
   // Marketplace views
   // ─────────────────────────────────────────────────────────────────────────
 
-  List<Order> get marketItems => List.unmodifiable(_market);
+  List<Order> get marketItems =>
+      List.unmodifiable(_orders.where((o) => o.isMarketplaceShared));
 
   // ─────────────────────────────────────────────────────────────────────────
   // Driver actions
@@ -110,6 +185,20 @@ class AppOrderStore extends ChangeNotifier {
     );
     _activeOrderId = orderId;
     notifyListeners();
+
+    // SUPABASE INTEGRATION: Update the DB
+    try {
+      Supabase.instance.client.from('orders').update({
+        'status': 'accepted',
+        'driver_id': Supabase.instance.client.auth.currentUser?.id,
+        'accepted_at': DateTime.now().toUtc().toIso8601String(),
+      }).eq('id', orderId).then((_) {}).catchError((e) {
+        debugPrint("Error accepting order in Supabase: $e");
+      });
+    } catch (e) {
+      debugPrint("Supabase not initialized: $e");
+    }
+
     return null;
   }
 
@@ -200,6 +289,22 @@ class AppOrderStore extends ChangeNotifier {
     );
     _orders.insert(0, order);
     notifyListeners();
+
+    // SUPABASE INTEGRATION: Insert new order into DB
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      final payload = order.toSupabaseMap(user?.id);
+      // Remove mock ID so Supabase uses its autogenerated UUID
+      payload.remove('id'); 
+      Supabase.instance.client.from('orders').insert(payload).select().then((res) {
+        if (res.isNotEmpty) {
+          debugPrint("Order created in Supabase with id: ${res[0]['id']}");
+        }
+      });
+    } catch (e) {
+      debugPrint("Error writing order to Supabase: $e");
+    }
+
     return order;
   }
 
@@ -489,20 +594,45 @@ class AppOrderStore extends ChangeNotifier {
   // ─────────────────────────────────────────────────────────────────────────
 
   void addMarketListing(Order order) {
-    _market.insert(0, order);
+    _orders.insert(0, order);
     notifyListeners();
+
+    // SUPABASE INTEGRATION: Insert new order into DB
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      final payload = order.toSupabaseMap(user?.id);
+      payload.remove('id'); 
+      Supabase.instance.client.from('orders').insert(payload).select().then((res) {
+        if (res.isNotEmpty) {
+          debugPrint("Market order created in Supabase with id: ${res[0]['id']}");
+        }
+      });
+    } catch (e) {
+      debugPrint("Error writing market order to Supabase: $e");
+    }
   }
 
   void removeMarketListing(String orderId) {
-    final idx = _market.indexWhere((o) => o.id == orderId);
+    final idx = _orders.indexWhere((o) => o.id == orderId);
     if (idx == -1) return;
-    if (_market[idx].status != OrderStatus.pending) return;
-    _market[idx] = _market[idx].copyWith(status: OrderStatus.cancelled);
+    if (_orders[idx].status != OrderStatus.pending) return;
+    _orders[idx] = _orders[idx].copyWith(status: OrderStatus.cancelled);
     notifyListeners();
+
+    try {
+      Supabase.instance.client.from('orders').update({
+        'status': 'cancelled',
+      }).eq('id', orderId).then((_) {}).catchError((e) {
+        debugPrint("Error updating market status: $e");
+      });
+    } catch (e) {
+      debugPrint("Supabase not initialized: $e");
+    }
   }
 
-  List<Order> myMarketListings(String publisherName) => _market
+  List<Order> myMarketListings(String publisherName) => _orders
       .where((o) =>
+          o.isMarketplaceShared &&
           o.supplierName == publisherName &&
           (o.status == OrderStatus.pending ||
               o.status == OrderStatus.accepted ||
@@ -510,10 +640,10 @@ class AppOrderStore extends ChangeNotifier {
       .toList();
 
   Order? claimMarketItem(String orderId, User driver) {
-    final idx = _market.indexWhere((o) => o.id == orderId);
-    if (idx == -1) return null;
-    if (_market[idx].status != OrderStatus.pending) return null;
-    final claimed = _market[idx].copyWith(
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1 || !_orders[idx].isMarketplaceShared) return null;
+    if (_orders[idx].status != OrderStatus.pending) return null;
+    final claimed = _orders[idx].copyWith(
       status: OrderStatus.accepted,
       acceptedAt: DateTime.now(),
       driverName: driver.name,
@@ -523,8 +653,21 @@ class AppOrderStore extends ChangeNotifier {
       driverVehicleColor: driver.vehicleColor,
       driverLicensePlate: driver.licensePlate,
     );
-    _market[idx] = claimed;
+    _orders[idx] = claimed;
     notifyListeners();
+
+    try {
+      Supabase.instance.client.from('orders').update({
+        'status': 'accepted',
+        'driver_id': Supabase.instance.client.auth.currentUser?.id,
+        'accepted_at': DateTime.now().toUtc().toIso8601String(),
+      }).eq('id', orderId).then((_) {}).catchError((e) {
+        debugPrint("Error claiming market item in Supabase: $e");
+      });
+    } catch (e) {
+      debugPrint("Supabase not initialized: $e");
+    }
+
     return claimed;
   }
 
@@ -534,35 +677,59 @@ class AppOrderStore extends ChangeNotifier {
     String? dropoffAddress,
     double deliveryFee = 0,
   }) {
-    final idx = _market.indexWhere((o) => o.id == orderId);
-    if (idx == -1) return null;
-    if (_market[idx].status != OrderStatus.pending) return null;
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1 || !_orders[idx].isMarketplaceShared) return null;
+    if (_orders[idx].status != OrderStatus.pending) return null;
     if (!selfPickup &&
         (dropoffAddress == null || dropoffAddress.trim().isEmpty)) {
       return null;
     }
-    final purchased = _market[idx].copyWith(
+    final purchased = _orders[idx].copyWith(
       status: OrderStatus.accepted,
       acceptedAt: DateTime.now(),
       dropoffAddress: selfPickup ? 'استلام من السوق' : dropoffAddress!,
       deliveryFee: selfPickup ? 0 : deliveryFee,
     );
-    _market[idx] = purchased;
+    _orders[idx] = purchased;
     notifyListeners();
+
+    try {
+      Supabase.instance.client.from('orders').update({
+        'status': 'accepted',
+        'accepted_at': DateTime.now().toUtc().toIso8601String(),
+      }).eq('id', orderId).then((_) {}).catchError((e) {
+        debugPrint("Error purchasing market item in Supabase: $e");
+      });
+    } catch (e) {
+      debugPrint("Supabase not initialized: $e");
+    }
+
     return purchased;
   }
 
   Order? receiveAtFacility(String orderId, String facilityAddress) {
-    final idx = _market.indexWhere((o) => o.id == orderId);
-    if (idx == -1) return null;
-    if (_market[idx].status != OrderStatus.pending) return null;
-    final received = _market[idx].copyWith(
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1 || !_orders[idx].isMarketplaceShared) return null;
+    if (_orders[idx].status != OrderStatus.pending) return null;
+    final received = _orders[idx].copyWith(
       status: OrderStatus.accepted,
       acceptedAt: DateTime.now(),
       dropoffAddress: facilityAddress,
     );
-    _market[idx] = received;
+    _orders[idx] = received;
     notifyListeners();
+
+    try {
+      Supabase.instance.client.from('orders').update({
+        'status': 'accepted',
+        'accepted_at': DateTime.now().toUtc().toIso8601String(),
+      }).eq('id', orderId).then((_) {}).catchError((e) {
+        debugPrint("Error receiving market item at facility in Supabase: $e");
+      });
+    } catch (e) {
+      debugPrint("Supabase not initialized: $e");
+    }
+
     return received;
   }
 

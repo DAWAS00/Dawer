@@ -243,6 +243,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signupSectionDocuments => 'Official Documents';
 
   @override
+  String get signupNationalIdDocument => 'National ID Image';
+
+  @override
+  String get signupCommercialRegisterDocument => 'Commercial Register Image';
+
+  @override
+  String get signupBusinessLicenseDocument => 'Business License Image';
+
+  @override
+  String get signupUploadDocumentPrompt => 'Tap to upload document image';
+
+  @override
+  String get signupUploadDocumentSources => 'Camera or photo gallery';
+
+  @override
+  String get signupDocumentUploaded => 'Uploaded';
+
+  @override
   String get signupSectionContact => 'Contact Information';
 
   @override
@@ -261,32 +279,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signupEmailHint => 'example@domain.com';
 
   @override
-  String get verificationTitle => 'Verification';
+  String get signupPasswordLabel => 'Password';
 
   @override
-  String get verificationCodeSent => 'We sent a 6-digit code';
+  String get signupPasswordHint => 'At least 8 characters, letter + digit';
 
   @override
-  String get verificationEnterCode => 'Enter Verification Code';
+  String get signupPasswordConfirmLabel => 'Confirm Password';
 
   @override
-  String get verificationResendAfter => 'Resend after';
+  String get signupPasswordConfirmHint => 'Re-enter your password';
 
   @override
-  String get verificationResend => 'Resend';
+  String get loginPasswordLabel => 'Password';
 
   @override
-  String get verificationButton => 'Verify';
+  String get loginPasswordHint => 'Enter your password';
 
   @override
-  String get verificationSecureTitle => 'Secure Verification';
+  String get signupRoleDriver => 'Driver Registration';
 
   @override
-  String get verificationSecureSubtitle =>
-      'Verification code is secret and protected';
+  String get signupRoleStoreBusiness => 'Store / Restaurant Registration';
 
   @override
-  String get verificationSecureFooter => 'Secure and Trusted Verification';
+  String get signupRoleIndividualSupplier => 'Individual Supplier Registration';
+
+  @override
+  String get signupRoleRecyclingCo => 'Recycling Company Registration';
+
+  @override
+  String get signupPhotoPersonal => 'Profile Photo';
+
+  @override
+  String get signupPhotoOrganization => 'Organization Logo';
+
+  @override
+  String get signupErrorManagerName =>
+      'Please enter the responsible person\'s name';
+
+  @override
+  String get signupErrorDocumentRequired =>
+      'Please upload the required document';
+
+  @override
+  String get signupErrorEmailRequired => 'Email address is required';
+
+  @override
+  String get signupErrorPasswordRequired => 'Password is required';
+
+  @override
+  String get signupErrorPasswordMismatch => 'Passwords do not match';
+
+  @override
+  String get signupErrorSubmitFailed =>
+      'Failed to create account, please try again';
 
   @override
   String get driverTitle => 'Dawar Driver';
@@ -1154,6 +1201,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get imagePickerAddPhoto => 'Add Photo';
 
   @override
+  String get imagePickerRemoveImage => 'Remove Image';
+
+  @override
   String get newOrderSelectButton => 'Select';
 
   @override
@@ -1213,4 +1263,69 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get newOrderSubmitButton => 'Submit Request';
+
+  @override
+  String get openInGoogleMaps => 'Open in Google Maps';
+
+  @override
+  String get mapsNotInstalledTitle => 'Google Maps not installed';
+
+  @override
+  String get mapsNotInstalledBody =>
+      'No maps app found. Open the store to install it?';
+
+  @override
+  String get openStore => 'Open Store';
+
+  @override
+  String get mapLabelPickup => 'Pickup';
+
+  @override
+  String get mapLabelDropoff => 'Drop-off';
+
+  @override
+  String get mapUnavailable => 'Map unavailable';
+
+  @override
+  String get routeTitle => 'Route';
+
+  @override
+  String get pickLocationTitle => 'Set location';
+
+  @override
+  String get confirmLocation => 'Confirm location';
+
+  @override
+  String get useCurrentLocation => 'Use my current location';
+
+  @override
+  String get pickOnGoogleMaps => 'Pick on Google Maps';
+
+  @override
+  String get locationNotSet => 'Not set yet';
+
+  @override
+  String get pasteCoordinates => 'Paste coordinates';
+
+  @override
+  String get pasteCoordinatesHint =>
+      'Paste from Google Maps, e.g. 31.9539, 35.9106';
+
+  @override
+  String get latitude => 'Latitude';
+
+  @override
+  String get longitude => 'Longitude';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get gpsPermissionDenied => 'Location permission denied';
+
+  @override
+  String get gpsUnavailable => 'Could not get current location';
+
+  @override
+  String get invalidCoordinates => 'Invalid coordinates';
 }

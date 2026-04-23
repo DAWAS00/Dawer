@@ -240,4 +240,79 @@ void main() {
       expect(sales, isEmpty);
     });
   });
+
+  group('AppOrderStore – marketplace logic', () {
+    test('adding a market listing includes it in market items', () {
+      final order = Order(
+        id: 'TEST-MKT-1',
+        type: OrderType.pickup,
+        wasteTypes: [WasteType.metal],
+        pickupAddress: 'Test Addr',
+        dropoffAddress: '',
+        reward: 0,
+        createdAt: DateTime.now(),
+        status: OrderStatus.pending,
+        pickupTarget: PickupTarget.riderBuy,
+        isMarketplaceShared: true,
+      );
+      store.addMarketListing(order);
+      expect(store.marketItems.any((o) => o.id == 'TEST-MKT-1'), isTrue);
+    });
+
+    test('non-shared elements do not appear in market items', () {
+      final order = Order(
+        id: 'TEST-MKT-2',
+        type: OrderType.pickup,
+        wasteTypes: [WasteType.metal],
+        pickupAddress: 'Test Addr',
+        dropoffAddress: '',
+        reward: 0,
+        createdAt: DateTime.now(),
+        status: OrderStatus.pending,
+        pickupTarget: PickupTarget.riderBuy,
+        isMarketplaceShared: false,
+      );
+      store.addMarketListing(order);
+      expect(store.marketItems.any((o) => o.id == 'TEST-MKT-2'), isFalse);
+    });
+
+    test('claiming a market item transitions it to accepted', () {
+      final order = Order(
+        id: 'TEST-MKT-3',
+        type: OrderType.pickup,
+        wasteTypes: [WasteType.metal],
+        pickupAddress: 'Test Addr',
+        dropoffAddress: '',
+        reward: 0,
+        createdAt: DateTime.now(),
+        status: OrderStatus.pending,
+        pickupTarget: PickupTarget.riderBuy,
+        isMarketplaceShared: true,
+      );
+      store.addMarketListing(order);
+      final claimed = store.claimMarketItem('TEST-MKT-3', mockDriver);
+      expect(claimed, isNotNull);
+      expect(claimed!.status, OrderStatus.accepted);
+      expect(store.marketItems.firstWhere((o) => o.id == 'TEST-MKT-3').status, OrderStatus.accepted);
+    });
+
+    test('purchasing a market item sets dropoff to استلام من السوق when self pickup', () {
+      final order = Order(
+        id: 'TEST-MKT-4',
+        type: OrderType.pickup,
+        wasteTypes: [WasteType.metal],
+        pickupAddress: 'Test Addr',
+        dropoffAddress: '',
+        reward: 0,
+        createdAt: DateTime.now(),
+        status: OrderStatus.pending,
+        pickupTarget: PickupTarget.riderBuy,
+        isMarketplaceShared: true,
+      );
+      store.addMarketListing(order);
+      final purchased = store.purchaseMarketItem(orderId: 'TEST-MKT-4', selfPickup: true);
+      expect(purchased, isNotNull);
+      expect(purchased!.dropoffAddress, 'استلام من السوق');
+    });
+  });
 }

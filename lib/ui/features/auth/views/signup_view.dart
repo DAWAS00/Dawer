@@ -6,7 +6,7 @@ import '../viewmodels/login_viewmodel.dart';
 import '../viewmodels/signup_viewmodel.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../common/green_button.dart';
-import 'verification_view.dart';
+import 'login_view.dart';
 import 'widgets/footer.dart';
 import 'widgets/photo_picker_card.dart';
 import 'widgets/identity_upload_card.dart';
@@ -44,6 +44,8 @@ class _SignUpScreenState extends State<_SignUpScreen> {
   final _coverageCtrl = TextEditingController();
   final _phoneCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
+  final _passwordCtrl = TextEditingController();
+  final _passwordConfirmCtrl = TextEditingController();
 
   @override
   void dispose() {
@@ -53,6 +55,8 @@ class _SignUpScreenState extends State<_SignUpScreen> {
     _coverageCtrl.dispose();
     _phoneCtrl.dispose();
     _emailCtrl.dispose();
+    _passwordCtrl.dispose();
+    _passwordConfirmCtrl.dispose();
     super.dispose();
   }
 
@@ -65,20 +69,9 @@ class _SignUpScreenState extends State<_SignUpScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         vm.resetSubmitted();
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (_) => VerificationView(
-              destination: vm.contactPhone.isNotEmpty
-                  ? vm.contactPhone
-                  : vm.contactEmail,
-              isEmail: vm.contactPhone.isEmpty,
-              role: vm.role,
-              supplierType: vm.supplierType,
-              userName: vm.isBusinessRole
-                  ? vm.businessName
-                  : vm.fullName,
-            ),
-          ),
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const LoginView()),
+          (route) => false,
         );
       });
     }
@@ -102,7 +95,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
             const SizedBox(height: 28),
             GreenButton(
               text: l10n.signupCreateButton,
-              onPressed: () => context.read<SignUpViewModel>().submit(),
+              onPressed: () => context.read<SignUpViewModel>().submit(context.l10n),
               isLoading: vm.isLoading,
               height: 58,
               borderRadius: 16,
@@ -112,6 +105,18 @@ class _SignUpScreenState extends State<_SignUpScreen> {
                 size: 20,
               ),
             ),
+            if (vm.errors['submit'] != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                vm.errors['submit']!,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.red.shade700,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
             const SizedBox(height: 8),
             const LoginFooter(),
           ],
@@ -179,6 +184,13 @@ class _SignUpScreenState extends State<_SignUpScreen> {
       UserRole.supplier => (Icons.inventory_2_rounded, const Color(0xFFC3EAC4)),
       UserRole.recyclingCo => (Icons.recycling_rounded, const Color(0xFFD4EBAB)),
     };
+    final roleTitle = switch (vm.role) {
+      UserRole.driver => l10n.signupRoleDriver,
+      UserRole.supplier when vm.supplierType == SupplierType.storeBusiness =>
+        l10n.signupRoleStoreBusiness,
+      UserRole.supplier => l10n.signupRoleIndividualSupplier,
+      UserRole.recyclingCo => l10n.signupRoleRecyclingCo,
+    };
 
     return Container(
       decoration: BoxDecoration(
@@ -197,7 +209,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  vm.roleTitle,
+                  roleTitle,
                   textAlign: TextAlign.right,
                   style: GoogleFonts.cairo(
                     fontSize: 20,
@@ -235,12 +247,16 @@ class _SignUpScreenState extends State<_SignUpScreen> {
   // ── Photo section ───────────────────────────────────────────────────────────
 
   Widget _buildPhotoSection(BuildContext context, SignUpViewModel vm) {
+    final l10n = context.l10n;
+    final photoLabel = vm.isBusinessRole
+        ? l10n.signupPhotoOrganization
+        : l10n.signupPhotoPersonal;
     return _SectionCard(
-      title: vm.photoLabel,
+      title: photoLabel,
       icon: Icons.photo_camera_rounded,
       child: PhotoPickerCard(
         image: vm.profilePhoto,
-        label: vm.photoLabel,
+        label: photoLabel,
         isBusiness: vm.isBusinessRole,
         onPick: (source) => context.read<SignUpViewModel>().pickProfilePhoto(source),
         onRemove: () => context.read<SignUpViewModel>().removeProfilePhoto(),
@@ -367,12 +383,19 @@ class _SignUpScreenState extends State<_SignUpScreen> {
 
   Widget _buildIdentitySection(BuildContext context, SignUpViewModel vm) {
     final l10n = context.l10n;
+    final docLabel = switch (vm.role) {
+      UserRole.driver => l10n.signupNationalIdDocument,
+      UserRole.supplier when vm.supplierType == SupplierType.storeBusiness =>
+        l10n.signupCommercialRegisterDocument,
+      UserRole.supplier => l10n.signupNationalIdDocument,
+      UserRole.recyclingCo => l10n.signupBusinessLicenseDocument,
+    };
     return _SectionCard(
       title: l10n.signupSectionDocuments,
       icon: Icons.badge_rounded,
       child: IdentityUploadCard(
         document: vm.identityDocument,
-        label: vm.idDocLabel,
+        label: docLabel,
         error: vm.errors['identityDocument'],
         onPick: (source) =>
             context.read<SignUpViewModel>().pickIdentityDocument(source),
@@ -398,10 +421,13 @@ class _SignUpScreenState extends State<_SignUpScreen> {
             hint: l10n.signupPhoneHint,
             keyboardType: TextInputType.phone,
             prefixText: '+962  ',
+            forceLtrInEnglish: true,
             isRequired: false,
+            error: vm.errors['contactPhone'],
             onChanged: (v) {
               context.read<SignUpViewModel>().contactPhone = v;
               context.read<SignUpViewModel>().clearError('contact');
+              context.read<SignUpViewModel>().clearError('contactPhone');
             },
           ),
           const SizedBox(height: 16),
@@ -427,10 +453,36 @@ class _SignUpScreenState extends State<_SignUpScreen> {
             label: l10n.signupEmailLabel,
             hint: l10n.signupEmailHint,
             keyboardType: TextInputType.emailAddress,
+            forceLtrInEnglish: true,
             isRequired: false,
+            error: vm.errors['contactEmail'],
             onChanged: (v) {
               context.read<SignUpViewModel>().contactEmail = v;
               context.read<SignUpViewModel>().clearError('contact');
+              context.read<SignUpViewModel>().clearError('contactEmail');
+            },
+          ),
+          const SizedBox(height: 16),
+          _PasswordInputField(
+            controller: _passwordCtrl,
+            label: l10n.signupPasswordLabel,
+            hint: l10n.signupPasswordHint,
+            error: vm.errors['password'],
+            onChanged: (v) {
+              context.read<SignUpViewModel>().password = v;
+              context.read<SignUpViewModel>().clearError('password');
+            },
+          ),
+          const SizedBox(height: 16),
+          _PasswordInputField(
+            controller: _passwordConfirmCtrl,
+            label: l10n.signupPasswordConfirmLabel,
+            hint: l10n.signupPasswordConfirmHint,
+            error: vm.errors['passwordConfirm'],
+            isConfirm: true,
+            onChanged: (v) {
+              context.read<SignUpViewModel>().passwordConfirm = v;
+              context.read<SignUpViewModel>().clearError('passwordConfirm');
             },
           ),
           if (vm.errors['contact'] != null) ...[
@@ -537,6 +589,7 @@ class _InputField extends StatelessWidget {
   final String? prefixText;
   final bool isRequired;
   final TextInputType keyboardType;
+  final bool forceLtrInEnglish;
   final ValueChanged<String> onChanged;
 
   const _InputField({
@@ -548,10 +601,14 @@ class _InputField extends StatelessWidget {
     this.prefixText,
     this.isRequired = true,
     this.keyboardType = TextInputType.text,
+    this.forceLtrInEnglish = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
+    final useLtrInput = forceLtrInEnglish && isEnglish;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -585,7 +642,8 @@ class _InputField extends StatelessWidget {
           child: TextField(
             controller: controller,
             keyboardType: keyboardType,
-            textAlign: TextAlign.right,
+            textAlign: useLtrInput ? TextAlign.left : TextAlign.right,
+            textDirection: useLtrInput ? TextDirection.ltr : null,
             onChanged: onChanged,
             style: GoogleFonts.cairo(
               fontSize: 15,
@@ -673,6 +731,117 @@ class _NationalityChip extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ── Password input field ─────────────────────────────────────────────────────
+
+class _PasswordInputField extends StatefulWidget {
+  final TextEditingController controller;
+  final String label;
+  final String hint;
+  final String? error;
+  final bool isConfirm;
+  final ValueChanged<String> onChanged;
+
+  const _PasswordInputField({
+    required this.controller,
+    required this.label,
+    required this.hint,
+    this.error,
+    this.isConfirm = false,
+    required this.onChanged,
+  });
+
+  @override
+  State<_PasswordInputField> createState() => _PasswordInputFieldState();
+}
+
+class _PasswordInputFieldState extends State<_PasswordInputField> {
+  bool _obscured = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(
+              widget.label,
+              style: GoogleFonts.cairo(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF404943),
+              ),
+            ),
+            const Text(
+              ' *',
+              style: TextStyle(color: Colors.red, fontSize: 14),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Container(
+          decoration: BoxDecoration(
+            color: widget.error != null ? Colors.red.shade50 : const Color(0xFFE6E9E7),
+            borderRadius: BorderRadius.circular(12),
+            border: widget.error != null
+                ? Border.all(color: Colors.red.shade300)
+                : null,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            children: [
+              GestureDetector(
+                onTap: () => setState(() => _obscured = !_obscured),
+                child: Icon(
+                  _obscured
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  color: const Color(0xFF6B7280),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: widget.controller,
+                  onChanged: widget.onChanged,
+                  obscureText: _obscured,
+                  textAlign: TextAlign.right,
+                  style: GoogleFonts.cairo(
+                    fontSize: 15,
+                    color: const Color(0xFF191C1B),
+                  ),
+                  decoration: InputDecoration(
+                    hintText: widget.hint,
+                    hintStyle: GoogleFonts.cairo(
+                      fontSize: 14,
+                      color: const Color(0xFF6B7280).withValues(alpha: 0.5),
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (widget.error != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            widget.error!,
+            style: GoogleFonts.cairo(
+              fontSize: 12,
+              color: Colors.red.shade600,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

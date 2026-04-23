@@ -47,6 +47,10 @@
 			</array>
 		</dict>
 	</dict>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>comgooglemaps</string>
+	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>نحتاج موقعك لتحديد نقطة الاستلام</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

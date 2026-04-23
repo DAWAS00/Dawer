@@ -1,7 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../auth/views/login_view.dart';
+import '../../../../data/models/user_role.dart';
+import '../../home/home_router.dart';
+import '../../../../data/services/user_signup_service.dart';
 import '../../../../l10n/l10n.dart';
 
 class SplashView extends StatefulWidget {
@@ -37,18 +41,85 @@ class _SplashViewState extends State<SplashView>
 
     _controller.forward();
 
+    // Check for existing session & navigate after splash animation
     Timer(const Duration(seconds: 3), () {
       if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const LoginView(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-          transitionDuration: const Duration(milliseconds: 500),
-        ),
-      );
+      _resolveNavigation();
     });
+  }
+
+  /// Checks if a Supabase session already exists. If so, fetches the user
+  /// profile and navigates directly to the home screen. Otherwise, goes to
+  /// the login page.
+  Future<void> _resolveNavigation() async {
+    try {
+      final session = Supabase.instance.client.auth.currentSession;
+      if (session != null) {
+        // Session exists — try to fetch the user profile
+        final service = UserSignUpService();
+        final profile = await service.getCurrentProfile();
+
+        if (profile != null && mounted) {
+          // Parse role and supplier type from profile
+          final roleStr = profile['role'] as String?;
+          final supplierStr = profile['supplier_type'] as String?;
+
+          UserRole role = UserRole.driver;
+          SupplierType supplierType = SupplierType.individual;
+
+          if (roleStr != null) {
+            for (final r in UserRole.values) {
+              if (r.dbValue == roleStr) {
+                role = r;
+                break;
+              }
+            }
+          }
+          if (supplierStr != null) {
+            for (final s in SupplierType.values) {
+              if (s.dbValue == supplierStr) {
+                supplierType = s;
+                break;
+              }
+            }
+          }
+
+          final userName = (profile['name'] as String?) ?? '';
+
+          Navigator.of(context).pushReplacement(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  HomeRouter(
+                role: role,
+                supplierType: supplierType,
+                userName: userName,
+              ),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              transitionDuration: const Duration(milliseconds: 500),
+            ),
+          );
+          return;
+        }
+      }
+    } catch (_) {
+      // If anything fails, fall through to login
+    }
+
+    // No valid session — go to login
+    if (!mounted) return;
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const LoginView(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
   }
 
   @override
@@ -103,7 +174,8 @@ class _SplashViewState extends State<SplashView>
                         width: 220,
                         height: 220,
                         fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) => const Icon(
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
                           Icons.eco_rounded,
                           size: 56,
                           color: Color(0xFF06402B),

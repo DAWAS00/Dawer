@@ -6,7 +6,12 @@
       "Bash(dir \"C:/Users/dawas/OneDrive/Documents/GitHub/Obsidian-Brain\")",
       "Bash(xargs grep:*)",
       "Bash(sed -n '30,65p' \"C:/Users/dawas/dwaar/lib/ui/features/home/supplier/tabs/supplier_home_tab.dart\")",
-      "Bash(sed -n '30,70p' \"C:/Users/dawas/dwaar/lib/ui/features/home/supplier/tabs/individual_supplier_home_tab.dart\")"
+      "Bash(sed -n '30,70p' \"C:/Users/dawas/dwaar/lib/ui/features/home/supplier/tabs/individual_supplier_home_tab.dart\")",
+      "Bash(obsidian vault=Obsidian-Brain *)",
+      "Bash(obsidian vault=\"Obsidian-Brain\" links path=\"Projects/Dawer\")",
+      "Bash(obsidian vault=\"Obsidian-Brain\" search query=\"Dwaar OR Dawer OR dwaar\" limit=15)",
+      "Bash(obsidian vault=\"Obsidian-Brain\" task path=\"Projects/Dawer\")",
+      "Bash(flutter analyze *)"
     ]
   }
 }

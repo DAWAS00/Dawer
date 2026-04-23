@@ -165,6 +165,7 @@ class Order {
   final double? dropoffLat;
   final double? dropoffLng;
   final int? etaMinutes;
+  final bool isMarketplaceShared;
 
   const Order({
     required this.id,
@@ -216,6 +217,7 @@ class Order {
     this.dropoffLat,
     this.dropoffLng,
     this.etaMinutes,
+    this.isMarketplaceShared = false,
   });
 
   Order copyWith({
@@ -268,6 +270,7 @@ class Order {
     double? dropoffLat,
     double? dropoffLng,
     int? etaMinutes,
+    bool? isMarketplaceShared,
   }) {
     return Order(
       id: id ?? this.id,
@@ -319,6 +322,7 @@ class Order {
       dropoffLat: dropoffLat ?? this.dropoffLat,
       dropoffLng: dropoffLng ?? this.dropoffLng,
       etaMinutes: etaMinutes ?? this.etaMinutes,
+      isMarketplaceShared: isMarketplaceShared ?? this.isMarketplaceShared,
     );
   }
 

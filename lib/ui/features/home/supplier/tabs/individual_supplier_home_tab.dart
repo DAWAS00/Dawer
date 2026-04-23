@@ -204,52 +204,56 @@ class IndividualSupplierHomeTab extends StatelessWidget {
             const Spacer(),
             Flexible(
               child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Row(
-                  children: [
-                    if (order.eta != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.statusInTransitBg,
-                          borderRadius: BorderRadius.circular(8),
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    children: [
+                      if (order.eta != null) ...[
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.statusInTransitBg,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            order.eta!,
+                            style: GoogleFonts.cairo(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.statusInTransitText),
+                          ),
                         ),
+                        const SizedBox(width: 8),
+                      ],
+                      Flexible(
                         child: Text(
-                          order.eta!,
-                          style: GoogleFonts.cairo(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.statusInTransitText),
+                          context.l10n.supplierDriverOnWay,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
                         ),
                       ),
-                    const SizedBox(width: 8),
-                    Text(
-                      context.l10n.supplierDriverOnWay,
-                      style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Flexible(
-                      child: Text(
-                        order.driverName ?? '',
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.cairo(fontSize: 13, color: AppColors.mutedText),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    if (order.driverRating != null) ...[
-                      Text(
-                        order.driverRating.toString(),
-                        style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.mutedText),
-                      ),
-                      const SizedBox(width: 2),
-                      const Icon(Icons.star_rounded, color: Color(0xFFFFC107), size: 14),
                     ],
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          order.driverName ?? '',
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.cairo(fontSize: 13, color: AppColors.mutedText),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      if (order.driverRating != null) ...[
+                        Text(
+                          order.driverRating.toString(),
+                          style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.mutedText),
+                        ),
+                        const SizedBox(width: 2),
+                        const Icon(Icons.star_rounded, color: Color(0xFFFFC107), size: 14),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
             ),
             const SizedBox(width: 12),
             Container(

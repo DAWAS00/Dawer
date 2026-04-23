@@ -243,6 +243,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signupSectionDocuments => 'المستندات الرسمية';
 
   @override
+  String get signupNationalIdDocument => 'صورة الهوية الوطنية';
+
+  @override
+  String get signupCommercialRegisterDocument => 'صورة السجل التجاري';
+
+  @override
+  String get signupBusinessLicenseDocument => 'صورة الترخيص التجاري';
+
+  @override
+  String get signupUploadDocumentPrompt => 'اضغط لرفع صورة المستند';
+
+  @override
+  String get signupUploadDocumentSources => 'كاميرا أو معرض الصور';
+
+  @override
+  String get signupDocumentUploaded => 'تم الرفع';
+
+  @override
   String get signupSectionContact => 'معلومات التواصل';
 
   @override
@@ -261,31 +279,58 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signupEmailHint => 'example@domain.com';
 
   @override
-  String get verificationTitle => 'التحقق';
+  String get signupPasswordLabel => 'كلمة المرور';
 
   @override
-  String get verificationCodeSent => 'أرسلنا رمزاً مكوناً من 6 أرقام';
+  String get signupPasswordHint => '٨ أحرف على الأقل، حرف ورقم';
 
   @override
-  String get verificationEnterCode => 'أدخل رمز التحقق';
+  String get signupPasswordConfirmLabel => 'تأكيد كلمة المرور';
 
   @override
-  String get verificationResendAfter => 'إعادة الإرسال بعد';
+  String get signupPasswordConfirmHint => 'أعد إدخال كلمة المرور';
 
   @override
-  String get verificationResend => 'إعادة الإرسال';
+  String get loginPasswordLabel => 'كلمة المرور';
 
   @override
-  String get verificationButton => 'تحقق';
+  String get loginPasswordHint => 'أدخل كلمة المرور';
 
   @override
-  String get verificationSecureTitle => 'تحقق آمن';
+  String get signupRoleDriver => 'تسجيل سائق';
 
   @override
-  String get verificationSecureSubtitle => 'رمز التحقق سري ومحمي';
+  String get signupRoleStoreBusiness => 'تسجيل متجر / مطعم';
 
   @override
-  String get verificationSecureFooter => 'تحقق آمن وموثوق';
+  String get signupRoleIndividualSupplier => 'تسجيل مورد فردي';
+
+  @override
+  String get signupRoleRecyclingCo => 'تسجيل شركة إعادة تدوير';
+
+  @override
+  String get signupPhotoPersonal => 'الصورة الشخصية';
+
+  @override
+  String get signupPhotoOrganization => 'شعار الجهة';
+
+  @override
+  String get signupErrorManagerName => 'الرجاء إدخال اسم المسؤول';
+
+  @override
+  String get signupErrorDocumentRequired => 'الرجاء رفع صورة المستند المطلوب';
+
+  @override
+  String get signupErrorEmailRequired => 'البريد الإلكتروني مطلوب';
+
+  @override
+  String get signupErrorPasswordRequired => 'كلمة المرور مطلوبة';
+
+  @override
+  String get signupErrorPasswordMismatch => 'كلمتا المرور غير متطابقتين';
+
+  @override
+  String get signupErrorSubmitFailed => 'تعذّر إنشاء الحساب، حاول مجدداً';
 
   @override
   String get driverTitle => 'سائق دوّر';
@@ -1145,6 +1190,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get imagePickerAddPhoto => 'إضافة صورة';
 
   @override
+  String get imagePickerRemoveImage => 'إزالة الصورة';
+
+  @override
   String get newOrderSelectButton => 'تحديد';
 
   @override
@@ -1202,4 +1250,69 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get newOrderSubmitButton => 'إرسال الطلب';
+
+  @override
+  String get openInGoogleMaps => 'فتح في خرائط جوجل';
+
+  @override
+  String get mapsNotInstalledTitle => 'خرائط جوجل غير مثبتة';
+
+  @override
+  String get mapsNotInstalledBody =>
+      'لم يتم العثور على تطبيق الخرائط. هل تريد فتح المتجر لتثبيته؟';
+
+  @override
+  String get openStore => 'فتح المتجر';
+
+  @override
+  String get mapLabelPickup => 'الاستلام';
+
+  @override
+  String get mapLabelDropoff => 'التسليم';
+
+  @override
+  String get mapUnavailable => 'الخريطة غير متوفرة';
+
+  @override
+  String get routeTitle => 'خط السير';
+
+  @override
+  String get pickLocationTitle => 'تحديد الموقع';
+
+  @override
+  String get confirmLocation => 'تأكيد الموقع';
+
+  @override
+  String get useCurrentLocation => 'استخدام موقعي الحالي';
+
+  @override
+  String get pickOnGoogleMaps => 'تحديد من خرائط جوجل';
+
+  @override
+  String get locationNotSet => 'لم يتم تحديد الموقع بعد';
+
+  @override
+  String get pasteCoordinates => 'الصق الإحداثيات';
+
+  @override
+  String get pasteCoordinatesHint =>
+      'الصق من خرائط جوجل، مثال: 31.9539, 35.9106';
+
+  @override
+  String get latitude => 'خط العرض';
+
+  @override
+  String get longitude => 'خط الطول';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String get gpsPermissionDenied => 'تم رفض إذن الموقع';
+
+  @override
+  String get gpsUnavailable => 'تعذّر الحصول على الموقع الحالي';
+
+  @override
+  String get invalidCoordinates => 'إحداثيات غير صحيحة';
 }

@@ -560,6 +560,42 @@ abstract class AppLocalizations {
   /// **'المستندات الرسمية'**
   String get signupSectionDocuments;
 
+  /// No description provided for @signupNationalIdDocument.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة الهوية الوطنية'**
+  String get signupNationalIdDocument;
+
+  /// No description provided for @signupCommercialRegisterDocument.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة السجل التجاري'**
+  String get signupCommercialRegisterDocument;
+
+  /// No description provided for @signupBusinessLicenseDocument.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة الترخيص التجاري'**
+  String get signupBusinessLicenseDocument;
+
+  /// No description provided for @signupUploadDocumentPrompt.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط لرفع صورة المستند'**
+  String get signupUploadDocumentPrompt;
+
+  /// No description provided for @signupUploadDocumentSources.
+  ///
+  /// In ar, this message translates to:
+  /// **'كاميرا أو معرض الصور'**
+  String get signupUploadDocumentSources;
+
+  /// No description provided for @signupDocumentUploaded.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الرفع'**
+  String get signupDocumentUploaded;
+
   /// No description provided for @signupSectionContact.
   ///
   /// In ar, this message translates to:
@@ -596,59 +632,113 @@ abstract class AppLocalizations {
   /// **'example@domain.com'**
   String get signupEmailHint;
 
-  /// No description provided for @verificationTitle.
+  /// No description provided for @signupPasswordLabel.
   ///
   /// In ar, this message translates to:
-  /// **'التحقق'**
-  String get verificationTitle;
+  /// **'كلمة المرور'**
+  String get signupPasswordLabel;
 
-  /// No description provided for @verificationCodeSent.
+  /// No description provided for @signupPasswordHint.
   ///
   /// In ar, this message translates to:
-  /// **'أرسلنا رمزاً مكوناً من 6 أرقام'**
-  String get verificationCodeSent;
+  /// **'٨ أحرف على الأقل، حرف ورقم'**
+  String get signupPasswordHint;
 
-  /// No description provided for @verificationEnterCode.
+  /// No description provided for @signupPasswordConfirmLabel.
   ///
   /// In ar, this message translates to:
-  /// **'أدخل رمز التحقق'**
-  String get verificationEnterCode;
+  /// **'تأكيد كلمة المرور'**
+  String get signupPasswordConfirmLabel;
 
-  /// No description provided for @verificationResendAfter.
+  /// No description provided for @signupPasswordConfirmHint.
   ///
   /// In ar, this message translates to:
-  /// **'إعادة الإرسال بعد'**
-  String get verificationResendAfter;
+  /// **'أعد إدخال كلمة المرور'**
+  String get signupPasswordConfirmHint;
 
-  /// No description provided for @verificationResend.
+  /// No description provided for @loginPasswordLabel.
   ///
   /// In ar, this message translates to:
-  /// **'إعادة الإرسال'**
-  String get verificationResend;
+  /// **'كلمة المرور'**
+  String get loginPasswordLabel;
 
-  /// No description provided for @verificationButton.
+  /// No description provided for @loginPasswordHint.
   ///
   /// In ar, this message translates to:
-  /// **'تحقق'**
-  String get verificationButton;
+  /// **'أدخل كلمة المرور'**
+  String get loginPasswordHint;
 
-  /// No description provided for @verificationSecureTitle.
+  /// No description provided for @signupRoleDriver.
   ///
   /// In ar, this message translates to:
-  /// **'تحقق آمن'**
-  String get verificationSecureTitle;
+  /// **'تسجيل سائق'**
+  String get signupRoleDriver;
 
-  /// No description provided for @verificationSecureSubtitle.
+  /// No description provided for @signupRoleStoreBusiness.
   ///
   /// In ar, this message translates to:
-  /// **'رمز التحقق سري ومحمي'**
-  String get verificationSecureSubtitle;
+  /// **'تسجيل متجر / مطعم'**
+  String get signupRoleStoreBusiness;
 
-  /// No description provided for @verificationSecureFooter.
+  /// No description provided for @signupRoleIndividualSupplier.
   ///
   /// In ar, this message translates to:
-  /// **'تحقق آمن وموثوق'**
-  String get verificationSecureFooter;
+  /// **'تسجيل مورد فردي'**
+  String get signupRoleIndividualSupplier;
+
+  /// No description provided for @signupRoleRecyclingCo.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل شركة إعادة تدوير'**
+  String get signupRoleRecyclingCo;
+
+  /// No description provided for @signupPhotoPersonal.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصورة الشخصية'**
+  String get signupPhotoPersonal;
+
+  /// No description provided for @signupPhotoOrganization.
+  ///
+  /// In ar, this message translates to:
+  /// **'شعار الجهة'**
+  String get signupPhotoOrganization;
+
+  /// No description provided for @signupErrorManagerName.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجاء إدخال اسم المسؤول'**
+  String get signupErrorManagerName;
+
+  /// No description provided for @signupErrorDocumentRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجاء رفع صورة المستند المطلوب'**
+  String get signupErrorDocumentRequired;
+
+  /// No description provided for @signupErrorEmailRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'البريد الإلكتروني مطلوب'**
+  String get signupErrorEmailRequired;
+
+  /// No description provided for @signupErrorPasswordRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور مطلوبة'**
+  String get signupErrorPasswordRequired;
+
+  /// No description provided for @signupErrorPasswordMismatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمتا المرور غير متطابقتين'**
+  String get signupErrorPasswordMismatch;
+
+  /// No description provided for @signupErrorSubmitFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر إنشاء الحساب، حاول مجدداً'**
+  String get signupErrorSubmitFailed;
 
   /// No description provided for @driverTitle.
   ///
@@ -2282,6 +2372,12 @@ abstract class AppLocalizations {
   /// **'إضافة صورة'**
   String get imagePickerAddPhoto;
 
+  /// No description provided for @imagePickerRemoveImage.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة الصورة'**
+  String get imagePickerRemoveImage;
+
   /// No description provided for @newOrderSelectButton.
   ///
   /// In ar, this message translates to:
@@ -2395,6 +2491,132 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إرسال الطلب'**
   String get newOrderSubmitButton;
+
+  /// No description provided for @openInGoogleMaps.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح في خرائط جوجل'**
+  String get openInGoogleMaps;
+
+  /// No description provided for @mapsNotInstalledTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'خرائط جوجل غير مثبتة'**
+  String get mapsNotInstalledTitle;
+
+  /// No description provided for @mapsNotInstalledBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم العثور على تطبيق الخرائط. هل تريد فتح المتجر لتثبيته؟'**
+  String get mapsNotInstalledBody;
+
+  /// No description provided for @openStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح المتجر'**
+  String get openStore;
+
+  /// No description provided for @mapLabelPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاستلام'**
+  String get mapLabelPickup;
+
+  /// No description provided for @mapLabelDropoff.
+  ///
+  /// In ar, this message translates to:
+  /// **'التسليم'**
+  String get mapLabelDropoff;
+
+  /// No description provided for @mapUnavailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخريطة غير متوفرة'**
+  String get mapUnavailable;
+
+  /// No description provided for @routeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'خط السير'**
+  String get routeTitle;
+
+  /// No description provided for @pickLocationTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديد الموقع'**
+  String get pickLocationTitle;
+
+  /// No description provided for @confirmLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد الموقع'**
+  String get confirmLocation;
+
+  /// No description provided for @useCurrentLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'استخدام موقعي الحالي'**
+  String get useCurrentLocation;
+
+  /// No description provided for @pickOnGoogleMaps.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديد من خرائط جوجل'**
+  String get pickOnGoogleMaps;
+
+  /// No description provided for @locationNotSet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم تحديد الموقع بعد'**
+  String get locationNotSet;
+
+  /// No description provided for @pasteCoordinates.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصق الإحداثيات'**
+  String get pasteCoordinates;
+
+  /// No description provided for @pasteCoordinatesHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصق من خرائط جوجل، مثال: 31.9539, 35.9106'**
+  String get pasteCoordinatesHint;
+
+  /// No description provided for @latitude.
+  ///
+  /// In ar, this message translates to:
+  /// **'خط العرض'**
+  String get latitude;
+
+  /// No description provided for @longitude.
+  ///
+  /// In ar, this message translates to:
+  /// **'خط الطول'**
+  String get longitude;
+
+  /// No description provided for @save.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ'**
+  String get save;
+
+  /// No description provided for @gpsPermissionDenied.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم رفض إذن الموقع'**
+  String get gpsPermissionDenied;
+
+  /// No description provided for @gpsUnavailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر الحصول على الموقع الحالي'**
+  String get gpsUnavailable;
+
+  /// No description provided for @invalidCoordinates.
+  ///
+  /// In ar, this message translates to:
+  /// **'إحداثيات غير صحيحة'**
+  String get invalidCoordinates;
 }
 
 class _AppLocalizationsDelegate

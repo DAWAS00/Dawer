@@ -146,6 +146,7 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
       weightCategory: weightCategory,
       pickupTarget: PickupTarget.riderBuy,
       itemPrice: itemPrice,
+      isMarketplaceShared: true,
     );
   }
 

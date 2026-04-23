@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dwaar/core/constants/app_colors.dart';
 import 'package:dwaar/data/models/order.dart';
-import 'package:dwaar/ui/common/map/order_route_map.dart';
+import 'package:dwaar/l10n/l10n.dart';
+import 'package:dwaar/ui/common/map/route_map_placeholder.dart';
 
 class OrderMapSection extends StatelessWidget {
   final Order order;
@@ -16,42 +17,16 @@ class OrderMapSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Coordinates available — show real map
     if (order.pickupLat != null && order.dropoffLat != null) {
-      return OrderRouteMap(
+      return RouteMapPlaceholder(
         pickupLat: order.pickupLat!,
         pickupLng: order.pickupLng!,
         dropoffLat: order.dropoffLat!,
         dropoffLng: order.dropoffLng!,
-        driverLat: (hasDriver && order.status == OrderStatus.inTransit)
-            ? _simulatedDriverLat(order)
-            : null,
-        driverLng: (hasDriver && order.status == OrderStatus.inTransit)
-            ? _simulatedDriverLng(order)
-            : null,
         height: 240,
-        interactive: false,
       );
     }
-
-    // Fallback placeholder — no coordinates
     return const _MapPlaceholder();
-  }
-
-  double _simulatedDriverLat(Order order) {
-    final f = _progressFraction(order);
-    return order.pickupLat! + (order.dropoffLat! - order.pickupLat!) * f;
-  }
-
-  double _simulatedDriverLng(Order order) {
-    final f = _progressFraction(order);
-    return order.pickupLng! + (order.dropoffLng! - order.pickupLng!) * f;
-  }
-
-  double _progressFraction(Order order) {
-    if (order.inTransitAt == null) return 0.1;
-    final elapsed = DateTime.now().difference(order.inTransitAt!).inSeconds;
-    return (elapsed / 600).clamp(0.05, 0.95);
   }
 }
 
@@ -73,7 +48,7 @@ class _MapPlaceholder extends StatelessWidget {
                 size: 32, color: AppColors.primaryGreen),
             const SizedBox(height: 8),
             Text(
-              '\u0627\u0644\u062e\u0631\u064a\u0637\u0629 \u063a\u064a\u0631 \u0645\u062a\u0648\u0641\u0631\u0629',
+              context.l10n.mapUnavailable,
               style: GoogleFonts.cairo(
                 fontSize: 13,
                 color: AppColors.primaryGreen,

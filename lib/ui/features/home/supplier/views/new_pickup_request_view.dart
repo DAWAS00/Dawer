@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/waste_type_icons.dart';
-import '../../../../common/map/location_picker_map.dart';
+import '../../../../common/map/location_picker_panel.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // NewPickupRequestView — full-screen pickup order form
@@ -827,16 +827,13 @@ class _LocationPickerScreenState
           ),
         ],
       ),
-      body: LayoutBuilder(
-        builder: (_, constraints) => LocationPickerMap(
-          initialLat: widget.initialLat,
-          initialLng: widget.initialLng,
-          height: constraints.maxHeight,
-          onLocationChanged: (lat, lng) {
-            _lat = lat;
-            _lng = lng;
-          },
-        ),
+      body: LocationPickerPanel(
+        initialLat: widget.initialLat,
+        initialLng: widget.initialLng,
+        onLocationChanged: (lat, lng) {
+          _lat = lat;
+          _lng = lng;
+        },
       ),
     );
   }

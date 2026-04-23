@@ -42,7 +42,19 @@ app.*.map.json
 # Map tokens (contains API keys)
 lib/core/constants/map_tokens.dart
 
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Supabase local state
+supabase/.temp/
+supabase/.branches/
+
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+node_modules/
+package-lock.json

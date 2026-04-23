@@ -130,6 +130,10 @@ class LoginForm extends StatelessWidget {
             dialCode: '',
             onCountryChanged: (c, d) {},
           ),
+        const SizedBox(height: 16),
+        _PasswordField(
+          onChanged: viewModel.setPassword,
+        ),
         if (viewModel.error != null) ...[
           const SizedBox(height: 8),
           Text(
@@ -145,7 +149,7 @@ class LoginForm extends StatelessWidget {
         const SizedBox(height: 24),
         GreenButton(
           text: l10n.loginButton,
-          onPressed: () => viewModel.sendVerificationCode(),
+          onPressed: () => viewModel.signIn(),
           isLoading: viewModel.isLoading,
           borderRadius: 14,
           leadingIcon: const Icon(
@@ -210,6 +214,8 @@ class LoginForm extends StatelessWidget {
     required Function(String code, String dialCode) onCountryChanged,
   }) {
     final l10n = context.l10n;
+    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
+    final useLtrInput = isEnglish;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -302,8 +308,12 @@ class LoginForm extends StatelessWidget {
                   inputFormatters: isPhone 
                       ? [FilteringTextInputFormatter.digitsOnly] 
                       : [],
-                  textAlign: isPhone ? TextAlign.right : TextAlign.left,
-                  textDirection: TextDirection.ltr,
+                  textAlign: useLtrInput
+                      ? TextAlign.left
+                      : (isPhone ? TextAlign.right : TextAlign.left),
+                  textDirection: useLtrInput
+                      ? TextDirection.ltr
+                      : (isPhone ? TextDirection.ltr : null),
                   decoration: InputDecoration(
                     hintText: hintText,
                     hintStyle: isPhone 
@@ -336,6 +346,81 @@ class LoginForm extends StatelessWidget {
                           fontSize: 16,
                           color: const Color(0xFF191C1B),
                         ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PasswordField extends StatefulWidget {
+  final ValueChanged<String> onChanged;
+  const _PasswordField({required this.onChanged});
+
+  @override
+  State<_PasswordField> createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<_PasswordField> {
+  bool _obscured = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          l10n.loginPasswordLabel,
+          style: GoogleFonts.cairo(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF404943),
+          ),
+          textAlign: TextAlign.right,
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFE6E9E7),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            children: [
+              IconButton(
+                icon: Icon(
+                  _obscured
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  color: const Color(0xFF6B7280),
+                ),
+                onPressed: () => setState(() => _obscured = !_obscured),
+              ),
+              Expanded(
+                child: TextField(
+                  onChanged: widget.onChanged,
+                  obscureText: _obscured,
+                  textAlign: isEnglish ? TextAlign.left : TextAlign.right,
+                  textDirection: isEnglish ? TextDirection.ltr : null,
+                  decoration: InputDecoration(
+                    hintText: l10n.loginPasswordHint,
+                    hintStyle: GoogleFonts.cairo(
+                      fontSize: 14,
+                      color: const Color(0xFF6B7280).withValues(alpha: 0.6),
+                    ),
+                    border: InputBorder.none,
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  style: GoogleFonts.dmSans(
+                    fontSize: 15,
+                    color: const Color(0xFF191C1B),
+                  ),
                 ),
               ),
             ],

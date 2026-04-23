@@ -18,13 +18,13 @@ dependencies:
   google_mlkit_image_labeling: ^0.13.0
   image_picker: ^1.2.1
   provider: ^6.1.5+1
-  flutter_map: ^7.0.2
   geolocator: ^13.0.2
-  http: ^1.2.1
-  latlong2: ^0.9.1
   permission_handler: ^11.3.1
   url_launcher: ^6.3.2
   shared_preferences: ^2.5.3
+  crypto: ^3.0.7
+  supabase_flutter: ^2.8.4
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -49,3 +49,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - .env.local

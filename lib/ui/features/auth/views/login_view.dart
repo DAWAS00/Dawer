@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../viewmodels/login_viewmodel.dart';
-import 'verification_view.dart';
+import '../../home/home_router.dart';
 import '../../../../l10n/l10n.dart';
 
 import 'widgets/role_selection_grid.dart';
@@ -32,17 +32,15 @@ class _LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<LoginViewModel>();
 
-    if (viewModel.verificationSent) {
+    if (viewModel.signedIn) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        viewModel.resetVerificationSent();
-        Navigator.of(context).push(
+        viewModel.resetSignedIn();
+        Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (_) => VerificationView(
-              destination: viewModel.currentInput,
-              isEmail: viewModel.isEmailMethod,
+            builder: (_) => HomeRouter(
               role: viewModel.selectedRole,
               supplierType: viewModel.supplierType,
-              userName: viewModel.currentInput,
+              userName: viewModel.profileName,
             ),
           ),
         );
