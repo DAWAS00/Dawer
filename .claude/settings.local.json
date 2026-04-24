@@ -11,7 +11,10 @@
       "Bash(obsidian vault=\"Obsidian-Brain\" links path=\"Projects/Dawer\")",
       "Bash(obsidian vault=\"Obsidian-Brain\" search query=\"Dwaar OR Dawer OR dwaar\" limit=15)",
       "Bash(obsidian vault=\"Obsidian-Brain\" task path=\"Projects/Dawer\")",
-      "Bash(flutter analyze *)"
+      "Bash(flutter analyze *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }
