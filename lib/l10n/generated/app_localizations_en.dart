@@ -1328,4 +1328,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invalidCoordinates => 'Invalid coordinates';
+
+  @override
+  String get orderTotalCost => 'Total Cost';
+
+  @override
+  String get orderPotentialEarnings => 'Potential Earnings';
+
+  @override
+  String get orderEarningsBreakdown => 'Earnings Breakdown';
+
+  @override
+  String get orderBaseFee => 'Base Fee';
+
+  @override
+  String get orderDistanceFee => 'Distance Fee';
+
+  @override
+  String get orderMaterialFee => 'Material Fee';
+
+  @override
+  String get orderUrgencyFee => 'Urgency Fee';
+
+  @override
+  String get orderPayout => 'Payout';
+
+  @override
+  String get orderInvoices => 'Invoices';
+
+  @override
+  String get rateDriver => 'Rate Driver';
 }

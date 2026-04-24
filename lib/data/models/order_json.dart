@@ -1,4 +1,6 @@
 import 'order.dart';
+import 'reward_breakdown.dart';
+
 
 /// JSON serialization helpers for [Order]. Kept separate from the model so
 /// the core class stays free of persistence concerns.
@@ -57,8 +59,28 @@ extension OrderJson on Order {
         if (dropoffLng != null) 'dropoffLng': dropoffLng,
         if (etaMinutes != null) 'etaMinutes': etaMinutes,
         'isMarketplaceShared': isMarketplaceShared,
+        'requiresRider': requiresRider,
+        if (rewardBreakdown != null) 'rewardBreakdown': rewardBreakdown!.toJson(),
+        if (invoices != null) 'invoices': invoices!.map((e) => e.toJson()).toList(),
       };
 }
+
+extension InvoiceItemJson on InvoiceItem {
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'quantity': quantity,
+        'price': price,
+      };
+
+  static InvoiceItem fromJson(Map<String, dynamic> json) {
+    return InvoiceItem(
+      name: json['name'] as String? ?? '',
+      quantity: json['quantity'] as int? ?? 0,
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+}
+
 
 /// Decodes an [Order] from [json]. Unknown enum values fall back to a safe
 /// default (e.g. `pending`) so a corrupt/outdated payload never crashes the
@@ -139,7 +161,7 @@ Order orderFromJson(Map<String, dynamic> json) {
     collectionDeliveryMethod: parseEnumN(
       json['collectionDeliveryMethod'] as String?,
       CollectionDeliveryMethod.values,
-    ),
+      ),
     collectionTransactionType: parseEnumN(
       json['collectionTransactionType'] as String?,
       CollectionTransactionType.values,
@@ -148,7 +170,15 @@ Order orderFromJson(Map<String, dynamic> json) {
     pickupLng: (json['pickupLng'] as num?)?.toDouble(),
     dropoffLat: (json['dropoffLat'] as num?)?.toDouble(),
     dropoffLng: (json['dropoffLng'] as num?)?.toDouble(),
-    etaMinutes: (json['etaMinutes'] as num?)?.toInt(),
+    etaMinutes: json['etaMinutes'] as int?,
     isMarketplaceShared: json['isMarketplaceShared'] as bool? ?? false,
+    requiresRider: json['requiresRider'] as bool? ?? false,
+    rewardBreakdown: json['rewardBreakdown'] != null
+        ? RewardBreakdown.fromJson(json['rewardBreakdown'] as Map<String, dynamic>)
+        : null,
+    invoices: (json['invoices'] as List?)
+        ?.map((e) => InvoiceItemJson.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
+

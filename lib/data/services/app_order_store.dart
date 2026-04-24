@@ -108,7 +108,11 @@ class AppOrderStore extends ChangeNotifier {
   /// Pending orders available for the driver to accept (no driver yet).
   List<Order> get driverFeed => _orders
       .where((o) =>
-          o.status == OrderStatus.pending && o.id != _activeOrderId)
+          ((o.status == OrderStatus.pending) ||
+              (o.status == OrderStatus.accepted &&
+                  o.requiresRider &&
+                  o.driverName == null)) &&
+          o.id != _activeOrderId)
       .toList();
 
   /// The driver's currently active order (null when not on a trip).
@@ -168,7 +172,10 @@ class AppOrderStore extends ChangeNotifier {
     final idx = _orders.indexWhere((o) => o.id == orderId);
     if (idx == -1) return 'الطلب غير موجود';
     final order = _orders[idx];
-    if (order.status != OrderStatus.pending) return 'هذا الطلب لم يعد متاحاً';
+    
+    final canAccept = order.status == OrderStatus.pending ||
+        (order.status == OrderStatus.accepted && order.requiresRider && order.driverName == null);
+    if (!canAccept) return 'هذا الطلب لم يعد متاحاً';
 
     _orders[idx] = order.copyWith(
       status: OrderStatus.accepted,
@@ -689,6 +696,7 @@ class AppOrderStore extends ChangeNotifier {
       acceptedAt: DateTime.now(),
       dropoffAddress: selfPickup ? 'استلام من السوق' : dropoffAddress!,
       deliveryFee: selfPickup ? 0 : deliveryFee,
+      requiresRider: !selfPickup,
     );
     _orders[idx] = purchased;
     notifyListeners();
@@ -697,6 +705,7 @@ class AppOrderStore extends ChangeNotifier {
       Supabase.instance.client.from('orders').update({
         'status': 'accepted',
         'accepted_at': DateTime.now().toUtc().toIso8601String(),
+        'requires_rider': !selfPickup,
       }).eq('id', orderId).then((_) {}).catchError((e) {
         debugPrint("Error purchasing market item in Supabase: $e");
       });

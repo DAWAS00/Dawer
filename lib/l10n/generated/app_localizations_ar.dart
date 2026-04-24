@@ -1314,5 +1314,35 @@ class AppLocalizationsAr extends AppLocalizations {
   String get gpsUnavailable => 'تعذّر الحصول على الموقع الحالي';
 
   @override
-  String get invalidCoordinates => 'إحداثيات غير صحيحة';
+  String get invalidCoordinates => 'إحداثيات غير صالحة';
+
+  @override
+  String get orderTotalCost => 'التكلفة الإجمالية';
+
+  @override
+  String get orderPotentialEarnings => 'الأرباح المتوقعة';
+
+  @override
+  String get orderEarningsBreakdown => 'تفاصيل الأرباح';
+
+  @override
+  String get orderBaseFee => 'الرسوم الأساسية';
+
+  @override
+  String get orderDistanceFee => 'رسوم المسافة';
+
+  @override
+  String get orderMaterialFee => 'رسوم المواد';
+
+  @override
+  String get orderUrgencyFee => 'رسوم الاستعجال';
+
+  @override
+  String get orderPayout => 'المستحق للسائق';
+
+  @override
+  String get orderInvoices => 'الفواتير';
+
+  @override
+  String get rateDriver => 'قيّم السائق';
 }

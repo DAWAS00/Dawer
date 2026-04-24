@@ -550,5 +550,15 @@
   "save": "حفظ",
   "gpsPermissionDenied": "تم رفض إذن الموقع",
   "gpsUnavailable": "تعذّر الحصول على الموقع الحالي",
-  "invalidCoordinates": "إحداثيات غير صحيحة"
+  "invalidCoordinates": "إحداثيات غير صالحة",
+  "orderTotalCost": "التكلفة الإجمالية",
+  "orderPotentialEarnings": "الأرباح المتوقعة",
+  "orderEarningsBreakdown": "تفاصيل الأرباح",
+  "orderBaseFee": "الرسوم الأساسية",
+  "orderDistanceFee": "رسوم المسافة",
+  "orderMaterialFee": "رسوم المواد",
+  "orderUrgencyFee": "رسوم الاستعجال",
+  "orderPayout": "المستحق للسائق",
+  "orderInvoices": "الفواتير",
+  "rateDriver": "قيّم السائق"
 }

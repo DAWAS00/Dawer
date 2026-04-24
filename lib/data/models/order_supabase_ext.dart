@@ -23,6 +23,7 @@ extension OrderSupabaseExt on Order {
       // 'is_urgent' boolean mapping if implemented
       if (supplierNotes != null) 'notes': supplierNotes,
       'is_marketplace_shared': isMarketplaceShared,
+      'requires_rider': requiresRider,
     };
   }
 }
@@ -71,5 +72,6 @@ Order orderFromSupabaseJson(Map<String, dynamic> json) {
     weightCategory: parseEnumN(json['weight_category'] as String?, WeightCategory.values),
     pickupTarget: parseEnumN(json['pickup_target'] as String?, PickupTarget.values),
     isMarketplaceShared: json['is_marketplace_shared'] as bool? ?? false,
+    requiresRider: json['requires_rider'] as bool? ?? false,
   );
 }

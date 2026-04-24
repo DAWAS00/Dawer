@@ -94,6 +94,10 @@ class OrderCard extends StatelessWidget {
               ),
             ),
           ),
+          if (mode == OrderCardMode.driverActive) ...[
+            const SizedBox(width: 8),
+            const Icon(Icons.check_circle_rounded, size: 14, color: AppColors.statusActiveText),
+          ],
           const Spacer(),
           Text(
             dateString,
@@ -119,8 +123,6 @@ class OrderCard extends StatelessWidget {
             order.type == OrderType.pickup
                 ? Icons.upload_rounded
                 : Icons.download_rounded,
-            size: 14,
-            color: const Color(0xFF717973),
           ),
         ],
       ),
@@ -247,7 +249,9 @@ class OrderCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n.orderEarningsLabel,
+                  mode == OrderCardMode.driverAvailable
+                      ? l10n.orderPotentialEarnings
+                      : l10n.orderEarningsLabel,
                   style: GoogleFonts.cairo(
                     fontSize: 10,
                     color: const Color(0xFF717973),
@@ -272,12 +276,69 @@ class OrderCard extends StatelessWidget {
                       style: GoogleFonts.cairo(
                         fontSize: 10,
                         color: AppColors.statusActiveText,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
               ],
             ),
+        ],
+        if ((order.itemPrice ?? 0) > 0) ...[
+          const SizedBox(width: 24),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.orderTotalCost,
+                style: GoogleFonts.cairo(
+                  fontSize: 10,
+                  color: const Color(0xFF717973),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    order.itemPrice!.toStringAsFixed(1),
+                    style: GoogleFonts.dmSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF404943),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  if (order.invoices != null && order.invoices!.isNotEmpty) ...[
+                    const SizedBox(width: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF06402B).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.receipt_long_rounded, size: 10, color: Color(0xFF06402B)),
+                          const SizedBox(width: 2),
+                          Text(
+                            '${order.invoices!.length}',
+                            style: GoogleFonts.dmSans(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF06402B),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
         ],
 
         // Spacer to push the action button to the far left

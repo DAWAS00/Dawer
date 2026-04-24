@@ -2615,8 +2615,68 @@ abstract class AppLocalizations {
   /// No description provided for @invalidCoordinates.
   ///
   /// In ar, this message translates to:
-  /// **'إحداثيات غير صحيحة'**
+  /// **'إحداثيات غير صالحة'**
   String get invalidCoordinates;
+
+  /// No description provided for @orderTotalCost.
+  ///
+  /// In ar, this message translates to:
+  /// **'التكلفة الإجمالية'**
+  String get orderTotalCost;
+
+  /// No description provided for @orderPotentialEarnings.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأرباح المتوقعة'**
+  String get orderPotentialEarnings;
+
+  /// No description provided for @orderEarningsBreakdown.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل الأرباح'**
+  String get orderEarningsBreakdown;
+
+  /// No description provided for @orderBaseFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرسوم الأساسية'**
+  String get orderBaseFee;
+
+  /// No description provided for @orderDistanceFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم المسافة'**
+  String get orderDistanceFee;
+
+  /// No description provided for @orderMaterialFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم المواد'**
+  String get orderMaterialFee;
+
+  /// No description provided for @orderUrgencyFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم الاستعجال'**
+  String get orderUrgencyFee;
+
+  /// No description provided for @orderPayout.
+  ///
+  /// In ar, this message translates to:
+  /// **'المستحق للسائق'**
+  String get orderPayout;
+
+  /// No description provided for @orderInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفواتير'**
+  String get orderInvoices;
+
+  /// No description provided for @rateDriver.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيّم السائق'**
+  String get rateDriver;
 }
 
 class _AppLocalizationsDelegate

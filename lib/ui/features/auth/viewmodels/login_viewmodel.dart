@@ -105,9 +105,7 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final identifier = isEmailMethod
-          ? _currentInput.trim()
-          : '$_selectedDialCode${_currentInput.trim()}';
+      final identifier = _currentInput.trim();
       _profile = await _service.signIn(
         identifier: identifier,
         password: _password,

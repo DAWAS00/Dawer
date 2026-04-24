@@ -550,5 +550,16 @@
   "save": "Save",
   "gpsPermissionDenied": "Location permission denied",
   "gpsUnavailable": "Could not get current location",
-  "invalidCoordinates": "Invalid coordinates"
+  "invalidCoordinates": "Invalid coordinates",
+  "orderTotalCost": "Total Cost",
+  "orderPotentialEarnings": "Potential Earnings",
+  "orderEarningsBreakdown": "Earnings Breakdown",
+  "orderBaseFee": "Base Fee",
+  "orderDistanceFee": "Distance Fee",
+  "orderMaterialFee": "Material Fee",
+  "orderUrgencyFee": "Urgency Fee",
+  "orderPayout": "Payout",
+  "orderInvoices": "Invoices",
+  "rateDriver": "Rate Driver",
+  "orderItemPrice": "Item Price"
 }

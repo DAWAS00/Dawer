@@ -9,6 +9,11 @@ class RewardBreakdown {
   final double totalJd;
   final bool needsManualReview;
 
+  double get base => baseFee;
+  double get distance => distanceFee;
+  double get material => materialFee;
+  double get urgency => urgencyBonus;
+
   const RewardBreakdown({
     required this.baseFee,
     required this.distanceFee,
