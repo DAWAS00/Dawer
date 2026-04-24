@@ -97,6 +97,8 @@ class _RecyclingHomeBody extends StatelessWidget {
           WasteForm? wasteForm,
           WeightCategory? weightCategory,
           double? itemPrice,
+          double? pickupLat,
+          double? pickupLng,
         }) {
           final order = recyclingVm.createListing(
             wasteTypes: wasteTypes,
@@ -106,6 +108,8 @@ class _RecyclingHomeBody extends StatelessWidget {
             wasteForm: wasteForm,
             weightCategory: weightCategory,
             itemPrice: itemPrice,
+            pickupLat: pickupLat,
+            pickupLng: pickupLng,
           );
           marketVm.addListing(order);
         },

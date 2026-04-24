@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/waste_type_icons.dart';
+import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../common/map/location_picker_screen.dart';
 import '../../supplier/widgets/image_picker_grid.dart';
 
 class PostToMarketSheet extends StatefulWidget {
@@ -14,6 +16,8 @@ class PostToMarketSheet extends StatefulWidget {
     WasteForm? wasteForm,
     WeightCategory? weightCategory,
     double? itemPrice,
+    double? pickupLat,
+    double? pickupLng,
   }) onSubmit;
 
   const PostToMarketSheet({super.key, required this.onSubmit});
@@ -29,7 +33,8 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
   final _priceCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
   final List<String> _images = [];
-
+  double? _pickedLat;
+  double? _pickedLng;
 
   static const List<(WasteForm, IconData)> _wasteFormOptions = [
     (WasteForm.solid, Icons.inventory_2_rounded),
@@ -51,26 +56,65 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
     super.dispose();
   }
 
+  Future<void> _pickLocation() async {
+    final result = await Navigator.push<(double, double)?>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => LocationPickerScreen(
+          initialLat: _pickedLat,
+          initialLng: _pickedLng,
+        ),
+      ),
+    );
+    if (result != null && mounted) {
+      setState(() {
+        _pickedLat = result.$1;
+        _pickedLng = result.$2;
+      });
+    }
+  }
+
+  String get _locationLabel {
+    if (_pickedLat != null && _pickedLng != null) {
+      return 'خط العرض: ${_pickedLat!.toStringAsFixed(4)} | خط الطول: ${_pickedLng!.toStringAsFixed(4)}';
+    }
+    return context.l10n.newOrderCurrentAddress;
+  }
+
   void _submit() {
     if (_selected.isEmpty) return;
+    if (_pickedLat == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('يرجى تحديد موقع الاستلام', style: GoogleFonts.cairo()),
+          backgroundColor: const Color(0xFFB91C1C),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      return;
+    }
     widget.onSubmit(
       wasteTypes: _selected.toList(),
-      pickupAddress: context.l10n.newOrderCurrentAddress,
+      pickupAddress: _locationLabel,
       images: List.from(_images),
       notes: _notesCtrl.text.trim().isNotEmpty ? _notesCtrl.text.trim() : null,
       wasteForm: _wasteForm,
       weightCategory: _weightCategory,
       itemPrice: double.tryParse(_priceCtrl.text.trim()),
+      pickupLat: _pickedLat,
+      pickupLng: _pickedLng,
     );
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    final dt = context.dt;
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: dt.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -84,7 +128,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFD1D5DB),
+                    color: dt.border,
                     borderRadius: BorderRadius.circular(9999),
                   ),
                 ),
@@ -100,10 +144,10 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF2F4F2),
+                        color: dt.surfaceVariant,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(Icons.close_rounded, size: 20, color: Color(0xFF717973)),
+                      child: Icon(Icons.close_rounded, size: 20, color: dt.onSurfaceMuted),
                     ),
                   ),
                   const Spacer(),
@@ -115,12 +159,12 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                         style: GoogleFonts.cairo(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF002819),
+                          color: dt.onSurface,
                         ),
                       ),
                       Text(
                         context.l10n.postMarketSubtitle,
-                        style: GoogleFonts.cairo(fontSize: 12, color: const Color(0xFF717973)),
+                        style: GoogleFonts.cairo(fontSize: 12, color: dt.onSurfaceMuted),
                       ),
                     ],
                   ),
@@ -139,7 +183,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
               const SizedBox(height: 24),
 
               // ── 1. Waste type ──
-              _buildSectionLabel(context.l10n.postMarketWasteTypeLabel),
+              _buildSectionLabel(context.l10n.postMarketWasteTypeLabel, dt),
               const SizedBox(height: 10),
               Wrap(
                 spacing: 8,
@@ -156,9 +200,9 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                       duration: const Duration(milliseconds: 180),
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF1E40AF) : const Color(0xFFF2F4F2),
+                        color: isSelected ? const Color(0xFF1E40AF) : dt.surfaceVariant,
                         borderRadius: BorderRadius.circular(30),
-                        border: isSelected ? null : Border.all(color: const Color(0xFFE6E9E7)),
+                        border: isSelected ? null : Border.all(color: dt.border),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -168,11 +212,11 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                             style: GoogleFonts.cairo(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
-                              color: isSelected ? Colors.white : const Color(0xFF404943),
+                              color: isSelected ? Colors.white : dt.onSurfaceVariant,
                             ),
                           ),
                           const SizedBox(width: 6),
-                          Icon(icon, size: 15, color: isSelected ? Colors.white : const Color(0xFF717973)),
+                          Icon(icon, size: 15, color: isSelected ? Colors.white : dt.onSurfaceMuted),
                         ],
                       ),
                     ),
@@ -182,7 +226,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
               const SizedBox(height: 24),
 
               // ── 2. Waste form ──
-              _buildSectionLabel(context.l10n.postMarketWasteFormLabel),
+              _buildSectionLabel(context.l10n.postMarketWasteFormLabel, dt),
               const SizedBox(height: 10),
               Row(
                 children: _wasteFormOptions.reversed.map((entry) {
@@ -196,20 +240,20 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                         margin: EdgeInsets.only(left: form != WasteForm.mixed ? 8 : 0),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         decoration: BoxDecoration(
-                          color: isSelected ? const Color(0xFF1E40AF) : const Color(0xFFF2F4F2),
+                          color: isSelected ? const Color(0xFF1E40AF) : dt.surfaceVariant,
                           borderRadius: BorderRadius.circular(14),
-                          border: isSelected ? null : Border.all(color: const Color(0xFFE6E9E7)),
+                          border: isSelected ? null : Border.all(color: dt.border),
                         ),
                         child: Column(
                           children: [
-                            Icon(icon, size: 22, color: isSelected ? Colors.white : const Color(0xFF717973)),
+                            Icon(icon, size: 22, color: isSelected ? Colors.white : dt.onSurfaceMuted),
                             const SizedBox(height: 6),
                             Text(
                               form.label,
                               style: GoogleFonts.cairo(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: isSelected ? Colors.white : const Color(0xFF404943),
+                                color: isSelected ? Colors.white : dt.onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -222,7 +266,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
               const SizedBox(height: 24),
 
               // ── 3. Weight category ──
-              _buildSectionLabel(context.l10n.newOrderWeightCategoryLabel),
+              _buildSectionLabel(context.l10n.newOrderWeightCategoryLabel, dt),
               const SizedBox(height: 10),
               ...WeightCategory.values.map((cat) {
                 final isSelected = _weightCategory == cat;
@@ -234,10 +278,10 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFF1E40AF) : Colors.white,
+                      color: isSelected ? const Color(0xFF1E40AF) : dt.surface,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: isSelected ? const Color(0xFF1E40AF) : const Color(0xFFE6E9E7),
+                        color: isSelected ? const Color(0xFF1E40AF) : dt.border,
                         width: isSelected ? 2 : 1,
                       ),
                     ),
@@ -245,7 +289,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                       children: [
                         isSelected
                             ? const Icon(Icons.check_circle_rounded, color: Colors.white, size: 20)
-                            : const Icon(Icons.radio_button_off_rounded, color: Color(0xFFBBBFBD), size: 20),
+                            : Icon(Icons.radio_button_off_rounded, color: dt.border, size: 20),
                         const Spacer(),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -255,14 +299,14 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                               style: GoogleFonts.cairo(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color: isSelected ? Colors.white : const Color(0xFF002819),
+                                color: isSelected ? Colors.white : dt.onSurface,
                               ),
                             ),
                             Text(
                               cat.label,
                               style: GoogleFonts.cairo(
                                 fontSize: 11,
-                                color: isSelected ? Colors.white70 : const Color(0xFF717973),
+                                color: isSelected ? Colors.white70 : dt.onSurfaceMuted,
                               ),
                             ),
                           ],
@@ -274,11 +318,11 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? Colors.white.withValues(alpha: 0.15)
-                                : const Color(0xFFF2F4F2),
+                                : dt.surfaceVariant,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Icon(entry.$2, size: 18,
-                              color: isSelected ? Colors.white : const Color(0xFF717973)),
+                              color: isSelected ? Colors.white : dt.onSurfaceMuted),
                         ),
                       ],
                     ),
@@ -288,11 +332,11 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
               const SizedBox(height: 24),
 
               // ── 4. Price ──
-              _buildSectionLabel(context.l10n.postMarketPriceLabel),
+              _buildSectionLabel(context.l10n.postMarketPriceLabel, dt),
               const SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF2F4F2),
+                  color: dt.surfaceVariant,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: TextField(
@@ -303,13 +347,13 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                   style: GoogleFonts.dmSans(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF191C1B),
+                    color: dt.onSurface,
                   ),
                   decoration: InputDecoration(
                     hintText: '0.00',
                     hintStyle: GoogleFonts.dmSans(
                       fontSize: 16,
-                      color: const Color(0xFF6B7280).withValues(alpha: 0.4),
+                      color: dt.onSurfaceMuted.withValues(alpha: 0.6),
                     ),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
@@ -320,19 +364,19 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                         style: GoogleFonts.cairo(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF717973),
+                          color: dt.onSurfaceMuted,
                         ),
                       ),
                     ),
                     suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-                    prefixIcon: const Icon(Icons.sell_rounded, color: Color(0xFF717973), size: 20),
+                    prefixIcon: Icon(Icons.sell_rounded, color: dt.onSurfaceMuted, size: 20),
                   ),
                 ),
               ),
               const SizedBox(height: 24),
 
               // ── 5. Images ──
-              _buildSectionLabel(context.l10n.postMarketImagesLabel),
+              _buildSectionLabel(context.l10n.postMarketImagesLabel, dt),
               const SizedBox(height: 8),
               ImagePickerGrid(
                 imagePaths: _images,
@@ -342,24 +386,24 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
               const SizedBox(height: 24),
 
               // ── 6. Location ──
-              _buildSectionLabel(context.l10n.newOrderPickupAddressLabel),
+              _buildSectionLabel(context.l10n.newOrderPickupAddressLabel, dt),
               const SizedBox(height: 8),
               GestureDetector(
-                onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(context.l10n.mapsComingSoon, style: GoogleFonts.cairo()),
-                    backgroundColor: const Color(0xFF1E40AF),
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-                child: Container(
+                onTap: _pickLocation,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF2F4F2),
+                    color: _pickedLat != null
+                        ? const Color(0xFF1E40AF).withValues(alpha: 0.06)
+                        : dt.surfaceVariant,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFFE6E9E7)),
+                    border: Border.all(
+                      color: _pickedLat != null
+                          ? const Color(0xFF1E40AF).withValues(alpha: 0.4)
+                          : dt.border,
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -383,16 +427,20 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            context.l10n.newOrderCurrentAddress,
+                            _pickedLat != null
+                                ? '${_pickedLat!.toStringAsFixed(4)}, ${_pickedLng!.toStringAsFixed(4)}'
+                                : context.l10n.newOrderCurrentAddress,
                             style: GoogleFonts.cairo(
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFF002819),
+                              color: _pickedLat != null
+                                  ? const Color(0xFF1E40AF)
+                                  : dt.onSurface,
                             ),
                           ),
                           Text(
                             context.l10n.newOrderTapToSelectLocation,
-                            style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF717973)),
+                            style: GoogleFonts.cairo(fontSize: 11, color: dt.onSurfaceMuted),
                           ),
                         ],
                       ),
@@ -404,7 +452,13 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                           color: const Color(0xFF1E40AF).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.location_on_rounded, size: 20, color: Color(0xFF1E40AF)),
+                        child: Icon(
+                          _pickedLat != null
+                              ? Icons.location_on_rounded
+                              : Icons.add_location_alt_rounded,
+                          size: 20,
+                          color: const Color(0xFF1E40AF),
+                        ),
                       ),
                     ],
                   ),
@@ -413,23 +467,23 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
               const SizedBox(height: 24),
 
               // ── 7. Notes ──
-              _buildSectionLabel(context.l10n.newOrderNotesLabel),
+              _buildSectionLabel(context.l10n.newOrderNotesLabel, dt),
               const SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF2F4F2),
+                  color: dt.surfaceVariant,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: TextField(
                   controller: _notesCtrl,
                   maxLines: 3,
                   textAlign: TextAlign.right,
-                  style: GoogleFonts.cairo(fontSize: 14, color: const Color(0xFF191C1B)),
+                  style: GoogleFonts.cairo(fontSize: 14, color: dt.onSurface),
                   decoration: InputDecoration(
                     hintText: context.l10n.newOrderNotesHint,
                     hintStyle: GoogleFonts.cairo(
                       fontSize: 13,
-                      color: const Color(0xFF6B7280).withValues(alpha: 0.5),
+                      color: dt.onSurfaceMuted.withValues(alpha: 0.7),
                     ),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.all(14),
@@ -474,13 +528,13 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
     );
   }
 
-  Widget _buildSectionLabel(String text) {
+  Widget _buildSectionLabel(String text, AppTokens dt) {
     return Text(
       text,
       style: GoogleFonts.cairo(
         fontSize: 14,
         fontWeight: FontWeight.bold,
-        color: const Color(0xFF404943),
+        color: dt.onSurfaceVariant,
       ),
     );
   }

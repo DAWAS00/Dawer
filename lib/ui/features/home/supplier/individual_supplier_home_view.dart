@@ -120,6 +120,8 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
           WasteForm? wasteForm,
           WeightCategory? weightCategory,
           double? itemPrice,
+          double? pickupLat,
+          double? pickupLng,
         }) {
           final order = vm.createListing(
             wasteTypes: wasteTypes,
@@ -129,6 +131,8 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
             wasteForm: wasteForm,
             weightCategory: weightCategory,
             itemPrice: itemPrice,
+            pickupLat: pickupLat,
+            pickupLng: pickupLng,
           );
           marketVm.addListing(order);
         },

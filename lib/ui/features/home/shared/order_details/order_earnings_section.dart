@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../l10n/l10n.dart';
 
@@ -168,7 +167,7 @@ class OrderEarningsSection extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
-                                  '${item.total.toStringAsFixed(2)}',
+                                  item.total.toStringAsFixed(2),
                                   style: GoogleFonts.dmSans(
                                     fontSize: 13,
                                     color: const Color(0xFF1F2937),

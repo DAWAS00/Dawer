@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/services/app_order_store.dart';
+import '../../../../../data/services/location_publisher.dart';
 
 class DriverHomeViewModel extends ChangeNotifier {
   final AppOrderStore _store;
@@ -68,7 +69,7 @@ class DriverHomeViewModel extends ChangeNotifier {
 
   // ── Order actions ─────────────────────────────────────────────────────────
 
-  String? acceptOrder(Order order) {
+  Future<String?> acceptOrder(Order order) async {
     if (!_isAvailable) {
       return 'أنت غير متاح حالياً. لا يمكنك قبول الطلب.';
     }
@@ -76,12 +77,15 @@ class DriverHomeViewModel extends ChangeNotifier {
     if (error == null) {
       _currentTab = 2; // Switch to Orders tab
       notifyListeners();
+      // Start publishing GPS to Supabase driver_locations.
+      await LocationPublisher.instance.start(order.id);
     }
     return error;
   }
 
-  void completeOrder(Order order) {
+  Future<void> completeOrder(Order order) async {
     _store.completeOrder(order);
+    await LocationPublisher.instance.stop();
   }
 
   /// Move a collectionSale to inTransit. Returns error string or null.
@@ -104,6 +108,8 @@ class DriverHomeViewModel extends ChangeNotifier {
     WasteForm? wasteForm,
     WeightCategory? weightCategory,
     double? itemPrice,
+    double? pickupLat,
+    double? pickupLng,
   }) {
     final orderId = 'DRV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
     final order = Order(
@@ -122,6 +128,9 @@ class DriverHomeViewModel extends ChangeNotifier {
       weightCategory: weightCategory,
       pickupTarget: PickupTarget.riderBuy,
       itemPrice: itemPrice,
+      isMarketplaceShared: true,
+      pickupLat: pickupLat,
+      pickupLng: pickupLng,
     );
     notifyListeners();
     return order;

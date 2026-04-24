@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_tokens.dart';
 
 // ── Reference messages for callers ────────────────────────────────────────────
 // Driver — المتاحة:    message='لا توجد طلبات متاحة حالياً',    icon=Icons.inbox_rounded
@@ -35,13 +36,14 @@ class OrdersEmptyState extends StatelessWidget {
       onAction == null || actionLabel != null,
       'actionLabel must be provided when onAction is set.',
     );
+    final dt = context.dt;
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 64, color: const Color(0xFF9CA3AF)),
+            Icon(icon, size: 64, color: dt.onSurfaceMuted),
             const SizedBox(height: 20),
             Text(
               message,
@@ -49,7 +51,7 @@ class OrdersEmptyState extends StatelessWidget {
               style: GoogleFonts.cairo(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF404943),
+                color: dt.onSurfaceVariant,
               ),
             ),
             if (subMessage != null) ...[
@@ -59,7 +61,7 @@ class OrdersEmptyState extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.cairo(
                   fontSize: 13,
-                  color: const Color(0xFF717973),
+                  color: dt.onSurfaceMuted,
                 ),
               ),
             ],

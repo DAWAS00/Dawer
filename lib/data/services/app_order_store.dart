@@ -108,7 +108,7 @@ class AppOrderStore extends ChangeNotifier {
   /// Pending orders available for the driver to accept (no driver yet).
   List<Order> get driverFeed => _orders
       .where((o) =>
-          ((o.status == OrderStatus.pending) ||
+          ((o.status == OrderStatus.pending && !o.isMarketplaceShared) ||
               (o.status == OrderStatus.accepted &&
                   o.requiresRider &&
                   o.driverName == null)) &&

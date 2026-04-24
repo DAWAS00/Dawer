@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../data/models/order_labels.dart';
 import '../../../../../l10n/l10n.dart';
@@ -25,16 +26,17 @@ class MarketItemCard extends StatelessWidget {
             ? l10n.timeAgoHours(timeDiff.inHours)
             : l10n.timeAgoMinutes(timeDiff.inMinutes);
 
+    final dt = context.dt;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: dt.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
+              color: dt.shadow.withValues(alpha: 0.06),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -43,13 +45,11 @@ class MarketItemCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ── Top: Price badge + waste type chips ──
             Container(
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Price badge
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
@@ -67,7 +67,6 @@ class MarketItemCard extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  // Waste type chips
                   Flexible(
                     child: Wrap(
                       spacing: 4,
@@ -96,7 +95,6 @@ class MarketItemCard extends StatelessWidget {
               ),
             ),
 
-            // ── Middle: Seller info + address ──
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
               child: Column(
@@ -107,7 +105,7 @@ class MarketItemCard extends StatelessWidget {
                     style: GoogleFonts.cairo(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF002819),
+                      color: dt.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -118,11 +116,11 @@ class MarketItemCard extends StatelessWidget {
                         item.pickupAddress,
                         style: GoogleFonts.cairo(
                           fontSize: 12,
-                          color: const Color(0xFF717973),
+                          color: dt.onSurfaceMuted,
                         ),
                       ),
                       const SizedBox(width: 4),
-                      const Icon(Icons.location_on_rounded, size: 14, color: Color(0xFF717973)),
+                      Icon(Icons.location_on_rounded, size: 14, color: dt.onSurfaceMuted),
                     ],
                   ),
                   if (item.supplierNotes != null && item.supplierNotes!.isNotEmpty) ...[
@@ -133,7 +131,7 @@ class MarketItemCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.cairo(
                         fontSize: 12,
-                        color: const Color(0xFF9CA3AF),
+                        color: dt.onSurfaceMuted,
                       ),
                     ),
                   ],
@@ -141,35 +139,34 @@ class MarketItemCard extends StatelessWidget {
               ),
             ),
 
-            // ── Bottom: Meta info row ──
             Container(
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
               decoration: BoxDecoration(
-                color: const Color(0xFFF9FAFB),
+                color: dt.surfaceVariant,
                 borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
               ),
               child: Row(
                 children: [
                   Text(
                     timeLabel,
-                    style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF9CA3AF)),
+                    style: GoogleFonts.cairo(fontSize: 11, color: dt.onSurfaceMuted),
                   ),
                   const Spacer(),
                   if (item.weightCategory != null) ...[
-                    Icon(Icons.fitness_center_rounded, size: 13, color: const Color(0xFF717973)),
+                    Icon(Icons.fitness_center_rounded, size: 13, color: dt.onSurfaceVariant),
                     const SizedBox(width: 3),
                     Text(
                       item.weightCategory!.shortLabelFor(locale),
-                      style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF717973)),
+                      style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: dt.onSurfaceVariant),
                     ),
                     const SizedBox(width: 12),
                   ],
                   if (item.wasteForm != null) ...[
-                    Icon(Icons.category_rounded, size: 13, color: const Color(0xFF717973)),
+                    Icon(Icons.category_rounded, size: 13, color: dt.onSurfaceVariant),
                     const SizedBox(width: 3),
                     Text(
                       item.wasteForm!.labelFor(locale),
-                      style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF717973)),
+                      style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: dt.onSurfaceVariant),
                     ),
                   ],
                 ],

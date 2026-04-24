@@ -127,6 +127,8 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
     WasteForm? wasteForm,
     WeightCategory? weightCategory,
     double? itemPrice,
+    double? pickupLat,
+    double? pickupLng,
   }) {
     final orderId =
         '$listingIdPrefix${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
@@ -147,6 +149,8 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
       pickupTarget: PickupTarget.riderBuy,
       itemPrice: itemPrice,
       isMarketplaceShared: true,
+      pickupLat: pickupLat,
+      pickupLng: pickupLng,
     );
   }
 

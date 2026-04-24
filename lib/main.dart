@@ -53,7 +53,7 @@ class DawerApp extends StatelessWidget {
             themeMode: themeNotifier.mode,
             locale: langNotifier.locale,
             localizationsDelegates: const [
-              AppLocalizations.delegate,
+              AppLocalizations.delegate,  
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
