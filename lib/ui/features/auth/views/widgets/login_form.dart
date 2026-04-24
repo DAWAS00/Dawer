@@ -303,6 +303,7 @@ class LoginForm extends StatelessWidget {
               ],
               Expanded(
                 child: TextField(
+                  key: ValueKey(isPhone ? 'phone_input' : 'email_input'),
                   onChanged: onChanged,
                   keyboardType: isPhone ? TextInputType.number : TextInputType.emailAddress,
                   inputFormatters: isPhone 
