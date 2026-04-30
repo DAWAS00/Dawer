@@ -1,33 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../../data/models/order.dart';
+import 'package:provider/provider.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/waste_type_icons.dart';
+import '../../../../../data/models/order.dart';
+import '../../../../../domain/requests/create_pickup_request.dart';
+import '../../../../../l10n/l10n.dart';
+import '../../../../common/green_button.dart';
 import '../../../../common/map/location_picker_panel.dart';
+import '../viewmodels/supplier_home_viewmodel.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // NewPickupRequestView — full-screen pickup order form
 // ─────────────────────────────────────────────────────────────────────────────
 
 class NewPickupRequestView extends StatefulWidget {
-  final void Function({
-    required List<WasteType> wasteTypes,
-    required String pickupAddress,
-    List<String>? images,
-    String? notes,
-    WasteForm? wasteForm,
-    WeightCategory? weightCategory,
-    PickupTarget? pickupTarget,
-    double? itemPrice,
-  }) onSubmit;
-
-  const NewPickupRequestView({super.key, required this.onSubmit});
+  const NewPickupRequestView({super.key});
 
   @override
   State<NewPickupRequestView> createState() => _NewPickupRequestViewState();
 }
 
 class _NewPickupRequestViewState extends State<NewPickupRequestView> {
+  final _formKey = GlobalKey<FormState>();
   final Set<WasteType> _selectedTypes = {};
   WasteForm? _wasteForm;
   WeightCategory? _weightCategory;
@@ -77,21 +72,56 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
     return 'الموقع المحدد';
   }
 
-  void _submit() {
+  Future<void> _handleSubmit(
+      BuildContext context, SupplierHomeViewModel vm) async {
     if (_selectedTypes.isEmpty) {
       setState(() => _showTypeError = true);
       return;
     }
-    widget.onSubmit(
+    if (!_formKey.currentState!.validate()) return;
+
+    final request = CreatePickupRequest(
+      supplierId: vm.user.id,
       wasteTypes: _selectedTypes.toList(),
+      wasteForm: _wasteForm ?? WasteForm.mixed,
+      weightCategory: _weightCategory ?? WeightCategory.light,
       pickupAddress: _pickupAddressLabel,
-      notes: _notesCtrl.text.trim().isNotEmpty ? _notesCtrl.text.trim() : null,
-      wasteForm: _wasteForm,
-      weightCategory: _weightCategory,
-      pickupTarget: _pickupTarget,
-      itemPrice: double.tryParse(_priceCtrl.text.trim()),
+      notes: _notesCtrl.text.trim().isNotEmpty
+          ? _notesCtrl.text.trim()
+          : null,
     );
-    Navigator.pop(context);
+
+    final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final successMsg = context.l10n.pickupRequestCreated;
+
+    final success = await vm.submitPickupRequest(request);
+    if (!mounted) return;
+
+    if (success) {
+      navigator.pop();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(successMsg, style: GoogleFonts.cairo()),
+          behavior: SnackBarBehavior.floating,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    } else {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            vm.pickupSubmitError?.message ?? 'حدث خطأ، حاول مجدداً',
+            style: GoogleFonts.cairo(),
+          ),
+          backgroundColor: AppColors.statusCancelledBg,
+          behavior: SnackBarBehavior.floating,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    }
   }
 
   Future<void> _pickLocation() async {
@@ -117,7 +147,9 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: _buildAppBar(context),
-      body: SingleChildScrollView(
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -132,6 +164,7 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
             _buildDeliveryFeeCard(),
           ],
         ),
+      ),
       ),
       bottomNavigationBar: _buildSubmitBar(),
     );
@@ -669,34 +702,17 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 200),
-          opacity: _selectedTypes.isEmpty ? 0.4 : 1.0,
-          child: SizedBox(
-            height: 54,
-            child: ElevatedButton(
-              onPressed: _submit,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF06402B),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-                elevation: 0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'إرسال الطلب',
-                    style: GoogleFonts.cairo(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.send_rounded,
-                      color: Colors.white, size: 20),
-                ],
-              ),
+        child: Consumer<SupplierHomeViewModel>(
+          builder: (context, vm, _) => GreenButton(
+            text: 'إرسال الطلب',
+            isLoading: vm.isSubmittingPickup,
+            onPressed: vm.isSubmittingPickup
+                ? null
+                : () => _handleSubmit(context, vm),
+            trailingIcon: const Icon(
+              Icons.send_rounded,
+              color: Colors.white,
+              size: 20,
             ),
           ),
         ),

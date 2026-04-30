@@ -28,6 +28,11 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
   User get defaultUser;
   String get listingIdPrefix;
 
+  // ── Exposed to subclasses ─────────────────────────────────────────────────
+
+  @protected
+  AppOrderStore get store => _store;
+
   // ── Local state ───────────────────────────────────────────────────────────
 
   int _currentTab = 0;
