@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../data/models/user_role.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
 import '../../../common/green_button.dart';
 import '../../home/home_router.dart';
 import '../viewmodels/verification_viewmodel.dart';
-import '../../../../l10n/l10n.dart';
 
 class VerificationView extends StatelessWidget {
   final String phoneNumber;
@@ -31,7 +31,6 @@ class _VerificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<VerificationViewModel>();
-    final l10n = context.l10n;
 
     if (viewModel.verified) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -50,7 +49,7 @@ class _VerificationScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.loginOtpVerification, style: GoogleFonts.cairo()),
+        title: Text('تأكيد الرمز', style: GoogleFonts.cairo()),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,

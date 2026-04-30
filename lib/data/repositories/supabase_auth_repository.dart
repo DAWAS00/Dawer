@@ -2,6 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../backend_integration_locally/local_store.dart';
 import '../../core/result/result.dart';
+import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/i_auth_repository.dart';
 import '../models/user_role.dart';
 import '../services/user_signup_service.dart';
