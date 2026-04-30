@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart';
 import '../../auth/views/login_view.dart';
 import '../../../../data/models/user_role.dart';
+import '../../../../domain/repositories/i_auth_repository.dart';
 import '../../home/home_router.dart';
-import '../../../../data/services/user_signup_service.dart';
 import '../../../../l10n/l10n.dart';
 
 class SplashView extends StatefulWidget {
@@ -48,61 +48,31 @@ class _SplashViewState extends State<SplashView>
     });
   }
 
-  /// Checks if a Supabase session already exists. If so, fetches the user
-  /// profile and navigates directly to the home screen. Otherwise, goes to
-  /// the login page.
+  /// Checks if an existing session exists via IAuthRepository. If so,
+  /// navigates directly to the home screen. Otherwise, goes to login.
   Future<void> _resolveNavigation() async {
     try {
-      final session = Supabase.instance.client.auth.currentSession;
-      if (session != null) {
-        // Session exists — try to fetch the user profile
-        final service = UserSignUpService();
-        final profile = await service.getCurrentProfile();
+      final authRepo = context.read<IAuthRepository>();
+      final session = authRepo.currentSession;
 
-        if (profile != null && mounted) {
-          // Parse role and supplier type from profile
-          final roleStr = profile['role'] as String?;
-          final supplierStr = profile['supplier_type'] as String?;
-
-          UserRole role = UserRole.driver;
-          SupplierType supplierType = SupplierType.individual;
-
-          if (roleStr != null) {
-            for (final r in UserRole.values) {
-              if (r.dbValue == roleStr) {
-                role = r;
-                break;
-              }
-            }
-          }
-          if (supplierStr != null) {
-            for (final s in SupplierType.values) {
-              if (s.dbValue == supplierStr) {
-                supplierType = s;
-                break;
-              }
-            }
-          }
-
-          final userName = (profile['name'] as String?) ?? '';
-
-          Navigator.of(context).pushReplacement(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  HomeRouter(
-                role: role,
-                supplierType: supplierType,
-                userName: userName,
-              ),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              transitionDuration: const Duration(milliseconds: 500),
+      if (session != null && mounted) {
+        // Session exists — navigate to home with the resolved role
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                HomeRouter(
+              role: session.role,
+              supplierType: session.supplierType ?? SupplierType.individual,
+              userName: '', // Name could be added to AuthSession if needed
             ),
-          );
-          return;
-        }
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            transitionDuration: const Duration(milliseconds: 500),
+          ),
+        );
+        return;
       }
     } catch (_) {
       // If anything fails, fall through to login

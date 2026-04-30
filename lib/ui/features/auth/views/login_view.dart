@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../viewmodels/login_viewmodel.dart';
 import '../../home/home_router.dart';
+import 'verification_view.dart';
 import '../../../../l10n/l10n.dart';
 
 import 'widgets/role_selection_grid.dart';
@@ -17,11 +18,7 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Provide the ViewModel to this screen and its children
-    return ChangeNotifierProvider(
-      create: (_) => LoginViewModel(),
-      child: const _LoginScreen(),
-    );
+    return const _LoginScreen();
   }
 }
 
@@ -42,6 +39,18 @@ class _LoginScreen extends StatelessWidget {
               supplierType: viewModel.supplierType,
               userName: viewModel.profileName,
             ),
+          ),
+        );
+      });
+    }
+
+    if (viewModel.otpSent) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final phone = viewModel.phone;
+        viewModel.resetOtpSent();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => VerificationView(phoneNumber: phone),
           ),
         );
       });

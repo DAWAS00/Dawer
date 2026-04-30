@@ -4,45 +4,39 @@ import 'package:flutter/foundation.dart';
 export '../../../../data/models/user_role.dart' show UserRole, SupplierType;
 
 import '../../../../data/models/user_role.dart';
-import '../../../../data/services/user_signup_service.dart';
-
-enum LoginMethod { email, phone }
+import '../../../../domain/repositories/i_auth_repository.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  LoginViewModel({UserSignUpService? service})
-      : _service = service ?? UserSignUpService();
+  LoginViewModel({required IAuthRepository authRepository})
+      : _authRepository = authRepository;
 
-  final UserSignUpService _service;
+  final IAuthRepository _authRepository;
 
   // --- State ---
   UserRole _selectedRole = UserRole.driver;
   SupplierType _supplierType = SupplierType.individual;
-  LoginMethod _loginMethod = LoginMethod.phone;
-  String _currentInput = '';
+  String _email = '';
   String _password = '';
+  String _phone = '';
   String? _error;
   bool _isLoading = false;
   bool _signedIn = false;
-  Map<String, dynamic>? _profile;
-  String _selectedCountryCode = 'JO';
-  String _selectedDialCode = '+962';
+  bool _otpSent = false;
+  AuthSession? _session;
 
   // --- Getters ---
   UserRole get selectedRole => _selectedRole;
   SupplierType get supplierType => _supplierType;
-  LoginMethod get loginMethod => _loginMethod;
-  String get currentInput => _currentInput;
+  String get email => _email;
   String get password => _password;
+  String get phone => _phone;
   String? get error => _error;
   bool get isLoading => _isLoading;
   bool get signedIn => _signedIn;
-  Map<String, dynamic>? get profile => _profile;
-  bool get isEmailMethod => _loginMethod == LoginMethod.email;
-  String get selectedCountryCode => _selectedCountryCode;
-  String get selectedDialCode => _selectedDialCode;
+  bool get otpSent => _otpSent;
+  AuthSession? get session => _session;
 
-  String get profileName =>
-      (_profile?['name'] as String?) ?? _currentInput;
+  String get profileName => _email.isNotEmpty ? _email : _phone;
 
   // --- Mutators ---
   void selectRole(UserRole role) {
@@ -56,20 +50,8 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setLoginMethod(LoginMethod method) {
-    _loginMethod = method;
-    _currentInput = '';
-    _error = null;
-    notifyListeners();
-  }
-
   void setEmail(String email) {
-    _currentInput = email;
-    _error = null;
-  }
-
-  void setPhoneNumber(String phone) {
-    _currentInput = phone;
+    _email = email;
     _error = null;
   }
 
@@ -78,19 +60,44 @@ class LoginViewModel extends ChangeNotifier {
     _error = null;
   }
 
-  void setCountry(String countryCode, String dialCode) {
-    _selectedCountryCode = countryCode;
-    _selectedDialCode = dialCode;
+  void setPhone(String value) {
+    _phone = value;
+    _error = null;
+  }
+
+  /// Requests an OTP for the provided phone number.
+  Future<void> requestOtp(String phone) async {
+    _phone = phone.trim();
+    if (_phone.isEmpty) {
+      _error = 'الرجاء إدخال رقم الهاتف';
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    final result = await _authRepository.requestOtp(_phone);
+    result.fold(
+      onSuccess: (_) {
+        _otpSent = true;
+      },
+      onFailure: (f) => _error = f.message,
+    );
+
+    _isLoading = false;
     notifyListeners();
   }
 
-  /// Attempts password-based sign-in against [LocalAuthService]. Sets
-  /// [signedIn] to true on success so the View can navigate to [HomeRouter].
+  void resetOtpSent() {
+    _otpSent = false;
+  }
+
+  /// Signs the user in with email + password.
   Future<void> signIn() async {
-    if (_currentInput.trim().isEmpty) {
-      _error = isEmailMethod
-          ? 'الرجاء إدخال البريد الإلكتروني'
-          : 'الرجاء إدخال رقم الهاتف';
+    if (_email.trim().isEmpty) {
+      _error = 'الرجاء إدخال البريد الإلكتروني';
       notifyListeners();
       return;
     }
@@ -104,41 +111,24 @@ class LoginViewModel extends ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    try {
-      final identifier = _currentInput.trim();
-      _profile = await _service.signIn(
-        identifier: identifier,
-        password: _password,
-      );
-      // Reflect the actual role stored on the account so the home router
-      // routes to the correct tab set (not the one picked in the UI).
-      final storedRole = _profile?['role'] as String?;
-      if (storedRole != null) {
-        for (final r in UserRole.values) {
-          if (r.dbValue == storedRole) {
-            _selectedRole = r;
-            break;
-          }
+    final result = await _authRepository.signInWithEmail(
+      _email.trim(),
+      _password,
+    );
+    result.fold(
+      onSuccess: (session) {
+        _session = session;
+        _selectedRole = session.role;
+        if (session.supplierType != null) {
+          _supplierType = session.supplierType!;
         }
-      }
-      final storedSupplier = _profile?['supplier_type'] as String?;
-      if (storedSupplier != null) {
-        for (final s in SupplierType.values) {
-          if (s.dbValue == storedSupplier) {
-            _supplierType = s;
-            break;
-          }
-        }
-      }
-      _signedIn = true;
-    } on SignUpException catch (e) {
-      _error = e.message;
-    } catch (_) {
-      _error = 'تعذّر تسجيل الدخول، حاول مجدداً';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+        _signedIn = true;
+      },
+      onFailure: (f) => _error = f.message,
+    );
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   void resetSignedIn() {

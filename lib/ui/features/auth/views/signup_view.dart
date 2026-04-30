@@ -6,7 +6,7 @@ import '../viewmodels/login_viewmodel.dart';
 import '../viewmodels/signup_viewmodel.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../common/green_button.dart';
-import 'login_view.dart';
+import '../../home/home_router.dart';
 import 'widgets/footer.dart';
 import 'widgets/photo_picker_card.dart';
 import 'widgets/identity_upload_card.dart';
@@ -24,7 +24,10 @@ class SignUpView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => SignUpViewModel(role: role, supplierType: supplierType),
+      create: (_) => SignUpViewModel(
+        role: role,
+        supplierType: supplierType,
+      ),
       child: const _SignUpScreen(),
     );
   }
@@ -70,7 +73,13 @@ class _SignUpScreenState extends State<_SignUpScreen> {
         if (!mounted) return;
         vm.resetSubmitted();
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const LoginView()),
+          MaterialPageRoute(
+            builder: (_) => HomeRouter(
+              role: vm.role,
+              supplierType: vm.supplierType,
+              userName: vm.buildRequest().name,
+            ),
+          ),
           (route) => false,
         );
       });

@@ -12,6 +12,8 @@ class LocalStore {
 
   static const String _usersKey = 'dwaar_users';
   static const String _currentUserKey = 'dwaar_current_user_id';
+  static const String _currentUserRoleKey = 'dwaar_current_user_role';
+  static const String _currentSupplierTypeKey = 'dwaar_current_supplier_type';
   static const String _ordersKey = 'dwaar_orders';
   static const String _marketKey = 'dwaar_market';
   static const String _firstLaunchKey = 'dwaar_first_launch_done';
@@ -88,5 +90,25 @@ class LocalStore {
 
   Future<void> clearCurrentUserId() async {
     await _prefs.remove(_currentUserKey);
+  }
+
+  String? getCurrentUserRole() => _prefs.getString(_currentUserRoleKey);
+
+  Future<void> setCurrentUserRole(String role) async {
+    await _prefs.setString(_currentUserRoleKey, role);
+  }
+
+  Future<void> clearCurrentUserRole() async {
+    await _prefs.remove(_currentUserRoleKey);
+  }
+
+  String? getCurrentSupplierType() => _prefs.getString(_currentSupplierTypeKey);
+
+  Future<void> setCurrentSupplierType(String type) async {
+    await _prefs.setString(_currentSupplierTypeKey, type);
+  }
+
+  Future<void> clearCurrentSupplierType() async {
+    await _prefs.remove(_currentSupplierTypeKey);
   }
 }

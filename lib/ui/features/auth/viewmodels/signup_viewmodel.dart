@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../data/models/user_role.dart';
 import '../../../../data/services/user_signup_service.dart';
+import '../../../../domain/failures/app_failure.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import 'login_viewmodel.dart';
 
@@ -195,20 +196,26 @@ class SignUpViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    try {
-      _createdProfile = await _service.signUp(buildRequest());
-      _submitted = true;
-    } on SignUpException catch (e) {
-      _errors['submit'] = e.message;
-      if (e.fieldErrors.isNotEmpty) {
-        _errors.addAll(e.fieldErrors);
-      }
-    } catch (_) {
-      _errors['submit'] = l10n.signupErrorSubmitFailed;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+    final result = await _service.signUp(
+      buildRequest(),
+      profilePhoto: profilePhoto,
+      identityDocument: identityDocument,
+    );
+    result.fold(
+      onSuccess: (profile) {
+        _createdProfile = profile;
+        _submitted = true;
+      },
+      onFailure: (failure) {
+        _errors['submit'] = failure.message;
+        if (failure is ValidationFailure && failure.fieldErrors.isNotEmpty) {
+          _errors.addAll(failure.fieldErrors);
+        }
+      },
+    );
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   void resetSubmitted() {

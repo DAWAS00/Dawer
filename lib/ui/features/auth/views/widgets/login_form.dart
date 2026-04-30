@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:country_picker/country_picker.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../common/green_button.dart';
 import '../../../../../l10n/l10n.dart';
@@ -21,115 +19,16 @@ class LoginForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Toggle Switch
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFFF2F4F2),
-            borderRadius: BorderRadius.circular(9999),
-          ),
-          padding: const EdgeInsets.all(6),
-          child: Row(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => viewModel.setLoginMethod(LoginMethod.email),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: viewModel.loginMethod == LoginMethod.email
-                          ? Colors.white
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(9999),
-                      boxShadow: viewModel.loginMethod == LoginMethod.email
-                          ? [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.05),
-                                blurRadius: 2,
-                                offset: const Offset(0, 1),
-                              )
-                            ]
-                          : null,
-                    ),
-                    child: Text(
-                      l10n.loginMethodEmail,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: viewModel.loginMethod == LoginMethod.email
-                            ? const Color(0xFF002819)
-                            : const Color(0xFF717973),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => viewModel.setLoginMethod(LoginMethod.phone),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: viewModel.loginMethod == LoginMethod.phone
-                          ? Colors.white
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(9999),
-                      boxShadow: viewModel.loginMethod == LoginMethod.phone
-                          ? [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.05),
-                                blurRadius: 2,
-                                offset: const Offset(0, 1),
-                              )
-                            ]
-                          : null,
-                    ),
-                    child: Text(
-                      l10n.loginMethodPhone,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: viewModel.loginMethod == LoginMethod.phone
-                            ? const Color(0xFF002819)
-                            : const Color(0xFF717973),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
         // Supplier sub-type selector — only visible when Supplier role is active
         if (viewModel.selectedRole == UserRole.supplier) ...[
-          const SizedBox(height: 24),
           const SupplierSubTypeSelector(),
+          const SizedBox(height: 24),
         ],
-        const SizedBox(height: 24),
-        // Input Field
-        if (viewModel.loginMethod == LoginMethod.phone)
-          _buildInputField(
-            context: context,
-            isPhone: true,
-            label: l10n.loginPhoneLabel,
-            hintText: '',
-            onChanged: viewModel.setPhoneNumber,
-            countryCode: viewModel.selectedCountryCode,
-            dialCode: viewModel.selectedDialCode,
-            onCountryChanged: (code, dialCode) => viewModel.setCountry(code, dialCode),
-          )
-        else
-          _buildInputField(
-            context: context,
-            isPhone: false,
-            label: l10n.loginEmailLabel,
-            hintText: l10n.loginEmailHint,
-            onChanged: viewModel.setEmail,
-            countryCode: '',
-            dialCode: '',
-            onCountryChanged: (c, d) {},
-          ),
+        _EmailField(
+          label: l10n.loginEmailLabel,
+          hint: l10n.loginEmailHint,
+          onChanged: viewModel.setEmail,
+        ),
         const SizedBox(height: 16),
         _PasswordField(
           onChanged: viewModel.setPassword,
@@ -202,20 +101,22 @@ class LoginForm extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget _buildInputField({
-    required BuildContext context,
-    required bool isPhone,
-    required String label,
-    required String hintText,
-    required ValueChanged<String> onChanged,
-    required String countryCode,
-    required String dialCode,
-    required Function(String code, String dialCode) onCountryChanged,
-  }) {
-    final l10n = context.l10n;
+class _EmailField extends StatelessWidget {
+  final String label;
+  final String hint;
+  final ValueChanged<String> onChanged;
+
+  const _EmailField({
+    required this.label,
+    required this.hint,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final isEnglish = Localizations.localeOf(context).languageCode == 'en';
-    final useLtrInput = isEnglish;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -233,123 +134,30 @@ class LoginForm extends StatelessWidget {
             color: const Color(0xFFE6E9E7),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Row(
-            children: [
-              if (isPhone) ...[
-                InkWell(
-                  onTap: () {
-                    showCountryPicker(
-                      context: context,
-                      countryListTheme: CountryListThemeData(
-                        flagSize: 25,
-                        backgroundColor: Colors.white,
-                        textStyle: GoogleFonts.cairo(fontSize: 16, color: const Color(0xFF002819)),
-                        bottomSheetHeight: 500, // Optional. Country list modal height
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(20.0),
-                        ),
-                        inputDecoration: InputDecoration(
-                          labelText: l10n.loginCountrySearch,
-                          hintText: l10n.loginCountrySearchHint,
-                          prefixIcon: const Icon(Icons.search),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: const Color(0xFF8C98A8).withValues(alpha: 0.2),
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Filter for Middle East countries (and some North African)
-                      countryFilter: <String>['JO'],
-                      onSelect: (Country country) {
-                        onCountryChanged(country.countryCode, '+${country.phoneCode}');
-                      },
-                    );
-                  },
-                  borderRadius: const BorderRadius.horizontal(right: Radius.circular(12)),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    child: Row(
-                      children: [
-                        Text(
-                          countryCode,
-                          style: GoogleFonts.cairo(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF191C1B),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          dialCode,
-                          style: GoogleFonts.dmSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xFF717973),
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        const Icon(Icons.arrow_drop_down_rounded, color: Color(0xFF717973), size: 20),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 24,
-                  width: 1,
-                  color: const Color(0xFFC0C9C1).withValues(alpha: 0.3),
-                ),
-              ],
-              Expanded(
-                child: TextField(
-                  key: ValueKey(isPhone ? 'phone_input' : 'email_input'),
-                  onChanged: onChanged,
-                  keyboardType: isPhone ? TextInputType.number : TextInputType.emailAddress,
-                  inputFormatters: isPhone 
-                      ? [FilteringTextInputFormatter.digitsOnly] 
-                      : [],
-                  textAlign: useLtrInput
-                      ? TextAlign.left
-                      : (isPhone ? TextAlign.right : TextAlign.left),
-                  textDirection: useLtrInput
-                      ? TextDirection.ltr
-                      : (isPhone ? TextDirection.ltr : null),
-                  decoration: InputDecoration(
-                    hintText: hintText,
-                    hintStyle: isPhone 
-                        ? GoogleFonts.cairo(
-                            fontSize: 18,
-                            color: const Color(0xFF6B7280).withValues(alpha: 0.5),
-                            letterSpacing: 1.8,
-                          )
-                        : GoogleFonts.dmSans(
-                            fontSize: 16,
-                            color: const Color(0xFF6B7280).withValues(alpha: 0.5),
-                          ),
-                    prefixIcon: isPhone 
-                        ? null 
-                        : const Icon(
-                            Icons.email_outlined,
-                            color: Color(0xFF9099A2),
-                          ),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 16),
-                  ),
-                  style: isPhone 
-                      ? GoogleFonts.dmSans(
-                          fontSize: 18,
-                          color: const Color(0xFF191C1B),
-                          letterSpacing: 1.8,
-                        )
-                      : GoogleFonts.dmSans(
-                          fontSize: 16,
-                          color: const Color(0xFF191C1B),
-                        ),
-                ),
+          child: TextField(
+            key: const ValueKey('email_input'),
+            onChanged: onChanged,
+            keyboardType: TextInputType.emailAddress,
+            textAlign: isEnglish ? TextAlign.left : TextAlign.left,
+            textDirection: TextDirection.ltr,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: GoogleFonts.dmSans(
+                fontSize: 16,
+                color: const Color(0xFF6B7280).withValues(alpha: 0.5),
               ),
-            ],
+              prefixIcon: const Icon(
+                Icons.email_outlined,
+                color: Color(0xFF9099A2),
+              ),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16, vertical: 16),
+            ),
+            style: GoogleFonts.dmSans(
+              fontSize: 16,
+              color: const Color(0xFF191C1B),
+            ),
           ),
         ),
       ],
