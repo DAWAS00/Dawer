@@ -1,5 +1,6 @@
 import '../../core/result/result.dart';
 import '../../data/models/order.dart';
+import '../../data/models/user_role.dart';
 
 /// Remote-side gateway for order writes and the live order stream.
 ///
@@ -8,9 +9,17 @@ import '../../data/models/order.dart';
 /// mutations back to the backend. The store stays pure Dart + `LocalStore`
 /// and never touches Supabase directly, which is what makes it unit-testable.
 abstract interface class IOrderRepository {
-  /// Live snapshots of the `orders` table as ordered lists. Each emission is
-  /// the latest full result set (most-recent first).
+  /// Live snapshots of the `orders` table — full unfiltered stream.
+  /// Used internally when no auth context is available.
   Stream<List<Order>> watchOrders();
+
+  /// Role-scoped live stream. Applies server-side filters so each user only
+  /// receives orders relevant to them:
+  /// - supplier → orders they created (`supplier_id = userId`)
+  /// - recyclingCo → jobs/shipments they own (`company_id = userId`)
+  /// - driver → all pending orders + orders they own (falls back to full stream;
+  ///   visibility is enforced by RLS on the DB)
+  Stream<List<Order>> watchOrdersForUser(String userId, UserRole role);
 
   /// Persists [order] to the remote backend. The implementation is responsible
   /// for stamping the current authenticated user id where appropriate.
@@ -29,6 +38,13 @@ abstract interface class IOrderRepository {
     String orderId, {
     required bool requiresRider,
   });
+
+  /// Marks [orderId] as in-transit (driver en route to dropoff). Stamps
+  /// `in_transit_at` server-side.
+  Future<AppResult<void>> markInTransit(String orderId);
+
+  /// Marks [orderId] as completed. Stamps `completed_at` server-side.
+  Future<AppResult<void>> markCompleted(String orderId);
 }
 
 /// Default no-op implementation. Used by tests and any code path that wants to
@@ -38,6 +54,10 @@ final class NoOpOrderRepository implements IOrderRepository {
 
   @override
   Stream<List<Order>> watchOrders() => const Stream<List<Order>>.empty();
+
+  @override
+  Stream<List<Order>> watchOrdersForUser(String userId, UserRole role) =>
+      const Stream<List<Order>>.empty();
 
   @override
   Future<AppResult<void>> insertOrder(Order order) async =>
@@ -56,5 +76,13 @@ final class NoOpOrderRepository implements IOrderRepository {
     String orderId, {
     required bool requiresRider,
   }) async =>
+      const Success(null);
+
+  @override
+  Future<AppResult<void>> markInTransit(String orderId) async =>
+      const Success(null);
+
+  @override
+  Future<AppResult<void>> markCompleted(String orderId) async =>
       const Success(null);
 }

@@ -5,6 +5,7 @@ import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/i_order_repository.dart';
 import '../models/order.dart';
 import '../models/order_supabase_ext.dart';
+import '../models/user_role.dart';
 
 /// Supabase-backed implementation of [IOrderRepository].
 ///
@@ -25,6 +26,33 @@ final class SupabaseOrderRepository implements IOrderRepository {
         .stream(primaryKey: ['id'])
         .order('created_at', ascending: false)
         .map((rows) => rows.map(orderFromSupabaseJson).toList());
+  }
+
+  @override
+  Stream<List<Order>> watchOrdersForUser(String userId, UserRole role) {
+    switch (role) {
+      case UserRole.supplier:
+        return _client
+            .from('orders')
+            .stream(primaryKey: ['id'])
+            .eq('supplier_id', userId)
+            .order('created_at', ascending: false)
+            .map((rows) => rows.map(orderFromSupabaseJson).toList());
+      case UserRole.recyclingCo:
+        return _client
+            .from('orders')
+            .stream(primaryKey: ['id'])
+            .eq('company_id', userId)
+            .order('created_at', ascending: false)
+            .map((rows) => rows.map(orderFromSupabaseJson).toList());
+      case UserRole.driver:
+        // Drivers need both available (pending, no driver) and their own orders.
+        // Supabase .stream().eq() supports only a single equality filter.
+        // RLS on the DB enforces visibility; we fall back to the full stream
+        // and rely on client-side filtering in AppOrderStore until pagination
+        // is added in a later sprint.
+        return watchOrders();
+    }
   }
 
   // ── Writes ─────────────────────────────────────────────────────────────────
@@ -61,6 +89,22 @@ final class SupabaseOrderRepository implements IOrderRepository {
           'status': 'accepted',
           'accepted_at': DateTime.now().toUtc().toIso8601String(),
           'requires_rider': requiresRider,
+        }).eq('id', orderId));
+  }
+
+  @override
+  Future<AppResult<void>> markInTransit(String orderId) {
+    return _run(() => _client.from('orders').update({
+          'status': 'in_transit',
+          'in_transit_at': DateTime.now().toUtc().toIso8601String(),
+        }).eq('id', orderId));
+  }
+
+  @override
+  Future<AppResult<void>> markCompleted(String orderId) {
+    return _run(() => _client.from('orders').update({
+          'status': 'completed',
+          'completed_at': DateTime.now().toUtc().toIso8601String(),
         }).eq('id', orderId));
   }
 

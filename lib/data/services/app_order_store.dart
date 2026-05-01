@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import '../../backend_integration_locally/local_store.dart';
+import '../../core/result/result.dart';
+import '../../domain/failures/app_failure.dart';
+import '../../domain/repositories/i_order_repository.dart';
+import '../../domain/requests/create_pickup_request.dart';
+import '../mock/order_mock_data.dart';
 import '../models/order.dart';
 import '../models/order_json.dart';
 import '../models/user.dart';
-import '../mock/order_mock_data.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' hide User;
-import '../models/order_supabase_ext.dart';
+import '../models/user_role.dart';
 
 /// Singleton shared order store — the single source of truth for all orders
 /// across Driver, Supplier, and Recycling Company roles.
@@ -14,11 +19,26 @@ import '../models/order_supabase_ext.dart';
 /// accept this store in their constructor and addListener to it so their own
 /// [notifyListeners] fires whenever the store changes.
 class AppOrderStore extends ChangeNotifier {
-  AppOrderStore({LocalStore? store}) : _store = store {
+  AppOrderStore({
+    LocalStore? store,
+    IOrderRepository? remote,
+  })  : _store = store,
+        _remote = remote ?? const NoOpOrderRepository() {
     _bootstrap();
   }
 
   final LocalStore? _store;
+  final IOrderRepository _remote;
+  StreamSubscription<List<Order>>? _remoteSub;
+
+  // ── Error state ───────────────────────────────────────────────────────────
+
+  AppFailure? get lastError => _lastError;
+
+  void clearError() {
+    _lastError = null;
+    notifyListeners();
+  }
 
   // ─────────────────────────────────────────────────────────────────────────
   // State
@@ -34,6 +54,9 @@ class AppOrderStore extends ChangeNotifier {
 
   /// IDs of orders completed by our mock driver (their personal history).
   final List<String> _driverCompletedIds = ['ORD-H01', 'ORD-H02'];
+
+  /// Last error captured by [_safeSupabaseInsert].
+  AppFailure? _lastError;
 
   // ─────────────────────────────────────────────────────────────────────────
   // Bootstrap & persistence
@@ -59,30 +82,51 @@ class AppOrderStore extends ChangeNotifier {
       }
     }
 
-    // SUPABASE INTEGRATION: Stream live orders and override the local mock _orders
-    try {
-      Supabase.instance.client
-          .from('orders')
-          .stream(primaryKey: ['id'])
-          .order('created_at', ascending: false)
-          .listen((data) {
-        if (data.isNotEmpty) {
-          final supabaseOrders = data.map((json) => orderFromSupabaseJson(json)).toList();
-          
-          for (var o in supabaseOrders) {
-             final idx = _orders.indexWhere((existing) => existing.id == o.id);
-             if (idx >= 0) {
-               _orders[idx] = o;
-             } else {
-               _orders.insert(0, o);
-             }
+    // Subscribe to remote order updates. The default NoOpOrderRepository
+    // emits nothing, so seed-only / test paths are unaffected.
+    _remoteSub = _remote.watchOrders().listen(
+      (remoteOrders) {
+        if (remoteOrders.isEmpty) return;
+        for (final o in remoteOrders) {
+          final idx = _orders.indexWhere((existing) => existing.id == o.id);
+          if (idx >= 0) {
+            _orders[idx] = o;
+          } else {
+            _orders.insert(0, o);
           }
-          notifyListeners();
         }
-      });
-    } catch (e) {
-      debugPrint("Supabase not initialized (or error): $e");
-    }
+        notifyListeners();
+      },
+      onError: (Object e) =>
+          debugPrint('Remote order stream error: $e'),
+    );
+  }
+
+  @override
+  void dispose() {
+    _remoteSub?.cancel();
+    super.dispose();
+  }
+
+  /// Re-subscribe the remote stream using a role-scoped filter.
+  /// Call this once from [HomeRouter] after the user's session is established.
+  void configureForUser(String userId, UserRole role) {
+    _remoteSub?.cancel();
+    _remoteSub = _remote.watchOrdersForUser(userId, role).listen(
+      (remoteOrders) {
+        if (remoteOrders.isEmpty) return;
+        for (final o in remoteOrders) {
+          final idx = _orders.indexWhere((existing) => existing.id == o.id);
+          if (idx >= 0) {
+            _orders[idx] = o;
+          } else {
+            _orders.insert(0, o);
+          }
+        }
+        notifyListeners();
+      },
+      onError: (Object e) => debugPrint('Remote order stream error: $e'),
+    );
   }
 
   Future<void> _persistOrders() async {
@@ -193,19 +237,7 @@ class AppOrderStore extends ChangeNotifier {
     _activeOrderId = orderId;
     notifyListeners();
 
-    // SUPABASE INTEGRATION: Update the DB
-    try {
-      Supabase.instance.client.from('orders').update({
-        'status': 'accepted',
-        'driver_id': Supabase.instance.client.auth.currentUser?.id,
-        'accepted_at': DateTime.now().toUtc().toIso8601String(),
-      }).eq('id', orderId).then((_) {}).catchError((e) {
-        debugPrint("Error accepting order in Supabase: $e");
-      });
-    } catch (e) {
-      debugPrint("Supabase not initialized: $e");
-    }
-
+    unawaited(_pushRemote(_remote.markAccepted(orderId)));
     return null;
   }
 
@@ -218,6 +250,8 @@ class AppOrderStore extends ChangeNotifier {
       inTransitAt: DateTime.now(),
     );
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markInTransit(orderId)));
   }
 
   /// Complete the active order (driver marks delivered).
@@ -233,6 +267,8 @@ class AppOrderStore extends ChangeNotifier {
       _activeOrderId = null;
     }
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markCompleted(completedOrder.id)));
   }
 
   /// Record a driver rating after delivery (mock — updates driverRating on order).
@@ -297,22 +333,30 @@ class AppOrderStore extends ChangeNotifier {
     _orders.insert(0, order);
     notifyListeners();
 
-    // SUPABASE INTEGRATION: Insert new order into DB
-    try {
-      final user = Supabase.instance.client.auth.currentUser;
-      final payload = order.toSupabaseMap(user?.id);
-      // Remove mock ID so Supabase uses its autogenerated UUID
-      payload.remove('id'); 
-      Supabase.instance.client.from('orders').insert(payload).select().then((res) {
-        if (res.isNotEmpty) {
-          debugPrint("Order created in Supabase with id: ${res[0]['id']}");
-        }
-      });
-    } catch (e) {
-      debugPrint("Error writing order to Supabase: $e");
-    }
-
+    unawaited(_pushRemote(_remote.insertOrder(order)));
     return order;
+  }
+
+  /// Domain-layer entry point for creating a pickup request.
+  /// Wraps [createPickupRequest] and returns an [AppResult] so callers can
+  /// fold success/failure without try-catch at the call site.
+  AppResult<Order> submitPickupRequest(
+    CreatePickupRequest request, {
+    required String supplierName,
+  }) {
+    try {
+      final order = createPickupRequest(
+        wasteTypes: request.wasteTypes,
+        supplierName: supplierName,
+        pickupAddress: request.pickupAddress,
+        notes: request.notes,
+        wasteForm: request.wasteForm,
+        weightCategory: request.weightCategory,
+      );
+      return Success(order);
+    } catch (e) {
+      return Failure(UnknownFailure.fromException(e));
+    }
   }
 
   /// Cancel a pending order.
@@ -325,6 +369,8 @@ class AppOrderStore extends ChangeNotifier {
     }
     _orders[idx] = order.copyWith(status: OrderStatus.cancelled);
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markCancelled(orderId)));
     return null;
   }
 
@@ -604,19 +650,7 @@ class AppOrderStore extends ChangeNotifier {
     _orders.insert(0, order);
     notifyListeners();
 
-    // SUPABASE INTEGRATION: Insert new order into DB
-    try {
-      final user = Supabase.instance.client.auth.currentUser;
-      final payload = order.toSupabaseMap(user?.id);
-      payload.remove('id'); 
-      Supabase.instance.client.from('orders').insert(payload).select().then((res) {
-        if (res.isNotEmpty) {
-          debugPrint("Market order created in Supabase with id: ${res[0]['id']}");
-        }
-      });
-    } catch (e) {
-      debugPrint("Error writing market order to Supabase: $e");
-    }
+    unawaited(_pushRemote(_remote.insertOrder(order)));
   }
 
   void removeMarketListing(String orderId) {
@@ -626,15 +660,7 @@ class AppOrderStore extends ChangeNotifier {
     _orders[idx] = _orders[idx].copyWith(status: OrderStatus.cancelled);
     notifyListeners();
 
-    try {
-      Supabase.instance.client.from('orders').update({
-        'status': 'cancelled',
-      }).eq('id', orderId).then((_) {}).catchError((e) {
-        debugPrint("Error updating market status: $e");
-      });
-    } catch (e) {
-      debugPrint("Supabase not initialized: $e");
-    }
+    unawaited(_pushRemote(_remote.markCancelled(orderId)));
   }
 
   List<Order> myMarketListings(String publisherName) => _orders
@@ -663,18 +689,7 @@ class AppOrderStore extends ChangeNotifier {
     _orders[idx] = claimed;
     notifyListeners();
 
-    try {
-      Supabase.instance.client.from('orders').update({
-        'status': 'accepted',
-        'driver_id': Supabase.instance.client.auth.currentUser?.id,
-        'accepted_at': DateTime.now().toUtc().toIso8601String(),
-      }).eq('id', orderId).then((_) {}).catchError((e) {
-        debugPrint("Error claiming market item in Supabase: $e");
-      });
-    } catch (e) {
-      debugPrint("Supabase not initialized: $e");
-    }
-
+    unawaited(_pushRemote(_remote.markAccepted(orderId)));
     return claimed;
   }
 
@@ -701,18 +716,9 @@ class AppOrderStore extends ChangeNotifier {
     _orders[idx] = purchased;
     notifyListeners();
 
-    try {
-      Supabase.instance.client.from('orders').update({
-        'status': 'accepted',
-        'accepted_at': DateTime.now().toUtc().toIso8601String(),
-        'requires_rider': !selfPickup,
-      }).eq('id', orderId).then((_) {}).catchError((e) {
-        debugPrint("Error purchasing market item in Supabase: $e");
-      });
-    } catch (e) {
-      debugPrint("Supabase not initialized: $e");
-    }
-
+    unawaited(_pushRemote(
+      _remote.markPurchased(orderId, requiresRider: !selfPickup),
+    ));
     return purchased;
   }
 
@@ -728,17 +734,10 @@ class AppOrderStore extends ChangeNotifier {
     _orders[idx] = received;
     notifyListeners();
 
-    try {
-      Supabase.instance.client.from('orders').update({
-        'status': 'accepted',
-        'accepted_at': DateTime.now().toUtc().toIso8601String(),
-      }).eq('id', orderId).then((_) {}).catchError((e) {
-        debugPrint("Error receiving market item at facility in Supabase: $e");
-      });
-    } catch (e) {
-      debugPrint("Supabase not initialized: $e");
-    }
-
+    // Marketplace receive-at-facility doesn't require a rider.
+    unawaited(_pushRemote(
+      _remote.markPurchased(orderId, requiresRider: false),
+    ));
     return received;
   }
 
@@ -758,4 +757,16 @@ class AppOrderStore extends ChangeNotifier {
         };
   }
 
+  /// Awaits a remote write and lifts any failure into [_lastError] so widgets
+  /// can react via [lastError]. Successes are silent.
+  Future<void> _pushRemote(Future<AppResult<void>> op) async {
+    final result = await op;
+    result.fold(
+      onSuccess: (_) {},
+      onFailure: (failure) {
+        _lastError = failure;
+        notifyListeners();
+      },
+    );
+  }
 }

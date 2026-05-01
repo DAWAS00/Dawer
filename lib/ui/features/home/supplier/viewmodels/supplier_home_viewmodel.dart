@@ -22,9 +22,6 @@ class SupplierHomeViewModel extends BaseSupplierViewModel {
     _pickupSubmitError = null;
     notifyListeners();
 
-    // Simulate network delay to show loading state
-    await Future.delayed(const Duration(seconds: 2));
-
     final result = store.submitPickupRequest(
       request,
       supplierName: user.name,

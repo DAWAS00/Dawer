@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../data/models/user.dart';
+import '../../../../../domain/repositories/i_auth_repository.dart';
 import '../../../../features/auth/views/login_view.dart';
 import '../../../../common/theme_mode_sheet.dart';
 import '../../../../common/lang_picker_sheet.dart';
@@ -37,9 +38,11 @@ class DriverProfileTab extends StatelessWidget {
             child: Text(context.l10n.cancel, style: GoogleFonts.cairo(color: const Color(0xFF717973))),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              Navigator.of(context).pushAndRemoveUntil(
+              final nav = Navigator.of(context);
+              await context.read<IAuthRepository>().signOut();
+              nav.pushAndRemoveUntil(
                 MaterialPageRoute(builder: (_) => const LoginView()),
                 (route) => false,
               );
@@ -205,17 +208,9 @@ class DriverProfileTab extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(user.id, style: GoogleFonts.dmSans(fontSize: 14, color: Colors.white70, letterSpacing: 1.2)),
-              const SizedBox(width: 12),
-              Container(width: 4, height: 4, decoration: const BoxDecoration(color: Colors.white54, shape: BoxShape.circle)),
-              const SizedBox(width: 12),
-              Row(
-                children: [
-                  const Icon(Icons.star_rounded, color: Color(0xFFFFC107), size: 16),
-                  const SizedBox(width: 4),
-                  Text(user.rating.toString(), style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
-                ],
-              ),
+              const Icon(Icons.star_rounded, color: Color(0xFFFFC107), size: 16),
+              const SizedBox(width: 4),
+              Text(user.rating.toString(), style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
             ],
           ),
         ],

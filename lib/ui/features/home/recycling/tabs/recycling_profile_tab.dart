@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/services/app_theme_notifier.dart';
+import '../../../../../domain/repositories/i_auth_repository.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../common/theme_mode_sheet.dart';
 import '../../../../features/auth/views/login_view.dart';
@@ -24,9 +25,11 @@ class RecyclingProfileTab extends StatelessWidget {
             child: Text(ctx.l10n.cancel, style: GoogleFonts.cairo(color: const Color(0xFF717973))),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(ctx);
-              Navigator.of(context).pushAndRemoveUntil(
+              final nav = Navigator.of(context);
+              await context.read<IAuthRepository>().signOut();
+              nav.pushAndRemoveUntil(
                 MaterialPageRoute(builder: (_) => const LoginView()),
                 (route) => false,
               );
@@ -164,7 +167,6 @@ class RecyclingProfileTab extends StatelessWidget {
                 ),
               ),
               _buildProfileTile(Icons.phone_rounded, context.l10n.recyclingCompanyPhone, company.phone),
-              _buildProfileTile(Icons.email_rounded, context.l10n.recyclingCompanyEmail, vm.email),
               _buildProfileTile(Icons.location_on_rounded, context.l10n.recyclingServiceArea, vm.serviceArea),
               _buildProfileTile(Icons.access_time_rounded, context.l10n.recyclingWorkingHours, vm.workingHours),
               _buildProfileTile(

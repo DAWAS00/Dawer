@@ -5,6 +5,7 @@ import '../../../../../data/models/user.dart';
 import '../../../../../core/services/app_theme_notifier.dart';
 import '../../../../common/theme_mode_sheet.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../domain/repositories/i_auth_repository.dart';
 import '../../../../features/auth/views/login_view.dart';
 import '../../../../features/auth/viewmodels/login_viewmodel.dart';
 import '../views/rewards_view.dart';
@@ -38,9 +39,11 @@ class SupplierProfileTab extends StatelessWidget {
             child: Text(context.l10n.cancel, style: GoogleFonts.cairo(color: const Color(0xFF717973))),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(ctx);
-              Navigator.of(context).pushAndRemoveUntil(
+              final nav = Navigator.of(context);
+              await context.read<IAuthRepository>().signOut();
+              nav.pushAndRemoveUntil(
                 MaterialPageRoute(builder: (_) => const LoginView()),
                 (route) => false,
               );
@@ -124,13 +127,6 @@ class SupplierProfileTab extends StatelessWidget {
                             isStore ? context.l10n.supplierStoreType : context.l10n.supplierIndividualType,
                             style: GoogleFonts.cairo(fontSize: 12, color: Colors.white),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Container(width: 4, height: 4, decoration: const BoxDecoration(color: Colors.white54, shape: BoxShape.circle)),
-                        const SizedBox(width: 12),
-                        Text(
-                          user.id,
-                          style: GoogleFonts.dmSans(fontSize: 14, color: Colors.white70, letterSpacing: 1.2),
                         ),
                       ],
                     ),

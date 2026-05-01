@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../data/models/order.dart';
 import '../../../../data/services/app_order_store.dart';
 import '../../auth/viewmodels/login_viewmodel.dart';
+import '../../../common/app_nav_item.dart';
 import '../shared/tabs/marketplace_tab.dart';
 import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../shared/widgets/post_to_market_sheet.dart';
@@ -135,10 +136,10 @@ class _RecyclingHomeBody extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _NavItem(icon: Icons.home_rounded, label: 'الرئيسية', isSelected: vm.currentTab == 0, onTap: () => vm.setTab(0)),
-              _NavItem(icon: Icons.storefront_rounded, label: 'السوق', isSelected: vm.currentTab == 1, onTap: () => vm.setTab(1)),
-              _NavItem(icon: Icons.receipt_long_rounded, label: 'الطلبات', isSelected: vm.currentTab == 2, onTap: () => vm.setTab(2)),
-              _NavItem(icon: Icons.business_rounded, label: 'حسابي', isSelected: vm.currentTab == 3, onTap: () => vm.setTab(3)),
+              AppNavItem(icon: Icons.home_rounded, label: 'الرئيسية', isSelected: vm.currentTab == 0, onTap: () => vm.setTab(0)),
+              AppNavItem(icon: Icons.storefront_rounded, label: 'السوق', isSelected: vm.currentTab == 1, onTap: () => vm.setTab(1)),
+              AppNavItem(icon: Icons.receipt_long_rounded, label: 'الطلبات', isSelected: vm.currentTab == 2, onTap: () => vm.setTab(2)),
+              AppNavItem(icon: Icons.business_rounded, label: 'حسابي', isSelected: vm.currentTab == 3, onTap: () => vm.setTab(3)),
             ],
           ),
         ),
@@ -147,57 +148,3 @@ class _RecyclingHomeBody extends StatelessWidget {
   }
 }
 
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final selectedColor = theme.primaryColor;
-    
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? selectedColor.withValues(alpha: 0.1)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Icon(
-              icon,
-              size: 24,
-              color: isSelected ? selectedColor : const Color(0xFF9CA3AF),
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: GoogleFonts.cairo(
-              fontSize: 11,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? selectedColor : const Color(0xFF9CA3AF),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
