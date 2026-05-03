@@ -125,6 +125,41 @@ class PhotoPickerCard extends StatelessWidget {
                     )
                   : null,
             ),
+            if (image != null)
+              Positioned(
+                top: -6,
+                right: -6,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF06402B),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.white, width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.auto_awesome_rounded,
+                          size: 10, color: Color(0xFF4ADE80)),
+                      const SizedBox(width: 4),
+                      Text(
+                        'AI SECURED',
+                        style: GoogleFonts.dmSans(
+                          fontSize: 7,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             Positioned(
               bottom: -4,
               left: -4,

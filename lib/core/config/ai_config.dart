@@ -1,10 +1,9 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AiConfig {
-  /// Gemini API key, injected at build time via:
-  ///   flutter run --dart-define=GEMINI_API_KEY=...
-  /// or via the matching entry in `.vscode/launch.json`.
-  static const String geminiApiKey = String.fromEnvironment('GEMINI_API_KEY');
+  /// Gemini API key, loaded from .env.local
+  static String get geminiApiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
 
   static bool get hasGeminiKey => geminiApiKey.isNotEmpty;
 

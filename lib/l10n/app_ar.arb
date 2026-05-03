@@ -709,6 +709,20 @@
   "aiValidationStatusInvalid": "الصورة لا تفي بالمعايير.",
   "aiValidationStatusErrorUnknown": "خطأ تحقق غير معروف.",
 
+  "aiValidationScanning": "جاري مسح الوثيقة...",
+  "aiValidationVerifyingStamps": "التحقق من الأختام الرسمية...",
+  "aiValidationMatchingData": "مطابقة البيانات مع السجلات الحكومية...",
+  "aiValidationExtractedData": "بيانات مستخرجة بالذكاء الاصطناعي",
+  "aiValidationDocId": "رقم الوثيقة",
+  "aiValidationOrg": "الجهة / المؤسسة",
+  "aiValidationAuthenticity": "نسبة المصداقية",
+  "aiValidationFutureVision": "رؤية مستقبلية: سيتم ربط النسخة النهائية مع الهوية الرقمية (سند) لضمان التحقق بنسبة 100%.",
+  "aiPulseStampOk": "STAMP_DETECTED",
+  "aiPulseIdMatch": "ID_CONFIRMED",
+  "aiPulseExpiryValid": "VALID_EXPIRY",
+  "aiPulseSecurePaper": "SECURITY_PAPER_OK",
+  "aiLivenessCheck": "تم التحقق من حيوية الصورة بالذكاء الاصطناعي",
+
   "signupCuisineType": "المطبخ / نوع العمل",
   "@signupCuisineType": {
     "description": "تسمية لمدخل نوع أو مطبخ المطعم."

@@ -1767,6 +1767,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiValidationStatusErrorUnknown => 'Unknown validation error.';
 
   @override
+  String get aiValidationScanning => 'Scanning Document...';
+
+  @override
+  String get aiValidationVerifyingStamps => 'Verifying Official Stamps...';
+
+  @override
+  String get aiValidationMatchingData => 'Matching with Gov Database...';
+
+  @override
+  String get aiValidationExtractedData => 'AI Extracted Data';
+
+  @override
+  String get aiValidationDocId => 'Document ID';
+
+  @override
+  String get aiValidationOrg => 'Organization';
+
+  @override
+  String get aiValidationAuthenticity => 'Authenticity Score';
+
+  @override
+  String get aiValidationFutureVision =>
+      'Future Vision: Production version will integrate with Jordan\'s Digital Identity (Sanad) for 100% verification.';
+
+  @override
+  String get aiPulseStampOk => 'STAMP_DETECTED';
+
+  @override
+  String get aiPulseIdMatch => 'ID_CONFIRMED';
+
+  @override
+  String get aiPulseExpiryValid => 'VALID_EXPIRY';
+
+  @override
+  String get aiPulseSecurePaper => 'SECURITY_PAPER_OK';
+
+  @override
+  String get aiLivenessCheck => 'AI Liveness & Identity Secured';
+
+  @override
   String get signupCuisineType => 'Cuisine / Business Type';
 
   @override

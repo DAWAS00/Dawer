@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,6 +7,8 @@ import 'package:provider/provider.dart';
 import '../../viewmodels/license_validation_viewmodel.dart';
 import '../../../../common/ai_shimmer_loader.dart';
 import '../../../../common/animated_status_text.dart';
+import '../../../../../l10n/l10n.dart';
+import '../../../../../domain/services/i_ai_license_validation_service.dart';
 
 /// Drop-in replacement for [IdentityUploadCard] that runs AI validation
 /// on the picked document and surfaces suggested marketplace categories.
@@ -100,6 +103,7 @@ class LicenseScanSection extends StatelessWidget {
                 key: const ValueKey('valid'),
                 licenseFile: vm.licenseFile,
                 categories: vm.suggestedCategories,
+                extractedData: vm.extractedData,
                 onReset: onReset,
               ),
             LicenseValidationState.invalid => _InvalidZone(
@@ -175,14 +179,48 @@ class _IdleZone extends StatelessWidget {
 
 // ── Analyzing ─────────────────────────────────────────────────────────────────
 
-class _AnalyzingZone extends StatelessWidget {
+class _AnalyzingZone extends StatefulWidget {
   const _AnalyzingZone({super.key});
 
   @override
+  State<_AnalyzingZone> createState() => _AnalyzingZoneState();
+}
+
+class _AnalyzingZoneState extends State<_AnalyzingZone>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _scanCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _scanCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _scanCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       children: [
-        const AiShimmerLoader(height: 110),
+        Stack(
+          children: [
+            const AiShimmerLoader(height: 140),
+            Positioned.fill(
+              child: _ScanningOverlay(animation: _scanCtrl),
+            ),
+            const Positioned.fill(
+              child: _DataPulseOverlay(),
+            ),
+          ],
+        ),
         const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -190,10 +228,10 @@ class _AnalyzingZone extends StatelessWidget {
             const _AiSparkleIcon(),
             const SizedBox(width: 8),
             AnimatedStatusText(
-              phrases: const [
-                'جاري تحليل الوثيقة...', // TODO: localize
-                'التحقق من صحة المستند...', // TODO: localize
-                'استخراج البيانات...', // TODO: localize
+              phrases: [
+                l10n.aiValidationScanning,
+                l10n.aiValidationVerifyingStamps,
+                l10n.aiValidationMatchingData,
               ],
               style: GoogleFonts.cairo(
                 fontSize: 14,
@@ -208,22 +246,170 @@ class _AnalyzingZone extends StatelessWidget {
   }
 }
 
+class _ScanningOverlay extends StatelessWidget {
+  final Animation<double> animation;
+  const _ScanningOverlay({required this.animation});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, child) {
+        return Stack(
+          children: [
+            Positioned(
+              top: 140 * animation.value,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 2,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF4ADE80).withValues(alpha: 0.8),
+                      blurRadius: 12,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.transparent,
+                      const Color(0xFF4ADE80).withValues(alpha: 0.6),
+                      const Color(0xFF4ADE80),
+                      const Color(0xFF4ADE80).withValues(alpha: 0.6),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _DataPulseOverlay extends StatefulWidget {
+  const _DataPulseOverlay();
+
+  @override
+  State<_DataPulseOverlay> createState() => _DataPulseOverlayState();
+}
+
+class _DataPulseOverlayState extends State<_DataPulseOverlay> {
+  final List<(String, Alignment, int)> _pulses = [];
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startPulses();
+  }
+
+  void _startPulses() {
+    _timer = Timer.periodic(const Duration(milliseconds: 700), (timer) {
+      if (!mounted) return;
+      final l10n = context.l10n;
+      final phrases = [
+        l10n.aiPulseStampOk,
+        l10n.aiPulseIdMatch,
+        l10n.aiPulseExpiryValid,
+        l10n.aiPulseSecurePaper,
+      ];
+      final phrase = phrases[timer.tick % phrases.length];
+      final alignments = [
+        Alignment.topLeft,
+        Alignment.topRight,
+        Alignment.bottomLeft,
+        Alignment.bottomRight,
+        Alignment.centerLeft,
+        Alignment.centerRight,
+      ];
+      final align = alignments[timer.tick % alignments.length];
+
+      setState(() {
+        _pulses.add((phrase, align, timer.tick));
+      });
+
+      Future.delayed(const Duration(milliseconds: 1200), () {
+        if (mounted) {
+          setState(() {
+            _pulses.removeWhere((p) => p.$3 == timer.tick);
+          });
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: _pulses.map((p) {
+        return Align(
+          alignment: p.$2,
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0.0, end: 1.0),
+              duration: const Duration(milliseconds: 400),
+              builder: (context, value, child) {
+                return Opacity(
+                  opacity: value * (1.0 - (value > 0.8 ? (value - 0.8) * 5 : 0)),
+                  child: Transform.scale(
+                    scale: 0.8 + (value * 0.2),
+                    child: child,
+                  ),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  p.$1,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF4ADE80),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
 // ── Valid ─────────────────────────────────────────────────────────────────────
 
 class _ValidZone extends StatelessWidget {
   final File? licenseFile;
   final List<String> categories;
+  final ExtractedDocData? extractedData;
   final VoidCallback onReset;
 
   const _ValidZone({
     super.key,
     required this.licenseFile,
     required this.categories,
+    required this.extractedData,
     required this.onReset,
   });
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -252,7 +438,7 @@ class _ValidZone extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'تم التحقق ✓', // TODO: localize
+                      l10n.aiValidationSuccessTitle,
                       style: GoogleFonts.cairo(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -260,7 +446,7 @@ class _ValidZone extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'الوثيقة صالحة', // TODO: localize
+                      l10n.aiValidationStatusSuccess,
                       style: GoogleFonts.cairo(
                         fontSize: 12,
                         color: const Color(0xFF4ADE80),
@@ -270,18 +456,165 @@ class _ValidZone extends StatelessWidget {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.refresh_rounded, color: Color(0xFF166534)),
+                icon:
+                    const Icon(Icons.refresh_rounded, color: Color(0xFF166534)),
                 onPressed: onReset,
-                tooltip: 'إعادة الرفع', // TODO: localize
+                tooltip: l10n.aiValidationRetryButton,
               ),
             ],
           ),
         ),
+        if (extractedData != null) ...[
+          const SizedBox(height: 12),
+          _ExtractedDataCard(data: extractedData!),
+        ],
         if (categories.isNotEmpty) ...[
           const SizedBox(height: 12),
           _CategoryPreviewChips(categories: categories),
         ],
       ],
+    );
+  }
+}
+
+class _ExtractedDataCard extends StatelessWidget {
+  final ExtractedDocData data;
+  const _ExtractedDataCard({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.analytics_outlined,
+                  size: 18, color: Color(0xFF06402B)),
+              const SizedBox(width: 8),
+              Text(
+                l10n.aiValidationExtractedData,
+                style: GoogleFonts.cairo(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF191C1B),
+                ),
+              ),
+              const Spacer(),
+              _TrustScoreBadge(score: data.confidenceScore),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _DataRow(label: l10n.aiValidationDocId, value: data.docId),
+          _DataRow(label: l10n.aiValidationOrg, value: data.organization),
+          const Divider(height: 24),
+          Row(
+            children: [
+              const Icon(Icons.auto_awesome_outlined,
+                  size: 14, color: Color(0xFF059669)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  l10n.aiValidationFutureVision,
+                  style: GoogleFonts.cairo(
+                    fontSize: 10,
+                    color: const Color(0xFF059669),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TrustScoreBadge extends StatelessWidget {
+  final double score;
+  const _TrustScoreBadge({required this.score});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFECFDF5),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: const Color(0xFF059669).withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            l10n.aiValidationAuthenticity,
+            style: GoogleFonts.cairo(
+              fontSize: 9,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF065F46),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            '${(score * 100).toStringAsFixed(1)}%',
+            style: GoogleFonts.dmSans(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              color: const Color(0xFF059669),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DataRow extends StatelessWidget {
+  final String label;
+  final String value;
+  const _DataRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.cairo(
+              fontSize: 11,
+              color: const Color(0xFF717973),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          Text(
+            value,
+            style: GoogleFonts.dmSans(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF191C1B),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

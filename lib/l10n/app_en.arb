@@ -710,6 +710,20 @@
   "aiValidationStatusInvalid": "Photo does not meet criteria.",
   "aiValidationStatusErrorUnknown": "Unknown validation error.",
 
+  "aiValidationScanning": "Scanning Document...",
+  "aiValidationVerifyingStamps": "Verifying Official Stamps...",
+  "aiValidationMatchingData": "Matching with Gov Database...",
+  "aiValidationExtractedData": "AI Extracted Data",
+  "aiValidationDocId": "Document ID",
+  "aiValidationOrg": "Organization",
+  "aiValidationAuthenticity": "Authenticity Score",
+  "aiValidationFutureVision": "Future Vision: Production version will integrate with Jordan's Digital Identity (Sanad) for 100% verification.",
+  "aiPulseStampOk": "STAMP_DETECTED",
+  "aiPulseIdMatch": "ID_CONFIRMED",
+  "aiPulseExpiryValid": "VALID_EXPIRY",
+  "aiPulseSecurePaper": "SECURITY_PAPER_OK",
+  "aiLivenessCheck": "AI Liveness & Identity Secured",
+
   "signupCuisineType": "Cuisine / Business Type",
   "@signupCuisineType": {
     "description": "Label for the restaurant cuisine or type input."

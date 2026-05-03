@@ -3410,6 +3410,84 @@ abstract class AppLocalizations {
   /// **'خطأ تحقق غير معروف.'**
   String get aiValidationStatusErrorUnknown;
 
+  /// No description provided for @aiValidationScanning.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري مسح الوثيقة...'**
+  String get aiValidationScanning;
+
+  /// No description provided for @aiValidationVerifyingStamps.
+  ///
+  /// In ar, this message translates to:
+  /// **'التحقق من الأختام الرسمية...'**
+  String get aiValidationVerifyingStamps;
+
+  /// No description provided for @aiValidationMatchingData.
+  ///
+  /// In ar, this message translates to:
+  /// **'مطابقة البيانات مع السجلات الحكومية...'**
+  String get aiValidationMatchingData;
+
+  /// No description provided for @aiValidationExtractedData.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات مستخرجة بالذكاء الاصطناعي'**
+  String get aiValidationExtractedData;
+
+  /// No description provided for @aiValidationDocId.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الوثيقة'**
+  String get aiValidationDocId;
+
+  /// No description provided for @aiValidationOrg.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجهة / المؤسسة'**
+  String get aiValidationOrg;
+
+  /// No description provided for @aiValidationAuthenticity.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسبة المصداقية'**
+  String get aiValidationAuthenticity;
+
+  /// No description provided for @aiValidationFutureVision.
+  ///
+  /// In ar, this message translates to:
+  /// **'رؤية مستقبلية: سيتم ربط النسخة النهائية مع الهوية الرقمية (سند) لضمان التحقق بنسبة 100%.'**
+  String get aiValidationFutureVision;
+
+  /// No description provided for @aiPulseStampOk.
+  ///
+  /// In ar, this message translates to:
+  /// **'STAMP_DETECTED'**
+  String get aiPulseStampOk;
+
+  /// No description provided for @aiPulseIdMatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'ID_CONFIRMED'**
+  String get aiPulseIdMatch;
+
+  /// No description provided for @aiPulseExpiryValid.
+  ///
+  /// In ar, this message translates to:
+  /// **'VALID_EXPIRY'**
+  String get aiPulseExpiryValid;
+
+  /// No description provided for @aiPulseSecurePaper.
+  ///
+  /// In ar, this message translates to:
+  /// **'SECURITY_PAPER_OK'**
+  String get aiPulseSecurePaper;
+
+  /// No description provided for @aiLivenessCheck.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم التحقق من حيوية الصورة بالذكاء الاصطناعي'**
+  String get aiLivenessCheck;
+
   /// تسمية لمدخل نوع أو مطبخ المطعم.
   ///
   /// In ar, this message translates to:

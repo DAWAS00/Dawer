@@ -19,7 +19,7 @@ class SplashView extends StatefulWidget {
 class _SplashViewState extends State<SplashView>
     with SingleTickerProviderStateMixin {
   // Toggle this flag to re-enable the login/verification flow when needed.
-  static const bool _bypassLogin = true;
+  static const bool _bypassLogin = false;
   static const UserRole _bypassRole = UserRole.driver;
   static const SupplierType _bypassSupplierType = SupplierType.individual;
   static const String _bypassUserName = 'Demo User';

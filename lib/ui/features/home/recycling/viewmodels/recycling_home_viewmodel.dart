@@ -110,6 +110,7 @@ class RecyclingHomeViewModel extends ChangeNotifier {
         pickupAddress: pickupAddress,
         companyName: companyName,
         notes: notes,
+        images: images,
         wasteForm: wasteForm,
         weightCategory: weightCategory,
         reward: reward,

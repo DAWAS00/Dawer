@@ -1747,6 +1747,47 @@ class AppLocalizationsAr extends AppLocalizations {
   String get aiValidationStatusErrorUnknown => 'خطأ تحقق غير معروف.';
 
   @override
+  String get aiValidationScanning => 'جاري مسح الوثيقة...';
+
+  @override
+  String get aiValidationVerifyingStamps => 'التحقق من الأختام الرسمية...';
+
+  @override
+  String get aiValidationMatchingData =>
+      'مطابقة البيانات مع السجلات الحكومية...';
+
+  @override
+  String get aiValidationExtractedData => 'بيانات مستخرجة بالذكاء الاصطناعي';
+
+  @override
+  String get aiValidationDocId => 'رقم الوثيقة';
+
+  @override
+  String get aiValidationOrg => 'الجهة / المؤسسة';
+
+  @override
+  String get aiValidationAuthenticity => 'نسبة المصداقية';
+
+  @override
+  String get aiValidationFutureVision =>
+      'رؤية مستقبلية: سيتم ربط النسخة النهائية مع الهوية الرقمية (سند) لضمان التحقق بنسبة 100%.';
+
+  @override
+  String get aiPulseStampOk => 'STAMP_DETECTED';
+
+  @override
+  String get aiPulseIdMatch => 'ID_CONFIRMED';
+
+  @override
+  String get aiPulseExpiryValid => 'VALID_EXPIRY';
+
+  @override
+  String get aiPulseSecurePaper => 'SECURITY_PAPER_OK';
+
+  @override
+  String get aiLivenessCheck => 'تم التحقق من حيوية الصورة بالذكاء الاصطناعي';
+
+  @override
   String get signupCuisineType => 'المطبخ / نوع العمل';
 
   @override

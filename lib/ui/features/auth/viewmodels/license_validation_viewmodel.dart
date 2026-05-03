@@ -21,6 +21,9 @@ class LicenseValidationViewModel extends ChangeNotifier {
   List<String> _suggestedCategories = const [];
   List<String> get suggestedCategories => _suggestedCategories;
 
+  ExtractedDocData? _extractedData;
+  ExtractedDocData? get extractedData => _extractedData;
+
   String? _failReason;
   String? get failReason => _failReason;
 
@@ -29,12 +32,14 @@ class LicenseValidationViewModel extends ChangeNotifier {
     _state = LicenseValidationState.analyzing;
     _failReason = null;
     _suggestedCategories = const [];
+    _extractedData = null;
     notifyListeners();
 
     try {
       final result = await _service.validateLicense(file.path, role);
       if (result.isValid) {
         _suggestedCategories = result.suggestedCategories;
+        _extractedData = result.docDetails;
         _state = LicenseValidationState.valid;
       } else {
         _failReason = result.statusMessage;
@@ -52,6 +57,7 @@ class LicenseValidationViewModel extends ChangeNotifier {
     _licenseFile = null;
     _state = LicenseValidationState.idle;
     _suggestedCategories = const [];
+    _extractedData = null;
     _failReason = null;
     notifyListeners();
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -27,14 +28,21 @@ import 'ui/features/splash/views/splash_view.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  try {
+    await dotenv.load(fileName: ".env.local");
+  } catch (e) {
+    debugPrint('Could not load .env.local file. Ensure it exists in the root directory.');
+  }
+
   AiConfig.assertConfigured();
 
   // Initialize Supabase via service
-  const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
-  const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+  final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
+  final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
   
   if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
-    debugPrint('WARNING: SUPABASE_URL or SUPABASE_ANON_KEY is not defined. App will run in mock mode or fail if backend is required.');
+    debugPrint('WARNING: SUPABASE_URL or SUPABASE_ANON_KEY is not defined in .env.local. App will run in mock mode or fail if backend is required.');
   }
 
   await SupabaseService.initialize(
