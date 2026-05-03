@@ -1,0 +1,156 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../core/result/result.dart';
+import '../../domain/failures/app_failure.dart';
+import '../../domain/repositories/i_order_repository.dart';
+import '../models/order.dart';
+import '../models/order_supabase_ext.dart';
+import '../models/user_role.dart';
+
+/// Supabase-backed implementation of [IOrderRepository].
+///
+/// All write methods catch transport/Postgrest errors and surface them as
+/// [AppFailure]s; the caller decides whether to display them. Network errors
+/// are mapped to [NetworkFailure] so the UI can show a localized retry hint.
+final class SupabaseOrderRepository implements IOrderRepository {
+  SupabaseOrderRepository(this._client);
+
+  final SupabaseClient _client;
+
+  // ── Reads ──────────────────────────────────────────────────────────────────
+
+  @override
+  Stream<List<Order>> watchOrders() {
+    return _client
+        .from('orders')
+        .stream(primaryKey: ['id'])
+        .order('created_at', ascending: false)
+        .map((rows) => rows.map(orderFromSupabaseJson).toList());
+  }
+
+  @override
+  Stream<List<Order>> watchOrdersForUser(String userId, UserRole role) {
+    switch (role) {
+      case UserRole.supplier:
+        return _client
+            .from('orders')
+            .stream(primaryKey: ['id'])
+            .eq('supplier_id', userId)
+            .order('created_at', ascending: false)
+            .map((rows) => rows.map(orderFromSupabaseJson).toList());
+      case UserRole.recyclingCo:
+        return _client
+            .from('orders')
+            .stream(primaryKey: ['id'])
+            .eq('company_id', userId)
+            .order('created_at', ascending: false)
+            .map((rows) => rows.map(orderFromSupabaseJson).toList());
+      case UserRole.driver:
+        // Drivers need both available (pending, no driver) and their own orders.
+        // Supabase .stream().eq() supports only a single equality filter.
+        // RLS on the DB enforces visibility; we fall back to the full stream
+        // and rely on client-side filtering in AppOrderStore until pagination
+        // is added in a later sprint.
+        return watchOrders();
+    }
+  }
+
+  // ── Writes ─────────────────────────────────────────────────────────────────
+
+  @override
+  Future<AppResult<void>> insertOrder(Order order) async {
+    final authUserId = _client.auth.currentUser?.id;
+    final payload = order.toSupabaseMap(authUserId)..remove('id');
+    return _run(() => _client.from('orders').insert(payload));
+  }
+
+  @override
+  Future<AppResult<void>> updateOrder(Order order) async {
+    final authUserId = _client.auth.currentUser?.id;
+    final payload = order.toSupabaseMap(authUserId);
+    return _run(() => _client.from('orders').update(payload).eq('id', order.id));
+  }
+
+  @override
+  Future<AppResult<void>> deleteOrder(String orderId) {
+    return _run(() => _client.from('orders').delete().eq('id', orderId));
+  }
+
+  @override
+  Future<AppResult<void>> markAccepted(String orderId) {
+    return _run(() => _client.from('orders').update({
+          'status': 'accepted',
+          'driver_id': _client.auth.currentUser?.id,
+          'accepted_at': DateTime.now().toUtc().toIso8601String(),
+        }).eq('id', orderId));
+  }
+
+  @override
+  Future<AppResult<void>> assignDriver(String orderId, String driverId) {
+    return _run(() => _client.from('orders').update({
+          'status': 'accepted',
+          'driver_id': driverId,
+          'accepted_at': DateTime.now().toUtc().toIso8601String(),
+        }).eq('id', orderId));
+  }
+
+  @override
+  Future<AppResult<void>> markCancelled(String orderId) {
+    return _run(() => _client.from('orders').update({
+          'status': 'cancelled',
+        }).eq('id', orderId));
+  }
+
+  @override
+  Future<AppResult<void>> markPurchased(
+    String orderId, {
+    required bool requiresRider,
+  }) {
+    return _run(() => _client.from('orders').update({
+          'status': 'accepted',
+          'accepted_at': DateTime.now().toUtc().toIso8601String(),
+          'requires_rider': requiresRider,
+        }).eq('id', orderId));
+  }
+
+  @override
+  Future<AppResult<void>> markInTransit(String orderId) {
+    return _run(() => _client.from('orders').update({
+          'status': 'inTransit',
+          'in_transit_at': DateTime.now().toUtc().toIso8601String(),
+        }).eq('id', orderId));
+  }
+
+  @override
+  Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg}) {
+    return _run(() => _client.from('orders').update({
+          'status': 'completed',
+          'completed_at': DateTime.now().toUtc().toIso8601String(),
+          if (actualWeightKg != null) 'actual_weight_kg': actualWeightKg,
+        }).eq('id', orderId));
+  }
+
+  // ── Internal ───────────────────────────────────────────────────────────────
+
+  Future<AppResult<void>> _run(Future<void> Function() op) async {
+    try {
+      await op();
+      return const Success(null);
+    } on PostgrestException catch (e) {
+      return Failure(UnknownFailure(message: e.message, code: e.code));
+    } catch (e) {
+      if (_isNetworkError(e)) {
+        return const Failure(NetworkFailure());
+      }
+      return Failure(UnknownFailure.fromException(e));
+    }
+  }
+
+  static bool _isNetworkError(Object e) {
+    final msg = e.toString().toLowerCase();
+    return msg.contains('socketexception') ||
+        msg.contains('network') ||
+        msg.contains('connection refused') ||
+        msg.contains('failed host lookup');
+  }
+}

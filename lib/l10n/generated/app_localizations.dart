@@ -560,6 +560,42 @@ abstract class AppLocalizations {
   /// **'المستندات الرسمية'**
   String get signupSectionDocuments;
 
+  /// No description provided for @signupNationalIdDocument.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة الهوية الوطنية'**
+  String get signupNationalIdDocument;
+
+  /// No description provided for @signupCommercialRegisterDocument.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة السجل التجاري'**
+  String get signupCommercialRegisterDocument;
+
+  /// No description provided for @signupBusinessLicenseDocument.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة الترخيص التجاري'**
+  String get signupBusinessLicenseDocument;
+
+  /// No description provided for @signupUploadDocumentPrompt.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط لرفع صورة المستند'**
+  String get signupUploadDocumentPrompt;
+
+  /// No description provided for @signupUploadDocumentSources.
+  ///
+  /// In ar, this message translates to:
+  /// **'كاميرا أو معرض الصور'**
+  String get signupUploadDocumentSources;
+
+  /// No description provided for @signupDocumentUploaded.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الرفع'**
+  String get signupDocumentUploaded;
+
   /// No description provided for @signupSectionContact.
   ///
   /// In ar, this message translates to:
@@ -596,59 +632,281 @@ abstract class AppLocalizations {
   /// **'example@domain.com'**
   String get signupEmailHint;
 
-  /// No description provided for @verificationTitle.
+  /// No description provided for @signupPasswordLabel.
   ///
   /// In ar, this message translates to:
-  /// **'التحقق'**
-  String get verificationTitle;
+  /// **'كلمة المرور'**
+  String get signupPasswordLabel;
 
-  /// No description provided for @verificationCodeSent.
+  /// No description provided for @signupPasswordHint.
   ///
   /// In ar, this message translates to:
-  /// **'أرسلنا رمزاً مكوناً من 6 أرقام'**
-  String get verificationCodeSent;
+  /// **'٨ أحرف على الأقل، حرف ورقم'**
+  String get signupPasswordHint;
 
-  /// No description provided for @verificationEnterCode.
+  /// No description provided for @signupPasswordConfirmLabel.
   ///
   /// In ar, this message translates to:
-  /// **'أدخل رمز التحقق'**
-  String get verificationEnterCode;
+  /// **'تأكيد كلمة المرور'**
+  String get signupPasswordConfirmLabel;
 
-  /// No description provided for @verificationResendAfter.
+  /// No description provided for @signupPasswordConfirmHint.
   ///
   /// In ar, this message translates to:
-  /// **'إعادة الإرسال بعد'**
-  String get verificationResendAfter;
+  /// **'أعد إدخال كلمة المرور'**
+  String get signupPasswordConfirmHint;
 
-  /// No description provided for @verificationResend.
+  /// No description provided for @loginPasswordLabel.
   ///
   /// In ar, this message translates to:
-  /// **'إعادة الإرسال'**
-  String get verificationResend;
+  /// **'كلمة المرور'**
+  String get loginPasswordLabel;
 
-  /// No description provided for @verificationButton.
+  /// No description provided for @loginPasswordHint.
   ///
   /// In ar, this message translates to:
-  /// **'تحقق'**
-  String get verificationButton;
+  /// **'أدخل كلمة المرور'**
+  String get loginPasswordHint;
 
-  /// No description provided for @verificationSecureTitle.
+  /// No description provided for @signupRoleDriver.
   ///
   /// In ar, this message translates to:
-  /// **'تحقق آمن'**
-  String get verificationSecureTitle;
+  /// **'تسجيل سائق'**
+  String get signupRoleDriver;
 
-  /// No description provided for @verificationSecureSubtitle.
+  /// No description provided for @signupRoleStoreBusiness.
   ///
   /// In ar, this message translates to:
-  /// **'رمز التحقق سري ومحمي'**
-  String get verificationSecureSubtitle;
+  /// **'تسجيل متجر / مطعم'**
+  String get signupRoleStoreBusiness;
 
-  /// No description provided for @verificationSecureFooter.
+  /// No description provided for @signupRoleIndividualSupplier.
   ///
   /// In ar, this message translates to:
-  /// **'تحقق آمن وموثوق'**
-  String get verificationSecureFooter;
+  /// **'تسجيل مورد فردي'**
+  String get signupRoleIndividualSupplier;
+
+  /// No description provided for @signupRoleRecyclingCo.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل شركة إعادة تدوير'**
+  String get signupRoleRecyclingCo;
+
+  /// No description provided for @signupPhotoPersonal.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصورة الشخصية'**
+  String get signupPhotoPersonal;
+
+  /// No description provided for @signupPhotoOrganization.
+  ///
+  /// In ar, this message translates to:
+  /// **'شعار الجهة'**
+  String get signupPhotoOrganization;
+
+  /// No description provided for @signupErrorManagerName.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجاء إدخال اسم المسؤول'**
+  String get signupErrorManagerName;
+
+  /// No description provided for @signupErrorDocumentRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجاء رفع صورة المستند المطلوب'**
+  String get signupErrorDocumentRequired;
+
+  /// No description provided for @signupErrorEmailRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'البريد الإلكتروني مطلوب'**
+  String get signupErrorEmailRequired;
+
+  /// No description provided for @signupErrorPasswordRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور مطلوبة'**
+  String get signupErrorPasswordRequired;
+
+  /// No description provided for @signupErrorPasswordMismatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمتا المرور غير متطابقتين'**
+  String get signupErrorPasswordMismatch;
+
+  /// No description provided for @signupErrorSubmitFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر إنشاء الحساب، حاول مجدداً'**
+  String get signupErrorSubmitFailed;
+
+  /// No description provided for @signupLocationTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموقع الجغرافي'**
+  String get signupLocationTitle;
+
+  /// No description provided for @signupLocationSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختياري — يساعد على تحديد مناطق الخدمة'**
+  String get signupLocationSubtitle;
+
+  /// No description provided for @signupLocationChange.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير'**
+  String get signupLocationChange;
+
+  /// No description provided for @signupLocationSelect.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديد'**
+  String get signupLocationSelect;
+
+  /// No description provided for @signupLocationSelectPrompt.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط لتحديد موقعك'**
+  String get signupLocationSelectPrompt;
+
+  /// No description provided for @signupLocationOpenMap.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط لفتح خريطة الموقع'**
+  String get signupLocationOpenMap;
+
+  /// No description provided for @signupLocationPreciseLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'العنوان الدقيق'**
+  String get signupLocationPreciseLabel;
+
+  /// No description provided for @signupLocationPreciseHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشارع، البناية، الشقة، إلخ.'**
+  String get signupLocationPreciseHint;
+
+  /// No description provided for @onboardingCategoriesSelected.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} محددة'**
+  String onboardingCategoriesSelected(int count);
+
+  /// No description provided for @onboardingCategoriesSuggested.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفئات المقترحة — اختر ما ينطبق'**
+  String get onboardingCategoriesSuggested;
+
+  /// No description provided for @onboardingCategoriesNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'يمكنك تعديل اختياراتك في أي وقت من إعدادات الملف الشخصي'**
+  String get onboardingCategoriesNote;
+
+  /// No description provided for @onboardingHighlightsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما يميزك في التطبيق'**
+  String get onboardingHighlightsTitle;
+
+  /// No description provided for @onboardingHighlightsSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مزايا ستحصل عليها بمجرد إنشاء الحساب'**
+  String get onboardingHighlightsSubtitle;
+
+  /// No description provided for @onboardingAiPanelTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اقتراحات الذكاء الاصطناعي'**
+  String get onboardingAiPanelTitle;
+
+  /// No description provided for @onboardingAiPanelSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'فئات موصى بها وما يميزك في التطبيق'**
+  String get onboardingAiPanelSubtitle;
+
+  /// No description provided for @onboardingAiPanelContext.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيحلل الذكاء الاصطناعي معلوماتك ويقترح الفئات الأنسب لك، ويوضح ما يميزك أمام عملائك في التطبيق.'**
+  String get onboardingAiPanelContext;
+
+  /// No description provided for @onboardingTaglineLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'شعارك أو رؤيتك'**
+  String get onboardingTaglineLabel;
+
+  /// No description provided for @onboardingTaglineHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: أفضل خدمة بأقل تكلفة'**
+  String get onboardingTaglineHint;
+
+  /// No description provided for @onboardingAiGenerateButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'احصل على اقتراحات الذكاء الاصطناعي'**
+  String get onboardingAiGenerateButton;
+
+  /// No description provided for @onboardingAiGenerating.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ التوليد...'**
+  String get onboardingAiGenerating;
+
+  /// No description provided for @individualSupplierSignupTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء حساب مورد فردي'**
+  String get individualSupplierSignupTitle;
+
+  /// No description provided for @recyclingCoSignupTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء حساب شركة تدوير'**
+  String get recyclingCoSignupTitle;
+
+  /// No description provided for @storeSignupTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء حساب متجر / شركة'**
+  String get storeSignupTitle;
+
+  /// No description provided for @onboardingHeaderSubtitleAi.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكمل النموذج وسيساعدك الذكاء الاصطناعي في اختيار الفئات'**
+  String get onboardingHeaderSubtitleAi;
+
+  /// No description provided for @onboardingSectionProfile.
+  ///
+  /// In ar, this message translates to:
+  /// **'الملف الشخصي'**
+  String get onboardingSectionProfile;
+
+  /// No description provided for @onboardingSectionProfileCompany.
+  ///
+  /// In ar, this message translates to:
+  /// **'الملف الشخصي للشركة'**
+  String get onboardingSectionProfileCompany;
+
+  /// No description provided for @onboardingSectionProfileStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملف الشركة / المتجر'**
+  String get onboardingSectionProfileStore;
+
+  /// No description provided for @onboardingLabelCompanyLogo.
+  ///
+  /// In ar, this message translates to:
+  /// **'شعار الشركة'**
+  String get onboardingLabelCompanyLogo;
 
   /// No description provided for @driverTitle.
   ///
@@ -1646,10 +1904,76 @@ abstract class AppLocalizations {
   /// **'تم تسجيل الاستلام في المنشأة!'**
   String get marketItemFacilityReceived;
 
+  /// No description provided for @marketRiderChoiceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر الإجراء'**
+  String get marketRiderChoiceTitle;
+
+  /// No description provided for @marketRiderChoiceSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد شراء هذا العنصر لنفسك أم توصيله؟'**
+  String get marketRiderChoiceSubtitle;
+
+  /// No description provided for @marketRiderOptionBuy.
+  ///
+  /// In ar, this message translates to:
+  /// **'شراء لنفسي'**
+  String get marketRiderOptionBuy;
+
+  /// No description provided for @marketRiderOptionBuySubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادفع واستلم العنصر من موقعه'**
+  String get marketRiderOptionBuySubtitle;
+
+  /// No description provided for @marketRiderOptionDeliver.
+  ///
+  /// In ar, this message translates to:
+  /// **'توصيل الطلب'**
+  String get marketRiderOptionDeliver;
+
+  /// No description provided for @marketRiderOptionDeliverSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقل العنصر من مكان إلى آخر'**
+  String get marketRiderOptionDeliverSubtitle;
+
+  /// No description provided for @marketInvoiceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة الطلب'**
+  String get marketInvoiceTitle;
+
+  /// No description provided for @marketInvoiceTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ الإجمالي'**
+  String get marketInvoiceTotal;
+
+  /// No description provided for @marketInvoiceConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد وشراء'**
+  String get marketInvoiceConfirm;
+
+  /// No description provided for @marketInvoicePickupLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'موقع الاستلام'**
+  String get marketInvoicePickupLocation;
+
+  /// No description provided for @marketInvoicePickupSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تأكيد الشراء! توجه إلى الموقع لاستلام عنصرك.'**
+  String get marketInvoicePickupSuccess;
+
   /// No description provided for @rateDriverTitle.
   ///
   /// In ar, this message translates to:
-  /// **'قيّم السائق'**
+  /// **'تقييم السائق'**
   String get rateDriverTitle;
 
   /// No description provided for @rateDriverSubmit.
@@ -2282,6 +2606,12 @@ abstract class AppLocalizations {
   /// **'إضافة صورة'**
   String get imagePickerAddPhoto;
 
+  /// No description provided for @imagePickerRemoveImage.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة الصورة'**
+  String get imagePickerRemoveImage;
+
   /// No description provided for @newOrderSelectButton.
   ///
   /// In ar, this message translates to:
@@ -2395,6 +2725,714 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إرسال الطلب'**
   String get newOrderSubmitButton;
+
+  /// No description provided for @openInGoogleMaps.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح في خرائط جوجل'**
+  String get openInGoogleMaps;
+
+  /// No description provided for @mapsNotInstalledTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'خرائط جوجل غير مثبتة'**
+  String get mapsNotInstalledTitle;
+
+  /// No description provided for @mapsNotInstalledBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم العثور على تطبيق الخرائط. هل تريد فتح المتجر لتثبيته؟'**
+  String get mapsNotInstalledBody;
+
+  /// No description provided for @openStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح المتجر'**
+  String get openStore;
+
+  /// No description provided for @mapLabelPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاستلام'**
+  String get mapLabelPickup;
+
+  /// No description provided for @mapLabelDropoff.
+  ///
+  /// In ar, this message translates to:
+  /// **'التسليم'**
+  String get mapLabelDropoff;
+
+  /// No description provided for @mapUnavailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخريطة غير متوفرة'**
+  String get mapUnavailable;
+
+  /// No description provided for @routeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'خط السير'**
+  String get routeTitle;
+
+  /// No description provided for @pickLocationTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديد الموقع'**
+  String get pickLocationTitle;
+
+  /// No description provided for @confirmLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد الموقع'**
+  String get confirmLocation;
+
+  /// No description provided for @useCurrentLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'استخدام موقعي الحالي'**
+  String get useCurrentLocation;
+
+  /// No description provided for @pickOnGoogleMaps.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديد من خرائط جوجل'**
+  String get pickOnGoogleMaps;
+
+  /// No description provided for @locationNotSet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم تحديد الموقع بعد'**
+  String get locationNotSet;
+
+  /// No description provided for @pasteCoordinates.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصق الإحداثيات'**
+  String get pasteCoordinates;
+
+  /// No description provided for @pasteCoordinatesHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصق من خرائط جوجل، مثال: 31.9539, 35.9106'**
+  String get pasteCoordinatesHint;
+
+  /// No description provided for @latitude.
+  ///
+  /// In ar, this message translates to:
+  /// **'خط العرض'**
+  String get latitude;
+
+  /// No description provided for @longitude.
+  ///
+  /// In ar, this message translates to:
+  /// **'خط الطول'**
+  String get longitude;
+
+  /// No description provided for @save.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ'**
+  String get save;
+
+  /// No description provided for @gpsPermissionDenied.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم رفض إذن الموقع'**
+  String get gpsPermissionDenied;
+
+  /// No description provided for @gpsUnavailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر الحصول على الموقع الحالي'**
+  String get gpsUnavailable;
+
+  /// No description provided for @invalidCoordinates.
+  ///
+  /// In ar, this message translates to:
+  /// **'إحداثيات غير صالحة'**
+  String get invalidCoordinates;
+
+  /// No description provided for @orderTotalCost.
+  ///
+  /// In ar, this message translates to:
+  /// **'التكلفة الإجمالية'**
+  String get orderTotalCost;
+
+  /// No description provided for @orderPotentialEarnings.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأرباح المتوقعة'**
+  String get orderPotentialEarnings;
+
+  /// No description provided for @orderEarningsBreakdown.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل الأرباح'**
+  String get orderEarningsBreakdown;
+
+  /// No description provided for @orderBaseFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرسوم الأساسية'**
+  String get orderBaseFee;
+
+  /// No description provided for @orderDistanceFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم المسافة'**
+  String get orderDistanceFee;
+
+  /// No description provided for @orderMaterialFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم المواد'**
+  String get orderMaterialFee;
+
+  /// No description provided for @orderUrgencyFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم الاستعجال'**
+  String get orderUrgencyFee;
+
+  /// No description provided for @orderPayout.
+  ///
+  /// In ar, this message translates to:
+  /// **'المستحق للسائق'**
+  String get orderPayout;
+
+  /// No description provided for @orderInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفواتير'**
+  String get orderInvoices;
+
+  /// No description provided for @rateDriver.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيّم السائق'**
+  String get rateDriver;
+
+  /// No description provided for @pickupRequestCreated.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال طلب الاستلام بنجاح'**
+  String get pickupRequestCreated;
+
+  /// No description provided for @forgotPasswordLink.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسيت كلمة المرور؟'**
+  String get forgotPasswordLink;
+
+  /// No description provided for @forgotPasswordOtpTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز التحقق'**
+  String get forgotPasswordOtpTitle;
+
+  /// No description provided for @forgotPasswordOtpSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال رمز إلى {email}'**
+  String forgotPasswordOtpSubtitle(String email);
+
+  /// No description provided for @forgotPasswordOtpLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل الرمز المكوّن من ٦ أرقام'**
+  String get forgotPasswordOtpLabel;
+
+  /// No description provided for @forgotPasswordVerifyButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'التحقق من الرمز'**
+  String get forgotPasswordVerifyButton;
+
+  /// No description provided for @forgotPasswordResend.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة الإرسال'**
+  String get forgotPasswordResend;
+
+  /// No description provided for @forgotPasswordResendIn.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة الإرسال بعد {s} ثانية'**
+  String forgotPasswordResendIn(int s);
+
+  /// No description provided for @forgotPasswordCodeSentAgain.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال رمز جديد'**
+  String get forgotPasswordCodeSentAgain;
+
+  /// No description provided for @resetPasswordTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعيين كلمة مرور جديدة'**
+  String get resetPasswordTitle;
+
+  /// No description provided for @resetPasswordNewLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور الجديدة'**
+  String get resetPasswordNewLabel;
+
+  /// No description provided for @resetPasswordConfirmLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد كلمة المرور'**
+  String get resetPasswordConfirmLabel;
+
+  /// No description provided for @resetPasswordButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعيين كلمة المرور'**
+  String get resetPasswordButton;
+
+  /// No description provided for @resetPasswordSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تغيير كلمة المرور بنجاح. يمكنك تسجيل الدخول الآن'**
+  String get resetPasswordSuccess;
+
+  /// No description provided for @forgotPasswordErrorEmptyEmail.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجاء إدخال بريدك الإلكتروني أولاً'**
+  String get forgotPasswordErrorEmptyEmail;
+
+  /// No description provided for @forgotPasswordErrorCodeLength.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجاء إدخال رمز مكوّن من ٦ أرقام'**
+  String get forgotPasswordErrorCodeLength;
+
+  /// No description provided for @resetPasswordErrorMinLength.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور يجب أن تكون ٨ أحرف على الأقل'**
+  String get resetPasswordErrorMinLength;
+
+  /// No description provided for @resetPasswordErrorMismatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمتا المرور غير متطابقتين'**
+  String get resetPasswordErrorMismatch;
+
+  /// No description provided for @restaurantSignupStep1Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'الملف الشخصي الأساسي'**
+  String get restaurantSignupStep1Title;
+
+  /// No description provided for @restaurantSignupStep1Subtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'لنبدأ بتفاصيل شركتك. تساعدنا هذه المعلومات في التحقق من عملك وبناء الثقة مع العملاء.'**
+  String get restaurantSignupStep1Subtitle;
+
+  /// No description provided for @restaurantSignupCompanyNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المطعم / الشركة'**
+  String get restaurantSignupCompanyNameLabel;
+
+  /// No description provided for @restaurantSignupCompanyNameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: الملعقة الذهبية'**
+  String get restaurantSignupCompanyNameHint;
+
+  /// No description provided for @restaurantSignupOwnerNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المالك'**
+  String get restaurantSignupOwnerNameLabel;
+
+  /// No description provided for @restaurantSignupOwnerNameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: أحمد محمد'**
+  String get restaurantSignupOwnerNameHint;
+
+  /// No description provided for @restaurantSignupStep2Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'هوية العلامة التجارية والذكاء الاصطناعي'**
+  String get restaurantSignupStep2Title;
+
+  /// No description provided for @restaurantSignupStep2Subtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'صف مطعمك في سطر واحد. سيساعدك الذكاء الاصطناعي لدينا في صياغة قصة مقنعة والتوصية بفئات البحث.'**
+  String get restaurantSignupStep2Subtitle;
+
+  /// No description provided for @restaurantSignupTaglineLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'صف مطعمك في سطر واحد'**
+  String get restaurantSignupTaglineLabel;
+
+  /// No description provided for @restaurantSignupTaglineHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: مكرونة إيطالية أصيلة مصنوعة يدوياً'**
+  String get restaurantSignupTaglineHint;
+
+  /// No description provided for @restaurantSignupGenerateButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء الملف الشخصي والفئات'**
+  String get restaurantSignupGenerateButton;
+
+  /// No description provided for @restaurantSignupAiStoryLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'قصة من إنشاء الذكاء الاصطناعي (قابلة للتعديل)'**
+  String get restaurantSignupAiStoryLabel;
+
+  /// No description provided for @restaurantSignupCategoriesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفئات الموصى بها'**
+  String get restaurantSignupCategoriesLabel;
+
+  /// No description provided for @restaurantSignupStep3Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموقع والتحقق'**
+  String get restaurantSignupStep3Title;
+
+  /// No description provided for @restaurantSignupStep3Subtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'قدم عنوانك الفعلي وحمل مستندات التحقق. سيقوم الذكاء الاصطناعي لدينا بالتحقق من تفاصيلك تلقائياً.'**
+  String get restaurantSignupStep3Subtitle;
+
+  /// No description provided for @restaurantSignupAddressLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنوان المطعم'**
+  String get restaurantSignupAddressLabel;
+
+  /// No description provided for @restaurantSignupAddressHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل عنوان الشارع الكامل'**
+  String get restaurantSignupAddressHint;
+
+  /// No description provided for @restaurantSignupUploadVerifyButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحميل الترخيص والتحقق'**
+  String get restaurantSignupUploadVerifyButton;
+
+  /// No description provided for @restaurantSignupAiVerificationNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيتم فحص هذه الصورة بواسطة الذكاء الاصطناعي للتحقق من مستندك.'**
+  String get restaurantSignupAiVerificationNote;
+
+  /// No description provided for @restaurantSignupStatusVerified.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحالة: تم التحقق'**
+  String get restaurantSignupStatusVerified;
+
+  /// No description provided for @restaurantSignupStatusInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحالة: غير صالح'**
+  String get restaurantSignupStatusInvalid;
+
+  /// No description provided for @restaurantSignupVerificationSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم التحقق من مستنداتك وعنوانك تلقائياً.'**
+  String get restaurantSignupVerificationSuccess;
+
+  /// No description provided for @restaurantSignupStep4Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'المراجعة والإرسال'**
+  String get restaurantSignupStep4Title;
+
+  /// No description provided for @restaurantSignupStep4Subtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى مراجعة ملفك الشخصي وتفاصيلك قبل الإرسال النهائي.'**
+  String get restaurantSignupStep4Subtitle;
+
+  /// No description provided for @restaurantSignupSectionBasic.
+  ///
+  /// In ar, this message translates to:
+  /// **'معلومات أساسية'**
+  String get restaurantSignupSectionBasic;
+
+  /// No description provided for @restaurantSignupSectionAi.
+  ///
+  /// In ar, this message translates to:
+  /// **'الهوية المنشأة بالذكاء الاصطناعي'**
+  String get restaurantSignupSectionAi;
+
+  /// No description provided for @restaurantSignupSectionLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموقع والتحقق'**
+  String get restaurantSignupSectionLocation;
+
+  /// No description provided for @restaurantSignupGeneratedStoryLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'القصة المنشأة:'**
+  String get restaurantSignupGeneratedStoryLabel;
+
+  /// No description provided for @restaurantSignupNotVerified.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم التحقق'**
+  String get restaurantSignupNotVerified;
+
+  /// No description provided for @restaurantSignupAppBarTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل المطعم'**
+  String get restaurantSignupAppBarTitle;
+
+  /// No description provided for @restaurantSignupBackButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'رجوع'**
+  String get restaurantSignupBackButton;
+
+  /// No description provided for @restaurantSignupNextButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'التالي'**
+  String get restaurantSignupNextButton;
+
+  /// No description provided for @restaurantSignupSubmitButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال'**
+  String get restaurantSignupSubmitButton;
+
+  /// No description provided for @restaurantSignupSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم التسجيل بنجاح!'**
+  String get restaurantSignupSuccess;
+
+  /// No description provided for @restaurantSignupErrorCompanyNameRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم الشركة مطلوب'**
+  String get restaurantSignupErrorCompanyNameRequired;
+
+  /// No description provided for @restaurantSignupErrorOwnerNameRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المالك مطلوب'**
+  String get restaurantSignupErrorOwnerNameRequired;
+
+  /// No description provided for @restaurantSignupErrorTaglineRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى تقديم وصف قصير لإنشاء ملفك الشخصي'**
+  String get restaurantSignupErrorTaglineRequired;
+
+  /// No description provided for @restaurantSignupErrorAiProfileRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى إنشاء ومراجعة ملفك الشخصي بالذكاء الاصطناعي'**
+  String get restaurantSignupErrorAiProfileRequired;
+
+  /// No description provided for @restaurantSignupErrorCategoryRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى اختيار فئة واحدة على الأقل'**
+  String get restaurantSignupErrorCategoryRequired;
+
+  /// No description provided for @restaurantSignupErrorAddressRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'العنوان مطلوب'**
+  String get restaurantSignupErrorAddressRequired;
+
+  /// No description provided for @restaurantSignupErrorVerificationRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'يجب التحقق من مستنداتك وعنوانك'**
+  String get restaurantSignupErrorVerificationRequired;
+
+  /// No description provided for @restaurantSignupErrorAiGenerationFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل إنشاء الملف الشخصي. يرجى المحاولة مرة أخرى.'**
+  String get restaurantSignupErrorAiGenerationFailed;
+
+  /// No description provided for @restaurantSignupErrorVerificationFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل التحقق. يرجى المحاولة مرة أخرى.'**
+  String get restaurantSignupErrorVerificationFailed;
+
+  /// No description provided for @restaurantSignupErrorTaglineFirst.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى تقديم وصف قصير أولاً'**
+  String get restaurantSignupErrorTaglineFirst;
+
+  /// No description provided for @restaurantSignupErrorAddressFirst.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى تقديم عنوان أولاً'**
+  String get restaurantSignupErrorAddressFirst;
+
+  /// No description provided for @orderItemPrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'سعر العنصر'**
+  String get orderItemPrice;
+
+  /// No description provided for @aiValidationUploadPrompt.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط لالتقاط أو رفع صورة'**
+  String get aiValidationUploadPrompt;
+
+  /// No description provided for @aiValidationAnalyzingStep1.
+  ///
+  /// In ar, this message translates to:
+  /// **'الذكاء الاصطناعي يحلل صورتك...'**
+  String get aiValidationAnalyzingStep1;
+
+  /// No description provided for @aiValidationAnalyzingStep2.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري التحقق من وضوح المستند...'**
+  String get aiValidationAnalyzingStep2;
+
+  /// No description provided for @aiValidationAnalyzingStep3.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري التحقق من المصداقية...'**
+  String get aiValidationAnalyzingStep3;
+
+  /// No description provided for @aiValidationSuccessTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم التحقق من الصورة!'**
+  String get aiValidationSuccessTitle;
+
+  /// No description provided for @aiValidationSuccessSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تستوفي صورتك جميع المتطلبات.'**
+  String get aiValidationSuccessSubtitle;
+
+  /// No description provided for @aiValidationRetryButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'حاول مرة أخرى'**
+  String get aiValidationRetryButton;
+
+  /// No description provided for @aiValidationErrorTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل التحقق'**
+  String get aiValidationErrorTitle;
+
+  /// No description provided for @aiValidationErrorUnknown.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ غير متوقع.'**
+  String get aiValidationErrorUnknown;
+
+  /// No description provided for @aiValidationStatusSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم التحقق بنجاح'**
+  String get aiValidationStatusSuccess;
+
+  /// No description provided for @aiValidationStatusInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصورة لا تفي بالمعايير.'**
+  String get aiValidationStatusInvalid;
+
+  /// No description provided for @aiValidationStatusErrorUnknown.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ تحقق غير معروف.'**
+  String get aiValidationStatusErrorUnknown;
+
+  /// تسمية لمدخل نوع أو مطبخ المطعم.
+  ///
+  /// In ar, this message translates to:
+  /// **'المطبخ / نوع العمل'**
+  String get signupCuisineType;
+
+  /// نص تلميح لمدخل مطبخ المطعم.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: إيطالي، وجبات سريعة، مخبز'**
+  String get signupCuisineTypeHint;
+
+  /// تسمية لمدخل الفئة الأساسية للمورد الفردي.
+  ///
+  /// In ar, this message translates to:
+  /// **'المنتج الأساسي / الفئة'**
+  String get signupPrimaryCategory;
+
+  /// نص تلميح لمدخل فئة المورد الفردي.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: منتجات طازجة، ألبان'**
+  String get signupPrimaryCategoryHint;
+
+  /// No description provided for @signupSectionVehicle.
+  ///
+  /// In ar, this message translates to:
+  /// **'معلومات المركبة'**
+  String get signupSectionVehicle;
+
+  /// No description provided for @signupVehiclePlate.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم لوحة المركبة'**
+  String get signupVehiclePlate;
+
+  /// No description provided for @signupVehiclePlateHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: أ 123456'**
+  String get signupVehiclePlateHint;
+
+  /// No description provided for @signupVehicleModel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع المركبة وموديلها'**
+  String get signupVehicleModel;
+
+  /// No description provided for @signupVehicleModelHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: تويوتا بريوس 2020'**
+  String get signupVehicleModelHint;
+
+  /// No description provided for @signupVehicleColor.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون المركبة'**
+  String get signupVehicleColor;
+
+  /// No description provided for @signupVehicleColorHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: أبيض'**
+  String get signupVehicleColorHint;
 }
 
 class _AppLocalizationsDelegate

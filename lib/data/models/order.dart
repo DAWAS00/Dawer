@@ -1,5 +1,8 @@
+import 'reward_breakdown.dart';
+
 enum OrderType { pickup, collection, collectionSale }
 enum OrderStatus { pending, accepted, inTransit, completed, cancelled }
+
 enum PickupTarget { company, riderBuy }
 enum WasteType {
   paper, plastic, metal, glass, electronics, organic,
@@ -67,13 +70,13 @@ extension WasteFormLabel on WasteForm {
 
 extension PickupTargetLabel on PickupTarget {
   String get label => switch (this) {
-    PickupTarget.company => 'إرسال لشركة تدوير',
-    PickupTarget.riderBuy => 'السائق يشتريها مباشرة',
+    PickupTarget.company => 'Make Pickup Order',
+    PickupTarget.riderBuy => 'Put it in the restaurant and the market',
   };
 
   String get shortLabel => switch (this) {
-    PickupTarget.company => 'شركة',
-    PickupTarget.riderBuy => 'شراء مباشر',
+    PickupTarget.company => 'Make Pickup Order',
+    PickupTarget.riderBuy => 'Put it in the restaurant and the market',
   };
 }
 
@@ -164,6 +167,11 @@ class Order {
   final double? pickupLng;
   final double? dropoffLat;
   final double? dropoffLng;
+  final int? etaMinutes;
+  final bool isMarketplaceShared;
+  final bool requiresRider;
+  final RewardBreakdown? rewardBreakdown;
+  final List<InvoiceItem>? invoices;
 
   const Order({
     required this.id,
@@ -214,7 +222,13 @@ class Order {
     this.pickupLng,
     this.dropoffLat,
     this.dropoffLng,
+    this.etaMinutes,
+    this.isMarketplaceShared = false,
+    this.requiresRider = false,
+    this.rewardBreakdown,
+    this.invoices,
   });
+
 
   Order copyWith({
     String? id,
@@ -265,6 +279,11 @@ class Order {
     double? pickupLng,
     double? dropoffLat,
     double? dropoffLng,
+    int? etaMinutes,
+    bool? isMarketplaceShared,
+    bool? requiresRider,
+    RewardBreakdown? rewardBreakdown,
+    List<InvoiceItem>? invoices,
   }) {
     return Order(
       id: id ?? this.id,
@@ -315,7 +334,25 @@ class Order {
       pickupLng: pickupLng ?? this.pickupLng,
       dropoffLat: dropoffLat ?? this.dropoffLat,
       dropoffLng: dropoffLng ?? this.dropoffLng,
+      etaMinutes: etaMinutes ?? this.etaMinutes,
+      isMarketplaceShared: isMarketplaceShared ?? this.isMarketplaceShared,
+      requiresRider: requiresRider ?? this.requiresRider,
+      rewardBreakdown: rewardBreakdown ?? this.rewardBreakdown,
+      invoices: invoices ?? this.invoices,
     );
   }
+}
 
+class InvoiceItem {
+  final String name;
+  final int quantity;
+  final double price;
+
+  const InvoiceItem({
+    required this.name,
+    required this.quantity,
+    required this.price,
+  });
+
+  double get total => quantity * price;
 }

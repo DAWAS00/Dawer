@@ -40,12 +40,12 @@ VMs provided at home-view via `ChangeNotifierProvider`. Tabs read state with `co
 ```
 lib/data/
   models/     — plain Dart classes (Order, User) with copyWith
-  mock/       — OrderMockData, used by all three VMs (no backend yet)
+  mock/       — OrderMockData, used by all three VMs
   repositories/ — AuthRepository (thin wrapper over AuthService)
-  services/   — AuthService (stub; returns raw maps)
+  services/   — local backend-facing services (auth/signup/rewards)
 ```
 
-All data **mock only** — no HTTP, no DB. `AuthRepository`/`AuthService` stub with simulated network delay.
+Data flow is local-first (no cloud backend dependency in runtime flow).
 
 ### Shared Order UI
 

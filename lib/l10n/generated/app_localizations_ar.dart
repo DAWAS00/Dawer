@@ -243,6 +243,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signupSectionDocuments => 'المستندات الرسمية';
 
   @override
+  String get signupNationalIdDocument => 'صورة الهوية الوطنية';
+
+  @override
+  String get signupCommercialRegisterDocument => 'صورة السجل التجاري';
+
+  @override
+  String get signupBusinessLicenseDocument => 'صورة الترخيص التجاري';
+
+  @override
+  String get signupUploadDocumentPrompt => 'اضغط لرفع صورة المستند';
+
+  @override
+  String get signupUploadDocumentSources => 'كاميرا أو معرض الصور';
+
+  @override
+  String get signupDocumentUploaded => 'تم الرفع';
+
+  @override
   String get signupSectionContact => 'معلومات التواصل';
 
   @override
@@ -261,31 +279,148 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signupEmailHint => 'example@domain.com';
 
   @override
-  String get verificationTitle => 'التحقق';
+  String get signupPasswordLabel => 'كلمة المرور';
 
   @override
-  String get verificationCodeSent => 'أرسلنا رمزاً مكوناً من 6 أرقام';
+  String get signupPasswordHint => '٨ أحرف على الأقل، حرف ورقم';
 
   @override
-  String get verificationEnterCode => 'أدخل رمز التحقق';
+  String get signupPasswordConfirmLabel => 'تأكيد كلمة المرور';
 
   @override
-  String get verificationResendAfter => 'إعادة الإرسال بعد';
+  String get signupPasswordConfirmHint => 'أعد إدخال كلمة المرور';
 
   @override
-  String get verificationResend => 'إعادة الإرسال';
+  String get loginPasswordLabel => 'كلمة المرور';
 
   @override
-  String get verificationButton => 'تحقق';
+  String get loginPasswordHint => 'أدخل كلمة المرور';
 
   @override
-  String get verificationSecureTitle => 'تحقق آمن';
+  String get signupRoleDriver => 'تسجيل سائق';
 
   @override
-  String get verificationSecureSubtitle => 'رمز التحقق سري ومحمي';
+  String get signupRoleStoreBusiness => 'تسجيل متجر / مطعم';
 
   @override
-  String get verificationSecureFooter => 'تحقق آمن وموثوق';
+  String get signupRoleIndividualSupplier => 'تسجيل مورد فردي';
+
+  @override
+  String get signupRoleRecyclingCo => 'تسجيل شركة إعادة تدوير';
+
+  @override
+  String get signupPhotoPersonal => 'الصورة الشخصية';
+
+  @override
+  String get signupPhotoOrganization => 'شعار الجهة';
+
+  @override
+  String get signupErrorManagerName => 'الرجاء إدخال اسم المسؤول';
+
+  @override
+  String get signupErrorDocumentRequired => 'الرجاء رفع صورة المستند المطلوب';
+
+  @override
+  String get signupErrorEmailRequired => 'البريد الإلكتروني مطلوب';
+
+  @override
+  String get signupErrorPasswordRequired => 'كلمة المرور مطلوبة';
+
+  @override
+  String get signupErrorPasswordMismatch => 'كلمتا المرور غير متطابقتين';
+
+  @override
+  String get signupErrorSubmitFailed => 'تعذّر إنشاء الحساب، حاول مجدداً';
+
+  @override
+  String get signupLocationTitle => 'الموقع الجغرافي';
+
+  @override
+  String get signupLocationSubtitle => 'اختياري — يساعد على تحديد مناطق الخدمة';
+
+  @override
+  String get signupLocationChange => 'تغيير';
+
+  @override
+  String get signupLocationSelect => 'تحديد';
+
+  @override
+  String get signupLocationSelectPrompt => 'اضغط لتحديد موقعك';
+
+  @override
+  String get signupLocationOpenMap => 'اضغط لفتح خريطة الموقع';
+
+  @override
+  String get signupLocationPreciseLabel => 'العنوان الدقيق';
+
+  @override
+  String get signupLocationPreciseHint => 'الشارع، البناية، الشقة، إلخ.';
+
+  @override
+  String onboardingCategoriesSelected(int count) {
+    return '$count محددة';
+  }
+
+  @override
+  String get onboardingCategoriesSuggested => 'الفئات المقترحة — اختر ما ينطبق';
+
+  @override
+  String get onboardingCategoriesNote =>
+      'يمكنك تعديل اختياراتك في أي وقت من إعدادات الملف الشخصي';
+
+  @override
+  String get onboardingHighlightsTitle => 'ما يميزك في التطبيق';
+
+  @override
+  String get onboardingHighlightsSubtitle =>
+      'مزايا ستحصل عليها بمجرد إنشاء الحساب';
+
+  @override
+  String get onboardingAiPanelTitle => 'اقتراحات الذكاء الاصطناعي';
+
+  @override
+  String get onboardingAiPanelSubtitle => 'فئات موصى بها وما يميزك في التطبيق';
+
+  @override
+  String get onboardingAiPanelContext =>
+      'سيحلل الذكاء الاصطناعي معلوماتك ويقترح الفئات الأنسب لك، ويوضح ما يميزك أمام عملائك في التطبيق.';
+
+  @override
+  String get onboardingTaglineLabel => 'شعارك أو رؤيتك';
+
+  @override
+  String get onboardingTaglineHint => 'مثال: أفضل خدمة بأقل تكلفة';
+
+  @override
+  String get onboardingAiGenerateButton => 'احصل على اقتراحات الذكاء الاصطناعي';
+
+  @override
+  String get onboardingAiGenerating => 'جارٍ التوليد...';
+
+  @override
+  String get individualSupplierSignupTitle => 'إنشاء حساب مورد فردي';
+
+  @override
+  String get recyclingCoSignupTitle => 'إنشاء حساب شركة تدوير';
+
+  @override
+  String get storeSignupTitle => 'إنشاء حساب متجر / شركة';
+
+  @override
+  String get onboardingHeaderSubtitleAi =>
+      'أكمل النموذج وسيساعدك الذكاء الاصطناعي في اختيار الفئات';
+
+  @override
+  String get onboardingSectionProfile => 'الملف الشخصي';
+
+  @override
+  String get onboardingSectionProfileCompany => 'الملف الشخصي للشركة';
+
+  @override
+  String get onboardingSectionProfileStore => 'ملف الشركة / المتجر';
+
+  @override
+  String get onboardingLabelCompanyLogo => 'شعار الشركة';
 
   @override
   String get driverTitle => 'سائق دوّر';
@@ -798,7 +933,42 @@ class AppLocalizationsAr extends AppLocalizations {
   String get marketItemFacilityReceived => 'تم تسجيل الاستلام في المنشأة!';
 
   @override
-  String get rateDriverTitle => 'قيّم السائق';
+  String get marketRiderChoiceTitle => 'اختر الإجراء';
+
+  @override
+  String get marketRiderChoiceSubtitle =>
+      'هل تريد شراء هذا العنصر لنفسك أم توصيله؟';
+
+  @override
+  String get marketRiderOptionBuy => 'شراء لنفسي';
+
+  @override
+  String get marketRiderOptionBuySubtitle => 'ادفع واستلم العنصر من موقعه';
+
+  @override
+  String get marketRiderOptionDeliver => 'توصيل الطلب';
+
+  @override
+  String get marketRiderOptionDeliverSubtitle => 'نقل العنصر من مكان إلى آخر';
+
+  @override
+  String get marketInvoiceTitle => 'فاتورة الطلب';
+
+  @override
+  String get marketInvoiceTotal => 'المبلغ الإجمالي';
+
+  @override
+  String get marketInvoiceConfirm => 'تأكيد وشراء';
+
+  @override
+  String get marketInvoicePickupLocation => 'موقع الاستلام';
+
+  @override
+  String get marketInvoicePickupSuccess =>
+      'تم تأكيد الشراء! توجه إلى الموقع لاستلام عنصرك.';
+
+  @override
+  String get rateDriverTitle => 'تقييم السائق';
 
   @override
   String get rateDriverSubmit => 'إرسال التقييم';
@@ -1145,6 +1315,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get imagePickerAddPhoto => 'إضافة صورة';
 
   @override
+  String get imagePickerRemoveImage => 'إزالة الصورة';
+
+  @override
   String get newOrderSelectButton => 'تحديد';
 
   @override
@@ -1202,4 +1375,383 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get newOrderSubmitButton => 'إرسال الطلب';
+
+  @override
+  String get openInGoogleMaps => 'فتح في خرائط جوجل';
+
+  @override
+  String get mapsNotInstalledTitle => 'خرائط جوجل غير مثبتة';
+
+  @override
+  String get mapsNotInstalledBody =>
+      'لم يتم العثور على تطبيق الخرائط. هل تريد فتح المتجر لتثبيته؟';
+
+  @override
+  String get openStore => 'فتح المتجر';
+
+  @override
+  String get mapLabelPickup => 'الاستلام';
+
+  @override
+  String get mapLabelDropoff => 'التسليم';
+
+  @override
+  String get mapUnavailable => 'الخريطة غير متوفرة';
+
+  @override
+  String get routeTitle => 'خط السير';
+
+  @override
+  String get pickLocationTitle => 'تحديد الموقع';
+
+  @override
+  String get confirmLocation => 'تأكيد الموقع';
+
+  @override
+  String get useCurrentLocation => 'استخدام موقعي الحالي';
+
+  @override
+  String get pickOnGoogleMaps => 'تحديد من خرائط جوجل';
+
+  @override
+  String get locationNotSet => 'لم يتم تحديد الموقع بعد';
+
+  @override
+  String get pasteCoordinates => 'الصق الإحداثيات';
+
+  @override
+  String get pasteCoordinatesHint =>
+      'الصق من خرائط جوجل، مثال: 31.9539, 35.9106';
+
+  @override
+  String get latitude => 'خط العرض';
+
+  @override
+  String get longitude => 'خط الطول';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String get gpsPermissionDenied => 'تم رفض إذن الموقع';
+
+  @override
+  String get gpsUnavailable => 'تعذّر الحصول على الموقع الحالي';
+
+  @override
+  String get invalidCoordinates => 'إحداثيات غير صالحة';
+
+  @override
+  String get orderTotalCost => 'التكلفة الإجمالية';
+
+  @override
+  String get orderPotentialEarnings => 'الأرباح المتوقعة';
+
+  @override
+  String get orderEarningsBreakdown => 'تفاصيل الأرباح';
+
+  @override
+  String get orderBaseFee => 'الرسوم الأساسية';
+
+  @override
+  String get orderDistanceFee => 'رسوم المسافة';
+
+  @override
+  String get orderMaterialFee => 'رسوم المواد';
+
+  @override
+  String get orderUrgencyFee => 'رسوم الاستعجال';
+
+  @override
+  String get orderPayout => 'المستحق للسائق';
+
+  @override
+  String get orderInvoices => 'الفواتير';
+
+  @override
+  String get rateDriver => 'قيّم السائق';
+
+  @override
+  String get pickupRequestCreated => 'تم إرسال طلب الاستلام بنجاح';
+
+  @override
+  String get forgotPasswordLink => 'نسيت كلمة المرور؟';
+
+  @override
+  String get forgotPasswordOtpTitle => 'رمز التحقق';
+
+  @override
+  String forgotPasswordOtpSubtitle(String email) {
+    return 'تم إرسال رمز إلى $email';
+  }
+
+  @override
+  String get forgotPasswordOtpLabel => 'أدخل الرمز المكوّن من ٦ أرقام';
+
+  @override
+  String get forgotPasswordVerifyButton => 'التحقق من الرمز';
+
+  @override
+  String get forgotPasswordResend => 'إعادة الإرسال';
+
+  @override
+  String forgotPasswordResendIn(int s) {
+    return 'إعادة الإرسال بعد $s ثانية';
+  }
+
+  @override
+  String get forgotPasswordCodeSentAgain => 'تم إرسال رمز جديد';
+
+  @override
+  String get resetPasswordTitle => 'تعيين كلمة مرور جديدة';
+
+  @override
+  String get resetPasswordNewLabel => 'كلمة المرور الجديدة';
+
+  @override
+  String get resetPasswordConfirmLabel => 'تأكيد كلمة المرور';
+
+  @override
+  String get resetPasswordButton => 'تعيين كلمة المرور';
+
+  @override
+  String get resetPasswordSuccess =>
+      'تم تغيير كلمة المرور بنجاح. يمكنك تسجيل الدخول الآن';
+
+  @override
+  String get forgotPasswordErrorEmptyEmail =>
+      'الرجاء إدخال بريدك الإلكتروني أولاً';
+
+  @override
+  String get forgotPasswordErrorCodeLength =>
+      'الرجاء إدخال رمز مكوّن من ٦ أرقام';
+
+  @override
+  String get resetPasswordErrorMinLength =>
+      'كلمة المرور يجب أن تكون ٨ أحرف على الأقل';
+
+  @override
+  String get resetPasswordErrorMismatch => 'كلمتا المرور غير متطابقتين';
+
+  @override
+  String get restaurantSignupStep1Title => 'الملف الشخصي الأساسي';
+
+  @override
+  String get restaurantSignupStep1Subtitle =>
+      'لنبدأ بتفاصيل شركتك. تساعدنا هذه المعلومات في التحقق من عملك وبناء الثقة مع العملاء.';
+
+  @override
+  String get restaurantSignupCompanyNameLabel => 'اسم المطعم / الشركة';
+
+  @override
+  String get restaurantSignupCompanyNameHint => 'مثال: الملعقة الذهبية';
+
+  @override
+  String get restaurantSignupOwnerNameLabel => 'اسم المالك';
+
+  @override
+  String get restaurantSignupOwnerNameHint => 'مثال: أحمد محمد';
+
+  @override
+  String get restaurantSignupStep2Title =>
+      'هوية العلامة التجارية والذكاء الاصطناعي';
+
+  @override
+  String get restaurantSignupStep2Subtitle =>
+      'صف مطعمك في سطر واحد. سيساعدك الذكاء الاصطناعي لدينا في صياغة قصة مقنعة والتوصية بفئات البحث.';
+
+  @override
+  String get restaurantSignupTaglineLabel => 'صف مطعمك في سطر واحد';
+
+  @override
+  String get restaurantSignupTaglineHint =>
+      'مثال: مكرونة إيطالية أصيلة مصنوعة يدوياً';
+
+  @override
+  String get restaurantSignupGenerateButton => 'إنشاء الملف الشخصي والفئات';
+
+  @override
+  String get restaurantSignupAiStoryLabel =>
+      'قصة من إنشاء الذكاء الاصطناعي (قابلة للتعديل)';
+
+  @override
+  String get restaurantSignupCategoriesLabel => 'الفئات الموصى بها';
+
+  @override
+  String get restaurantSignupStep3Title => 'الموقع والتحقق';
+
+  @override
+  String get restaurantSignupStep3Subtitle =>
+      'قدم عنوانك الفعلي وحمل مستندات التحقق. سيقوم الذكاء الاصطناعي لدينا بالتحقق من تفاصيلك تلقائياً.';
+
+  @override
+  String get restaurantSignupAddressLabel => 'عنوان المطعم';
+
+  @override
+  String get restaurantSignupAddressHint => 'أدخل عنوان الشارع الكامل';
+
+  @override
+  String get restaurantSignupUploadVerifyButton => 'تحميل الترخيص والتحقق';
+
+  @override
+  String get restaurantSignupAiVerificationNote =>
+      'سيتم فحص هذه الصورة بواسطة الذكاء الاصطناعي للتحقق من مستندك.';
+
+  @override
+  String get restaurantSignupStatusVerified => 'الحالة: تم التحقق';
+
+  @override
+  String get restaurantSignupStatusInvalid => 'الحالة: غير صالح';
+
+  @override
+  String get restaurantSignupVerificationSuccess =>
+      'تم التحقق من مستنداتك وعنوانك تلقائياً.';
+
+  @override
+  String get restaurantSignupStep4Title => 'المراجعة والإرسال';
+
+  @override
+  String get restaurantSignupStep4Subtitle =>
+      'يرجى مراجعة ملفك الشخصي وتفاصيلك قبل الإرسال النهائي.';
+
+  @override
+  String get restaurantSignupSectionBasic => 'معلومات أساسية';
+
+  @override
+  String get restaurantSignupSectionAi => 'الهوية المنشأة بالذكاء الاصطناعي';
+
+  @override
+  String get restaurantSignupSectionLocation => 'الموقع والتحقق';
+
+  @override
+  String get restaurantSignupGeneratedStoryLabel => 'القصة المنشأة:';
+
+  @override
+  String get restaurantSignupNotVerified => 'لم يتم التحقق';
+
+  @override
+  String get restaurantSignupAppBarTitle => 'تسجيل المطعم';
+
+  @override
+  String get restaurantSignupBackButton => 'رجوع';
+
+  @override
+  String get restaurantSignupNextButton => 'التالي';
+
+  @override
+  String get restaurantSignupSubmitButton => 'إرسال';
+
+  @override
+  String get restaurantSignupSuccess => 'تم التسجيل بنجاح!';
+
+  @override
+  String get restaurantSignupErrorCompanyNameRequired => 'اسم الشركة مطلوب';
+
+  @override
+  String get restaurantSignupErrorOwnerNameRequired => 'اسم المالك مطلوب';
+
+  @override
+  String get restaurantSignupErrorTaglineRequired =>
+      'يرجى تقديم وصف قصير لإنشاء ملفك الشخصي';
+
+  @override
+  String get restaurantSignupErrorAiProfileRequired =>
+      'يرجى إنشاء ومراجعة ملفك الشخصي بالذكاء الاصطناعي';
+
+  @override
+  String get restaurantSignupErrorCategoryRequired =>
+      'يرجى اختيار فئة واحدة على الأقل';
+
+  @override
+  String get restaurantSignupErrorAddressRequired => 'العنوان مطلوب';
+
+  @override
+  String get restaurantSignupErrorVerificationRequired =>
+      'يجب التحقق من مستنداتك وعنوانك';
+
+  @override
+  String get restaurantSignupErrorAiGenerationFailed =>
+      'فشل إنشاء الملف الشخصي. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get restaurantSignupErrorVerificationFailed =>
+      'فشل التحقق. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get restaurantSignupErrorTaglineFirst => 'يرجى تقديم وصف قصير أولاً';
+
+  @override
+  String get restaurantSignupErrorAddressFirst => 'يرجى تقديم عنوان أولاً';
+
+  @override
+  String get orderItemPrice => 'سعر العنصر';
+
+  @override
+  String get aiValidationUploadPrompt => 'اضغط لالتقاط أو رفع صورة';
+
+  @override
+  String get aiValidationAnalyzingStep1 => 'الذكاء الاصطناعي يحلل صورتك...';
+
+  @override
+  String get aiValidationAnalyzingStep2 => 'جاري التحقق من وضوح المستند...';
+
+  @override
+  String get aiValidationAnalyzingStep3 => 'جاري التحقق من المصداقية...';
+
+  @override
+  String get aiValidationSuccessTitle => 'تم التحقق من الصورة!';
+
+  @override
+  String get aiValidationSuccessSubtitle => 'تستوفي صورتك جميع المتطلبات.';
+
+  @override
+  String get aiValidationRetryButton => 'حاول مرة أخرى';
+
+  @override
+  String get aiValidationErrorTitle => 'فشل التحقق';
+
+  @override
+  String get aiValidationErrorUnknown => 'حدث خطأ غير متوقع.';
+
+  @override
+  String get aiValidationStatusSuccess => 'تم التحقق بنجاح';
+
+  @override
+  String get aiValidationStatusInvalid => 'الصورة لا تفي بالمعايير.';
+
+  @override
+  String get aiValidationStatusErrorUnknown => 'خطأ تحقق غير معروف.';
+
+  @override
+  String get signupCuisineType => 'المطبخ / نوع العمل';
+
+  @override
+  String get signupCuisineTypeHint => 'مثال: إيطالي، وجبات سريعة، مخبز';
+
+  @override
+  String get signupPrimaryCategory => 'المنتج الأساسي / الفئة';
+
+  @override
+  String get signupPrimaryCategoryHint => 'مثال: منتجات طازجة، ألبان';
+
+  @override
+  String get signupSectionVehicle => 'معلومات المركبة';
+
+  @override
+  String get signupVehiclePlate => 'رقم لوحة المركبة';
+
+  @override
+  String get signupVehiclePlateHint => 'مثال: أ 123456';
+
+  @override
+  String get signupVehicleModel => 'نوع المركبة وموديلها';
+
+  @override
+  String get signupVehicleModelHint => 'مثال: تويوتا بريوس 2020';
+
+  @override
+  String get signupVehicleColor => 'لون المركبة';
+
+  @override
+  String get signupVehicleColorHint => 'مثال: أبيض';
 }

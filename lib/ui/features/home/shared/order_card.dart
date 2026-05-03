@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/theme/app_tokens.dart';
 import '../../../../data/models/order.dart';
 import '../../../../data/models/order_labels.dart';
 import '../../../../l10n/l10n.dart';
@@ -24,21 +25,25 @@ class OrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context);
+    final dt = context.dt;
     return GestureDetector(
       onTap: (mode == OrderCardMode.driverAvailable || mode == OrderCardMode.driverHistory)
           ? () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => OrderDetailsView(order: order),
+                  builder: (_) => OrderDetailsView(
+                    order: order,
+                    hideStatus: true,
+                  ),
                 ),
               )
           : null,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: dt.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
+              color: dt.shadow.withValues(alpha: 0.06),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -47,17 +52,17 @@ class OrderCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildHeader(l10n),
+            _buildHeader(l10n, dt),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  _buildWasteChips(locale),
+                  _buildWasteChips(locale, dt),
                   const SizedBox(height: 10),
-                  _buildAddressRow(),
+                  _buildAddressRow(dt),
                   const SizedBox(height: 12),
-                  _buildFooterRow(context),
+                  _buildFooterRow(context, dt),
                 ],
               ),
             ),
@@ -67,10 +72,10 @@ class OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(AppLocalizations l10n) {
+  Widget _buildHeader(AppLocalizations l10n, AppTokens dt) {
     final (Color bg, Color text, String label) = _statusStyle(l10n);
     final dateString = '${order.createdAt.day.toString().padLeft(2, '0')}/${order.createdAt.month.toString().padLeft(2, '0')}/${order.createdAt.year}';
-    
+
     return Container(
       decoration: BoxDecoration(
         color: bg.withValues(alpha: 0.12),
@@ -94,23 +99,27 @@ class OrderCard extends StatelessWidget {
               ),
             ),
           ),
+          if (mode == OrderCardMode.driverActive) ...[
+            const SizedBox(width: 8),
+            const Icon(Icons.check_circle_rounded, size: 14, color: AppColors.statusActiveText),
+          ],
           const Spacer(),
           Text(
             dateString,
             style: GoogleFonts.dmSans(
               fontSize: 12,
-              color: const Color(0xFF717973),
+              color: dt.onSurfaceMuted,
               letterSpacing: 0.5,
             ),
           ),
           const SizedBox(width: 8),
-          Container(width: 1, height: 12, color: const Color(0xFF717973).withValues(alpha: 0.3)),
+          Container(width: 1, height: 12, color: dt.onSurfaceMuted.withValues(alpha: 0.3)),
           const SizedBox(width: 8),
           Text(
             '#${order.id}',
             style: GoogleFonts.dmSans(
               fontSize: 12,
-              color: const Color(0xFF717973),
+              color: dt.onSurfaceMuted,
               letterSpacing: 0.5,
             ),
           ),
@@ -119,15 +128,14 @@ class OrderCard extends StatelessWidget {
             order.type == OrderType.pickup
                 ? Icons.upload_rounded
                 : Icons.download_rounded,
-            size: 14,
-            color: const Color(0xFF717973),
+            color: dt.onSurfaceMuted,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildWasteChips(Locale locale) {
+  Widget _buildWasteChips(Locale locale, AppTokens dt) {
     return Wrap(
       spacing: 6,
       runSpacing: 4,
@@ -136,14 +144,14 @@ class OrderCard extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: const Color(0xFFF2F4F2),
+            color: dt.surfaceVariant,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
             t.labelFor(locale),
             style: GoogleFonts.cairo(
               fontSize: 12,
-              color: const Color(0xFF404943),
+              color: dt.onSurfaceVariant,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -152,7 +160,7 @@ class OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildAddressRow() {
+  Widget _buildAddressRow(AppTokens dt) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -166,7 +174,7 @@ class OrderCard extends StatelessWidget {
           child: Container(
             width: 1,
             height: 16,
-            color: const Color(0xFFC0C9C1),
+            color: dt.border,
           ),
         ),
         _AddressLine(
@@ -178,7 +186,7 @@ class OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildFooterRow(BuildContext context) {
+  Widget _buildFooterRow(BuildContext context, AppTokens dt) {
     final l10n = context.l10n;
     // If it's a driver viewing an accepted order, they need to see the timer and start button
     final isDriverAccepted = mode == OrderCardMode.driverActive &&
@@ -202,7 +210,7 @@ class OrderCard extends StatelessWidget {
                 context.l10n.orderWaitingTime,
                 style: GoogleFonts.cairo(
                   fontSize: 10,
-                  color: const Color(0xFF717973),
+                  color: dt.onSurfaceMuted,
                 ),
               ),
               const SizedBox(height: 2),
@@ -218,22 +226,22 @@ class OrderCard extends StatelessWidget {
                   l10n.orderArrivalTime,
                   style: GoogleFonts.cairo(
                     fontSize: 10,
-                    color: const Color(0xFF717973),
+                    color: dt.onSurfaceMuted,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.timer_rounded,
-                        size: 14, color: Color(0xFF404943)),
+                    Icon(Icons.timer_rounded,
+                        size: 14, color: dt.onSurfaceVariant),
                     const SizedBox(width: 4),
                     Text(
                       order.eta!,
                       style: GoogleFonts.cairo(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF404943),
+                        color: dt.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -247,10 +255,12 @@ class OrderCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n.orderEarningsLabel,
+                  mode == OrderCardMode.driverAvailable
+                      ? l10n.orderPotentialEarnings
+                      : l10n.orderEarningsLabel,
                   style: GoogleFonts.cairo(
                     fontSize: 10,
-                    color: const Color(0xFF717973),
+                    color: dt.onSurfaceMuted,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -272,12 +282,69 @@ class OrderCard extends StatelessWidget {
                       style: GoogleFonts.cairo(
                         fontSize: 10,
                         color: AppColors.statusActiveText,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
               ],
             ),
+        ],
+        if ((order.itemPrice ?? 0) > 0) ...[
+          const SizedBox(width: 24),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.orderTotalCost,
+                style: GoogleFonts.cairo(
+                  fontSize: 10,
+                  color: dt.onSurfaceMuted,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    order.itemPrice!.toStringAsFixed(1),
+                    style: GoogleFonts.dmSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: dt.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  if (order.invoices != null && order.invoices!.isNotEmpty) ...[
+                    const SizedBox(width: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF06402B).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.receipt_long_rounded, size: 10, color: Color(0xFF06402B)),
+                          const SizedBox(width: 2),
+                          Text(
+                            '${order.invoices!.length}',
+                            style: GoogleFonts.dmSans(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF06402B),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
         ],
 
         // Spacer to push the action button to the far left
@@ -326,7 +393,10 @@ class OrderCard extends StatelessWidget {
               onTap: onAction ??
                   () => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => OrderDetailsView(order: order),
+                          builder: (_) => OrderDetailsView(
+                            order: order,
+                            hideStatus: true,
+                          ),
                         ),
                       ),
             ),
@@ -340,7 +410,10 @@ class OrderCard extends StatelessWidget {
               onTap: onAction ??
                   () => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => OrderDetailsView(order: order),
+                          builder: (_) => OrderDetailsView(
+                            order: order,
+                            hideStatus: true,
+                          ),
                         ),
                       ),
             ),
@@ -389,7 +462,7 @@ class _AddressLine extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.cairo(
               fontSize: 13,
-              color: const Color(0xFF404943),
+              color: context.dt.onSurfaceVariant,
             ),
           ),
         ),

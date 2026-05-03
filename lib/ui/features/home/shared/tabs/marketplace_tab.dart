@@ -13,6 +13,7 @@ import '../widgets/marketplace_segment_bar.dart';
 import '../market_item_details_view.dart';
 import '../../../../../data/models/order_labels.dart';
 import '../../../../../l10n/l10n.dart';
+import '../views/all_categories_view.dart';
 
 class MarketplaceTab extends StatefulWidget {
   final UserRole role;
@@ -61,9 +62,11 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
 
         // ── Segment 0: seller listings ──
         if (_segment == 0) ...[
+          if (vm.hasUserCategories)
+            SliverToBoxAdapter(child: _buildUserCategoryChips(context, vm)),
           SliverToBoxAdapter(child: _buildSearchBar(context, vm)),
           SliverToBoxAdapter(child: _buildCategoryChips(context, vm)),
-          SliverToBoxAdapter(child: _buildResultsCount(context, items.length)),
+          SliverToBoxAdapter(child: _buildResultsCount(context, items.length, vm)),
           if (items.isEmpty)
             _buildEmptyListings(context)
           else
@@ -183,6 +186,59 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
     );
   }
 
+  Widget _buildUserCategoryChips(BuildContext context, MarketplaceViewModel vm) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            'فئاتك',
+            style: GoogleFonts.cairo(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF6B7280),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            alignment: WrapAlignment.end,
+            children: vm.userCategories.map((cat) {
+              return GestureDetector(
+                onTap: () {
+                  final match = WasteTypeIcons.all
+                      .where((e) => e.$1.label == cat)
+                      .firstOrNull;
+                  if (match != null) vm.setCategory(match.$1);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF06402B).withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: const Color(0xFF06402B).withValues(alpha: 0.25),
+                    ),
+                  ),
+                  child: Text(
+                    cat,
+                    style: GoogleFonts.cairo(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF06402B),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSearchBar(BuildContext context, MarketplaceViewModel vm) {
     final l10n = context.l10n;
     return Padding(
@@ -287,7 +343,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
     );
   }
 
-  Widget _buildResultsCount(BuildContext context, int count) {
+  Widget _buildResultsCount(BuildContext context, int count, MarketplaceViewModel vm) {
     final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
@@ -306,6 +362,40 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF06402B)),
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => ChangeNotifierProvider.value(
+                  value: vm,
+                  child: const AllCategoriesView(),
+                ),
+              ),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8F5E9),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFF06402B).withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.category_rounded, size: 14, color: Color(0xFF06402B)),
+                  const SizedBox(width: 4),
+                  Text(
+                    'كل الفئات',
+                    style: GoogleFonts.cairo(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF06402B),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const Spacer(),
@@ -350,7 +440,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
     List<Order> items,
   ) {
     return SliverPadding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+      padding: const EdgeInsets.fromLTRB(14, 0, 14, 100),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (ctx, index) => MarketItemCard(

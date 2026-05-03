@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
+import 'app_tokens.dart';
 
 class AppTheme {
   static ThemeData get lightTheme {
@@ -189,6 +190,7 @@ class AppTheme {
           side: const BorderSide(color: AppColors.shamrock1000, width: 1),
         ),
       ),
+      extensions: [AppTokens.dark],
     );
   }
 
@@ -196,3 +198,4 @@ class AppTheme {
     return GoogleFonts.dmSans(textStyle: style);
   }
 }
+

@@ -7,6 +7,7 @@ class GreenButton extends StatelessWidget {
   final bool isLoading;
   final double borderRadius;
   final double height;
+  final double width;
   final Widget? leadingIcon;
   final Widget? trailingIcon;
 
@@ -17,20 +18,23 @@ class GreenButton extends StatelessWidget {
     this.isLoading = false,
     this.borderRadius = 12,
     this.height = 60,
+    this.width = double.infinity,
     this.leadingIcon,
     this.trailingIcon,
   });
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+
     return SizedBox(
-      width: double.infinity,
+      width: width,
       height: height,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF06402B),
-          disabledBackgroundColor: const Color(0xFF06402B).withValues(alpha: 0.5),
+          backgroundColor: primaryColor,
+          disabledBackgroundColor: primaryColor.withValues(alpha: 0.5),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
@@ -49,12 +53,17 @@ class GreenButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (leadingIcon != null) ...[leadingIcon!, const SizedBox(width: 8)],
-                  Text(
-                    text,
-                    style: GoogleFonts.cairo(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        text,
+                        style: GoogleFonts.cairo(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                   if (trailingIcon != null) ...[const SizedBox(width: 8), trailingIcon!],

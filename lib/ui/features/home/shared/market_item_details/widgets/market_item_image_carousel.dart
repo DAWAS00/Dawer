@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../../data/models/order.dart';
@@ -26,6 +27,44 @@ class _MarketItemImageCarouselState extends State<MarketItemImageCarousel> {
     super.dispose();
   }
 
+  Widget _buildImage(String path) {
+    final isNetwork = path.startsWith('http://') || path.startsWith('https://');
+    final placeholder = Container(
+      color: const Color(0xFF14401F),
+      child: const Center(
+        child: CircularProgressIndicator(color: Colors.white54, strokeWidth: 2),
+      ),
+    );
+    final errorWidget = Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF14401F), Color(0xFF1E6B35)],
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+        ),
+      ),
+    );
+
+    if (isNetwork) {
+      return Image.network(
+        path,
+        fit: BoxFit.cover,
+        loadingBuilder: (_, child, progress) =>
+            progress == null ? child : placeholder,
+        errorBuilder: (_, __, ___) => errorWidget,
+      );
+    }
+
+    final file = File(path);
+    if (!file.existsSync()) return errorWidget;
+
+    return Image.file(
+      file,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => errorWidget,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -35,30 +74,8 @@ class _MarketItemImageCarouselState extends State<MarketItemImageCarousel> {
           controller: _controller,
           onPageChanged: (p) => setState(() => _currentPage = p),
           itemCount: widget.images.length,
-          itemBuilder: (context, index) => Image.network(
-            widget.images[index],
-            fit: BoxFit.cover,
-            loadingBuilder: (context, child, progress) => progress == null
-                ? child
-                : Container(
-                    color: const Color(0xFF14401F),
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.white54,
-                        strokeWidth: 2,
-                      ),
-                    ),
-                  ),
-            errorBuilder: (context, err, stack) => Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF14401F), Color(0xFF1E6B35)],
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                ),
-              ),
-            ),
-          ),
+          itemBuilder: (context, index) =>
+              _buildImage(widget.images[index]),
         ),
         Positioned(
           bottom: 0,

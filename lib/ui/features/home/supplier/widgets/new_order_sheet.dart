@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../common/map/location_picker_screen.dart';
 import 'image_picker_grid.dart';
 
 class NewOrderSheet extends StatefulWidget {
@@ -16,6 +18,8 @@ class NewOrderSheet extends StatefulWidget {
     WeightCategory? weightCategory,
     PickupTarget? pickupTarget,
     double? itemPrice,
+    double? pickupLat,
+    double? pickupLng,
   }) onSubmit;
 
   const NewOrderSheet({
@@ -36,6 +40,8 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
   WeightCategory? _weightCategory;
   PickupTarget _pickupTarget = PickupTarget.company;
   final _priceCtrl = TextEditingController();
+  double? _pickedLat;
+  double? _pickedLng;
 
   static const List<(WasteType, IconData)> _wasteCategories = [
     (WasteType.paper, Icons.newspaper_rounded),
@@ -93,24 +99,63 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
     return baseFee + surcharge;
   }
 
+  Future<void> _pickLocation() async {
+    final result = await Navigator.push<(double, double)?>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => LocationPickerScreen(
+          initialLat: _pickedLat,
+          initialLng: _pickedLng,
+        ),
+      ),
+    );
+    if (result != null && mounted) {
+      setState(() {
+        _pickedLat = result.$1;
+        _pickedLng = result.$2;
+      });
+    }
+  }
+
+  String get _locationLabel {
+    if (_pickedLat != null && _pickedLng != null) {
+      return 'خط العرض: ${_pickedLat!.toStringAsFixed(4)} | خط الطول: ${_pickedLng!.toStringAsFixed(4)}';
+    }
+    return context.l10n.newOrderCurrentAddress;
+  }
+
   void _submit() {
     if (_selected.isEmpty) return;
+    if (_pickedLat == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('يرجى تحديد موقع الاستلام', style: GoogleFonts.cairo()),
+          backgroundColor: const Color(0xFFB91C1C),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      return;
+    }
     final price = double.tryParse(_priceCtrl.text.trim());
     widget.onSubmit(
       wasteTypes: _selected.toList(),
-      pickupAddress: context.l10n.newOrderCurrentAddress,
+      pickupAddress: _locationLabel,
       images: List.from(_images),
       notes: _notesCtrl.text.trim().isNotEmpty ? _notesCtrl.text.trim() : null,
       wasteForm: _wasteForm,
       weightCategory: _weightCategory,
       pickupTarget: _pickupTarget,
       itemPrice: price,
+      pickupLat: _pickedLat,
+      pickupLng: _pickedLng,
     );
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    final dt = context.dt;
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SingleChildScrollView(
@@ -123,7 +168,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD1D5DB),
+                  color: dt.border,
                   borderRadius: BorderRadius.circular(9999),
                 ),
               ),
@@ -137,10 +182,10 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF2F4F2),
+                      color: dt.surfaceVariant,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.close_rounded, size: 20, color: Color(0xFF717973)),
+                    child: Icon(Icons.close_rounded, size: 20, color: dt.onSurfaceMuted),
                   ),
                 ),
                 const Spacer(),
@@ -149,11 +194,11 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                   children: [
                     Text(
                       context.l10n.newOrderTitle,
-                      style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
+                      style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.bold, color: dt.onSurface),
                     ),
                     Text(
                       context.l10n.newOrderSubtitle,
-                      style: GoogleFonts.cairo(fontSize: 12, color: const Color(0xFF717973)),
+                      style: GoogleFonts.cairo(fontSize: 12, color: dt.onSurfaceMuted),
                     ),
                   ],
                 ),
@@ -162,7 +207,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 1. Waste type selection ──
-            _buildSectionLabel(context.l10n.newOrderWasteTypeLabel),
+            _buildSectionLabel(context.l10n.newOrderWasteTypeLabel, dt),
             const SizedBox(height: 10),
             Wrap(
               spacing: 8,
@@ -179,9 +224,9 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                     duration: const Duration(milliseconds: 180),
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFF06402B) : const Color(0xFFF2F4F2),
+                      color: isSelected ? const Color(0xFF06402B) : dt.surfaceVariant,
                       borderRadius: BorderRadius.circular(30),
-                      border: isSelected ? null : Border.all(color: const Color(0xFFE6E9E7)),
+                      border: isSelected ? null : Border.all(color: dt.border),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -191,11 +236,11 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                           style: GoogleFonts.cairo(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: isSelected ? Colors.white : const Color(0xFF404943),
+                            color: isSelected ? Colors.white : dt.onSurfaceVariant,
                           ),
                         ),
                         const SizedBox(width: 6),
-                        Icon(icon, size: 15, color: isSelected ? Colors.white : const Color(0xFF717973)),
+                        Icon(icon, size: 15, color: isSelected ? Colors.white : dt.onSurfaceMuted),
                       ],
                     ),
                   ),
@@ -205,7 +250,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 2. Waste form ──
-            _buildSectionLabel(context.l10n.newOrderWasteFormLabel),
+            _buildSectionLabel(context.l10n.newOrderWasteFormLabel, dt),
             const SizedBox(height: 10),
             Row(
               children: _wasteFormOptions.reversed.map((entry) {
@@ -221,20 +266,20 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                       margin: EdgeInsets.only(left: form != WasteForm.mixed ? 8 : 0),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF06402B) : const Color(0xFFF2F4F2),
+                        color: isSelected ? const Color(0xFF06402B) : dt.surfaceVariant,
                         borderRadius: BorderRadius.circular(14),
-                        border: isSelected ? null : Border.all(color: const Color(0xFFE6E9E7)),
+                        border: isSelected ? null : Border.all(color: dt.border),
                       ),
                       child: Column(
                         children: [
-                          Icon(icon, size: 22, color: isSelected ? Colors.white : const Color(0xFF717973)),
+                          Icon(icon, size: 22, color: isSelected ? Colors.white : dt.onSurfaceMuted),
                           const SizedBox(height: 6),
                           Text(
                             form.label,
                             style: GoogleFonts.cairo(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
-                              color: isSelected ? Colors.white : const Color(0xFF404943),
+                              color: isSelected ? Colors.white : dt.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -247,7 +292,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 3. Weight category ──
-            _buildSectionLabel(context.l10n.newOrderWeightCategoryLabel),
+            _buildSectionLabel(context.l10n.newOrderWeightCategoryLabel, dt),
             const SizedBox(height: 10),
             ...WeightCategory.values.map((cat) {
               final isSelected = _weightCategory == cat;
@@ -261,10 +306,10 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xFF06402B) : Colors.white,
+                    color: isSelected ? const Color(0xFF06402B) : dt.surface,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: isSelected ? const Color(0xFF06402B) : const Color(0xFFE6E9E7),
+                      color: isSelected ? const Color(0xFF06402B) : dt.border,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -273,7 +318,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                       if (isSelected)
                         const Icon(Icons.check_circle_rounded, color: Colors.white, size: 20)
                       else
-                        Icon(Icons.radio_button_off_rounded, color: const Color(0xFFBBBFBD), size: 20),
+                        Icon(Icons.radio_button_off_rounded, color: dt.border, size: 20),
                       const Spacer(),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -283,14 +328,14 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                             style: GoogleFonts.cairo(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: isSelected ? Colors.white : const Color(0xFF002819),
+                              color: isSelected ? Colors.white : dt.onSurface,
                             ),
                           ),
                           Text(
                             cat.label,
                             style: GoogleFonts.cairo(
                               fontSize: 11,
-                              color: isSelected ? Colors.white70 : const Color(0xFF717973),
+                              color: isSelected ? Colors.white70 : dt.onSurfaceMuted,
                             ),
                           ),
                         ],
@@ -300,10 +345,10 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: isSelected ? Colors.white.withValues(alpha: 0.15) : const Color(0xFFF2F4F2),
+                          color: isSelected ? Colors.white.withValues(alpha: 0.15) : dt.surfaceVariant,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Icon(entry.$2, size: 18, color: isSelected ? Colors.white : const Color(0xFF717973)),
+                        child: Icon(entry.$2, size: 18, color: isSelected ? Colors.white : dt.onSurfaceMuted),
                       ),
                     ],
                   ),
@@ -312,27 +357,25 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             }),
             const SizedBox(height: 24),
 
-            // ── 4. Pickup address (Google Maps placeholder) ──
-            _buildSectionLabel(context.l10n.newOrderPickupAddressLabel),
+            // ── 4. Pickup address ──
+            _buildSectionLabel(context.l10n.newOrderPickupAddressLabel, dt),
             const SizedBox(height: 8),
             GestureDetector(
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(context.l10n.mapsComingSoon, style: GoogleFonts.cairo()),
-                    backgroundColor: const Color(0xFF1E5C35),
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                );
-              },
-              child: Container(
+              onTap: _pickLocation,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF2F4F2),
+                  color: _pickedLat != null
+                      ? const Color(0xFF06402B).withValues(alpha: 0.06)
+                      : dt.surfaceVariant,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFE6E9E7)),
+                  border: Border.all(
+                    color: _pickedLat != null
+                        ? const Color(0xFF06402B).withValues(alpha: 0.4)
+                        : dt.border,
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -352,12 +395,20 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          context.l10n.newOrderCurrentAddress,
-                          style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
+                          _pickedLat != null
+                              ? '${_pickedLat!.toStringAsFixed(4)}, ${_pickedLng!.toStringAsFixed(4)}'
+                              : context.l10n.newOrderCurrentAddress,
+                          style: GoogleFonts.cairo(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: _pickedLat != null
+                                ? const Color(0xFF06402B)
+                                : dt.onSurface,
+                          ),
                         ),
                         Text(
                           context.l10n.newOrderTapToSelectLocation,
-                          style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF717973)),
+                          style: GoogleFonts.cairo(fontSize: 11, color: dt.onSurfaceMuted),
                         ),
                       ],
                     ),
@@ -369,7 +420,13 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                         color: const Color(0xFF06402B).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(Icons.location_on_rounded, size: 20, color: Color(0xFF06402B)),
+                      child: Icon(
+                        _pickedLat != null
+                            ? Icons.location_on_rounded
+                            : Icons.add_location_alt_rounded,
+                        size: 20,
+                        color: const Color(0xFF06402B),
+                      ),
                     ),
                   ],
                 ),
@@ -378,7 +435,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 5. Images ──
-            _buildSectionLabel(context.l10n.newOrderImagesLabel),
+            _buildSectionLabel(context.l10n.newOrderImagesLabel, dt),
             const SizedBox(height: 8),
             ImagePickerGrid(
               imagePaths: _images,
@@ -388,7 +445,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 6. Pickup target (company vs rider buy) ──
-            _buildSectionLabel(context.l10n.newOrderPickupTargetLabel),
+            _buildSectionLabel(context.l10n.newOrderPickupTargetLabel, dt),
             const SizedBox(height: 10),
             Row(
               children: PickupTarget.values.reversed.map((target) {
@@ -406,16 +463,16 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
                       decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF06402B) : Colors.white,
+                        color: isSelected ? const Color(0xFF06402B) : dt.surface,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: isSelected ? const Color(0xFF06402B) : const Color(0xFFE6E9E7),
+                          color: isSelected ? const Color(0xFF06402B) : dt.border,
                           width: isSelected ? 2 : 1,
                         ),
                       ),
                       child: Column(
                         children: [
-                          Icon(icon, size: 28, color: isSelected ? Colors.white : const Color(0xFF717973)),
+                          Icon(icon, size: 28, color: isSelected ? Colors.white : dt.onSurfaceMuted),
                           const SizedBox(height: 8),
                           Text(
                             target.label,
@@ -423,7 +480,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                             style: GoogleFonts.cairo(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: isSelected ? Colors.white : const Color(0xFF404943),
+                              color: isSelected ? Colors.white : dt.onSurfaceVariant,
                             ),
                           ),
                           if (isSelected)
@@ -441,18 +498,18 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 7. Item price ──
-            _buildSectionLabel(context.l10n.newOrderPriceLabel),
+            _buildSectionLabel(context.l10n.newOrderPriceLabel, dt),
             const SizedBox(height: 4),
             Text(
               _pickupTarget == PickupTarget.riderBuy
                   ? context.l10n.newOrderPriceHintDriver
                   : context.l10n.newOrderPriceHintCompany,
-              style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF717973)),
+              style: GoogleFonts.cairo(fontSize: 11, color: dt.onSurfaceMuted),
             ),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xFFF2F4F2),
+                color: dt.surfaceVariant,
                 borderRadius: BorderRadius.circular(14),
               ),
               child: TextField(
@@ -460,20 +517,20 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 textDirection: TextDirection.ltr,
                 textAlign: TextAlign.left,
-                style: GoogleFonts.dmSans(fontSize: 16, fontWeight: FontWeight.bold, color: const Color(0xFF191C1B)),
+                style: GoogleFonts.dmSans(fontSize: 16, fontWeight: FontWeight.bold, color: dt.onSurface),
                 decoration: InputDecoration(
                   hintText: '0.00',
-                  hintStyle: GoogleFonts.dmSans(fontSize: 16, color: const Color(0xFF6B7280).withValues(alpha: 0.4)),
+                  hintStyle: GoogleFonts.dmSans(fontSize: 16, color: dt.onSurfaceMuted.withValues(alpha: 0.6)),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                   suffixIcon: Padding(
                     padding: const EdgeInsets.only(left: 14),
-                    child: Text(context.l10n.orderCurrencyJD, style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF717973))),
+                    child: Text(context.l10n.orderCurrencyJD, style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: dt.onSurfaceMuted)),
                   ),
                   suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
                   prefixIcon: Icon(
                     _pickupTarget == PickupTarget.riderBuy ? Icons.sell_rounded : Icons.storefront_rounded,
-                    color: const Color(0xFF717973),
+                    color: dt.onSurfaceMuted,
                     size: 20,
                   ),
                 ),
@@ -482,21 +539,21 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             const SizedBox(height: 24),
 
             // ── 8. Notes ──
-            _buildSectionLabel(context.l10n.newOrderNotesLabel),
+            _buildSectionLabel(context.l10n.newOrderNotesLabel, dt),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xFFF2F4F2),
+                color: dt.surfaceVariant,
                 borderRadius: BorderRadius.circular(14),
               ),
               child: TextField(
                 controller: _notesCtrl,
                 maxLines: 3,
                 textAlign: TextAlign.right,
-                style: GoogleFonts.cairo(fontSize: 14, color: const Color(0xFF191C1B)),
+                style: GoogleFonts.cairo(fontSize: 14, color: dt.onSurface),
                 decoration: InputDecoration(
                   hintText: context.l10n.newOrderNotesHint,
-                  hintStyle: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF6B7280).withValues(alpha: 0.5)),
+                  hintStyle: GoogleFonts.cairo(fontSize: 13, color: dt.onSurfaceMuted.withValues(alpha: 0.7)),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.all(14),
                 ),
@@ -504,7 +561,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             ),
             const SizedBox(height: 24),
 
-            // ── 7. Delivery fee (auto-calculated) ──
+            // ── Delivery fee (auto-calculated) ──
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -540,7 +597,7 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
             ),
             const SizedBox(height: 28),
 
-            // ── 8. Submit ──
+            // ── Submit ──
             SizedBox(
               width: double.infinity,
               height: 54,
@@ -571,10 +628,10 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
     );
   }
 
-  Widget _buildSectionLabel(String text) {
+  Widget _buildSectionLabel(String text, AppTokens dt) {
     return Text(
       text,
-      style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF404943)),
+      style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: dt.onSurfaceVariant),
     );
   }
 }

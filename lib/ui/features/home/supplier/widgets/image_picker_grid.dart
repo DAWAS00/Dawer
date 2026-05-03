@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../l10n/l10n.dart';
 
 class ImagePickerGrid extends StatelessWidget {
@@ -19,35 +20,38 @@ class ImagePickerGrid extends StatelessWidget {
   });
 
   Future<void> _pickImage(BuildContext context) async {
+    final dt = context.dt;
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: dt.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE6E9E7),
-                  borderRadius: BorderRadius.circular(2),
+      builder: (ctx) {
+        final ctxDt = ctx.dt;
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: ctxDt.border,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                context.l10n.imagePickerSourceTitle,
-                style: GoogleFonts.cairo(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819),
+                const SizedBox(height: 16),
+                Text(
+                  ctx.l10n.imagePickerSourceTitle,
+                  style: GoogleFonts.cairo(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: ctxDt.onSurface,
+                  ),
                 ),
-              ),
               const SizedBox(height: 16),
               ListTile(
                 leading: Container(
@@ -59,7 +63,7 @@ class ImagePickerGrid extends StatelessWidget {
                   ),
                   child: const Icon(Icons.camera_alt_rounded, color: Color(0xFF06402B)),
                 ),
-                title: Text(ctx.l10n.imagePickerCamera, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                title: Text(ctx.l10n.imagePickerCamera, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: ctxDt.onSurface)),
                 onTap: () => Navigator.pop(ctx, ImageSource.camera),
               ),
               ListTile(
@@ -72,13 +76,14 @@ class ImagePickerGrid extends StatelessWidget {
                   ),
                   child: const Icon(Icons.photo_library_rounded, color: Color(0xFF06402B)),
                 ),
-                title: Text(ctx.l10n.imagePickerGallery, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                title: Text(ctx.l10n.imagePickerGallery, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: ctxDt.onSurface)),
                 onTap: () => Navigator.pop(ctx, ImageSource.gallery),
               ),
             ],
           ),
         ),
-      ),
+      );
+      },
     );
 
     if (source == null) return;
@@ -124,11 +129,12 @@ class _AddTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dt = context.dt;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFFF2F4F2),
+          color: dt.surfaceVariant,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: const Color(0xFF06402B).withValues(alpha: 0.3),

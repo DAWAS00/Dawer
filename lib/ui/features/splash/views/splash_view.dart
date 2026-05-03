@@ -1,7 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../auth/views/login_view.dart';
+import '../../../../data/models/user_role.dart';
+import '../../../../domain/repositories/i_auth_repository.dart';
+import '../../home/home_router.dart';
 import '../../../../l10n/l10n.dart';
 
 class SplashView extends StatefulWidget {
@@ -37,18 +41,56 @@ class _SplashViewState extends State<SplashView>
 
     _controller.forward();
 
+    // Check for existing session & navigate after splash animation
     Timer(const Duration(seconds: 3), () {
       if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const LoginView(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-          transitionDuration: const Duration(milliseconds: 500),
-        ),
-      );
+      _resolveNavigation();
     });
+  }
+
+  /// Checks if an existing session exists via IAuthRepository. If so,
+  /// navigates directly to the home screen. Otherwise, goes to login.
+  Future<void> _resolveNavigation() async {
+    try {
+      final authRepo = context.read<IAuthRepository>();
+      final session = authRepo.currentSession;
+
+      if (session != null && mounted) {
+        // Session exists — navigate to home with the resolved role
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                HomeRouter(
+              role: session.role,
+              supplierType: session.supplierType ?? SupplierType.individual,
+              userName: session.userName,
+              aiSuggestedCategories: session.categories,
+            ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            transitionDuration: const Duration(milliseconds: 500),
+          ),
+        );
+        return;
+      }
+    } catch (_) {
+      // If anything fails, fall through to login
+    }
+
+    // No valid session — go to login
+    if (!mounted) return;
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const LoginView(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
   }
 
   @override
@@ -103,7 +145,8 @@ class _SplashViewState extends State<SplashView>
                         width: 220,
                         height: 220,
                         fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) => const Icon(
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
                           Icons.eco_rounded,
                           size: 56,
                           color: Color(0xFF06402B),

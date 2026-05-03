@@ -18,21 +18,37 @@ dependencies:
   google_mlkit_image_labeling: ^0.13.0
   image_picker: ^1.2.1
   provider: ^6.1.5+1
-  flutter_map: ^7.0.2
   geolocator: ^13.0.2
-  http: ^1.2.1
-  latlong2: ^0.9.1
+  google_maps_flutter: ^2.10.0
   permission_handler: ^11.3.1
   url_launcher: ^6.3.2
   shared_preferences: ^2.5.3
+  crypto: ^3.0.7
+  supabase_flutter: ^2.8.4
+  flutter_dotenv: ^5.2.1
+  path: ^1.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/AppLogo.png"
+  min_sdk_android: 21
+  web:
+    generate: false
+  windows:
+    generate: false
+  macos:
+    generate: false
 
 flutter:
   generate: true
   uses-material-design: true
   assets:
     - assets/images/
+    - .env.local

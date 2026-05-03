@@ -1,40 +1,49 @@
 import 'package:flutter/foundation.dart';
 
-enum UserRole { driver, supplier, recyclingCo }
+// Re-export data-layer enums so existing imports of this file keep working.
+export '../../../../data/models/user_role.dart' show UserRole, SupplierType;
 
-enum SupplierType { individual, storeBusiness }
-
-enum LoginMethod { email, phone }
+import '../../../../data/models/user_role.dart';
+import '../../../../domain/repositories/i_auth_repository.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  LoginViewModel();
+  LoginViewModel({required IAuthRepository authRepository})
+      : _authRepository = authRepository;
+
+  final IAuthRepository _authRepository;
 
   // --- State ---
   UserRole _selectedRole = UserRole.driver;
-  SupplierType _supplierType = SupplierType.individual;
-  LoginMethod _loginMethod = LoginMethod.phone;
-  String _currentInput = '';
+  SupplierType? _supplierType;
+  String _email = '';
+  String _password = '';
+  String _phone = '';
   String? _error;
   bool _isLoading = false;
-  bool _verificationSent = false;
-  String _selectedCountryCode = 'JO';
-  String _selectedDialCode = '+962';
+  bool _signedIn = false;
+  bool _otpSent = false;
+  bool _passwordResetRequested = false;
+  AuthSession? _session;
 
   // --- Getters ---
   UserRole get selectedRole => _selectedRole;
-  SupplierType get supplierType => _supplierType;
-  LoginMethod get loginMethod => _loginMethod;
-  String get currentInput => _currentInput;
+  SupplierType? get supplierType => _supplierType;
+  String get email => _email;
+  String get password => _password;
+  String get phone => _phone;
   String? get error => _error;
   bool get isLoading => _isLoading;
-  bool get verificationSent => _verificationSent;
-  bool get isEmailMethod => _loginMethod == LoginMethod.email;
-  String get selectedCountryCode => _selectedCountryCode;
-  String get selectedDialCode => _selectedDialCode;
+  bool get signedIn => _signedIn;
+  bool get otpSent => _otpSent;
+  bool get passwordResetRequested => _passwordResetRequested;
+  AuthSession? get session => _session;
 
-  // --- Methods ---
+  String get profileName => _session?.userName ?? (_email.isNotEmpty ? _email : _phone);
+
+  // --- Mutators ---
   void selectRole(UserRole role) {
     _selectedRole = role;
+    _supplierType = null; // reset so portal cards return to un-chosen state
     _error = null;
     notifyListeners();
   }
@@ -44,34 +53,31 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setLoginMethod(LoginMethod method) {
-    _loginMethod = method;
-    _currentInput = '';
-    _error = null;
+  void clearSupplierType() {
+    _supplierType = null;
     notifyListeners();
   }
 
   void setEmail(String email) {
-    _currentInput = email;
+    _email = email;
     _error = null;
   }
 
-  void setPhoneNumber(String phone) {
-    _currentInput = phone;
+  void setPassword(String value) {
+    _password = value;
     _error = null;
   }
 
-  void setCountry(String countryCode, String dialCode) {
-    _selectedCountryCode = countryCode;
-    _selectedDialCode = dialCode;
-    notifyListeners();
+  void setPhone(String value) {
+    _phone = value;
+    _error = null;
   }
 
-  Future<void> sendVerificationCode() async {
-    if (_currentInput.trim().isEmpty) {
-      _error = isEmailMethod
-          ? 'الرجاء إدخال البريد الإلكتروني'
-          : 'الرجاء إدخال رقم الهاتف';
+  /// Requests an OTP for the provided phone number.
+  Future<void> requestOtp(String phone) async {
+    _phone = phone.trim();
+    if (_phone.isEmpty) {
+      _error = 'الرجاء إدخال رقم الهاتف';
       notifyListeners();
       return;
     }
@@ -80,14 +86,86 @@ class LoginViewModel extends ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    await Future.delayed(const Duration(milliseconds: 1200));
+    final result = await _authRepository.requestOtp(_phone);
+    result.fold(
+      onSuccess: (_) {
+        _otpSent = true;
+      },
+      onFailure: (f) => _error = f.message,
+    );
 
     _isLoading = false;
-    _verificationSent = true;
     notifyListeners();
   }
 
-  void resetVerificationSent() {
-    _verificationSent = false;
+  void resetOtpSent() {
+    _otpSent = false;
+  }
+
+  void resetPasswordResetRequested() {
+    _passwordResetRequested = false;
+  }
+
+  /// Sends a 6-digit recovery OTP to the current [_email].
+  Future<void> requestPasswordReset() async {
+    if (_email.trim().isEmpty) {
+      _error = 'forgotPasswordErrorEmptyEmail';
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    final result = await _authRepository.requestPasswordReset(_email.trim());
+    result.fold(
+      onSuccess: (_) => _passwordResetRequested = true,
+      onFailure: (f) => _error = f.message,
+    );
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  /// Signs the user in with email + password.
+  Future<void> signIn() async {
+    if (_email.trim().isEmpty) {
+      _error = 'الرجاء إدخال البريد الإلكتروني';
+      notifyListeners();
+      return;
+    }
+    if (_password.isEmpty) {
+      _error = 'الرجاء إدخال كلمة المرور';
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    final result = await _authRepository.signInWithEmail(
+      _email.trim(),
+      _password,
+    );
+    result.fold(
+      onSuccess: (session) {
+        _session = session;
+        _selectedRole = session.role;
+        if (session.supplierType != null) {
+          _supplierType = session.supplierType!;
+        }
+        _signedIn = true;
+      },
+      onFailure: (f) => _error = f.message,
+    );
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  void resetSignedIn() {
+    _signedIn = false;
   }
 }

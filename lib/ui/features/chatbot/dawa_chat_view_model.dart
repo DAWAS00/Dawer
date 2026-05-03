@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../../data/models/order.dart';
 import 'dawa_chatbot_service.dart';
 import 'dawa_image_scan_service.dart';
 
@@ -39,6 +40,11 @@ class DawaChatViewModel extends ChangeNotifier {
 
   bool _isScanning = false;
   bool get isScanning => _isScanning;
+
+  WasteType? _lastScannedType;
+  double? _lastScannedWeightKg;
+  WasteType? get lastScannedType => _lastScannedType;
+  double? get lastScannedWeightKg => _lastScannedWeightKg;
 
   DawaChatViewModel() {
     final greeting = DawaChatbotService.greeting;
@@ -106,6 +112,7 @@ class DawaChatViewModel extends ChangeNotifier {
       notifyListeners();
       final result = await DawaImageScanService.classify(tempFile);
       _isScanning = false;
+      _applyScannedCategory(result.category);
       if (result.category == 'unknown') {
         final confPct = (result.confidence * 100).toStringAsFixed(0);
         _addBotMessage(
@@ -197,6 +204,7 @@ class DawaChatViewModel extends ChangeNotifier {
     try {
       final result = await DawaImageScanService.classify(File(imagePath));
       _isScanning = false;
+      _applyScannedCategory(result.category);
 
       if (result.category == 'unknown') {
         final confPct = (result.confidence * 100).toStringAsFixed(0);
@@ -257,6 +265,18 @@ class DawaChatViewModel extends ChangeNotifier {
   // ──────────────────────────────────────────────
   //  Internal
   // ──────────────────────────────────────────────
+
+  void _applyScannedCategory(String category) {
+    switch (category) {
+      case 'oil':
+        _lastScannedType = WasteType.oil;
+      case 'wood':
+        _lastScannedType = WasteType.wood;
+      default:
+        _lastScannedType = null;
+    }
+    notifyListeners();
+  }
 
   void _addBotMessage(DawaEntry entry, {String? mlSource}) {
     final followUps = entry.followUpIds

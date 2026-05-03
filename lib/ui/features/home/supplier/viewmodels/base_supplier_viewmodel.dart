@@ -28,6 +28,11 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
   User get defaultUser;
   String get listingIdPrefix;
 
+  // ── Exposed to subclasses ─────────────────────────────────────────────────
+
+  @protected
+  AppOrderStore get store => _store;
+
   // ── Local state ───────────────────────────────────────────────────────────
 
   int _currentTab = 0;
@@ -127,6 +132,8 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
     WasteForm? wasteForm,
     WeightCategory? weightCategory,
     double? itemPrice,
+    double? pickupLat,
+    double? pickupLng,
   }) {
     final orderId =
         '$listingIdPrefix${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
@@ -146,6 +153,9 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
       weightCategory: weightCategory,
       pickupTarget: PickupTarget.riderBuy,
       itemPrice: itemPrice,
+      isMarketplaceShared: true,
+      pickupLat: pickupLat,
+      pickupLng: pickupLng,
     );
   }
 
@@ -157,11 +167,14 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
   String? completeCollectionSale(String saleId, {double? actualWeightKg}) =>
       _store.completeCollectionSale(saleId, actualWeightKg: actualWeightKg);
 
-  /// Cancel a pending collectionSale.
-  String? cancelCollectionSale(String saleId) =>
+  /// Cancel a pending collectionSale. Silently ignored if inTransit/completed.
+  void cancelCollectionSale(String saleId) =>
       _store.cancelCollectionSale(saleId);
 
   String? cancelOrder(String orderId) => _store.cancelOrder(orderId);
+
+  void assignDriver(String orderId, User driver) =>
+      _store.assignDriver(orderId, driver);
 
   void addOrder(Order order) {
     _currentTab = 2;

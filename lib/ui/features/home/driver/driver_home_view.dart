@@ -18,17 +18,26 @@ import '../../../../../l10n/l10n.dart';
 
 class DriverHomeView extends StatelessWidget {
   final String userName;
-  const DriverHomeView({super.key, required this.userName});
+  final List<String> aiSuggestedCategories;
+
+  const DriverHomeView({
+    super.key,
+    required this.userName,
+    this.aiSuggestedCategories = const [],
+  });
 
   @override
   Widget build(BuildContext context) {
     final store = context.read<AppOrderStore>();
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => DriverHomeViewModel(store)),
         ChangeNotifierProvider(
-            create: (_) => DriverHomeViewModel(store)),
-        ChangeNotifierProvider(
-            create: (_) => MarketplaceViewModel(store)),
+          create: (_) => MarketplaceViewModel(
+            store,
+            initialSuggestions: aiSuggestedCategories,
+          ),
+        ),
       ],
       child: _DriverHomeBody(userName: userName),
     );
@@ -41,32 +50,33 @@ class _DriverHomeBody extends StatelessWidget {
 
   void _handleAcceptOrder(
       BuildContext context, DriverHomeViewModel vm, order) {
-    final error = vm.acceptOrder(order);
-    if (error != null) {
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16)),
-          title: Text(context.l10n.alert,
-              textAlign: TextAlign.right,
-              style:
-                  GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-          content: Text(error,
-              textAlign: TextAlign.right,
-              style: GoogleFonts.cairo()),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(context.l10n.ok,
-                  style: GoogleFonts.cairo(
-                      color: const Color(0xFF06402B),
-                      fontWeight: FontWeight.bold)),
-            ),
-          ],
-        ),
-      );
-    }
+    vm.acceptOrder(order).then((error) {
+      if (error != null && context.mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16)),
+            title: Text(context.l10n.alert,
+                textAlign: TextAlign.right,
+                style:
+                    GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+            content: Text(error,
+                textAlign: TextAlign.right,
+                style: GoogleFonts.cairo()),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(context.l10n.ok,
+                    style: GoogleFonts.cairo(
+                        color: const Color(0xFF06402B),
+                        fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+        );
+      }
+    });
   }
 
   void _handleToggleAvailability(
@@ -169,6 +179,8 @@ class _DriverHomeBody extends StatelessWidget {
           WasteForm? wasteForm,
           WeightCategory? weightCategory,
           double? itemPrice,
+          double? pickupLat,
+          double? pickupLng,
         }) {
           final order = vm.createListing(
             wasteTypes: wasteTypes,
@@ -178,6 +190,8 @@ class _DriverHomeBody extends StatelessWidget {
             wasteForm: wasteForm,
             weightCategory: weightCategory,
             itemPrice: itemPrice,
+            pickupLat: pickupLat,
+            pickupLng: pickupLng,
           );
           marketVm.addListing(order);
         },

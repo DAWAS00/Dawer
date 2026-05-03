@@ -17,18 +17,27 @@ import '../shared/widgets/post_to_market_sheet.dart';
 
 class IndividualSupplierHomeView extends StatelessWidget {
   final String userName;
+  final List<String> aiSuggestedCategories;
 
   const IndividualSupplierHomeView({
     super.key,
     required this.userName,
+    this.aiSuggestedCategories = const [],
   });
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (ctx) => IndividualSupplierViewModel(ctx.read<AppOrderStore>())),
-        ChangeNotifierProvider(create: (ctx) => MarketplaceViewModel(ctx.read<AppOrderStore>())),
+        ChangeNotifierProvider(
+          create: (ctx) => IndividualSupplierViewModel(ctx.read<AppOrderStore>()),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => MarketplaceViewModel(
+            ctx.read<AppOrderStore>(),
+            initialSuggestions: aiSuggestedCategories,
+          ),
+        ),
       ],
       child: _IndividualSupplierHomeBody(userName: userName),
     );
@@ -120,6 +129,8 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
           WasteForm? wasteForm,
           WeightCategory? weightCategory,
           double? itemPrice,
+          double? pickupLat,
+          double? pickupLng,
         }) {
           final order = vm.createListing(
             wasteTypes: wasteTypes,
@@ -129,6 +140,8 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
             wasteForm: wasteForm,
             weightCategory: weightCategory,
             itemPrice: itemPrice,
+            pickupLat: pickupLat,
+            pickupLng: pickupLng,
           );
           marketVm.addListing(order);
         },

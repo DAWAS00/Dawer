@@ -106,6 +106,13 @@ class OrderInfoSection extends StatelessWidget {
                   value: l10n.orderRewardJD(order.reward.toStringAsFixed(1)),
                   highlight: true,
                 ),
+              if ((order.itemPrice ?? 0) > 0) ...[
+                const SizedBox(width: 8),
+                _MetaChip(
+                  icon: Icons.receipt_long_rounded,
+                  value: '${order.itemPrice!.toStringAsFixed(1)} ${l10n.orderCurrencyJD}',
+                ),
+              ],
             ],
           ),
         ],

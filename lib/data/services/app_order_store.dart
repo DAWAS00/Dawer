@@ -1,7 +1,16 @@
-﻿import 'package:flutter/foundation.dart';
-import '../models/order.dart';
-import '../models/user.dart';
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import '../../backend_integration_locally/local_store.dart';
+import '../../core/result/result.dart';
+import '../../domain/failures/app_failure.dart';
+import '../../domain/repositories/i_order_repository.dart';
+import '../../domain/requests/create_pickup_request.dart';
 import '../mock/order_mock_data.dart';
+import '../models/order.dart';
+import '../models/order_json.dart';
+import '../models/user.dart';
+import '../models/user_role.dart';
 
 /// Singleton shared order store — the single source of truth for all orders
 /// across Driver, Supplier, and Recycling Company roles.
@@ -10,22 +19,131 @@ import '../mock/order_mock_data.dart';
 /// accept this store in their constructor and addListener to it so their own
 /// [notifyListeners] fires whenever the store changes.
 class AppOrderStore extends ChangeNotifier {
+  AppOrderStore({
+    LocalStore? store,
+    IOrderRepository? remote,
+  })  : _store = store,
+        _remote = remote ?? const NoOpOrderRepository() {
+    _bootstrap();
+  }
+
+  final LocalStore? _store;
+  final IOrderRepository _remote;
+  StreamSubscription<List<Order>>? _remoteSub;
+
+  // ── Error state ───────────────────────────────────────────────────────────
+
+  AppFailure? get lastError => _lastError;
+
+  void clearError() {
+    _lastError = null;
+    notifyListeners();
+  }
+
   // ─────────────────────────────────────────────────────────────────────────
   // State
   // ─────────────────────────────────────────────────────────────────────────
 
   /// All regular orders — pickup requests (from suppliers) and collection jobs
   /// (posted by recycling companies). This is the canonical list.
-  final List<Order> _orders = OrderMockData.seedOrders();
+  late List<Order> _orders;
 
-  /// Marketplace items — materials listed for purchase/claim.
-  final List<Order> _market = OrderMockData.seedMarketItems();
 
   /// ID of the order currently active for our mock driver session.
   String? _activeOrderId;
 
   /// IDs of orders completed by our mock driver (their personal history).
   final List<String> _driverCompletedIds = ['ORD-H01', 'ORD-H02'];
+
+  /// Last error captured by [_safeSupabaseInsert].
+  AppFailure? _lastError;
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Bootstrap & persistence
+  // ─────────────────────────────────────────────────────────────────────────
+
+  void _bootstrap() {
+    final store = _store;
+    if (store == null) {
+      _orders = [...OrderMockData.seedOrders(), ...OrderMockData.seedMarketItems()];
+    } else {
+      if (store.isFirstLaunch) {
+        _orders = [...OrderMockData.seedOrders(), ...OrderMockData.seedMarketItems()];
+        store.writeOrders(_orders.map((o) => o.toJson()).toList());
+        store.markFirstLaunchDone();
+      } else {
+        _orders = store.readOrders().map(orderFromJson).toList();
+        final oldMarket = store.readMarket().map(orderFromJson).toList();
+        for (final m in oldMarket) {
+          if (!_orders.any((o) => o.id == m.id)) {
+            _orders.add(m.copyWith(isMarketplaceShared: true));
+          }
+        }
+      }
+    }
+
+    // Subscribe to remote order updates. The default NoOpOrderRepository
+    // emits nothing, so seed-only / test paths are unaffected.
+    _remoteSub = _remote.watchOrders().listen(
+      (remoteOrders) {
+        if (remoteOrders.isEmpty) return;
+        for (final o in remoteOrders) {
+          final idx = _orders.indexWhere((existing) => existing.id == o.id);
+          if (idx >= 0) {
+            _orders[idx] = o;
+          } else {
+            _orders.insert(0, o);
+          }
+        }
+        notifyListeners();
+      },
+      onError: (Object e) =>
+          debugPrint('Remote order stream error: $e'),
+    );
+  }
+
+  @override
+  void dispose() {
+    _remoteSub?.cancel();
+    super.dispose();
+  }
+
+  /// Re-subscribe the remote stream using a role-scoped filter.
+  /// Call this once from [HomeRouter] after the user's session is established.
+  void configureForUser(String userId, UserRole role) {
+    _remoteSub?.cancel();
+    _remoteSub = _remote.watchOrdersForUser(userId, role).listen(
+      (remoteOrders) {
+        if (remoteOrders.isEmpty) return;
+        for (final o in remoteOrders) {
+          final idx = _orders.indexWhere((existing) => existing.id == o.id);
+          if (idx >= 0) {
+            _orders[idx] = o;
+          } else {
+            _orders.insert(0, o);
+          }
+        }
+        notifyListeners();
+      },
+      onError: (Object e) => debugPrint('Remote order stream error: $e'),
+    );
+  }
+
+  Future<void> _persistOrders() async {
+    final store = _store;
+    if (store == null) return;
+    await store.writeOrders(_orders.map((o) => o.toJson()).toList());
+  }
+
+
+  @override
+  void notifyListeners() {
+      // Auto-persist on every mutation. Fire-and-forget — a write failure does
+    // not block UI updates.
+    // ignore: discarded_futures
+    _persistOrders();
+    super.notifyListeners();
+  }
 
   // ─────────────────────────────────────────────────────────────────────────
   // Driver views
@@ -34,7 +152,11 @@ class AppOrderStore extends ChangeNotifier {
   /// Pending orders available for the driver to accept (no driver yet).
   List<Order> get driverFeed => _orders
       .where((o) =>
-          o.status == OrderStatus.pending && o.id != _activeOrderId)
+          ((o.status == OrderStatus.pending && !o.isMarketplaceShared) ||
+              (o.status == OrderStatus.accepted &&
+                  o.requiresRider &&
+                  o.driverName == null)) &&
+          o.id != _activeOrderId)
       .toList();
 
   /// The driver's currently active order (null when not on a trip).
@@ -79,7 +201,8 @@ class AppOrderStore extends ChangeNotifier {
   // Marketplace views
   // ─────────────────────────────────────────────────────────────────────────
 
-  List<Order> get marketItems => List.unmodifiable(_market);
+  List<Order> get marketItems =>
+      List.unmodifiable(_orders.where((o) => o.isMarketplaceShared));
 
   // ─────────────────────────────────────────────────────────────────────────
   // Driver actions
@@ -93,7 +216,10 @@ class AppOrderStore extends ChangeNotifier {
     final idx = _orders.indexWhere((o) => o.id == orderId);
     if (idx == -1) return 'الطلب غير موجود';
     final order = _orders[idx];
-    if (order.status != OrderStatus.pending) return 'هذا الطلب لم يعد متاحاً';
+    
+    final canAccept = order.status == OrderStatus.pending ||
+        (order.status == OrderStatus.accepted && order.requiresRider && order.driverName == null);
+    if (!canAccept) return 'هذا الطلب لم يعد متاحاً';
 
     _orders[idx] = order.copyWith(
       status: OrderStatus.accepted,
@@ -110,7 +236,30 @@ class AppOrderStore extends ChangeNotifier {
     );
     _activeOrderId = orderId;
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markAccepted(orderId)));
     return null;
+  }
+
+  /// Assign a specific driver to an order (supplier action).
+  void assignDriver(String orderId, User driver) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return;
+    _orders[idx] = _orders[idx].copyWith(
+      status: OrderStatus.accepted,
+      acceptedAt: DateTime.now(),
+      driverName: driver.name,
+      driverPhone: driver.phone,
+      driverRating: driver.rating,
+      driverVehicle: driver.vehicleModel,
+      driverVehicleModel: driver.vehicleModel,
+      driverVehicleColor: driver.vehicleColor,
+      driverLicensePlate: driver.licensePlate,
+      driverVehiclePhotoPath: driver.vehiclePhotoPath,
+    );
+    notifyListeners();
+
+    unawaited(_pushRemote(_remote.assignDriver(orderId, driver.id)));
   }
 
   /// Mark the active order as in-transit (driver en-route to dropoff).
@@ -122,6 +271,8 @@ class AppOrderStore extends ChangeNotifier {
       inTransitAt: DateTime.now(),
     );
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markInTransit(orderId)));
   }
 
   /// Complete the active order (driver marks delivered).
@@ -137,6 +288,8 @@ class AppOrderStore extends ChangeNotifier {
       _activeOrderId = null;
     }
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markCompleted(completedOrder.id, actualWeightKg: completedOrder.weightKg)));
   }
 
   /// Record a driver rating after delivery (mock — updates driverRating on order).
@@ -200,7 +353,31 @@ class AppOrderStore extends ChangeNotifier {
     );
     _orders.insert(0, order);
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.insertOrder(order)));
     return order;
+  }
+
+  /// Domain-layer entry point for creating a pickup request.
+  /// Wraps [createPickupRequest] and returns an [AppResult] so callers can
+  /// fold success/failure without try-catch at the call site.
+  AppResult<Order> submitPickupRequest(
+    CreatePickupRequest request, {
+    required String supplierName,
+  }) {
+    try {
+      final order = createPickupRequest(
+        wasteTypes: request.wasteTypes,
+        supplierName: supplierName,
+        pickupAddress: request.pickupAddress,
+        notes: request.notes,
+        wasteForm: request.wasteForm,
+        weightCategory: request.weightCategory,
+      );
+      return Success(order);
+    } catch (e) {
+      return Failure(UnknownFailure.fromException(e));
+    }
   }
 
   /// Cancel a pending order.
@@ -213,6 +390,8 @@ class AppOrderStore extends ChangeNotifier {
     }
     _orders[idx] = order.copyWith(status: OrderStatus.cancelled);
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markCancelled(orderId)));
     return null;
   }
 
@@ -258,6 +437,8 @@ class AppOrderStore extends ChangeNotifier {
     );
     _orders.insert(0, order);
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.insertOrder(order)));
     return order;
   }
 
@@ -288,6 +469,8 @@ class AppOrderStore extends ChangeNotifier {
       driverPhone: driver.phone,
     );
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markAccepted(jobId)));
     return null;
   }
 
@@ -322,6 +505,8 @@ class AppOrderStore extends ChangeNotifier {
       editNote: editNote,
     );
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.updateOrder(_orders[idx])));
     return _orders[idx];
   }
 
@@ -335,6 +520,8 @@ class AppOrderStore extends ChangeNotifier {
     }
     _orders.removeAt(idx);
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.deleteOrder(jobId)));
     return true;
   }
 
@@ -386,7 +573,7 @@ class AppOrderStore extends ChangeNotifier {
       wasteTypes: wasteTypes,
       pickupAddress: 'موقعك الحالي',
       dropoffAddress: collectionArea,
-      status: OrderStatus.pending,
+      status: OrderStatus.accepted,
       reward: pricePerKg ?? itemPrice ?? 0,
       createdAt: DateTime.now(),
       supplierName: acceptorName,
@@ -401,6 +588,8 @@ class AppOrderStore extends ChangeNotifier {
     );
     _orders.insert(0, sale);
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.insertOrder(sale)));
     return null;
   }
 
@@ -413,14 +602,16 @@ class AppOrderStore extends ChangeNotifier {
     );
     if (idx == -1) return 'الالتزام غير موجود';
     final current = _orders[idx];
-    if (current.status != OrderStatus.pending) {
-      return 'لا يمكن تغيير الحالة — الالتزام ليس في حالة انتظار';
+    if (current.status != OrderStatus.accepted) {
+      return 'لا يمكن تغيير الحالة — الالتزام ليس في حالة مقبولة';
     }
     _orders[idx] = current.copyWith(
       status: OrderStatus.inTransit,
       inTransitAt: DateTime.now(),
     );
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markInTransit(saleId)));
     return null;
   }
 
@@ -443,31 +634,29 @@ class AppOrderStore extends ChangeNotifier {
       weightKg: actualWeightKg ?? current.weightKg,
     );
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markCompleted(saleId, actualWeightKg: actualWeightKg)));
     return null;
   }
 
   /// Cancel a collection sale commitment. Only allowed when status == pending.
-  /// Once inTransit or completed, cancellation is blocked — the user must
-  /// contact the company directly.
-  /// Returns an error string on failure, null on success.
-  String? cancelCollectionSale(String saleId) {
+  /// Once inTransit or completed, cancellation is silently ignored — the user
+  /// must contact the company directly.
+  void cancelCollectionSale(String saleId) {
     final idx = _orders.indexWhere(
       (o) => o.id == saleId && o.type == OrderType.collectionSale,
     );
-    if (idx == -1) return 'الالتزام غير موجود';
+    if (idx == -1) return;
     final status = _orders[idx].status;
-    if (status == OrderStatus.inTransit) {
-      return 'لا يمكن الإلغاء بعد بدء التجميع — تواصل مع الشركة مباشرة';
-    }
-    if (status == OrderStatus.completed) {
-      return 'لا يمكن إلغاء التزام مكتمل';
-    }
-    if (status == OrderStatus.cancelled) {
-      return 'هذا الالتزام ملغى مسبقاً';
+    if (status == OrderStatus.inTransit ||
+        status == OrderStatus.completed ||
+        status == OrderStatus.cancelled) {
+      return;
     }
     _orders[idx] = _orders[idx].copyWith(status: OrderStatus.cancelled);
     notifyListeners();
-    return null;
+
+    unawaited(_pushRemote(_remote.markCancelled(saleId)));
   }
 
   /// All collectionSale commitments linked to jobs owned by [companyName].
@@ -495,20 +684,25 @@ class AppOrderStore extends ChangeNotifier {
   // ─────────────────────────────────────────────────────────────────────────
 
   void addMarketListing(Order order) {
-    _market.insert(0, order);
+    _orders.insert(0, order);
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.insertOrder(order)));
   }
 
   void removeMarketListing(String orderId) {
-    final idx = _market.indexWhere((o) => o.id == orderId);
+    final idx = _orders.indexWhere((o) => o.id == orderId);
     if (idx == -1) return;
-    if (_market[idx].status != OrderStatus.pending) return;
-    _market[idx] = _market[idx].copyWith(status: OrderStatus.cancelled);
+    if (_orders[idx].status != OrderStatus.pending) return;
+    _orders[idx] = _orders[idx].copyWith(status: OrderStatus.cancelled);
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markCancelled(orderId)));
   }
 
-  List<Order> myMarketListings(String publisherName) => _market
+  List<Order> myMarketListings(String publisherName) => _orders
       .where((o) =>
+          o.isMarketplaceShared &&
           o.supplierName == publisherName &&
           (o.status == OrderStatus.pending ||
               o.status == OrderStatus.accepted ||
@@ -516,10 +710,10 @@ class AppOrderStore extends ChangeNotifier {
       .toList();
 
   Order? claimMarketItem(String orderId, User driver) {
-    final idx = _market.indexWhere((o) => o.id == orderId);
-    if (idx == -1) return null;
-    if (_market[idx].status != OrderStatus.pending) return null;
-    final claimed = _market[idx].copyWith(
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1 || !_orders[idx].isMarketplaceShared) return null;
+    if (_orders[idx].status != OrderStatus.pending) return null;
+    final claimed = _orders[idx].copyWith(
       status: OrderStatus.accepted,
       acceptedAt: DateTime.now(),
       driverName: driver.name,
@@ -529,8 +723,10 @@ class AppOrderStore extends ChangeNotifier {
       driverVehicleColor: driver.vehicleColor,
       driverLicensePlate: driver.licensePlate,
     );
-    _market[idx] = claimed;
+    _orders[idx] = claimed;
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markAccepted(orderId)));
     return claimed;
   }
 
@@ -540,35 +736,45 @@ class AppOrderStore extends ChangeNotifier {
     String? dropoffAddress,
     double deliveryFee = 0,
   }) {
-    final idx = _market.indexWhere((o) => o.id == orderId);
-    if (idx == -1) return null;
-    if (_market[idx].status != OrderStatus.pending) return null;
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1 || !_orders[idx].isMarketplaceShared) return null;
+    if (_orders[idx].status != OrderStatus.pending) return null;
     if (!selfPickup &&
         (dropoffAddress == null || dropoffAddress.trim().isEmpty)) {
       return null;
     }
-    final purchased = _market[idx].copyWith(
+    final purchased = _orders[idx].copyWith(
       status: OrderStatus.accepted,
       acceptedAt: DateTime.now(),
-      dropoffAddress: selfPickup ? 'استلام من السوق' : dropoffAddress!,
+      dropoffAddress: selfPickup ? 'استلام من السوق' : (dropoffAddress ?? 'عنوان مجهول'),
       deliveryFee: selfPickup ? 0 : deliveryFee,
+      requiresRider: !selfPickup,
     );
-    _market[idx] = purchased;
+    _orders[idx] = purchased;
     notifyListeners();
+
+    unawaited(_pushRemote(
+      _remote.markPurchased(orderId, requiresRider: !selfPickup),
+    ));
     return purchased;
   }
 
   Order? receiveAtFacility(String orderId, String facilityAddress) {
-    final idx = _market.indexWhere((o) => o.id == orderId);
-    if (idx == -1) return null;
-    if (_market[idx].status != OrderStatus.pending) return null;
-    final received = _market[idx].copyWith(
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1 || !_orders[idx].isMarketplaceShared) return null;
+    if (_orders[idx].status != OrderStatus.pending) return null;
+    final received = _orders[idx].copyWith(
       status: OrderStatus.accepted,
       acceptedAt: DateTime.now(),
       dropoffAddress: facilityAddress,
     );
-    _market[idx] = received;
+    _orders[idx] = received;
     notifyListeners();
+
+    // Marketplace receive-at-facility doesn't require a rider.
+    unawaited(_pushRemote(
+      _remote.markPurchased(orderId, requiresRider: false),
+    ));
     return received;
   }
 
@@ -588,4 +794,16 @@ class AppOrderStore extends ChangeNotifier {
         };
   }
 
+  /// Awaits a remote write and lifts any failure into [_lastError] so widgets
+  /// can react via [lastError]. Successes are silent.
+  Future<void> _pushRemote(Future<AppResult<void>> op) async {
+    final result = await op;
+    result.fold(
+      onSuccess: (_) {},
+      onFailure: (failure) {
+        _lastError = failure;
+        notifyListeners();
+      },
+    );
+  }
 }

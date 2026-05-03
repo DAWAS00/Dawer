@@ -2,12 +2,15 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"/>
     <application
-        android:label="dwaar"
+        android:label="Dawer"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -37,6 +40,14 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- Geolocator foreground service for background location publishing -->
+        <service
+            android:name="com.baseflow.geolocator.GeolocatorService"
+            android:foregroundServiceType="location"
+            android:exported="false"/>
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="${MAPS_API_KEY}"/>
         <!-- Tells Google Play to pre-download the ML Kit image-labeling model
              (ica = Image Classification API) so it is ready on first launch. -->
         <meta-data
@@ -53,5 +64,15 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- Allow canLaunchUrl / launchUrl for Google Maps deep links -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="https" android:host="www.google.com"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="geo"/>
+        </intent>
+        <package android:name="com.google.android.apps.maps"/>
     </queries>
 </manifest>

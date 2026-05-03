@@ -8,7 +8,8 @@ enum SupplierPurchaseMode { selfPickup, assignRider }
 class MarketplaceViewModel extends ChangeNotifier {
   final AppOrderStore _store;
 
-  MarketplaceViewModel(this._store) {
+  MarketplaceViewModel(this._store, {List<String> initialSuggestions = const []}) {
+    _userCategories = initialSuggestions;
     _store.addListener(_onStoreChanged);
   }
 
@@ -19,6 +20,31 @@ class MarketplaceViewModel extends ChangeNotifier {
   }
 
   void _onStoreChanged() => notifyListeners();
+
+  // ── User categories (persisted from signup/login) ─────────────────────────
+
+  List<String> _userCategories = const [];
+
+  List<String> get userCategories => _userCategories;
+
+  bool get hasUserCategories => _userCategories.isNotEmpty;
+
+  // Keep legacy getters for any widgets that still reference them.
+  List<String> get aiSuggestedCategories => _userCategories;
+  bool get showSuggestionBanner => false;
+
+  void setAiSuggestions(List<String> categories) {
+    _userCategories = categories;
+    notifyListeners();
+  }
+
+  void dismissSuggestions() {}
+
+  void showAllOrders() {
+    _searchQuery = '';
+    _selectedCategory = null;
+    notifyListeners();
+  }
 
   // ── Local filter state ────────────────────────────────────────────────────
 

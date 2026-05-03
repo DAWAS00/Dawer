@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/services/app_order_store.dart';
+import '../../../../../data/services/location_publisher.dart';
+import '../../../../../domain/services/i_location_publisher.dart';
 
 class DriverHomeViewModel extends ChangeNotifier {
   final AppOrderStore _store;
+  final ILocationPublisher _publisher;
 
-  DriverHomeViewModel(this._store) {
+  DriverHomeViewModel(
+    this._store, {
+    ILocationPublisher? publisher,
+  }) : _publisher = publisher ?? LocationPublisher.instance {
     _store.addListener(_onStoreChanged);
   }
 
@@ -68,7 +74,7 @@ class DriverHomeViewModel extends ChangeNotifier {
 
   // ── Order actions ─────────────────────────────────────────────────────────
 
-  String? acceptOrder(Order order) {
+  Future<String?> acceptOrder(Order order) async {
     if (!_isAvailable) {
       return 'أنت غير متاح حالياً. لا يمكنك قبول الطلب.';
     }
@@ -76,12 +82,15 @@ class DriverHomeViewModel extends ChangeNotifier {
     if (error == null) {
       _currentTab = 2; // Switch to Orders tab
       notifyListeners();
+      // Start publishing GPS to Supabase driver_locations.
+      await _publisher.start(order.id);
     }
     return error;
   }
 
-  void completeOrder(Order order) {
+  Future<void> completeOrder(Order order) async {
     _store.completeOrder(order);
+    await _publisher.stop();
   }
 
   /// Move a collectionSale to inTransit. Returns error string or null.
@@ -92,8 +101,8 @@ class DriverHomeViewModel extends ChangeNotifier {
   String? completeCollectionSale(String saleId, {double? actualWeightKg}) =>
       _store.completeCollectionSale(saleId, actualWeightKg: actualWeightKg);
 
-  /// Cancel a pending collectionSale. Returns error string or null.
-  String? cancelCollectionSale(String saleId) =>
+  /// Cancel a pending collectionSale. Silently ignored if inTransit/completed.
+  void cancelCollectionSale(String saleId) =>
       _store.cancelCollectionSale(saleId);
 
   Order createListing({
@@ -104,6 +113,8 @@ class DriverHomeViewModel extends ChangeNotifier {
     WasteForm? wasteForm,
     WeightCategory? weightCategory,
     double? itemPrice,
+    double? pickupLat,
+    double? pickupLng,
   }) {
     final orderId = 'DRV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
     final order = Order(
@@ -122,6 +133,9 @@ class DriverHomeViewModel extends ChangeNotifier {
       weightCategory: weightCategory,
       pickupTarget: PickupTarget.riderBuy,
       itemPrice: itemPrice,
+      isMarketplaceShared: true,
+      pickupLat: pickupLat,
+      pickupLng: pickupLng,
     );
     notifyListeners();
     return order;

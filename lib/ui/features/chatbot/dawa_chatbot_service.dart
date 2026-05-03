@@ -1,3 +1,5 @@
+import '../../../core/utils/arabic_text_utils.dart';
+
 /// A single knowledge-base entry the Dawa chatbot can return.
 class DawaEntry {
   final String id;
@@ -178,11 +180,7 @@ class DawaChatbotService {
   ///   • Remove non-word, non-Arabic chars
   ///   • Lowercase + trim
   static String _normalise(String input) {
-    return input
-        .replaceAll(RegExp(r'[\u064B-\u065F\u0670\u0640]'), '') // tashkeel + tatweel
-        .replaceAll(RegExp(r'[أإآ]'), 'ا')   // alef unification
-        .replaceAll('ة', 'ه')                // taa marbuta
-        .replaceAll('ى', 'ي')               // alef maqsoura
+    return ArabicTextUtils.normalize(input)
         .replaceAll(RegExp(r'[^\w\s\u0600-\u06FF]'), '') // keep Arabic + alnum
         .toLowerCase()
         .trim();
@@ -314,13 +312,11 @@ class DawaChatbotService {
           '2. اختر دورك (مورد / سائق / شركة)\n'
           '3. اضغط "سجّل الآن"\n'
           '4. أدخل بياناتك ورفع المستندات المطلوبة\n'
-          '5. ستصل رمز OTP للتحقق (6 أرقام)\n'
-          '6. بعد التحقق ستُحوّل فوراً لصفحتك الرئيسية',
+          '5. سيتم إنشاء حسابك وتحويلك للصفحة الرئيسية مباشرة',
       followUpIds: [
         'driver_signup',
         'supplier_signup',
         'company_signup',
-        'otp_help',
       ],
     ),
 
@@ -339,7 +335,6 @@ class DawaChatbotService {
           '• رقم هاتف أو بريد إلكتروني\n\n'
           'الوثائق تُستخدم للتحقق فقط ولا تُشارك مع أحد.',
       followUpIds: [
-        'otp_help',
         'driver_earnings',
         'how_to_accept_order',
       ],
@@ -357,7 +352,6 @@ class DawaChatbotService {
           '🏪 مورد متجر/مطعم: اسم الجهة، اسم المالك/المدير، منطقة التغطية، شعار، سجل تجاري',
       followUpIds: [
         'how_to_post_request',
-        'otp_help',
         'points_system',
       ],
     ),
@@ -378,26 +372,7 @@ class DawaChatbotService {
           '• هاتف أو بريد إلكتروني',
       followUpIds: [
         'company_overview',
-        'otp_help',
         'post_collection_job',
-      ],
-    ),
-
-    const DawaEntry(
-      id: 'otp_help',
-      keywords: [
-        'رمز التحقق', 'otp', 'كود', 'لم يصل الرمز', 'إعادة إرسال',
-        'verification code', 'resend otp', '6 أرقام',
-      ],
-      response:
-          'رمز التحقق (OTP):\n'
-          '• يُرسل رمز من 6 أرقام لهاتفك أو بريدك\n'
-          '• أدخل كل رقم في مربعه — ينتقل التركيز تلقائياً\n'
-          '• إذا لم يصل الرمز: انتظر انتهاء العداد ثم اضغط "إعادة الإرسال"\n'
-          '• أي رقم خاطئ: ستظهر رسالة خطأ، المربعات لا تُمسح تلقائياً',
-      followUpIds: [
-        'how_to_register',
-        'login_help',
       ],
     ),
 
@@ -410,12 +385,11 @@ class DawaChatbotService {
       response:
           'لتسجيل الدخول:\n'
           '1. اختر دورك من الشاشة الرئيسية\n'
-          '2. أدخل رقم هاتفك أو بريدك الإلكتروني\n'
-          '3. اضغط "تسجيل الدخول"\n'
-          '4. أدخل رمز OTP المُرسل إليك\n\n'
+          '2. أدخل بريدك الإلكتروني\n'
+          '3. أدخل كلمة المرور\n'
+          '4. اضغط "تسجيل الدخول"\n\n'
           '⚠️ يجب اختيار الدور أولاً قبل تفعيل زر الدخول.',
       followUpIds: [
-        'otp_help',
         'how_to_register',
       ],
     ),
@@ -1505,7 +1479,6 @@ class DawaChatbotService {
           'يرجى ذكر رقم الطلب عند التواصل.',
       followUpIds: [
         'cancel_order',
-        'otp_help',
       ],
     ),
 

@@ -8,15 +8,23 @@ import 'order_details/order_map_section.dart';
 import 'order_details/order_status_timeline.dart';
 import 'order_details/order_driver_card.dart';
 import 'order_details/order_info_section.dart';
+import 'order_details/order_earnings_section.dart';
 import 'order_details/order_action_buttons.dart';
 import 'order_details/order_completion_section.dart';
 import 'order_details/order_proof_section.dart';
+import '../../../../l10n/l10n.dart';
 
 class OrderDetailsView extends StatelessWidget {
   final Order order;
   final void Function(Order)? onCompleteOrder;
+  final bool hideStatus;
 
-  const OrderDetailsView({super.key, required this.order, this.onCompleteOrder});
+  const OrderDetailsView({
+    super.key,
+    required this.order,
+    this.onCompleteOrder,
+    this.hideStatus = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +32,18 @@ class OrderDetailsView extends StatelessWidget {
       backgroundColor: const Color(0xFFF8FAF8),
       body: CustomScrollView(
         slivers: [
-          OrderDetailsAppBar(order: order),
+          OrderDetailsAppBar(order: order, hideStatus: hideStatus),
           SliverToBoxAdapter(
             child: OrderMapSection(order: order, hasDriver: order.driverName != null),
           ),
-          SliverToBoxAdapter(
-            child: OrderStatusTimeline(order: order),
-          ),
+          if (!hideStatus)
+            SliverToBoxAdapter(
+              child: OrderStatusTimeline(order: order),
+            ),
           if (order.driverName != null)
             SliverToBoxAdapter(child: OrderDriverCard(order: order)),
           SliverToBoxAdapter(child: OrderInfoSection(order: order)),
+          SliverToBoxAdapter(child: OrderEarningsSection(order: order)),
           
           if (order.status == OrderStatus.completed && order.proofImagePath != null)
             SliverToBoxAdapter(
@@ -94,7 +104,7 @@ class _RateDriverButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
         icon: const Icon(Icons.star_outline_rounded, size: 20),
-        label: const Text('قيّم السائق'),
+        label: Text(context.l10n.rateDriver),
       ),
     );
   }

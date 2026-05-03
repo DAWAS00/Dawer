@@ -1,85 +1,71 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import '../../../../domain/repositories/i_auth_repository.dart';
 
 class VerificationViewModel extends ChangeNotifier {
-  final String destination;
-  final bool isEmail;
+  final IAuthRepository _authRepository;
+  final String phoneNumber;
 
-  final List<String> _digits = List.filled(6, '');
-  Timer? _timer;
-  int _secondsRemaining = 120;
-  bool _canResend = false;
-  bool _isLoading = false;
+  VerificationViewModel({
+    required IAuthRepository authRepository,
+    required this.phoneNumber,
+  }) : _authRepository = authRepository;
+
+  String _otp = '';
   String? _error;
+  bool _isLoading = false;
   bool _verified = false;
+  AuthSession? _session;
 
-  VerificationViewModel({required this.destination, required this.isEmail}) {
-    _startTimer();
-  }
-
-  List<String> get digits => List.unmodifiable(_digits);
-  bool get canResend => _canResend;
-  bool get isLoading => _isLoading;
+  String get otp => _otp;
   String? get error => _error;
+  bool get isLoading => _isLoading;
   bool get verified => _verified;
-  bool get isComplete => _digits.every((d) => d.isNotEmpty);
+  AuthSession? get session => _session;
 
-  String get timerDisplay {
-    final m = _secondsRemaining ~/ 60;
-    final s = _secondsRemaining % 60;
-    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
-  }
-
-  void setDigit(int index, String value) {
-    if (index < 0 || index >= 6) return;
-    _digits[index] = value;
-    if (_error != null) _error = null;
-    notifyListeners();
-  }
-
-  void _startTimer() {
-    _secondsRemaining = 120;
-    _canResend = false;
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_secondsRemaining > 0) {
-        _secondsRemaining--;
-        notifyListeners();
-      } else {
-        _canResend = true;
-        timer.cancel();
-        notifyListeners();
-      }
-    });
-  }
-
-  void resendCode() {
-    if (!_canResend) return;
-    _digits.fillRange(0, 6, '');
-    _startTimer();
+  void setOtp(String value) {
+    _otp = value;
+    _error = null;
     notifyListeners();
   }
 
   Future<void> verify() async {
-    if (!isComplete) {
-      _error = 'أكمل رمز التحقق من 6 أرقام';
+    if (_otp.length < 6) {
+      _error = 'الرجاء إدخال رمز التحقق كاملاً';
       notifyListeners();
       return;
     }
+
     _isLoading = true;
     _error = null;
     notifyListeners();
 
-    await Future.delayed(const Duration(milliseconds: 1200));
+    final result = await _authRepository.verifyOtp(phoneNumber, _otp);
+    result.fold(
+      onSuccess: (session) {
+        _session = session;
+        _verified = true;
+      },
+      onFailure: (f) => _error = f.message,
+    );
 
     _isLoading = false;
-    _verified = true;
     notifyListeners();
   }
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
+  Future<void> resendOtp() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    final result = await _authRepository.requestOtp(phoneNumber);
+    result.fold(
+      onSuccess: (_) {
+        _error = 'تم إعادة إرسال الرمز';
+      },
+      onFailure: (f) => _error = f.message,
+    );
+
+    _isLoading = false;
+    notifyListeners();
   }
 }

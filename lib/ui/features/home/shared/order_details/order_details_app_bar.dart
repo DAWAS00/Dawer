@@ -5,8 +5,13 @@ import '../../../../../data/models/order.dart';
 
 class OrderDetailsAppBar extends StatelessWidget {
   final Order order;
+  final bool hideStatus;
 
-  const OrderDetailsAppBar({super.key, required this.order});
+  const OrderDetailsAppBar({
+    super.key,
+    required this.order,
+    this.hideStatus = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,25 +45,26 @@ class OrderDetailsAppBar extends StatelessWidget {
         ],
       ),
       actions: [
-        Container(
-          margin: const EdgeInsets.only(left: 16, top: 10, bottom: 10),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: _statusColor(order.status).withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: _statusColor(order.status).withValues(alpha: 0.5),
+        if (!hideStatus)
+          Container(
+            margin: const EdgeInsets.only(left: 16, top: 10, bottom: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: _statusColor(order.status).withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: _statusColor(order.status).withValues(alpha: 0.5),
+              ),
+            ),
+            child: Text(
+              order.status.label,
+              style: GoogleFonts.cairo(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ),
-          child: Text(
-            order.status.label,
-            style: GoogleFonts.cairo(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ),
       ],
     );
   }

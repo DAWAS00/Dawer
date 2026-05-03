@@ -201,6 +201,7 @@ class DriverOrdersTab extends StatelessWidget {
                                   builder: (_) => OrderDetailsView(
                                     order: all[i],
                                     onCompleteOrder: onCompleteOrder,
+                                    hideStatus: true,
                                   ),
                                 ),
                               )

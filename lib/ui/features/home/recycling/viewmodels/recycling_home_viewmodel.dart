@@ -102,6 +102,8 @@ class RecyclingHomeViewModel extends ChangeNotifier {
     WeightCategory? weightCategory,
     double reward = 0,
     double? itemPrice,
+    double? pickupLat,
+    double? pickupLng,
   }) =>
       _store.createCollectionJob(
         wasteTypes: wasteTypes,

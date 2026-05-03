@@ -35,7 +35,7 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -119,7 +119,7 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
             const SizedBox(height: 24),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(14),
@@ -139,15 +139,15 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
                 ],
               ),
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
-              height: 54,
+              height: 44,
               child: ElevatedButton(
                 onPressed: () => widget.onConfirm('عنواني الحالي', _deliveryFee),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF06402B),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 0,
                 ),
                 child: Row(
@@ -156,13 +156,13 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
                     Text(
                       'تأكيد الشراء — ${_totalCost.toStringAsFixed(2)} د.أ',
                       style: GoogleFonts.cairo(
-                        fontSize: 15,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Icon(Icons.check_circle_rounded, color: Colors.white, size: 22),
+                    const Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
                   ],
                 ),
               ),
@@ -183,7 +183,7 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
   }) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
       decoration: BoxDecoration(
         color: isPlaceholder ? const Color(0xFFF9FAFB) : Colors.white,
         borderRadius: BorderRadius.circular(12),

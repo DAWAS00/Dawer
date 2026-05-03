@@ -1,0 +1,38 @@
+<!--
+  Supabase Auth › Email Templates › Magic Link
+  Canonical source for the OTP email body. Paste the contents of this file
+  (excluding this comment block) into the dashboard template editor.
+
+  Subject line (separate field in the dashboard):
+      رمز التحقق لدوّر: {{ .Token }}
+
+  Template variables used:
+      {{ .Token }}   — the 6-digit OTP code. REQUIRED.
+  Template variables intentionally NOT used:
+      {{ .ConfirmationURL }} — would redirect to site_url (localhost by default).
+                               We deliberately omit it so the mobile user
+                               types the code into the in-app Verification screen.
+-->
+<!doctype html>
+<html dir="rtl" lang="ar">
+  <body style="font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:#F8FAF8;margin:0;padding:24px;">
+    <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:16px;padding:32px;text-align:center;">
+      <h1 style="color:#06402B;font-size:22px;margin:0 0 8px;">دوّر</h1>
+      <p style="color:#717973;font-size:14px;margin:0 0 24px;">رمز التحقق الخاص بك</p>
+
+      <div style="background:#C3EAC4;border-radius:12px;padding:20px;margin:24px 0;">
+        <div style="font-size:36px;font-weight:800;letter-spacing:8px;color:#002819;font-family:monospace;">
+          {{ .Token }}
+        </div>
+      </div>
+
+      <p style="color:#717973;font-size:13px;line-height:1.6;margin:16px 0 0;">
+        أدخل الرمز في التطبيق لإكمال تسجيل الدخول.<br>
+        صالح لمدة 60 دقيقة. لا تشاركه مع أحد.
+      </p>
+      <p style="color:#B0B5B0;font-size:11px;margin:32px 0 0;">
+        إذا لم تطلب هذا الرمز، تجاهل هذا البريد.
+      </p>
+    </div>
+  </body>
+</html>

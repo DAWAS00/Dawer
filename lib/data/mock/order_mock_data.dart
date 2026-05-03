@@ -211,6 +211,7 @@ class OrderMockData {
             'https://picsum.photos/seed/mkt001b/600/400',
             'https://picsum.photos/seed/mkt001c/600/400',
           ],
+          isMarketplaceShared: true,
         ),
         Order(
           id: 'MKT-002',
@@ -233,6 +234,7 @@ class OrderMockData {
             'https://picsum.photos/seed/mkt002a/600/400',
             'https://picsum.photos/seed/mkt002b/600/400',
           ],
+          isMarketplaceShared: true,
         ),
         Order(
           id: 'MKT-003',
@@ -254,6 +256,7 @@ class OrderMockData {
           images: [
             'https://picsum.photos/seed/mkt003a/600/400',
           ],
+          isMarketplaceShared: true,
         ),
         Order(
           id: 'MKT-004',
@@ -276,6 +279,7 @@ class OrderMockData {
             'https://picsum.photos/seed/mkt004a/600/400',
             'https://picsum.photos/seed/mkt004b/600/400',
           ],
+          isMarketplaceShared: true,
         ),
         Order(
           id: 'MKT-005',
@@ -298,6 +302,7 @@ class OrderMockData {
             'https://picsum.photos/seed/mkt005a/600/400',
             'https://picsum.photos/seed/mkt005b/600/400',
           ],
+          isMarketplaceShared: true,
         ),
       ];
 }

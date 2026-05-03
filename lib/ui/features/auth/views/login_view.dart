@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../viewmodels/login_viewmodel.dart';
+import '../../home/home_router.dart';
 import 'verification_view.dart';
+import 'forgot_password_otp_view.dart';
 import '../../../../l10n/l10n.dart';
 
 import 'widgets/role_selection_grid.dart';
@@ -11,17 +13,14 @@ import 'widgets/login_form.dart';
 import 'widgets/footer.dart';
 import '../../../../core/services/app_lang_notifier.dart';
 import '../../../common/lang_picker_sheet.dart';
+import 'restaurant_signup_view.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Provide the ViewModel to this screen and its children
-    return ChangeNotifierProvider(
-      create: (_) => LoginViewModel(),
-      child: const _LoginScreen(),
-    );
+    return const _LoginScreen();
   }
 }
 
@@ -32,18 +31,41 @@ class _LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<LoginViewModel>();
 
-    if (viewModel.verificationSent) {
+    if (viewModel.signedIn) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        viewModel.resetVerificationSent();
+        viewModel.resetSignedIn();
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => HomeRouter(
+              role: viewModel.selectedRole,
+              supplierType: viewModel.supplierType ?? SupplierType.individual,
+              userName: viewModel.profileName,
+              aiSuggestedCategories: viewModel.session?.categories ?? const [],
+            ),
+          ),
+        );
+      });
+    }
+
+    if (viewModel.otpSent) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final phone = viewModel.phone;
+        viewModel.resetOtpSent();
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => VerificationView(
-              destination: viewModel.currentInput,
-              isEmail: viewModel.isEmailMethod,
-              role: viewModel.selectedRole,
-              supplierType: viewModel.supplierType,
-              userName: viewModel.currentInput,
-            ),
+            builder: (_) => VerificationView(phoneNumber: phone),
+          ),
+        );
+      });
+    }
+
+    if (viewModel.passwordResetRequested) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final email = viewModel.email;
+        viewModel.resetPasswordResetRequested();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => ForgotPasswordOtpView(email: email),
           ),
         );
       });
@@ -90,10 +112,25 @@ class _LoginScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
-                  children: const [
-                    RoleSelectionGrid(),
-                    SizedBox(height: 32),
-                    LoginForm(),
+                  children: [
+                    const RoleSelectionGrid(),
+                    const SizedBox(height: 32),
+                    const LoginForm(),
+                    const SizedBox(height: 16),
+                    TextButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const RestaurantSignupView(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.storefront),
+                      label: const Text('Register as Restaurant / Company'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF06402B),
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -147,9 +147,10 @@ void main() {
       return s;
     }
 
-    test('markCollectionSaleInTransit succeeds from pending', () {
+    test('markCollectionSaleInTransit succeeds from accepted', () {
       final s = storeWithSale();
       final saleId = s.collectionSalesFor('مورد اختبار').first.id;
+      expect(s.collectionSalesFor('مورد اختبار').first.status, OrderStatus.accepted);
       final error = s.markCollectionSaleInTransit(saleId);
       expect(error, isNull);
       final sale = s.collectionSalesFor('مورد اختبار').first;
@@ -182,7 +183,7 @@ void main() {
       expect(sale.completedAt, isNotNull);
     });
 
-    test('completeCollectionSale fails if still pending', () {
+    test('completeCollectionSale fails if not inTransit', () {
       final s = storeWithSale();
       final saleId = s.collectionSalesFor('مورد اختبار').first.id;
       final error = s.completeCollectionSale(saleId);
@@ -199,32 +200,29 @@ void main() {
       expect(sale.weightKg, 42.5);
     });
 
-    test('cancelCollectionSale succeeds from pending', () {
+    test('cancelCollectionSale succeeds from accepted', () {
       final s = storeWithSale();
       final saleId = s.collectionSalesFor('مورد اختبار').first.id;
-      final error = s.cancelCollectionSale(saleId);
-      expect(error, isNull);
+      s.cancelCollectionSale(saleId);
       final sale = s.collectionSalesFor('مورد اختبار').first;
       expect(sale.status, OrderStatus.cancelled);
     });
 
-    test('cancelCollectionSale blocked when inTransit', () {
+    test('cancelCollectionSale silent when inTransit', () {
       final s = storeWithSale();
       final saleId = s.collectionSalesFor('مورد اختبار').first.id;
       s.markCollectionSaleInTransit(saleId);
-      final error = s.cancelCollectionSale(saleId);
-      expect(error, isNotNull);
+      s.cancelCollectionSale(saleId);
       final sale = s.collectionSalesFor('مورد اختبار').first;
       expect(sale.status, OrderStatus.inTransit);
     });
 
-    test('cancelCollectionSale blocked when completed', () {
+    test('cancelCollectionSale silent when completed', () {
       final s = storeWithSale();
       final saleId = s.collectionSalesFor('مورد اختبار').first.id;
       s.markCollectionSaleInTransit(saleId);
       s.completeCollectionSale(saleId);
-      final error = s.cancelCollectionSale(saleId);
-      expect(error, isNotNull);
+      s.cancelCollectionSale(saleId);
       final sale = s.collectionSalesFor('مورد اختبار').first;
       expect(sale.status, OrderStatus.completed);
     });
@@ -240,6 +238,81 @@ void main() {
       final s = storeWithSale();
       final sales = s.salesForCompanyJobs('شركة وهمية');
       expect(sales, isEmpty);
+    });
+  });
+
+  group('AppOrderStore – marketplace logic', () {
+    test('adding a market listing includes it in market items', () {
+      final order = Order(
+        id: 'TEST-MKT-1',
+        type: OrderType.pickup,
+        wasteTypes: [WasteType.metal],
+        pickupAddress: 'Test Addr',
+        dropoffAddress: '',
+        reward: 0,
+        createdAt: DateTime.now(),
+        status: OrderStatus.pending,
+        pickupTarget: PickupTarget.riderBuy,
+        isMarketplaceShared: true,
+      );
+      store.addMarketListing(order);
+      expect(store.marketItems.any((o) => o.id == 'TEST-MKT-1'), isTrue);
+    });
+
+    test('non-shared elements do not appear in market items', () {
+      final order = Order(
+        id: 'TEST-MKT-2',
+        type: OrderType.pickup,
+        wasteTypes: [WasteType.metal],
+        pickupAddress: 'Test Addr',
+        dropoffAddress: '',
+        reward: 0,
+        createdAt: DateTime.now(),
+        status: OrderStatus.pending,
+        pickupTarget: PickupTarget.riderBuy,
+        isMarketplaceShared: false,
+      );
+      store.addMarketListing(order);
+      expect(store.marketItems.any((o) => o.id == 'TEST-MKT-2'), isFalse);
+    });
+
+    test('claiming a market item transitions it to accepted', () {
+      final order = Order(
+        id: 'TEST-MKT-3',
+        type: OrderType.pickup,
+        wasteTypes: [WasteType.metal],
+        pickupAddress: 'Test Addr',
+        dropoffAddress: '',
+        reward: 0,
+        createdAt: DateTime.now(),
+        status: OrderStatus.pending,
+        pickupTarget: PickupTarget.riderBuy,
+        isMarketplaceShared: true,
+      );
+      store.addMarketListing(order);
+      final claimed = store.claimMarketItem('TEST-MKT-3', mockDriver);
+      expect(claimed, isNotNull);
+      expect(claimed!.status, OrderStatus.accepted);
+      expect(store.marketItems.firstWhere((o) => o.id == 'TEST-MKT-3').status, OrderStatus.accepted);
+    });
+
+    test('purchasing a market item sets dropoff to استلام من السوق when self pickup', () {
+      final order = Order(
+        id: 'TEST-MKT-4',
+        type: OrderType.pickup,
+        wasteTypes: [WasteType.metal],
+        pickupAddress: 'Test Addr',
+        dropoffAddress: '',
+        reward: 0,
+        createdAt: DateTime.now(),
+        status: OrderStatus.pending,
+        pickupTarget: PickupTarget.riderBuy,
+        isMarketplaceShared: true,
+      );
+      store.addMarketListing(order);
+      final purchased = store.purchaseMarketItem(orderId: 'TEST-MKT-4', selfPickup: true);
+      expect(purchased, isNotNull);
+      expect(purchased!.dropoffAddress, 'استلام من السوق');
     });
   });
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../../l10n/l10n.dart';
 
 class IdentityUploadCard extends StatelessWidget {
   final File? document;
@@ -20,6 +21,7 @@ class IdentityUploadCard extends StatelessWidget {
   });
 
   void _showSourceSheet(BuildContext context) {
+    final l10n = context.l10n;
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.white,
@@ -43,7 +45,7 @@ class IdentityUploadCard extends StatelessWidget {
               const SizedBox(height: 16),
               _SheetTile(
                 icon: Icons.camera_alt_rounded,
-                label: 'التقاط صورة',
+                label: l10n.imagePickerCamera,
                 onTap: () {
                   Navigator.pop(context);
                   onPick(ImageSource.camera);
@@ -51,7 +53,7 @@ class IdentityUploadCard extends StatelessWidget {
               ),
               _SheetTile(
                 icon: Icons.photo_library_rounded,
-                label: 'اختر من المعرض',
+                label: l10n.imagePickerGallery,
                 onTap: () {
                   Navigator.pop(context);
                   onPick(ImageSource.gallery);
@@ -60,7 +62,7 @@ class IdentityUploadCard extends StatelessWidget {
               if (document != null)
                 _SheetTile(
                   icon: Icons.delete_outline_rounded,
-                  label: 'إزالة الصورة',
+                  label: l10n.imagePickerRemoveImage,
                   color: Colors.red.shade600,
                   onTap: () {
                     Navigator.pop(context);
@@ -136,6 +138,7 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -154,7 +157,7 @@ class _EmptyState extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'اضغط لرفع صورة المستند',
+          l10n.signupUploadDocumentPrompt,
           style: GoogleFonts.cairo(
             fontSize: 13,
             fontWeight: FontWeight.w600,
@@ -162,7 +165,7 @@ class _EmptyState extends StatelessWidget {
           ),
         ),
         Text(
-          'كاميرا أو معرض الصور',
+          l10n.signupUploadDocumentSources,
           style: GoogleFonts.cairo(
             fontSize: 11,
             color: const Color(0xFF717973),
@@ -180,6 +183,7 @@ class _FilledState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -226,7 +230,7 @@ class _FilledState extends StatelessWidget {
                     size: 12, color: Colors.white),
                 const SizedBox(width: 4),
                 Text(
-                  'تم الرفع',
+                  l10n.signupDocumentUploaded,
                   style: GoogleFonts.cairo(
                     fontSize: 11,
                     color: Colors.white,
