@@ -17,19 +17,28 @@ import '../shared/widgets/post_to_market_sheet.dart';
 class SupplierHomeView extends StatelessWidget {
   final String userName;
   final SupplierType supplierType;
+  final List<String> aiSuggestedCategories;
 
   const SupplierHomeView({
     super.key,
     required this.userName,
     required this.supplierType,
+    this.aiSuggestedCategories = const [],
   });
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (ctx) => SupplierHomeViewModel(ctx.read<AppOrderStore>())),
-        ChangeNotifierProvider(create: (ctx) => MarketplaceViewModel(ctx.read<AppOrderStore>())),
+        ChangeNotifierProvider(
+          create: (ctx) => SupplierHomeViewModel(ctx.read<AppOrderStore>()),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => MarketplaceViewModel(
+            ctx.read<AppOrderStore>(),
+            initialSuggestions: aiSuggestedCategories,
+          ),
+        ),
       ],
       child: _SupplierHomeBody(userName: userName, supplierType: supplierType),
     );

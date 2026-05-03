@@ -9,6 +9,7 @@ import '../../../../domain/services/i_ai_marketplace_service.dart';
 import '../../../../data/services/user_signup_service.dart';
 import '../../../../domain/failures/app_failure.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import 'license_validation_viewmodel.dart';
 import 'login_viewmodel.dart';
 
 class SignUpViewModel extends ChangeNotifier {
@@ -16,6 +17,7 @@ class SignUpViewModel extends ChangeNotifier {
   final SupplierType supplierType;
 
   final UserSignUpService _service;
+  final LicenseValidationViewModel licenseVm = LicenseValidationViewModel();
 
   SignUpViewModel({
     required this.role,
@@ -63,6 +65,7 @@ class SignUpViewModel extends ChangeNotifier {
   // --- Address / Location ---
   double? _addressLat;
   double? _addressLng;
+  String preciseAddress = '';
 
   double? get addressLat => _addressLat;
   double? get addressLng => _addressLng;
@@ -74,9 +77,15 @@ class SignUpViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updatePreciseAddress(String value) {
+    preciseAddress = value;
+    notifyListeners();
+  }
+
   void clearAddress() {
     _addressLat = null;
     _addressLng = null;
+    preciseAddress = '';
     notifyListeners();
   }
 
@@ -90,7 +99,8 @@ class SignUpViewModel extends ChangeNotifier {
   Map<String, String> get errors => Map.unmodifiable(_errors);
 
   // AI Suggestions
-  final IAiMarketplaceService _aiMarketplaceService = MockAiMarketplaceService();
+  final IAiMarketplaceService _aiMarketplaceService =
+      MockAiMarketplaceService();
   AiMarketplaceSuggestion? _suggestion;
   AiMarketplaceSuggestion? get suggestion => _suggestion;
   bool _isLoadingSuggestion = false;
@@ -104,7 +114,9 @@ class SignUpViewModel extends ChangeNotifier {
       notifyListeners();
 
       try {
-        final result = await _aiMarketplaceService.getSuggestionsForSupplier(input);
+        final result = await _aiMarketplaceService.getSuggestionsForSupplier(
+          input,
+        );
         _suggestion = result;
       } catch (_) {
         // Silently ignore AI errors
@@ -118,7 +130,6 @@ class SignUpViewModel extends ChangeNotifier {
   bool get isBusinessRole =>
       role == UserRole.recyclingCo ||
       supplierType == SupplierType.storeBusiness;
-
 
   // --- Image picking ---
   final ImagePicker _picker = ImagePicker();
@@ -145,8 +156,20 @@ class SignUpViewModel extends ChangeNotifier {
       identityDocument = File(xFile.path);
       _errors.remove('identityDocument');
       notifyListeners();
+      // Trigger AI license validation in parallel with form completion
+      await licenseVm.analyzeDocument(identityDocument!, role);
     }
   }
+
+  void clearIdentityDocument() {
+    identityDocument = null;
+    licenseVm.reset();
+    _errors.remove('identityDocument');
+    notifyListeners();
+  }
+
+  /// Categories extracted from the AI license scan, passed to the marketplace.
+  List<String> get aiCategories => licenseVm.suggestedCategories;
 
   void removeProfilePhoto() {
     profilePhoto = null;
@@ -178,6 +201,15 @@ class SignUpViewModel extends ChangeNotifier {
   /// Build a [SignUpRequest] from the current form state for validation and
   /// local profile creation.
   SignUpRequest buildRequest() {
+    String? finalAddress;
+    if (isAddressSet) {
+      final coords =
+          '${_addressLat!.toStringAsFixed(5)}, ${_addressLng!.toStringAsFixed(5)}';
+      finalAddress = preciseAddress.trim().isNotEmpty
+          ? '$coords (${preciseAddress.trim()})'
+          : coords;
+    }
+
     return SignUpRequest(
       name: _effectiveName,
       phone: contactPhone.trim(),
@@ -185,17 +217,12 @@ class SignUpViewModel extends ChangeNotifier {
       password: password,
       role: role,
       supplierType: role == UserRole.supplier ? supplierType : null,
-      vehiclePlate:
-          role == UserRole.driver && vehiclePlate.trim().isNotEmpty
-              ? vehiclePlate.trim()
-              : null,
-      vehicleModel:
-          vehicleModel.trim().isEmpty ? null : vehicleModel.trim(),
-      vehicleColor:
-          vehicleColor.trim().isEmpty ? null : vehicleColor.trim(),
-      address: isAddressSet
-          ? '${_addressLat!.toStringAsFixed(5)}, ${_addressLng!.toStringAsFixed(5)}'
+      vehiclePlate: role == UserRole.driver && vehiclePlate.trim().isNotEmpty
+          ? vehiclePlate.trim()
           : null,
+      vehicleModel: vehicleModel.trim().isEmpty ? null : vehicleModel.trim(),
+      vehicleColor: vehicleColor.trim().isEmpty ? null : vehicleColor.trim(),
+      address: finalAddress,
       addressLat: _addressLat,
       addressLng: _addressLng,
     );
@@ -291,6 +318,8 @@ class SignUpViewModel extends ChangeNotifier {
   @override
   void dispose() {
     _debounce?.cancel();
+    licenseVm.dispose();
     super.dispose();
   }
+
 }

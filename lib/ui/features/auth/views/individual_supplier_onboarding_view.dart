@@ -7,7 +7,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../common/map/location_picker_screen.dart';
 import '../../home/home_router.dart';
 import '../viewmodels/individual_supplier_onboarding_viewmodel.dart';
-import 'widgets/identity_upload_card.dart';
+import 'widgets/license_scan_section.dart';
 import 'widgets/onboarding_shared_widgets.dart';
 import 'widgets/photo_picker_card.dart';
 
@@ -44,6 +44,7 @@ class _BodyState extends State<_Body> {
   final _pwCtrl = TextEditingController();
   final _pwConfirmCtrl = TextEditingController();
   final _taglineCtrl = TextEditingController();
+  final _preciseAddressCtrl = TextEditingController();
 
   @override
   void dispose() {
@@ -53,6 +54,7 @@ class _BodyState extends State<_Body> {
     _pwCtrl.dispose();
     _pwConfirmCtrl.dispose();
     _taglineCtrl.dispose();
+    _preciseAddressCtrl.dispose();
     super.dispose();
   }
 
@@ -70,6 +72,7 @@ class _BodyState extends State<_Body> {
               role: UserRole.supplier,
               supplierType: SupplierType.individual,
               userName: vm.fullName,
+              aiSuggestedCategories: vm.combinedCategories,
             ),
           ),
           (route) => false,
@@ -131,25 +134,41 @@ class _BodyState extends State<_Body> {
               title: l10n.signupLocationTitle,
               icon: Icons.location_on_rounded,
               subtitle: l10n.signupLocationSubtitle,
-              child: GestureDetector(
-                onTap: () async {
-                  final result = await Navigator.push<(double, double)?>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => LocationPickerScreen(
-                        initialLat: vm.addressLat,
-                        initialLng: vm.addressLng,
-                      ),
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      final result = await Navigator.push<(double, double)?>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => LocationPickerScreen(
+                            initialLat: vm.addressLat,
+                            initialLng: vm.addressLng,
+                          ),
+                        ),
+                      );
+                      if (result != null && context.mounted) {
+                        context
+                            .read<IndividualSupplierOnboardingViewModel>()
+                            .setAddress(result.$1, result.$2);
+                      }
+                    },
+                    child: OnboardingLocationTile(
+                        lat: vm.addressLat, lng: vm.addressLng),
+                  ),
+                  if (vm.isAddressSet) ...[
+                    const SizedBox(height: 14),
+                    OnboardingInputField(
+                      controller: _preciseAddressCtrl,
+                      label: l10n.signupLocationPreciseLabel,
+                      hint: l10n.signupLocationPreciseHint,
+                      isRequired: false,
+                      onChanged: (v) {
+                        vm.updatePreciseAddress(v);
+                      },
                     ),
-                  );
-                  if (result != null && context.mounted) {
-                    context
-                        .read<IndividualSupplierOnboardingViewModel>()
-                        .setAddress(result.$1, result.$2);
-                  }
-                },
-                child: OnboardingLocationTile(
-                    lat: vm.addressLat, lng: vm.addressLng),
+                  ],
+                ],
               ),
             ),
             const SizedBox(height: 16),
@@ -215,16 +234,17 @@ class _BodyState extends State<_Body> {
               title: l10n.signupSectionDocuments,
               icon: Icons.badge_rounded,
               subtitle: l10n.signupNationalIdDocument,
-              child: IdentityUploadCard(
-                document: vm.identityDocument,
-                label: l10n.signupSectionDocuments,
-                error: null,
-                onPick: (src) => context
-                    .read<IndividualSupplierOnboardingViewModel>()
-                    .pickIdentityDocument(src),
-                onRemove: () => context
-                    .read<IndividualSupplierOnboardingViewModel>()
-                    .removeIdentityDocument(),
+              child: ChangeNotifierProvider.value(
+                value: vm.licenseVm,
+                child: LicenseScanSection(
+                  label: l10n.signupNationalIdDocument,
+                  onPick: (src) => context
+                      .read<IndividualSupplierOnboardingViewModel>()
+                      .pickIdentityDocument(src),
+                  onReset: () => context
+                      .read<IndividualSupplierOnboardingViewModel>()
+                      .clearIdentityDocument(),
+                ),
               ),
             ),
             const SizedBox(height: 16),

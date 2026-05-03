@@ -7,7 +7,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../common/map/location_picker_screen.dart';
 import '../../home/home_router.dart';
 import '../viewmodels/recycling_co_onboarding_viewmodel.dart';
-import 'widgets/identity_upload_card.dart';
+import 'widgets/license_scan_section.dart';
 import 'widgets/onboarding_shared_widgets.dart';
 import 'widgets/photo_picker_card.dart';
 
@@ -38,6 +38,7 @@ class _SignUpBodyState extends State<_SignUpBody> {
   final _pwCtrl = TextEditingController();
   final _pwConfirmCtrl = TextEditingController();
   final _taglineCtrl = TextEditingController();
+  final _preciseAddressCtrl = TextEditingController();
 
   @override
   void dispose() {
@@ -48,6 +49,7 @@ class _SignUpBodyState extends State<_SignUpBody> {
     _pwCtrl.dispose();
     _pwConfirmCtrl.dispose();
     _taglineCtrl.dispose();
+    _preciseAddressCtrl.dispose();
     super.dispose();
   }
 
@@ -65,6 +67,7 @@ class _SignUpBodyState extends State<_SignUpBody> {
               role: UserRole.recyclingCo,
               supplierType: SupplierType.storeBusiness,
               userName: vm.companyName,
+              aiSuggestedCategories: vm.combinedCategories,
             ),
           ),
           (route) => false,
@@ -136,25 +139,41 @@ class _SignUpBodyState extends State<_SignUpBody> {
               title: l10n.signupLocationTitle,
               icon: Icons.location_on_rounded,
               subtitle: l10n.signupLocationSubtitle,
-              child: GestureDetector(
-                onTap: () async {
-                  final result = await Navigator.push<(double, double)?>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => LocationPickerScreen(
-                        initialLat: vm.addressLat,
-                        initialLng: vm.addressLng,
-                      ),
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      final result = await Navigator.push<(double, double)?>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => LocationPickerScreen(
+                            initialLat: vm.addressLat,
+                            initialLng: vm.addressLng,
+                          ),
+                        ),
+                      );
+                      if (result != null && context.mounted) {
+                        context
+                            .read<RecyclingCoOnboardingViewModel>()
+                            .setAddress(result.$1, result.$2);
+                      }
+                    },
+                    child: OnboardingLocationTile(
+                        lat: vm.addressLat, lng: vm.addressLng),
+                  ),
+                  if (vm.isAddressSet) ...[
+                    const SizedBox(height: 14),
+                    OnboardingInputField(
+                      controller: _preciseAddressCtrl,
+                      label: l10n.signupLocationPreciseLabel,
+                      hint: l10n.signupLocationPreciseHint,
+                      isRequired: false,
+                      onChanged: (v) {
+                        vm.updatePreciseAddress(v);
+                      },
                     ),
-                  );
-                  if (result != null && context.mounted) {
-                    context
-                        .read<RecyclingCoOnboardingViewModel>()
-                        .setAddress(result.$1, result.$2);
-                  }
-                },
-                child: OnboardingLocationTile(
-                    lat: vm.addressLat, lng: vm.addressLng),
+                  ],
+                ],
               ),
             ),
             const SizedBox(height: 16),
@@ -219,16 +238,17 @@ class _SignUpBodyState extends State<_SignUpBody> {
             OnboardingSectionCard(
               title: l10n.recyclingLicense,
               icon: Icons.badge_rounded,
-              child: IdentityUploadCard(
-                document: vm.licenseDocument,
-                label: l10n.recyclingLicense,
-                error: null,
-                onPick: (src) => context
-                    .read<RecyclingCoOnboardingViewModel>()
-                    .pickLicense(src),
-                onRemove: () => context
-                    .read<RecyclingCoOnboardingViewModel>()
-                    .removeLicense(),
+              child: ChangeNotifierProvider.value(
+                value: vm.licenseVm,
+                child: LicenseScanSection(
+                  label: l10n.recyclingLicense,
+                  onPick: (src) => context
+                      .read<RecyclingCoOnboardingViewModel>()
+                      .pickLicense(src),
+                  onReset: () => context
+                      .read<RecyclingCoOnboardingViewModel>()
+                      .clearLicense(),
+                ),
               ),
             ),
             const SizedBox(height: 16),

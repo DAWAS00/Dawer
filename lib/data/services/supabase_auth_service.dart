@@ -108,6 +108,7 @@ class SupabaseAuthService {
           'vehicle_color': request.vehicleColor!.trim(),
         if (request.address != null && request.address!.trim().isNotEmpty)
           'address': request.address!.trim(),
+        if (request.categories.isNotEmpty) 'categories': request.categories,
       };
 
       final inserted = await _client
@@ -294,6 +295,7 @@ class SupabaseAuthService {
         'profile_photo_url': row['profile_photo_url'],
       if (row['identity_doc_path'] != null)
         'identity_doc_path': row['identity_doc_path'],
+      'categories': (row['categories'] as List?)?.cast<String>() ?? const <String>[],
       'created_at': row['created_at'],
     };
   }

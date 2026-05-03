@@ -33,6 +33,7 @@ class SignUpRequest {
   final String? address;
   final double? addressLat;
   final double? addressLng;
+  final List<String> categories;
 
   const SignUpRequest({
     required this.name,
@@ -48,13 +49,13 @@ class SignUpRequest {
     this.address,
     this.addressLat,
     this.addressLng,
+    this.categories = const [],
   });
 
   /// Returns a map of `{field: humanReadableError}`. Empty map == valid.
   ValidationErrors validate() {
     final errors = <String, String>{};
-    // [CHANGE] Validation disabled for sign-up flow to allow bypassing checks
-    /*
+
     final trimmedName = name.trim();
     if (trimmedName.isEmpty) {
       errors['name'] = 'الاسم مطلوب';
@@ -99,7 +100,6 @@ class SignUpRequest {
     if (role != UserRole.supplier && supplierType != null) {
       errors['supplierType'] = 'نوع المورد لا يُستخدم إلا مع دور المورد';
     }
-    */
 
     return errors;
   }
@@ -124,6 +124,7 @@ class SignUpRequest {
         'address': address!.trim(),
       if (addressLat != null && addressLng != null)
         'location': 'SRID=4326;POINT($addressLng $addressLat)',
+      if (categories.isNotEmpty) 'categories': categories,
     };
   }
 

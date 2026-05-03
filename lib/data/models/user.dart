@@ -12,6 +12,7 @@ class User {
   final int points;
   final int totalOrders;
   final bool isVerified;
+  final List<String> categories;
 
   const User({
     required this.id,
@@ -27,6 +28,7 @@ class User {
     this.points = 0,
     this.totalOrders = 0,
     this.isVerified = false,
+    this.categories = const [],
   });
 
   User copyWith({
@@ -43,6 +45,7 @@ class User {
     int? points,
     int? totalOrders,
     bool? isVerified,
+    List<String>? categories,
   }) {
     return User(
       id: id ?? this.id,
@@ -58,6 +61,7 @@ class User {
       points: points ?? this.points,
       totalOrders: totalOrders ?? this.totalOrders,
       isVerified: isVerified ?? this.isVerified,
+      categories: categories ?? this.categories,
     );
   }
 }

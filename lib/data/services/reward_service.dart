@@ -36,12 +36,9 @@ class RewardService {
     required double estimatedWeightKg,
     required double distanceKm,
   }) {
-    // [CHANGE] Validation disabled to allow bypassing checks
-    /*
-    if (wasteTypes.isEmpty) return 'wasteTypes must not be empty';
-    if (estimatedWeightKg < 0) return 'estimatedWeightKg must be non-negative';
-    if (distanceKm < 0) return 'distanceKm must be non-negative';
-    */
+    if (wasteTypes.isEmpty) return 'يجب تحديد نوع النفايات';
+    if (estimatedWeightKg < 0) return 'يجب أن يكون الوزن المقدر غير سالب';
+    if (distanceKm < 0) return 'يجب أن تكون المسافة غير سالبة';
     return null;
   }
 

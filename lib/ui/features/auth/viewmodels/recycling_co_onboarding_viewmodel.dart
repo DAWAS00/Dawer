@@ -6,6 +6,7 @@ import '../../../../data/models/user_role.dart';
 import '../../../../data/services/mock_ai_service.dart';
 import '../../../../data/services/user_signup_service.dart';
 import '../../../../domain/failures/app_failure.dart';
+import 'license_validation_viewmodel.dart';
 
 enum AiAnalysisStatus { none, analyzing, verified, failed }
 
@@ -15,6 +16,7 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
 
   final UserSignUpService _service;
   final ImagePicker _picker = ImagePicker();
+  final LicenseValidationViewModel licenseVm = LicenseValidationViewModel();
 
   // ── AI Status ─────────────────────────────────────────────────────────────
   AiAnalysisStatus _aiStatus = AiAnalysisStatus.none;
@@ -53,6 +55,7 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
 
   double? _addressLat;
   double? _addressLng;
+  String preciseAddress = '';
 
   double? get addressLat => _addressLat;
   double? get addressLng => _addressLng;
@@ -64,9 +67,15 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updatePreciseAddress(String value) {
+    preciseAddress = value;
+    notifyListeners();
+  }
+
   void clearAddress() {
     _addressLat = null;
     _addressLng = null;
+    preciseAddress = '';
     notifyListeners();
   }
 
@@ -80,12 +89,27 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
     if (xf != null) {
       licenseDocument = File(xf.path);
       notifyListeners();
+      await licenseVm.analyzeDocument(licenseDocument!, UserRole.recyclingCo);
     }
   }
 
-  void removeLicense() {
+  void clearLicense() {
     licenseDocument = null;
+    licenseVm.reset();
     notifyListeners();
+  }
+
+  void removeLicense() => clearLicense();
+
+  List<String> get aiCategories => licenseVm.suggestedCategories;
+
+  /// License-scan categories + user-selected brand-profile categories, deduplicated.
+  List<String> get combinedCategories {
+    final seen = <String>{};
+    return [
+      ...licenseVm.suggestedCategories,
+      ..._selectedCategories,
+    ].where(seen.add).toList();
   }
 
   // ── AI — category suggestions ─────────────────────────────────────────────
@@ -178,8 +202,6 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
 
   bool validate() {
     errors.clear();
-    // [CHANGE] Validation disabled for onboarding flow to allow bypassing checks
-    /*
     if (companyName.trim().length < 2) {
       errors['companyName'] = 'اسم الشركة مطلوب (حرفين على الأقل)';
     }
@@ -197,7 +219,6 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
     if (passwordConfirm != password) {
       errors['passwordConfirm'] = 'كلمتا المرور غير متطابقتين';
     }
-    */
     notifyListeners();
     return errors.isEmpty;
   }
@@ -214,18 +235,26 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
   Map<String, dynamic>? createdProfile;
   String? submitError;
 
-  SignUpRequest _buildRequest() => SignUpRequest(
-        name: companyName.trim(),
-        phone: phone.trim(),
-        email: email.trim().isEmpty ? null : email.trim(),
-        password: password,
-        role: UserRole.recyclingCo,
-        address: isAddressSet
-            ? '${_addressLat!.toStringAsFixed(5)}, ${_addressLng!.toStringAsFixed(5)}'
-            : null,
-        addressLat: _addressLat,
-        addressLng: _addressLng,
-      );
+  SignUpRequest _buildRequest() {
+    String? finalAddress;
+    if (isAddressSet) {
+      final coords = '${_addressLat!.toStringAsFixed(5)}, ${_addressLng!.toStringAsFixed(5)}';
+      finalAddress = preciseAddress.trim().isNotEmpty
+          ? '$coords (${preciseAddress.trim()})'
+          : coords;
+    }
+    return SignUpRequest(
+      name: companyName.trim(),
+      phone: phone.trim(),
+      email: email.trim().isEmpty ? null : email.trim(),
+      password: password,
+      role: UserRole.recyclingCo,
+      address: finalAddress,
+      addressLat: _addressLat,
+      addressLng: _addressLng,
+      categories: combinedCategories,
+    );
+  }
 
   Future<void> submit() async {
     if (!validate()) return;
@@ -234,8 +263,6 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
     submitError = null;
     notifyListeners();
 
-    // TODO: persist selectedCategories + tagline to 'company_profiles' table
-    //       when the backend AI profile store is ready.
     final result = await _service.signUp(
       _buildRequest(),
       profilePhoto: profilePhoto,
@@ -262,4 +289,10 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
   static final _emailRegex = RegExp(r"^[\w.\-]+@[\w\-]+(\.[\w\-]+)+$");
   static final _hasLetter = RegExp(r'[A-Za-z]');
   static final _hasDigit = RegExp(r'\d');
+
+  @override
+  void dispose() {
+    licenseVm.dispose();
+    super.dispose();
+  }
 }

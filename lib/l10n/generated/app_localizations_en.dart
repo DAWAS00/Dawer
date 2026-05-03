@@ -355,6 +355,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signupLocationOpenMap => 'Tap to open location map';
 
   @override
+  String get signupLocationPreciseLabel => 'Precise Address';
+
+  @override
+  String get signupLocationPreciseHint => 'Street, building, apartment, etc.';
+
+  @override
   String onboardingCategoriesSelected(int count) {
     return '$count selected';
   }
@@ -1748,4 +1754,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signupPrimaryCategoryHint => 'e.g., Fresh Produce, Dairy';
+
+  @override
+  String get signupSectionVehicle => 'Vehicle Information';
+
+  @override
+  String get signupVehiclePlate => 'License Plate Number';
+
+  @override
+  String get signupVehiclePlateHint => 'e.g., 12-34567';
+
+  @override
+  String get signupVehicleModel => 'Vehicle Make and Model';
+
+  @override
+  String get signupVehicleModelHint => 'e.g., Toyota Prius 2020';
+
+  @override
+  String get signupVehicleColor => 'Vehicle Color';
+
+  @override
+  String get signupVehicleColorHint => 'e.g., White';
 }

@@ -129,6 +129,8 @@
   "signupLocationSelect": "Select",
   "signupLocationSelectPrompt": "Tap to select your location",
   "signupLocationOpenMap": "Tap to open location map",
+  "signupLocationPreciseLabel": "Precise Address",
+  "signupLocationPreciseHint": "Street, building, apartment, etc.",
   "onboardingCategoriesSelected": "{count} selected",
   "@onboardingCategoriesSelected": {
     "placeholders": {
@@ -716,5 +718,12 @@
   "signupPrimaryCategoryHint": "e.g., Fresh Produce, Dairy",
   "@signupPrimaryCategoryHint": {
     "description": "Hint text for the individual supplier category input."
-  }
+  },
+  "signupSectionVehicle": "Vehicle Information",
+  "signupVehiclePlate": "License Plate Number",
+  "signupVehiclePlateHint": "e.g., 12-34567",
+  "signupVehicleModel": "Vehicle Make and Model",
+  "signupVehicleModelHint": "e.g., Toyota Prius 2020",
+  "signupVehicleColor": "Vehicle Color",
+  "signupVehicleColorHint": "e.g., White"
 }

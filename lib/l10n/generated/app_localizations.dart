@@ -776,6 +776,18 @@ abstract class AppLocalizations {
   /// **'اضغط لفتح خريطة الموقع'**
   String get signupLocationOpenMap;
 
+  /// No description provided for @signupLocationPreciseLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'العنوان الدقيق'**
+  String get signupLocationPreciseLabel;
+
+  /// No description provided for @signupLocationPreciseHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشارع، البناية، الشقة، إلخ.'**
+  String get signupLocationPreciseHint;
+
   /// No description provided for @onboardingCategoriesSelected.
   ///
   /// In ar, this message translates to:
@@ -3379,6 +3391,48 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'مثال: منتجات طازجة، ألبان'**
   String get signupPrimaryCategoryHint;
+
+  /// No description provided for @signupSectionVehicle.
+  ///
+  /// In ar, this message translates to:
+  /// **'معلومات المركبة'**
+  String get signupSectionVehicle;
+
+  /// No description provided for @signupVehiclePlate.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم لوحة المركبة'**
+  String get signupVehiclePlate;
+
+  /// No description provided for @signupVehiclePlateHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: أ 123456'**
+  String get signupVehiclePlateHint;
+
+  /// No description provided for @signupVehicleModel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع المركبة وموديلها'**
+  String get signupVehicleModel;
+
+  /// No description provided for @signupVehicleModelHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: تويوتا بريوس 2020'**
+  String get signupVehicleModelHint;
+
+  /// No description provided for @signupVehicleColor.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون المركبة'**
+  String get signupVehicleColor;
+
+  /// No description provided for @signupVehicleColorHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: أبيض'**
+  String get signupVehicleColorHint;
 }
 
 class _AppLocalizationsDelegate

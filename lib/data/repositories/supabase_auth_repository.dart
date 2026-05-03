@@ -149,11 +149,14 @@ final class SupabaseAuthRepository implements IAuthRepository {
       }
     }
 
+    final categories = _localStore.getCurrentUserCategories();
+
     return AuthSession(
       userId: userId,
       userName: userName,
       role: role,
       supplierType: supplierType,
+      categories: categories,
     );
   }
 
@@ -214,11 +217,15 @@ final class SupabaseAuthRepository implements IAuthRepository {
     } else {
       _localStore.clearCurrentSupplierType();
     }
+    // ignore: discarded_futures
+    _localStore.setCurrentUserCategories(session.categories);
   }
 
   void _clearCache() {
     _localStore.clearCurrentUserRole();
     _localStore.clearCurrentSupplierType();
+    // ignore: discarded_futures
+    _localStore.clearCurrentUserCategories();
   }
 
   AuthSession _mapProfileToSession(Map<String, dynamic> profile) {
@@ -243,11 +250,15 @@ final class SupabaseAuthRepository implements IAuthRepository {
       }
     }
 
+    final rawCats = profile['categories'];
+    final categories = rawCats is List ? rawCats.cast<String>() : const <String>[];
+
     return AuthSession(
       userId: profile['auth_id'] as String,
       userName: profile['name'] as String? ?? 'مستخدم',
       role: role,
       supplierType: supplierType,
+      categories: categories,
     );
   }
 }

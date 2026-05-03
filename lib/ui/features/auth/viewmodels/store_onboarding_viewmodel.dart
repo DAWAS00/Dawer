@@ -6,6 +6,7 @@ import '../../../../data/models/user_role.dart';
 import '../../../../data/services/mock_ai_service.dart';
 import '../../../../data/services/user_signup_service.dart';
 import '../../../../domain/failures/app_failure.dart';
+import 'license_validation_viewmodel.dart';
 
 class StoreOnboardingViewModel extends ChangeNotifier {
   StoreOnboardingViewModel({UserSignUpService? service})
@@ -13,6 +14,7 @@ class StoreOnboardingViewModel extends ChangeNotifier {
 
   final UserSignUpService _service;
   final ImagePicker _picker = ImagePicker();
+  final LicenseValidationViewModel licenseVm = LicenseValidationViewModel();
 
   // ── Profile ───────────────────────────────────────────────────────────────
 
@@ -42,6 +44,7 @@ class StoreOnboardingViewModel extends ChangeNotifier {
 
   double? _addressLat;
   double? _addressLng;
+  String preciseAddress = '';
 
   double? get addressLat => _addressLat;
   double? get addressLng => _addressLng;
@@ -53,9 +56,15 @@ class StoreOnboardingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updatePreciseAddress(String value) {
+    preciseAddress = value;
+    notifyListeners();
+  }
+
   void clearAddress() {
     _addressLat = null;
     _addressLng = null;
+    preciseAddress = '';
     notifyListeners();
   }
 
@@ -69,13 +78,19 @@ class StoreOnboardingViewModel extends ChangeNotifier {
     if (xf != null) {
       identityDocument = File(xf.path);
       notifyListeners();
+      await licenseVm.analyzeDocument(identityDocument!, UserRole.supplier);
     }
   }
 
-  void removeIdentityDocument() {
+  void clearIdentityDocument() {
     identityDocument = null;
+    licenseVm.reset();
     notifyListeners();
   }
+
+  void removeIdentityDocument() => clearIdentityDocument();
+
+  List<String> get aiCategories => licenseVm.suggestedCategories;
 
   // ── AI — category suggestions ─────────────────────────────────────────────
 
@@ -158,19 +173,26 @@ class StoreOnboardingViewModel extends ChangeNotifier {
   Map<String, dynamic>? createdProfile;
   String? submitError;
 
-  SignUpRequest _buildRequest() => SignUpRequest(
-        name: companyName.trim(),
-        phone: phone.trim(),
-        email: email.trim().isEmpty ? null : email.trim(),
-        password: password,
-        role: UserRole.supplier,
-        supplierType: SupplierType.storeBusiness,
-        address: isAddressSet
-            ? '${_addressLat!.toStringAsFixed(5)}, ${_addressLng!.toStringAsFixed(5)}'
-            : null,
-        addressLat: _addressLat,
-        addressLng: _addressLng,
-      );
+  SignUpRequest _buildRequest() {
+    String? finalAddress;
+    if (isAddressSet) {
+      final coords = '${_addressLat!.toStringAsFixed(5)}, ${_addressLng!.toStringAsFixed(5)}';
+      finalAddress = preciseAddress.trim().isNotEmpty
+          ? '$coords (${preciseAddress.trim()})'
+          : coords;
+    }
+    return SignUpRequest(
+      name: companyName.trim(),
+      phone: phone.trim(),
+      email: email.trim().isEmpty ? null : email.trim(),
+      password: password,
+      role: UserRole.supplier,
+      supplierType: SupplierType.storeBusiness,
+      address: finalAddress,
+      addressLat: _addressLat,
+      addressLng: _addressLng,
+    );
+  }
 
   Future<void> submit() async {
     if (!validate()) return;
@@ -201,6 +223,12 @@ class StoreOnboardingViewModel extends ChangeNotifier {
 
     isSubmitting = false;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    licenseVm.dispose();
+    super.dispose();
   }
 
   static final _emailRegex = RegExp(r"^[\w.\-]+@[\w\-]+(\.[\w\-]+)+$");

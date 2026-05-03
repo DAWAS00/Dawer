@@ -129,6 +129,8 @@
   "signupLocationSelect": "تحديد",
   "signupLocationSelectPrompt": "اضغط لتحديد موقعك",
   "signupLocationOpenMap": "اضغط لفتح خريطة الموقع",
+  "signupLocationPreciseLabel": "العنوان الدقيق",
+  "signupLocationPreciseHint": "الشارع، البناية، الشقة، إلخ.",
   "onboardingCategoriesSelected": "{count} محددة",
   "@onboardingCategoriesSelected": {
     "placeholders": {
@@ -715,5 +717,12 @@
   "signupPrimaryCategoryHint": "مثال: منتجات طازجة، ألبان",
   "@signupPrimaryCategoryHint": {
     "description": "نص تلميح لمدخل فئة المورد الفردي."
-  }
+  },
+  "signupSectionVehicle": "معلومات المركبة",
+  "signupVehiclePlate": "رقم لوحة المركبة",
+  "signupVehiclePlateHint": "مثال: أ 123456",
+  "signupVehicleModel": "نوع المركبة وموديلها",
+  "signupVehicleModelHint": "مثال: تويوتا بريوس 2020",
+  "signupVehicleColor": "لون المركبة",
+  "signupVehicleColorHint": "مثال: أبيض"
 }

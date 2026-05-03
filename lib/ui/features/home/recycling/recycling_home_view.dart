@@ -15,14 +15,27 @@ import 'viewmodels/recycling_home_viewmodel.dart';
 
 class RecyclingHomeView extends StatelessWidget {
   final String userName;
-  const RecyclingHomeView({super.key, required this.userName});
+  final List<String> aiSuggestedCategories;
+
+  const RecyclingHomeView({
+    super.key,
+    required this.userName,
+    this.aiSuggestedCategories = const [],
+  });
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (ctx) => RecyclingHomeViewModel(ctx.read<AppOrderStore>())),
-        ChangeNotifierProvider(create: (ctx) => MarketplaceViewModel(ctx.read<AppOrderStore>())),
+        ChangeNotifierProvider(
+          create: (ctx) => RecyclingHomeViewModel(ctx.read<AppOrderStore>()),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => MarketplaceViewModel(
+            ctx.read<AppOrderStore>(),
+            initialSuggestions: aiSuggestedCategories,
+          ),
+        ),
       ],
       child: _RecyclingHomeBody(userName: userName),
     );

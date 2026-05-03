@@ -18,17 +18,26 @@ import '../../../../../l10n/l10n.dart';
 
 class DriverHomeView extends StatelessWidget {
   final String userName;
-  const DriverHomeView({super.key, required this.userName});
+  final List<String> aiSuggestedCategories;
+
+  const DriverHomeView({
+    super.key,
+    required this.userName,
+    this.aiSuggestedCategories = const [],
+  });
 
   @override
   Widget build(BuildContext context) {
     final store = context.read<AppOrderStore>();
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => DriverHomeViewModel(store)),
         ChangeNotifierProvider(
-            create: (_) => DriverHomeViewModel(store)),
-        ChangeNotifierProvider(
-            create: (_) => MarketplaceViewModel(store)),
+          create: (_) => MarketplaceViewModel(
+            store,
+            initialSuggestions: aiSuggestedCategories,
+          ),
+        ),
       ],
       child: _DriverHomeBody(userName: userName),
     );

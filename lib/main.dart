@@ -40,7 +40,7 @@ void main() async {
     anonKey: supabaseAnonKey.isNotEmpty ? supabaseAnonKey : 'sb_publishable__JiNp6XeCpIOC1rWi9PwpA_JA51eBU7',
   );
 
-  final prefs = await SharedPreferences.getInstance();
+  final prefs = await SharedPreferences.getInstance();  
   final localStore = await LocalStore.init();
 
   final fileStorage = SupabaseFileStorageRepository();

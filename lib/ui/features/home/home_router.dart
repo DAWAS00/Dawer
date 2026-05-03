@@ -12,12 +12,14 @@ class HomeRouter extends StatelessWidget {
   final UserRole role;
   final SupplierType supplierType;
   final String userName;
+  final List<String> aiSuggestedCategories;
 
   const HomeRouter({
     super.key,
     required this.role,
     required this.supplierType,
     required this.userName,
+    this.aiSuggestedCategories = const [],
   });
 
   @override
@@ -32,15 +34,25 @@ class HomeRouter extends StatelessWidget {
     });
 
     return switch (role) {
-      UserRole.driver => DriverHomeView(userName: userName),
+      UserRole.driver => DriverHomeView(
+          userName: userName,
+          aiSuggestedCategories: aiSuggestedCategories,
+        ),
       UserRole.supplier => switch (supplierType) {
-          SupplierType.individual => IndividualSupplierHomeView(userName: userName),
+          SupplierType.individual => IndividualSupplierHomeView(
+              userName: userName,
+              aiSuggestedCategories: aiSuggestedCategories,
+            ),
           SupplierType.storeBusiness => SupplierHomeView(
               userName: userName,
               supplierType: supplierType,
+              aiSuggestedCategories: aiSuggestedCategories,
             ),
         },
-      UserRole.recyclingCo => RecyclingHomeView(userName: userName),
+      UserRole.recyclingCo => RecyclingHomeView(
+          userName: userName,
+          aiSuggestedCategories: aiSuggestedCategories,
+        ),
     };
   }
 }

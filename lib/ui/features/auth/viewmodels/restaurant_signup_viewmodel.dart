@@ -1,13 +1,21 @@
 
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../../data/models/restaurant_registration_data.dart';
+import '../../../../data/models/user_role.dart';
 import '../../../../domain/services/i_ai_simulation_service.dart';
 import '../../../../domain/services/i_ai_marketplace_service.dart';
 import '../../../../data/services/mock_ai_marketplace_service.dart';
+import 'license_validation_viewmodel.dart';
 
 class RestaurantSignupViewModel extends ChangeNotifier {
   final IAiSimulationService _aiService;
+  final ImagePicker _picker = ImagePicker();
+  final LicenseValidationViewModel licenseVm = LicenseValidationViewModel();
+
+  File? _licenseFile;
 
   RestaurantSignupViewModel({required IAiSimulationService aiService})
       : _aiService = aiService;
@@ -205,6 +213,30 @@ class RestaurantSignupViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> pickLicense(ImageSource source) async {
+    final xf = await _picker.pickImage(
+        source: source, imageQuality: 85, maxWidth: 1200);
+    if (xf != null) {
+      _licenseFile = File(xf.path);
+      await licenseVm.analyzeDocument(_licenseFile!, UserRole.supplier);
+      // Sync to legacy isCertificationVerified so step-3 validation passes
+      _data = _data.copyWith(
+        isCertificationVerified: licenseVm.state == LicenseValidationState.valid,
+      );
+      _errors.remove('verification');
+      notifyListeners();
+    }
+  }
+
+  void clearLicense() {
+    _licenseFile = null;
+    licenseVm.reset();
+    _data = _data.copyWith(isCertificationVerified: false);
+    notifyListeners();
+  }
+
+  List<String> get aiCategories => licenseVm.suggestedCategories;
+
   Future<void> verifyLocationAndDocs(String documentPath) async {
     if (_data.address == null || _data.address!.trim().isEmpty) {
       _errors['address'] = 'restaurantSignupErrorAddressFirst';
@@ -255,6 +287,7 @@ class RestaurantSignupViewModel extends ChangeNotifier {
   @override
   void dispose() {
     _debounce?.cancel();
+    licenseVm.dispose();
     super.dispose();
   }
 }

@@ -40,6 +40,7 @@ class _LoginScreen extends StatelessWidget {
               role: viewModel.selectedRole,
               supplierType: viewModel.supplierType ?? SupplierType.individual,
               userName: viewModel.profileName,
+              aiSuggestedCategories: viewModel.session?.categories ?? const [],
             ),
           ),
         );

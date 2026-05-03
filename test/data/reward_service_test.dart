@@ -23,7 +23,7 @@ void main() {
           estimatedWeightKg: 1,
           distanceKm: 1,
         ),
-        contains('wasteTypes'),
+        contains('نوع النفايات'),
       );
     });
 
@@ -34,7 +34,7 @@ void main() {
           estimatedWeightKg: -1,
           distanceKm: 1,
         ),
-        contains('estimatedWeightKg'),
+        contains('الوزن المقدر'),
       );
     });
 
@@ -45,7 +45,7 @@ void main() {
           estimatedWeightKg: 1,
           distanceKm: -0.5,
         ),
-        contains('distanceKm'),
+        contains('المسافة'),
       );
     });
 

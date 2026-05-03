@@ -64,6 +64,7 @@ class _SplashViewState extends State<SplashView>
               role: session.role,
               supplierType: session.supplierType ?? SupplierType.individual,
               userName: session.userName,
+              aiSuggestedCategories: session.categories,
             ),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {

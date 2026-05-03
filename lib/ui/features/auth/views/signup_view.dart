@@ -9,9 +9,10 @@ import '../../../common/green_button.dart';
 import '../../home/home_router.dart';
 import 'widgets/footer.dart';
 import 'widgets/photo_picker_card.dart';
-import 'widgets/identity_upload_card.dart';
+import 'widgets/license_scan_section.dart';
 import '../../../common/map/location_picker_screen.dart';
 import 'widgets/ai_suggestion_card.dart';
+import '../../../../data/models/user_role.dart';
 
 class SignUpView extends StatelessWidget {
   final UserRole role;
@@ -52,6 +53,10 @@ class _SignUpScreenState extends State<_SignUpScreen> {
   final _passwordCtrl = TextEditingController();
   final _passwordConfirmCtrl = TextEditingController();
   final _primaryCategoryCtrl = TextEditingController();
+  final _preciseAddressCtrl = TextEditingController();
+  final _vehiclePlateCtrl = TextEditingController();
+  final _vehicleModelCtrl = TextEditingController();
+  final _vehicleColorCtrl = TextEditingController();
 
   @override
   void dispose() {
@@ -64,6 +69,10 @@ class _SignUpScreenState extends State<_SignUpScreen> {
     _passwordCtrl.dispose();
     _passwordConfirmCtrl.dispose();
     _primaryCategoryCtrl.dispose();
+    _preciseAddressCtrl.dispose();
+    _vehiclePlateCtrl.dispose();
+    _vehicleModelCtrl.dispose();
+    _vehicleColorCtrl.dispose();
     super.dispose();
   }
 
@@ -82,6 +91,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
               role: vm.role,
               supplierType: vm.supplierType,
               userName: vm.buildRequest().name,
+              aiSuggestedCategories: vm.aiCategories,
             ),
           ),
           (route) => false,
@@ -101,6 +111,10 @@ class _SignUpScreenState extends State<_SignUpScreen> {
             _buildPhotoSection(context, vm),
             const SizedBox(height: 20),
             _buildInfoSection(context, vm),
+            if (vm.role == UserRole.driver) ...[
+              const SizedBox(height: 20),
+              _buildVehicleSection(context, vm),
+            ],
             const SizedBox(height: 20),
             _buildIdentitySection(context, vm),
             const SizedBox(height: 20),
@@ -427,14 +441,15 @@ class _SignUpScreenState extends State<_SignUpScreen> {
     return _SectionCard(
       title: l10n.signupSectionDocuments,
       icon: Icons.badge_rounded,
-      child: IdentityUploadCard(
-        document: vm.identityDocument,
-        label: docLabel,
-        error: vm.errors['identityDocument'],
-        onPick: (source) =>
-            context.read<SignUpViewModel>().pickIdentityDocument(source),
-        onRemove: () =>
-            context.read<SignUpViewModel>().removeIdentityDocument(),
+      child: ChangeNotifierProvider.value(
+        value: vm.licenseVm,
+        child: LicenseScanSection(
+          label: docLabel,
+          onPick: (source) =>
+              context.read<SignUpViewModel>().pickIdentityDocument(source),
+          onReset: () =>
+              context.read<SignUpViewModel>().clearIdentityDocument(),
+        ),
       ),
     );
   }
@@ -447,96 +462,112 @@ class _SignUpScreenState extends State<_SignUpScreen> {
       title: l10n.signupLocationTitle,
       icon: Icons.location_on_rounded,
       subtitle: l10n.signupLocationSubtitle,
-      child: GestureDetector(
-        onTap: () async {
-          final result = await Navigator.push<(double, double)?>(context,
-              MaterialPageRoute(
-                builder: (_) => LocationPickerScreen(
-                  initialLat: vm.addressLat,
-                  initialLng: vm.addressLng,
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: () async {
+              final result = await Navigator.push<(double, double)?>(context,
+                  MaterialPageRoute(
+                    builder: (_) => LocationPickerScreen(
+                      initialLat: vm.addressLat,
+                      initialLng: vm.addressLng,
+                    ),
+                  ));
+              if (result != null && context.mounted) {
+                context.read<SignUpViewModel>().setAddress(result.$1, result.$2);
+              }
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: vm.isAddressSet
+                    ? const Color(0xFF06402B).withValues(alpha: 0.06)
+                    : const Color(0xFFE6E9E7),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: vm.isAddressSet
+                      ? const Color(0xFF06402B).withValues(alpha: 0.4)
+                      : const Color(0xFFC0C9C1),
                 ),
-              ));
-          if (result != null && context.mounted) {
-            context.read<SignUpViewModel>().setAddress(result.$1, result.$2);
-          }
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          width: double.infinity,
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: vm.isAddressSet
-                ? const Color(0xFF06402B).withValues(alpha: 0.06)
-                : const Color(0xFFE6E9E7),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: vm.isAddressSet
-                  ? const Color(0xFF06402B).withValues(alpha: 0.4)
-                  : const Color(0xFFC0C9C1),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF06402B).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      vm.isAddressSet
+                          ? Icons.location_on_rounded
+                          : Icons.add_location_alt_rounded,
+                      size: 20,
+                      color: const Color(0xFF06402B),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          vm.isAddressSet
+                              ? '${vm.addressLat!.toStringAsFixed(4)}, ${vm.addressLng!.toStringAsFixed(4)}'
+                              : l10n.signupLocationSelectPrompt,
+                          style: GoogleFonts.cairo(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: vm.isAddressSet
+                                ? const Color(0xFF06402B)
+                                : const Color(0xFF404943),
+                          ),
+                        ),
+                        Text(
+                          l10n.signupLocationOpenMap,
+                          style: GoogleFonts.cairo(
+                            fontSize: 11,
+                            color: const Color(0xFF717973),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF06402B).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      vm.isAddressSet ? l10n.signupLocationChange : l10n.signupLocationSelect,
+                      style: GoogleFonts.cairo(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF06402B),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          child: Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF06402B).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  vm.isAddressSet
-                      ? Icons.location_on_rounded
-                      : Icons.add_location_alt_rounded,
-                  size: 20,
-                  color: const Color(0xFF06402B),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      vm.isAddressSet
-                          ? '${vm.addressLat!.toStringAsFixed(4)}, ${vm.addressLng!.toStringAsFixed(4)}'
-                          : l10n.signupLocationSelectPrompt,
-                      style: GoogleFonts.cairo(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: vm.isAddressSet
-                            ? const Color(0xFF06402B)
-                            : const Color(0xFF404943),
-                      ),
-                    ),
-                    Text(
-                      l10n.signupLocationOpenMap,
-                      style: GoogleFonts.cairo(
-                        fontSize: 11,
-                        color: const Color(0xFF717973),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF06402B).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  vm.isAddressSet ? l10n.signupLocationChange : l10n.signupLocationSelect,
-                  style: GoogleFonts.cairo(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF06402B),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+          if (vm.isAddressSet) ...[
+            const SizedBox(height: 16),
+            _InputField(
+              controller: _preciseAddressCtrl,
+              label: l10n.signupLocationPreciseLabel,
+              hint: l10n.signupLocationPreciseHint,
+              isRequired: false,
+              onChanged: (v) {
+                context.read<SignUpViewModel>().updatePreciseAddress(v);
+              },
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -632,6 +663,50 @@ class _SignUpScreenState extends State<_SignUpScreen> {
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  // ── Vehicle section (driver only) ──────────────────────────────────────────
+
+  Widget _buildVehicleSection(BuildContext context, SignUpViewModel vm) {
+    final l10n = context.l10n;
+    return _SectionCard(
+      title: l10n.signupSectionVehicle,
+      icon: Icons.local_shipping_rounded,
+      child: Column(
+        children: [
+          _InputField(
+            controller: _vehiclePlateCtrl,
+            label: l10n.signupVehiclePlate,
+            hint: l10n.signupVehiclePlateHint,
+            error: vm.errors['vehiclePlate'],
+            onChanged: (v) {
+              context.read<SignUpViewModel>().vehiclePlate = v;
+              context.read<SignUpViewModel>().clearError('vehiclePlate');
+            },
+          ),
+          const SizedBox(height: 16),
+          _InputField(
+            controller: _vehicleModelCtrl,
+            label: l10n.signupVehicleModel,
+            hint: l10n.signupVehicleModelHint,
+            isRequired: false,
+            onChanged: (v) {
+              context.read<SignUpViewModel>().vehicleModel = v;
+            },
+          ),
+          const SizedBox(height: 16),
+          _InputField(
+            controller: _vehicleColorCtrl,
+            label: l10n.signupVehicleColor,
+            hint: l10n.signupVehicleColorHint,
+            isRequired: false,
+            onChanged: (v) {
+              context.read<SignUpViewModel>().vehicleColor = v;
+            },
+          ),
         ],
       ),
     );

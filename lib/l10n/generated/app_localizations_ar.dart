@@ -351,6 +351,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signupLocationOpenMap => 'اضغط لفتح خريطة الموقع';
 
   @override
+  String get signupLocationPreciseLabel => 'العنوان الدقيق';
+
+  @override
+  String get signupLocationPreciseHint => 'الشارع، البناية، الشقة، إلخ.';
+
+  @override
   String onboardingCategoriesSelected(int count) {
     return '$count محددة';
   }
@@ -1727,4 +1733,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get signupPrimaryCategoryHint => 'مثال: منتجات طازجة، ألبان';
+
+  @override
+  String get signupSectionVehicle => 'معلومات المركبة';
+
+  @override
+  String get signupVehiclePlate => 'رقم لوحة المركبة';
+
+  @override
+  String get signupVehiclePlateHint => 'مثال: أ 123456';
+
+  @override
+  String get signupVehicleModel => 'نوع المركبة وموديلها';
+
+  @override
+  String get signupVehicleModelHint => 'مثال: تويوتا بريوس 2020';
+
+  @override
+  String get signupVehicleColor => 'لون المركبة';
+
+  @override
+  String get signupVehicleColorHint => 'مثال: أبيض';
 }

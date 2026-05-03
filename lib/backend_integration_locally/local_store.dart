@@ -15,10 +15,10 @@ class LocalStore {
   static const String _currentUserNameKey = 'dwaar_current_user_name';
   static const String _currentUserRoleKey = 'dwaar_current_user_role';
   static const String _currentSupplierTypeKey = 'dwaar_current_supplier_type';
+  static const String _currentUserCategoriesKey = 'dwaar_current_user_categories';
   static const String _ordersKey = 'dwaar_orders';
   static const String _marketKey = 'dwaar_market';
   static const String _firstLaunchKey = 'dwaar_first_launch_done';
-  static const String _authSchemaKey = 'dwaar_auth_schema';
 
   /// Async factory. Must be awaited exactly once during app bootstrap.
   static Future<LocalStore> init() async {
@@ -60,14 +60,6 @@ class LocalStore {
 
   Future<void> resetFirstLaunch() async {
     await _prefs.remove(_firstLaunchKey);
-  }
-
-  // ── Auth schema version ──────────────────────────────────────────────────
-
-  int get authSchemaVersion => _prefs.getInt(_authSchemaKey) ?? 1;
-
-  Future<void> setAuthSchemaVersion(int version) async {
-    await _prefs.setInt(_authSchemaKey, version);
   }
 
   List<Map<String, dynamic>> _readMapList(String key) {
@@ -121,5 +113,21 @@ class LocalStore {
 
   Future<void> clearCurrentUserName() async {
     await _prefs.remove(_currentUserNameKey);
+  }
+
+  List<String> getCurrentUserCategories() {
+    final raw = _prefs.getString(_currentUserCategoriesKey);
+    if (raw == null || raw.isEmpty) return const [];
+    final decoded = jsonDecode(raw);
+    if (decoded is! List) return const [];
+    return decoded.whereType<String>().toList();
+  }
+
+  Future<void> setCurrentUserCategories(List<String> categories) async {
+    await _prefs.setString(_currentUserCategoriesKey, jsonEncode(categories));
+  }
+
+  Future<void> clearCurrentUserCategories() async {
+    await _prefs.remove(_currentUserCategoriesKey);
   }
 }
