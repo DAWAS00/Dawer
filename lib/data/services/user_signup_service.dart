@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import '../../backend_integration_locally/local_store.dart';
+import '../../core/result/result.dart';
+import '../../domain/failures/app_failure.dart';
 import '../models/user_role.dart';
 import 'supabase_auth_service.dart';
 
@@ -121,55 +125,58 @@ class SignUpRequest {
   static final _hasDigit = RegExp(r'\d');
 }
 
-/// Thrown when sign-up / sign-in fails.
-class SignUpException implements Exception {
-  final String message;
-  final ValidationErrors fieldErrors;
-  final Object? cause;
-
-  const SignUpException(
-    this.message, {
-    this.fieldErrors = const {},
-    this.cause,
-  });
-
-  bool get isValidation => fieldErrors.isNotEmpty;
-
-  @override
-  String toString() =>
-      'SignUpException: $message${fieldErrors.isEmpty ? '' : ' $fieldErrors'}';
-}
-
 /// Delegates auth operations to [SupabaseAuthService].
+///
+/// All methods return [AppResult] so call sites use `result.fold(...)` rather
+/// than try/catch. Field-level validation errors are surfaced via
+/// [ValidationFailure.fieldErrors].
+
 class UserSignUpService {
   UserSignUpService({SupabaseAuthService? authService})
       : _injected = authService;
 
   final SupabaseAuthService? _injected;
 
+  static SupabaseAuthService? _globalAuth;
   static LocalStore? _globalStore;
 
-  /// Called once from `main.dart` after `LocalStore.init()` completes.
+  /// Wires the production [SupabaseAuthService] (with file storage and any
+  /// other dependencies) once at app boot. Preferred over [setGlobalStore].
+  static void setGlobalAuthService(SupabaseAuthService service) {
+    _globalAuth = service;
+  }
+
+  /// Legacy boot hook used by tests that don't need file uploads. Builds a
+  /// minimal [SupabaseAuthService] on demand.
   static void setGlobalStore(LocalStore store) => _globalStore = store;
 
   SupabaseAuthService get _auth {
     final injected = _injected;
     if (injected != null) return injected;
+    final wired = _globalAuth;
+    if (wired != null) return wired;
     final store = _globalStore;
     if (store == null) {
-      // Fallback: create with a new LocalStore-less approach
-      // This requires setGlobalStore to have been called
       throw StateError(
-        'UserSignUpService.setGlobalStore must be called from main.dart',
+        'UserSignUpService.setGlobalAuthService (or setGlobalStore) must be '
+        'called from main.dart before signUp/signIn.',
       );
     }
     return SupabaseAuthService(store: store);
   }
 
-  Future<Map<String, dynamic>> signUp(SignUpRequest request) =>
-      _auth.signUp(request);
+  Future<AppResult<Map<String, dynamic>>> signUp(
+    SignUpRequest request, {
+    File? profilePhoto,
+    File? identityDocument,
+  }) =>
+      _auth.signUp(
+        request,
+        profilePhoto: profilePhoto,
+        identityDocument: identityDocument,
+      );
 
-  Future<Map<String, dynamic>> signIn({
+  Future<AppResult<Map<String, dynamic>>> signIn({
     required String identifier,
     required String password,
   }) =>

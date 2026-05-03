@@ -173,6 +173,9 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
 
   String? cancelOrder(String orderId) => _store.cancelOrder(orderId);
 
+  void assignDriver(String orderId, User driver) =>
+      _store.assignDriver(orderId, driver);
+
   void addOrder(Order order) {
     _currentTab = 2;
     notifyListeners();

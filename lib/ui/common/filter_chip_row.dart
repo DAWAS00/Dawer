@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_tokens.dart';
 
 @immutable
 class FilterGroup {
@@ -27,12 +28,12 @@ class FilterChipRow extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
-        children: groups.map(_buildGroup).toList(),
+        children: groups.map((g) => _buildGroup(context, g)).toList(),
       ),
     );
   }
 
-  Widget _buildGroup(FilterGroup group) {
+  Widget _buildGroup(BuildContext context, FilterGroup group) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -41,40 +42,38 @@ class FilterChipRow extends StatelessWidget {
             group.label!,
             style: GoogleFonts.cairo(
               fontSize: 11,
-              color: const Color(0xFF9CA3AF),
+              color: context.dt.onSurfaceMuted,
             ),
           ),
           const SizedBox(width: 6),
         ],
-        ...group.options.map((opt) => _buildChip(opt, group)),
+        ...group.options.map((opt) => _buildChip(context, opt, group)),
         const SizedBox(width: 16),
       ],
     );
   }
 
-  Widget _buildChip(String option, FilterGroup group) {
+  Widget _buildChip(BuildContext context, String option, FilterGroup group) {
     final isSelected = option == group.selected;
+    final theme = Theme.of(context);
+    final dt = context.dt;
+
     return GestureDetector(
       onTap: () => group.onChanged(option),
       child: Container(
         margin: const EdgeInsets.only(right: 8),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFF06402B)
-              : const Color(0xFFF2F4F2),
+          color: isSelected ? theme.primaryColor : dt.surfaceVariant,
           borderRadius: BorderRadius.circular(30),
-          border: isSelected
-              ? null
-              : Border.all(color: const Color(0xFFE6E9E7)),
+          border: isSelected ? null : Border.all(color: dt.border),
         ),
         child: Text(
           option,
           style: GoogleFonts.cairo(
             fontSize: 12,
-            fontWeight:
-                isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? Colors.white : const Color(0xFF404943),
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            color: isSelected ? dt.surface : dt.onSurfaceVariant,
           ),
         ),
       ),

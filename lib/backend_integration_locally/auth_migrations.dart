@@ -8,9 +8,10 @@ const int kAuthSchemaVersion = 2;
 /// layout up to [kAuthSchemaVersion]. Idempotent — safe to call on every
 /// app launch.
 ///
-/// v1 → v2: OTP era → password era. Legacy user rows have no `password_hash`
-/// and cannot log in, so we wipe them (and the current session) and reset the
-/// first-launch flag so the seed orders will be regenerated on next boot.
+/// v1 → v2: introduces password hashing. Legacy user rows have no
+/// `password_hash` and cannot log in, so we wipe them (and the current
+/// session) and reset the first-launch flag so the seed orders will be
+/// regenerated on next boot.
 Future<void> runAuthMigrations(LocalStore store) async {
   var version = store.authSchemaVersion;
 

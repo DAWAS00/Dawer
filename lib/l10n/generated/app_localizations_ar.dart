@@ -843,7 +843,42 @@ class AppLocalizationsAr extends AppLocalizations {
   String get marketItemFacilityReceived => 'تم تسجيل الاستلام في المنشأة!';
 
   @override
-  String get rateDriverTitle => 'قيّم السائق';
+  String get marketRiderChoiceTitle => 'اختر الإجراء';
+
+  @override
+  String get marketRiderChoiceSubtitle =>
+      'هل تريد شراء هذا العنصر لنفسك أم توصيله؟';
+
+  @override
+  String get marketRiderOptionBuy => 'شراء لنفسي';
+
+  @override
+  String get marketRiderOptionBuySubtitle => 'ادفع واستلم العنصر من موقعه';
+
+  @override
+  String get marketRiderOptionDeliver => 'توصيل الطلب';
+
+  @override
+  String get marketRiderOptionDeliverSubtitle => 'نقل العنصر من مكان إلى آخر';
+
+  @override
+  String get marketInvoiceTitle => 'فاتورة الطلب';
+
+  @override
+  String get marketInvoiceTotal => 'المبلغ الإجمالي';
+
+  @override
+  String get marketInvoiceConfirm => 'تأكيد وشراء';
+
+  @override
+  String get marketInvoicePickupLocation => 'موقع الاستلام';
+
+  @override
+  String get marketInvoicePickupSuccess =>
+      'تم تأكيد الشراء! توجه إلى الموقع لاستلام عنصرك.';
+
+  @override
+  String get rateDriverTitle => 'تقييم السائق';
 
   @override
   String get rateDriverSubmit => 'إرسال التقييم';
@@ -1345,4 +1380,66 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get rateDriver => 'قيّم السائق';
+
+  @override
+  String get pickupRequestCreated => 'تم إرسال طلب الاستلام بنجاح';
+
+  @override
+  String get forgotPasswordLink => 'نسيت كلمة المرور؟';
+
+  @override
+  String get forgotPasswordOtpTitle => 'رمز التحقق';
+
+  @override
+  String forgotPasswordOtpSubtitle(String email) {
+    return 'تم إرسال رمز إلى $email';
+  }
+
+  @override
+  String get forgotPasswordOtpLabel => 'أدخل الرمز المكوّن من ٦ أرقام';
+
+  @override
+  String get forgotPasswordVerifyButton => 'التحقق من الرمز';
+
+  @override
+  String get forgotPasswordResend => 'إعادة الإرسال';
+
+  @override
+  String forgotPasswordResendIn(int s) {
+    return 'إعادة الإرسال بعد $s ثانية';
+  }
+
+  @override
+  String get forgotPasswordCodeSentAgain => 'تم إرسال رمز جديد';
+
+  @override
+  String get resetPasswordTitle => 'تعيين كلمة مرور جديدة';
+
+  @override
+  String get resetPasswordNewLabel => 'كلمة المرور الجديدة';
+
+  @override
+  String get resetPasswordConfirmLabel => 'تأكيد كلمة المرور';
+
+  @override
+  String get resetPasswordButton => 'تعيين كلمة المرور';
+
+  @override
+  String get resetPasswordSuccess =>
+      'تم تغيير كلمة المرور بنجاح. يمكنك تسجيل الدخول الآن';
+
+  @override
+  String get forgotPasswordErrorEmptyEmail =>
+      'الرجاء إدخال بريدك الإلكتروني أولاً';
+
+  @override
+  String get forgotPasswordErrorCodeLength =>
+      'الرجاء إدخال رمز مكوّن من ٦ أرقام';
+
+  @override
+  String get resetPasswordErrorMinLength =>
+      'كلمة المرور يجب أن تكون ٨ أحرف على الأقل';
+
+  @override
+  String get resetPasswordErrorMismatch => 'كلمتا المرور غير متطابقتين';
 }

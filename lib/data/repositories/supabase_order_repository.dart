@@ -65,10 +65,31 @@ final class SupabaseOrderRepository implements IOrderRepository {
   }
 
   @override
+  Future<AppResult<void>> updateOrder(Order order) async {
+    final authUserId = _client.auth.currentUser?.id;
+    final payload = order.toSupabaseMap(authUserId);
+    return _run(() => _client.from('orders').update(payload).eq('id', order.id));
+  }
+
+  @override
+  Future<AppResult<void>> deleteOrder(String orderId) {
+    return _run(() => _client.from('orders').delete().eq('id', orderId));
+  }
+
+  @override
   Future<AppResult<void>> markAccepted(String orderId) {
     return _run(() => _client.from('orders').update({
           'status': 'accepted',
           'driver_id': _client.auth.currentUser?.id,
+          'accepted_at': DateTime.now().toUtc().toIso8601String(),
+        }).eq('id', orderId));
+  }
+
+  @override
+  Future<AppResult<void>> assignDriver(String orderId, String driverId) {
+    return _run(() => _client.from('orders').update({
+          'status': 'accepted',
+          'driver_id': driverId,
           'accepted_at': DateTime.now().toUtc().toIso8601String(),
         }).eq('id', orderId));
   }
@@ -95,16 +116,17 @@ final class SupabaseOrderRepository implements IOrderRepository {
   @override
   Future<AppResult<void>> markInTransit(String orderId) {
     return _run(() => _client.from('orders').update({
-          'status': 'in_transit',
+          'status': 'inTransit',
           'in_transit_at': DateTime.now().toUtc().toIso8601String(),
         }).eq('id', orderId));
   }
 
   @override
-  Future<AppResult<void>> markCompleted(String orderId) {
+  Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg}) {
     return _run(() => _client.from('orders').update({
           'status': 'completed',
           'completed_at': DateTime.now().toUtc().toIso8601String(),
+          if (actualWeightKg != null) 'actual_weight_kg': actualWeightKg,
         }).eq('id', orderId));
   }
 

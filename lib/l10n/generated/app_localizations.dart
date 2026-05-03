@@ -1736,10 +1736,76 @@ abstract class AppLocalizations {
   /// **'تم تسجيل الاستلام في المنشأة!'**
   String get marketItemFacilityReceived;
 
+  /// No description provided for @marketRiderChoiceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر الإجراء'**
+  String get marketRiderChoiceTitle;
+
+  /// No description provided for @marketRiderChoiceSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد شراء هذا العنصر لنفسك أم توصيله؟'**
+  String get marketRiderChoiceSubtitle;
+
+  /// No description provided for @marketRiderOptionBuy.
+  ///
+  /// In ar, this message translates to:
+  /// **'شراء لنفسي'**
+  String get marketRiderOptionBuy;
+
+  /// No description provided for @marketRiderOptionBuySubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادفع واستلم العنصر من موقعه'**
+  String get marketRiderOptionBuySubtitle;
+
+  /// No description provided for @marketRiderOptionDeliver.
+  ///
+  /// In ar, this message translates to:
+  /// **'توصيل الطلب'**
+  String get marketRiderOptionDeliver;
+
+  /// No description provided for @marketRiderOptionDeliverSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقل العنصر من مكان إلى آخر'**
+  String get marketRiderOptionDeliverSubtitle;
+
+  /// No description provided for @marketInvoiceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة الطلب'**
+  String get marketInvoiceTitle;
+
+  /// No description provided for @marketInvoiceTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ الإجمالي'**
+  String get marketInvoiceTotal;
+
+  /// No description provided for @marketInvoiceConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد وشراء'**
+  String get marketInvoiceConfirm;
+
+  /// No description provided for @marketInvoicePickupLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'موقع الاستلام'**
+  String get marketInvoicePickupLocation;
+
+  /// No description provided for @marketInvoicePickupSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تأكيد الشراء! توجه إلى الموقع لاستلام عنصرك.'**
+  String get marketInvoicePickupSuccess;
+
   /// No description provided for @rateDriverTitle.
   ///
   /// In ar, this message translates to:
-  /// **'قيّم السائق'**
+  /// **'تقييم السائق'**
   String get rateDriverTitle;
 
   /// No description provided for @rateDriverSubmit.
@@ -2677,6 +2743,114 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'قيّم السائق'**
   String get rateDriver;
+
+  /// No description provided for @pickupRequestCreated.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال طلب الاستلام بنجاح'**
+  String get pickupRequestCreated;
+
+  /// No description provided for @forgotPasswordLink.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسيت كلمة المرور؟'**
+  String get forgotPasswordLink;
+
+  /// No description provided for @forgotPasswordOtpTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز التحقق'**
+  String get forgotPasswordOtpTitle;
+
+  /// No description provided for @forgotPasswordOtpSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال رمز إلى {email}'**
+  String forgotPasswordOtpSubtitle(String email);
+
+  /// No description provided for @forgotPasswordOtpLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل الرمز المكوّن من ٦ أرقام'**
+  String get forgotPasswordOtpLabel;
+
+  /// No description provided for @forgotPasswordVerifyButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'التحقق من الرمز'**
+  String get forgotPasswordVerifyButton;
+
+  /// No description provided for @forgotPasswordResend.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة الإرسال'**
+  String get forgotPasswordResend;
+
+  /// No description provided for @forgotPasswordResendIn.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة الإرسال بعد {s} ثانية'**
+  String forgotPasswordResendIn(int s);
+
+  /// No description provided for @forgotPasswordCodeSentAgain.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال رمز جديد'**
+  String get forgotPasswordCodeSentAgain;
+
+  /// No description provided for @resetPasswordTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعيين كلمة مرور جديدة'**
+  String get resetPasswordTitle;
+
+  /// No description provided for @resetPasswordNewLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور الجديدة'**
+  String get resetPasswordNewLabel;
+
+  /// No description provided for @resetPasswordConfirmLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد كلمة المرور'**
+  String get resetPasswordConfirmLabel;
+
+  /// No description provided for @resetPasswordButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعيين كلمة المرور'**
+  String get resetPasswordButton;
+
+  /// No description provided for @resetPasswordSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تغيير كلمة المرور بنجاح. يمكنك تسجيل الدخول الآن'**
+  String get resetPasswordSuccess;
+
+  /// No description provided for @forgotPasswordErrorEmptyEmail.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجاء إدخال بريدك الإلكتروني أولاً'**
+  String get forgotPasswordErrorEmptyEmail;
+
+  /// No description provided for @forgotPasswordErrorCodeLength.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجاء إدخال رمز مكوّن من ٦ أرقام'**
+  String get forgotPasswordErrorCodeLength;
+
+  /// No description provided for @resetPasswordErrorMinLength.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور يجب أن تكون ٨ أحرف على الأقل'**
+  String get resetPasswordErrorMinLength;
+
+  /// No description provided for @resetPasswordErrorMismatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمتا المرور غير متطابقتين'**
+  String get resetPasswordErrorMismatch;
 }
 
 class _AppLocalizationsDelegate

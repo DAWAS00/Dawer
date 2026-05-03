@@ -5,13 +5,15 @@ import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../domain/services/i_location_publisher.dart';
+
 /// Publishes the driver's GPS position to the `driver_locations` table in
 /// Supabase via a single-row upsert (primary key = driver_id).
 ///
 /// Usage:
 ///   await LocationPublisher.instance.start(orderId);   // on order accept
 ///   await LocationPublisher.instance.stop();            // on complete / cancel
-class LocationPublisher {
+class LocationPublisher implements ILocationPublisher {
   LocationPublisher._();
   static final instance = LocationPublisher._();
 
@@ -22,6 +24,7 @@ class LocationPublisher {
 
   // ── Public API ────────────────────────────────────────────────────────────
 
+  @override
   Future<void> start(String orderId) async {
     if (_sub != null) await stop();
 
@@ -52,6 +55,7 @@ class LocationPublisher {
         .listen((pos) => _upsert(pos, orderId));
   }
 
+  @override
   Future<void> stop() async {
     await _sub?.cancel();
     _sub = null;

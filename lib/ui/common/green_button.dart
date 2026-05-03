@@ -7,6 +7,7 @@ class GreenButton extends StatelessWidget {
   final bool isLoading;
   final double borderRadius;
   final double height;
+  final double width;
   final Widget? leadingIcon;
   final Widget? trailingIcon;
 
@@ -17,20 +18,23 @@ class GreenButton extends StatelessWidget {
     this.isLoading = false,
     this.borderRadius = 12,
     this.height = 60,
+    this.width = double.infinity,
     this.leadingIcon,
     this.trailingIcon,
   });
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+
     return SizedBox(
-      width: double.infinity,
+      width: width,
       height: height,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF06402B),
-          disabledBackgroundColor: const Color(0xFF06402B).withValues(alpha: 0.5),
+          backgroundColor: primaryColor,
+          disabledBackgroundColor: primaryColor.withValues(alpha: 0.5),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),

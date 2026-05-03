@@ -25,6 +25,7 @@ final class MockAuthRepository implements IAuthRepository {
     // In mock mode, any non-empty credentials succeed
     return Success(AuthSession(
       userId: 'mock-uuid-1234',
+      userName: 'Mock User',
       role: initialRole,
       supplierType: initialSupplierType,
     ));
@@ -35,6 +36,7 @@ final class MockAuthRepository implements IAuthRepository {
     await Future.delayed(const Duration(seconds: 1));
     return Success(AuthSession(
       userId: 'mock-uuid-5678',
+      userName: 'Mock User',
       role: request.role,
       supplierType: request.supplierType,
     ));
@@ -51,6 +53,7 @@ final class MockAuthRepository implements IAuthRepository {
     await Future.delayed(const Duration(seconds: 1));
     return Success(AuthSession(
       userId: 'mock-uuid-otp',
+      userName: 'Mock User',
       role: initialRole,
       supplierType: initialSupplierType,
     ));
@@ -69,4 +72,22 @@ final class MockAuthRepository implements IAuthRepository {
 
   @override
   AuthSession? get currentSession => null;
+
+  @override
+  Future<AppResult<void>> requestPasswordReset(String email) async {
+    await Future<void>.delayed(const Duration(seconds: 1));
+    return const Success(null);
+  }
+
+  @override
+  Future<AppResult<void>> verifyResetCode(String email, String code) async {
+    await Future<void>.delayed(const Duration(seconds: 1));
+    return const Success(null);
+  }
+
+  @override
+  Future<AppResult<void>> updatePassword(String newPassword) async {
+    await Future<void>.delayed(const Duration(seconds: 1));
+    return const Success(null);
+  }
 }

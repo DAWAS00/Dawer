@@ -350,7 +350,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
     List<Order> items,
   ) {
     return SliverPadding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+      padding: const EdgeInsets.fromLTRB(14, 0, 14, 100),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (ctx, index) => MarketItemCard(

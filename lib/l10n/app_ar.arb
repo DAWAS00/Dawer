@@ -316,7 +316,19 @@
   "marketItemPurchasedDriver": "تم الشراء! سيتم إرسال سائق للاستلام.",
   "marketItemFacilityReceived": "تم تسجيل الاستلام في المنشأة!",
 
-  "rateDriverTitle": "قيّم السائق",
+  "marketRiderChoiceTitle": "اختر الإجراء",
+  "marketRiderChoiceSubtitle": "هل تريد شراء هذا العنصر لنفسك أم توصيله؟",
+  "marketRiderOptionBuy": "شراء لنفسي",
+  "marketRiderOptionBuySubtitle": "ادفع واستلم العنصر من موقعه",
+  "marketRiderOptionDeliver": "توصيل الطلب",
+  "marketRiderOptionDeliverSubtitle": "نقل العنصر من مكان إلى آخر",
+  "marketInvoiceTitle": "فاتورة الطلب",
+  "marketInvoiceTotal": "المبلغ الإجمالي",
+  "marketInvoiceConfirm": "تأكيد وشراء",
+  "marketInvoicePickupLocation": "موقع الاستلام",
+  "marketInvoicePickupSuccess": "تم تأكيد الشراء! توجه إلى الموقع لاستلام عنصرك.",
+
+  "rateDriverTitle": "تقييم السائق",
   "rateDriverSubmit": "إرسال التقييم",
   "rateDriverSkip": "تخطّ",
 
@@ -560,5 +572,34 @@
   "orderUrgencyFee": "رسوم الاستعجال",
   "orderPayout": "المستحق للسائق",
   "orderInvoices": "الفواتير",
-  "rateDriver": "قيّم السائق"
+  "rateDriver": "قيّم السائق",
+  "pickupRequestCreated": "تم إرسال طلب الاستلام بنجاح",
+
+  "forgotPasswordLink": "نسيت كلمة المرور؟",
+  "forgotPasswordOtpTitle": "رمز التحقق",
+  "forgotPasswordOtpSubtitle": "تم إرسال رمز إلى {email}",
+  "@forgotPasswordOtpSubtitle": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "forgotPasswordOtpLabel": "أدخل الرمز المكوّن من ٦ أرقام",
+  "forgotPasswordVerifyButton": "التحقق من الرمز",
+  "forgotPasswordResend": "إعادة الإرسال",
+  "forgotPasswordResendIn": "إعادة الإرسال بعد {s} ثانية",
+  "@forgotPasswordResendIn": {
+    "placeholders": {
+      "s": { "type": "int" }
+    }
+  },
+  "forgotPasswordCodeSentAgain": "تم إرسال رمز جديد",
+  "resetPasswordTitle": "تعيين كلمة مرور جديدة",
+  "resetPasswordNewLabel": "كلمة المرور الجديدة",
+  "resetPasswordConfirmLabel": "تأكيد كلمة المرور",
+  "resetPasswordButton": "تعيين كلمة المرور",
+  "resetPasswordSuccess": "تم تغيير كلمة المرور بنجاح. يمكنك تسجيل الدخول الآن",
+  "forgotPasswordErrorEmptyEmail": "الرجاء إدخال بريدك الإلكتروني أولاً",
+  "forgotPasswordErrorCodeLength": "الرجاء إدخال رمز مكوّن من ٦ أرقام",
+  "resetPasswordErrorMinLength": "كلمة المرور يجب أن تكون ٨ أحرف على الأقل",
+  "resetPasswordErrorMismatch": "كلمتا المرور غير متطابقتين"
 }

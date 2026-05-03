@@ -280,7 +280,7 @@
   "postMarketWasteFormLabel": "Material Condition",
   "postMarketPriceLabel": "Asking Price (JD) — Optional",
   "postMarketImagesLabel": "Material Photos — Optional",
-  "postMarketSubmitButton": "Publish Listing",
+  "postMarketSubmitButton": "Publish Ad",
 
   "collectionJobTitle": "Collection Job Details",
   "collectionJobCollectionArea": "Collection Area: ",
@@ -315,6 +315,18 @@
   "marketItemReceived": "Item received successfully!",
   "marketItemPurchasedDriver": "Purchased! A driver will be sent for pickup.",
   "marketItemFacilityReceived": "Receipt registered at facility!",
+
+  "marketRiderChoiceTitle": "Select Action",
+  "marketRiderChoiceSubtitle": "Do you want to buy this item or deliver it?",
+  "marketRiderOptionBuy": "Buy for Myself",
+  "marketRiderOptionBuySubtitle": "Pay and take the item from its location",
+  "marketRiderOptionDeliver": "Deliver Item",
+  "marketRiderOptionDeliverSubtitle": "Transport the item from place to place",
+  "marketInvoiceTitle": "Order Invoice",
+  "marketInvoiceTotal": "Total Amount",
+  "marketInvoiceConfirm": "Confirm and Buy",
+  "marketInvoicePickupLocation": "Pickup Location",
+  "marketInvoicePickupSuccess": "Purchase confirmed! Go to the location to collect your item.",
 
   "rateDriverTitle": "Rate Driver",
   "rateDriverSubmit": "Submit Rating",
@@ -561,5 +573,34 @@
   "orderPayout": "Payout",
   "orderInvoices": "Invoices",
   "rateDriver": "Rate Driver",
-  "orderItemPrice": "Item Price"
+  "orderItemPrice": "Item Price",
+  "pickupRequestCreated": "Pickup request sent successfully",
+
+  "forgotPasswordLink": "Forgot Password?",
+  "forgotPasswordOtpTitle": "Verification Code",
+  "forgotPasswordOtpSubtitle": "A code was sent to {email}",
+  "@forgotPasswordOtpSubtitle": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "forgotPasswordOtpLabel": "Enter the 6-digit code",
+  "forgotPasswordVerifyButton": "Verify Code",
+  "forgotPasswordResend": "Resend Code",
+  "forgotPasswordResendIn": "Resend in {s} seconds",
+  "@forgotPasswordResendIn": {
+    "placeholders": {
+      "s": { "type": "int" }
+    }
+  },
+  "forgotPasswordCodeSentAgain": "A new code was sent",
+  "resetPasswordTitle": "Set New Password",
+  "resetPasswordNewLabel": "New Password",
+  "resetPasswordConfirmLabel": "Confirm Password",
+  "resetPasswordButton": "Set Password",
+  "resetPasswordSuccess": "Password changed successfully. You can now log in.",
+  "forgotPasswordErrorEmptyEmail": "Please enter your email address first",
+  "forgotPasswordErrorCodeLength": "Please enter a 6-digit code",
+  "resetPasswordErrorMinLength": "Password must be at least 8 characters",
+  "resetPasswordErrorMismatch": "Passwords do not match"
 }

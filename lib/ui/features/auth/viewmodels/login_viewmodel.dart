@@ -22,6 +22,7 @@ class LoginViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool _signedIn = false;
   bool _otpSent = false;
+  bool _passwordResetRequested = false;
   AuthSession? _session;
 
   // --- Getters ---
@@ -34,9 +35,10 @@ class LoginViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get signedIn => _signedIn;
   bool get otpSent => _otpSent;
+  bool get passwordResetRequested => _passwordResetRequested;
   AuthSession? get session => _session;
 
-  String get profileName => _email.isNotEmpty ? _email : _phone;
+  String get profileName => _session?.userName ?? (_email.isNotEmpty ? _email : _phone);
 
   // --- Mutators ---
   void selectRole(UserRole role) {
@@ -92,6 +94,32 @@ class LoginViewModel extends ChangeNotifier {
 
   void resetOtpSent() {
     _otpSent = false;
+  }
+
+  void resetPasswordResetRequested() {
+    _passwordResetRequested = false;
+  }
+
+  /// Sends a 6-digit recovery OTP to the current [_email].
+  Future<void> requestPasswordReset() async {
+    if (_email.trim().isEmpty) {
+      _error = 'forgotPasswordErrorEmptyEmail';
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    final result = await _authRepository.requestPasswordReset(_email.trim());
+    result.fold(
+      onSuccess: (_) => _passwordResetRequested = true,
+      onFailure: (f) => _error = f.message,
+    );
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   /// Signs the user in with email + password.

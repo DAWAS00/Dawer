@@ -30,7 +30,10 @@ class OrderCard extends StatelessWidget {
       onTap: (mode == OrderCardMode.driverAvailable || mode == OrderCardMode.driverHistory)
           ? () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => OrderDetailsView(order: order),
+                  builder: (_) => OrderDetailsView(
+                    order: order,
+                    hideStatus: true,
+                  ),
                 ),
               )
           : null,
@@ -390,7 +393,10 @@ class OrderCard extends StatelessWidget {
               onTap: onAction ??
                   () => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => OrderDetailsView(order: order),
+                          builder: (_) => OrderDetailsView(
+                            order: order,
+                            hideStatus: true,
+                          ),
                         ),
                       ),
             ),
@@ -404,7 +410,10 @@ class OrderCard extends StatelessWidget {
               onTap: onAction ??
                   () => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => OrderDetailsView(order: order),
+                          builder: (_) => OrderDetailsView(
+                            order: order,
+                            hideStatus: true,
+                          ),
                         ),
                       ),
             ),

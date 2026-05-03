@@ -28,9 +28,16 @@ void main() async {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   // Initialize Supabase via service
+  const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+  
+  if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
+    debugPrint('WARNING: SUPABASE_URL or SUPABASE_ANON_KEY is not defined. App will run in mock mode or fail if backend is required.');
+  }
+
   await SupabaseService.initialize(
-    url: 'https://qexwkjwqnbowsrrthxva.supabase.co',
-    anonKey: 'sb_publishable_5L9NXEGuDEnPIHrIuiva_g_81fPRwtJ',
+    url: supabaseUrl.isNotEmpty ? supabaseUrl : 'https://bpzuwwbtqqrpohfqjcuo.supabase.co',
+    anonKey: supabaseAnonKey.isNotEmpty ? supabaseAnonKey : 'sb_publishable__JiNp6XeCpIOC1rWi9PwpA_JA51eBU7',
   );
 
   final prefs = await SharedPreferences.getInstance();

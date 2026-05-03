@@ -21,7 +21,7 @@ import '../constants/app_colors.dart';
 /// Brand colors (primaryGreen, accentAmber, status badges) stay in
 /// [AppColors] because they appear on intentionally colored backgrounds
 /// and do not need to flip between themes.
-class AppTokens {
+class AppTokens extends ThemeExtension<AppTokens> {
   /// Whether the app is currently in dark mode.
   final bool isDark;
 
@@ -67,7 +67,7 @@ class AppTokens {
 
   // ── Constructor ───────────────────────────────────────────────────────────
 
-  const AppTokens._({
+  const AppTokens({
     required this.isDark,
     required this.surface,
     required this.surfaceVariant,
@@ -81,7 +81,7 @@ class AppTokens {
 
   // ── Singletons ────────────────────────────────────────────────────────────
 
-  static const AppTokens _light = AppTokens._(
+  static const AppTokens light = AppTokens(
     isDark: false,
     surface: Color(0xFFFFFFFF),
     surfaceVariant: Color(0xFFF2F4F2),
@@ -93,7 +93,7 @@ class AppTokens {
     shadow: Colors.black,
   );
 
-  static const AppTokens _dark = AppTokens._(
+  static const AppTokens dark = AppTokens(
     isDark: true,
     surface: AppColors.shamrock1200,
     surfaceVariant: AppColors.shamrock1100,
@@ -105,12 +105,54 @@ class AppTokens {
     shadow: Colors.black,
   );
 
+  // ── ThemeExtension Methods ────────────────────────────────────────────────
+
+  @override
+  ThemeExtension<AppTokens> copyWith({
+    bool? isDark,
+    Color? surface,
+    Color? surfaceVariant,
+    Color? scaffold,
+    Color? onSurface,
+    Color? onSurfaceVariant,
+    Color? onSurfaceMuted,
+    Color? border,
+    Color? shadow,
+  }) {
+    return AppTokens(
+      isDark: isDark ?? this.isDark,
+      surface: surface ?? this.surface,
+      surfaceVariant: surfaceVariant ?? this.surfaceVariant,
+      scaffold: scaffold ?? this.scaffold,
+      onSurface: onSurface ?? this.onSurface,
+      onSurfaceVariant: onSurfaceVariant ?? this.onSurfaceVariant,
+      onSurfaceMuted: onSurfaceMuted ?? this.onSurfaceMuted,
+      border: border ?? this.border,
+      shadow: shadow ?? this.shadow,
+    );
+  }
+
+  @override
+  ThemeExtension<AppTokens> lerp(covariant ThemeExtension<AppTokens>? other, double t) {
+    if (other is! AppTokens) return this;
+    return AppTokens(
+      isDark: t < 0.5 ? isDark : other.isDark,
+      surface: Color.lerp(surface, other.surface, t)!,
+      surfaceVariant: Color.lerp(surfaceVariant, other.surfaceVariant, t)!,
+      scaffold: Color.lerp(scaffold, other.scaffold, t)!,
+      onSurface: Color.lerp(onSurface, other.onSurface, t)!,
+      onSurfaceVariant: Color.lerp(onSurfaceVariant, other.onSurfaceVariant, t)!,
+      onSurfaceMuted: Color.lerp(onSurfaceMuted, other.onSurfaceMuted, t)!,
+      border: Color.lerp(border, other.border, t)!,
+      shadow: Color.lerp(shadow, other.shadow, t)!,
+    );
+  }
+
   // ── Factory ───────────────────────────────────────────────────────────────
 
   /// Returns the correct [AppTokens] for the current [BuildContext] theme.
   static AppTokens of(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return isDark ? _dark : _light;
+    return Theme.of(context).extension<AppTokens>() ?? (Theme.of(context).brightness == Brightness.dark ? dark : light);
   }
 }
 
@@ -125,3 +167,4 @@ extension AppTokensX on BuildContext {
   /// ```
   AppTokens get dt => AppTokens.of(this);
 }
+

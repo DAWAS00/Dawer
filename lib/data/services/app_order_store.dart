@@ -241,6 +241,27 @@ class AppOrderStore extends ChangeNotifier {
     return null;
   }
 
+  /// Assign a specific driver to an order (supplier action).
+  void assignDriver(String orderId, User driver) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return;
+    _orders[idx] = _orders[idx].copyWith(
+      status: OrderStatus.accepted,
+      acceptedAt: DateTime.now(),
+      driverName: driver.name,
+      driverPhone: driver.phone,
+      driverRating: driver.rating,
+      driverVehicle: driver.vehicleModel,
+      driverVehicleModel: driver.vehicleModel,
+      driverVehicleColor: driver.vehicleColor,
+      driverLicensePlate: driver.licensePlate,
+      driverVehiclePhotoPath: driver.vehiclePhotoPath,
+    );
+    notifyListeners();
+
+    unawaited(_pushRemote(_remote.assignDriver(orderId, driver.id)));
+  }
+
   /// Mark the active order as in-transit (driver en-route to dropoff).
   void markInTransit(String orderId) {
     final idx = _orders.indexWhere((o) => o.id == orderId);
@@ -268,7 +289,7 @@ class AppOrderStore extends ChangeNotifier {
     }
     notifyListeners();
 
-    unawaited(_pushRemote(_remote.markCompleted(completedOrder.id)));
+    unawaited(_pushRemote(_remote.markCompleted(completedOrder.id, actualWeightKg: completedOrder.weightKg)));
   }
 
   /// Record a driver rating after delivery (mock — updates driverRating on order).
@@ -416,6 +437,8 @@ class AppOrderStore extends ChangeNotifier {
     );
     _orders.insert(0, order);
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.insertOrder(order)));
     return order;
   }
 
@@ -446,6 +469,8 @@ class AppOrderStore extends ChangeNotifier {
       driverPhone: driver.phone,
     );
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markAccepted(jobId)));
     return null;
   }
 
@@ -480,6 +505,8 @@ class AppOrderStore extends ChangeNotifier {
       editNote: editNote,
     );
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.updateOrder(_orders[idx])));
     return _orders[idx];
   }
 
@@ -493,6 +520,8 @@ class AppOrderStore extends ChangeNotifier {
     }
     _orders.removeAt(idx);
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.deleteOrder(jobId)));
     return true;
   }
 
@@ -559,6 +588,8 @@ class AppOrderStore extends ChangeNotifier {
     );
     _orders.insert(0, sale);
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.insertOrder(sale)));
     return null;
   }
 
@@ -579,6 +610,8 @@ class AppOrderStore extends ChangeNotifier {
       inTransitAt: DateTime.now(),
     );
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markInTransit(saleId)));
     return null;
   }
 
@@ -601,6 +634,8 @@ class AppOrderStore extends ChangeNotifier {
       weightKg: actualWeightKg ?? current.weightKg,
     );
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markCompleted(saleId, actualWeightKg: actualWeightKg)));
     return null;
   }
 
@@ -620,6 +655,8 @@ class AppOrderStore extends ChangeNotifier {
     }
     _orders[idx] = _orders[idx].copyWith(status: OrderStatus.cancelled);
     notifyListeners();
+
+    unawaited(_pushRemote(_remote.markCancelled(saleId)));
   }
 
   /// All collectionSale commitments linked to jobs owned by [companyName].

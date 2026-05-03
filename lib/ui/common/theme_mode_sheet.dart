@@ -80,7 +80,7 @@ class ThemeModeSheet extends StatelessWidget {
     required AppThemeNotifier notifier,
   }) {
     final isSelected = mode == currentMode;
-    final color = isSelected ? const Color(0xFF5ED0B4) : Theme.of(context).textTheme.bodyMedium?.color;
+    final color = isSelected ? Theme.of(context).primaryColor : Theme.of(context).textTheme.bodyMedium?.color;
 
     return InkWell(
       onTap: () {
@@ -104,7 +104,7 @@ class ThemeModeSheet extends StatelessWidget {
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_circle_rounded, color: Color(0xFF5ED0B4), size: 24),
+              Icon(Icons.check_circle_rounded, color: Theme.of(context).primaryColor, size: 24),
           ],
         ),
       ),

@@ -503,6 +503,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
                     disabledBackgroundColor: const Color(0xFF1E40AF).withValues(alpha: 0.4),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

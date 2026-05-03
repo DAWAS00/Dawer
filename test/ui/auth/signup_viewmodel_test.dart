@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:dwaar/backend_integration_locally/local_store.dart';
+import 'package:dwaar/core/result/result.dart';
 import 'package:dwaar/data/models/user_role.dart';
 import 'package:dwaar/data/services/supabase_auth_service.dart';
 import 'package:dwaar/data/services/user_signup_service.dart';
@@ -18,10 +19,18 @@ import 'package:dwaar/ui/features/auth/viewmodels/signup_viewmodel.dart';
 class _FakeSupabaseAuthService extends SupabaseAuthService {
   _FakeSupabaseAuthService({required super.store});
 
+  File? lastProfilePhoto;
+  File? lastIdentityDocument;
+
   @override
-  Future<Map<String, dynamic>> signUp(SignUpRequest request) async {
-    // Simulate a successful sign-up returning a profile row.
-    return <String, dynamic>{
+  Future<AppResult<Map<String, dynamic>>> signUp(
+    SignUpRequest request, {
+    File? profilePhoto,
+    File? identityDocument,
+  }) async {
+    lastProfilePhoto = profilePhoto;
+    lastIdentityDocument = identityDocument;
+    return Success(<String, dynamic>{
       'id': 'fake-uuid',
       'auth_id': 'fake-auth-uuid',
       'name': request.name,
@@ -36,7 +45,7 @@ class _FakeSupabaseAuthService extends SupabaseAuthService {
       'is_verified': false,
       'points': 0,
       'created_at': DateTime.now().toIso8601String(),
-    };
+    });
   }
 }
 
@@ -44,11 +53,8 @@ class _FakeSupabaseAuthService extends SupabaseAuthService {
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// Fake file that counts as "identity document uploaded" for the VM. We don't
-/// actually read it — only null-vs-non-null matters for validation.
 File _fakeDoc() => File('C:/tmp/nonexistent.jpg');
 
-/// Arabic localizations used throughout the tests so `submit(l10n)` compiles.
 final AppLocalizations _l10n = AppLocalizationsAr();
 
 late UserSignUpService _fakeService;
@@ -85,7 +91,6 @@ void main() {
     final store = await LocalStore.init();
     UserSignUpService.setGlobalStore(store);
 
-    // Wire up the fake auth service so tests don't hit Supabase.
     final fakeAuth = _FakeSupabaseAuthService(store: store);
     _fakeService = UserSignUpService(authService: fakeAuth);
   });
@@ -206,8 +211,7 @@ void main() {
       expect(vm.errors['contactEmail'], isNotNull);
     });
 
-    test('missing email blocks submission (email is the OTP channel)',
-        () async {
+    test('missing email blocks submission', () async {
       final vm = _driverVm()
         ..fullName = 'أحمد'
         ..contactPhone = '+962791234567'
@@ -260,6 +264,40 @@ void main() {
         ..contactPhone = '+962791234567';
 
       expect(vm.buildRequest().email, isNull);
+    });
+  });
+
+  group('SignUpViewModel.submit — media forwarding', () {
+    test('forwards picked profilePhoto + identityDocument to the service',
+        () async {
+      // Build a fresh fake & service so we can read its captured args.
+      final store = await LocalStore.init();
+      final fakeAuth = _FakeSupabaseAuthService(store: store);
+      final service = UserSignUpService(authService: fakeAuth);
+
+      final profilePhoto = File('C:/tmp/avatar.jpg');
+      final idDoc = File('C:/tmp/national-id.jpg');
+
+      final vm = SignUpViewModel(
+        role: UserRole.driver,
+        supplierType: SupplierType.individual,
+        service: service,
+      )
+        ..fullName = 'أحمد'
+        ..contactPhone = '+962791234567'
+        ..contactEmail = 'ahmad@example.com'
+        ..password = 'Password123'
+        ..passwordConfirm = 'Password123'
+        ..vehiclePlate = 'أ 123456'
+        ..profilePhoto = profilePhoto
+        ..identityDocument = idDoc;
+
+      await vm.submit(_l10n);
+
+      expect(vm.errors, isEmpty);
+      expect(vm.submitted, isTrue);
+      expect(fakeAuth.lastProfilePhoto?.path, profilePhoto.path);
+      expect(fakeAuth.lastIdentityDocument?.path, idDoc.path);
     });
   });
 

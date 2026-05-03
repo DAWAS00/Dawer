@@ -452,6 +452,7 @@ class DriverHomeTab extends StatelessWidget {
                   builder: (_) => OrderDetailsView(
                     order: order,
                     onCompleteOrder: onCompleteOrder,
+                    hideStatus: true,
                   ),
                 ),
               ),

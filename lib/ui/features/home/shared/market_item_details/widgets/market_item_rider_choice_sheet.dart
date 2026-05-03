@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dwaar/l10n/l10n.dart';
 
-class MarketItemPurchaseChoiceSheet extends StatelessWidget {
-  final VoidCallback onSelfPickup;
-  final VoidCallback onAssignRider;
+class MarketItemRiderChoiceSheet extends StatelessWidget {
+  final VoidCallback onBuyForSelf;
+  final VoidCallback onDeliver;
 
-  const MarketItemPurchaseChoiceSheet({
+  const MarketItemRiderChoiceSheet({
     super.key,
-    required this.onSelfPickup,
-    required this.onAssignRider,
+    required this.onBuyForSelf,
+    required this.onDeliver,
   });
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Center(
             child: Container(
-              width: 40,
+              width: 50,
               height: 4,
               decoration: BoxDecoration(
                 color: const Color(0xFFD1D5DB),
@@ -31,7 +33,7 @@ class MarketItemPurchaseChoiceSheet extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'اختر طريقة الاستلام',
+            l10n.marketRiderChoiceTitle,
             style: GoogleFonts.cairo(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -40,22 +42,22 @@ class MarketItemPurchaseChoiceSheet extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'يمكنك الاستلام بنفسك أو تعيين سائق للتوصيل',
+            l10n.marketRiderChoiceSubtitle,
             style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF717973)),
           ),
           const SizedBox(height: 16),
-          _PurchaseOptionTile(
-            icon: Icons.storefront_rounded,
-            title: 'استلام من السوق',
-            subtitle: 'بدون رسوم توصيل',
-            onTap: onSelfPickup,
+          _ChoiceOptionTile(
+            icon: Icons.shopping_bag_rounded,
+            title: l10n.marketRiderOptionBuy,
+            subtitle: l10n.marketRiderOptionBuySubtitle,
+            onTap: onBuyForSelf,
           ),
           const SizedBox(height: 10),
-          _PurchaseOptionTile(
+          _ChoiceOptionTile(
             icon: Icons.local_shipping_rounded,
-            title: 'تعيين سائق للتوصيل',
-            subtitle: 'حساب رسوم التوصيل حسب المسافة والوزن',
-            onTap: onAssignRider,
+            title: l10n.marketRiderOptionDeliver,
+            subtitle: l10n.marketRiderOptionDeliverSubtitle,
+            onTap: onDeliver,
           ),
         ],
       ),
@@ -63,13 +65,13 @@ class MarketItemPurchaseChoiceSheet extends StatelessWidget {
   }
 }
 
-class _PurchaseOptionTile extends StatelessWidget {
+class _ChoiceOptionTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
   final VoidCallback onTap;
 
-  const _PurchaseOptionTile({
+  const _ChoiceOptionTile({
     required this.icon,
     required this.title,
     required this.subtitle,
@@ -83,7 +85,7 @@ class _PurchaseOptionTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),

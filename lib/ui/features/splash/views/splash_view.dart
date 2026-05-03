@@ -63,7 +63,7 @@ class _SplashViewState extends State<SplashView>
                 HomeRouter(
               role: session.role,
               supplierType: session.supplierType ?? SupplierType.individual,
-              userName: '', // Name could be added to AuthSession if needed
+              userName: session.userName,
             ),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {

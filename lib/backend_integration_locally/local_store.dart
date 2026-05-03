@@ -12,6 +12,7 @@ class LocalStore {
 
   static const String _usersKey = 'dwaar_users';
   static const String _currentUserKey = 'dwaar_current_user_id';
+  static const String _currentUserNameKey = 'dwaar_current_user_name';
   static const String _currentUserRoleKey = 'dwaar_current_user_role';
   static const String _currentSupplierTypeKey = 'dwaar_current_supplier_type';
   static const String _ordersKey = 'dwaar_orders';
@@ -110,5 +111,15 @@ class LocalStore {
 
   Future<void> clearCurrentSupplierType() async {
     await _prefs.remove(_currentSupplierTypeKey);
+  }
+
+  String? getCurrentUserName() => _prefs.getString(_currentUserNameKey);
+
+  Future<void> setCurrentUserName(String name) async {
+    await _prefs.setString(_currentUserNameKey, name);
+  }
+
+  Future<void> clearCurrentUserName() async {
+    await _prefs.remove(_currentUserNameKey);
   }
 }

@@ -17,8 +17,14 @@ import '../../../../l10n/l10n.dart';
 class OrderDetailsView extends StatelessWidget {
   final Order order;
   final void Function(Order)? onCompleteOrder;
+  final bool hideStatus;
 
-  const OrderDetailsView({super.key, required this.order, this.onCompleteOrder});
+  const OrderDetailsView({
+    super.key,
+    required this.order,
+    this.onCompleteOrder,
+    this.hideStatus = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +32,14 @@ class OrderDetailsView extends StatelessWidget {
       backgroundColor: const Color(0xFFF8FAF8),
       body: CustomScrollView(
         slivers: [
-          OrderDetailsAppBar(order: order),
+          OrderDetailsAppBar(order: order, hideStatus: hideStatus),
           SliverToBoxAdapter(
             child: OrderMapSection(order: order, hasDriver: order.driverName != null),
           ),
-          SliverToBoxAdapter(
-            child: OrderStatusTimeline(order: order),
-          ),
+          if (!hideStatus)
+            SliverToBoxAdapter(
+              child: OrderStatusTimeline(order: order),
+            ),
           if (order.driverName != null)
             SliverToBoxAdapter(child: OrderDriverCard(order: order)),
           SliverToBoxAdapter(child: OrderInfoSection(order: order)),

@@ -29,6 +29,9 @@ abstract interface class IOrderRepository {
   /// implementation stamps `driver_id` and `accepted_at` server-side.
   Future<AppResult<void>> markAccepted(String orderId);
 
+  /// Assigns a specific [driverId] to [orderId] (called by supplier).
+  Future<AppResult<void>> assignDriver(String orderId, String driverId);
+
   /// Marks [orderId] as cancelled.
   Future<AppResult<void>> markCancelled(String orderId);
 
@@ -44,7 +47,14 @@ abstract interface class IOrderRepository {
   Future<AppResult<void>> markInTransit(String orderId);
 
   /// Marks [orderId] as completed. Stamps `completed_at` server-side.
-  Future<AppResult<void>> markCompleted(String orderId);
+  /// [actualWeightKg] is optional, used for collectionSale final settlement.
+  Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg});
+
+  /// Updates an existing collection job.
+  Future<AppResult<void>> updateOrder(Order order);
+
+  /// Deletes an order (only if status is pending).
+  Future<AppResult<void>> deleteOrder(String orderId);
 }
 
 /// Default no-op implementation. Used by tests and any code path that wants to
@@ -64,7 +74,19 @@ final class NoOpOrderRepository implements IOrderRepository {
       const Success(null);
 
   @override
+  Future<AppResult<void>> updateOrder(Order order) async =>
+      const Success(null);
+
+  @override
+  Future<AppResult<void>> deleteOrder(String orderId) async =>
+      const Success(null);
+
+  @override
   Future<AppResult<void>> markAccepted(String orderId) async =>
+      const Success(null);
+
+  @override
+  Future<AppResult<void>> assignDriver(String orderId, String driverId) async =>
       const Success(null);
 
   @override
@@ -83,6 +105,6 @@ final class NoOpOrderRepository implements IOrderRepository {
       const Success(null);
 
   @override
-  Future<AppResult<void>> markCompleted(String orderId) async =>
+  Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg}) async =>
       const Success(null);
 }

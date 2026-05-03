@@ -17,7 +17,7 @@ import 'package:dwaar/ui/features/auth/views/widgets/login_form.dart';
 
 class _FakeAuthRepository implements IAuthRepository {
   AppResult<AuthSession> nextSignInResult = const Success(
-    AuthSession(userId: 'fake-id', role: UserRole.driver),
+    AuthSession(userId: 'fake-id', userName: 'Fake User', role: UserRole.driver),
   );
 
   String? lastEmail;
@@ -53,6 +53,18 @@ class _FakeAuthRepository implements IAuthRepository {
 
   @override
   AuthSession? get currentSession => null;
+
+  @override
+  Future<AppResult<void>> requestPasswordReset(String email) async =>
+      const Success(null);
+
+  @override
+  Future<AppResult<void>> verifyResetCode(String email, String code) async =>
+      const Success(null);
+
+  @override
+  Future<AppResult<void>> updatePassword(String newPassword) async =>
+      const Success(null);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -140,7 +152,7 @@ void main() {
         (tester) async {
       final repo = _FakeAuthRepository()
         ..nextSignInResult = const Success(
-          AuthSession(userId: 'u-1', role: UserRole.driver),
+          AuthSession(userId: 'u-1', userName: 'User 1', role: UserRole.driver),
         );
 
       await _pumpLoginForm(tester, repo: repo);

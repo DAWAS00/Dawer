@@ -37,8 +37,20 @@ class _RecordingOrderRepository implements IOrderRepository {
       _record('insertOrder');
 
   @override
+  Future<AppResult<void>> updateOrder(Order order) async =>
+      _record('updateOrder');
+
+  @override
+  Future<AppResult<void>> deleteOrder(String orderId) async =>
+      _record('deleteOrder');
+
+  @override
   Future<AppResult<void>> markAccepted(String orderId) async =>
       _record('markAccepted');
+
+  @override
+  Future<AppResult<void>> assignDriver(String orderId, String driverId) async =>
+      _record('assignDriver');
 
   @override
   Future<AppResult<void>> markCancelled(String orderId) async =>
@@ -56,7 +68,7 @@ class _RecordingOrderRepository implements IOrderRepository {
       _record('markInTransit');
 
   @override
-  Future<AppResult<void>> markCompleted(String orderId) async =>
+  Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg}) async =>
       _record('markCompleted');
 }
 

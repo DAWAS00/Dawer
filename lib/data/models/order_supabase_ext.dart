@@ -7,7 +7,7 @@ extension OrderSupabaseExt on Order {
       if (id.length == 36) 'id': id, // Only pass id if it's a UUID, Supabase auto-generates if omitted. Our mock uses 'ORD-xxx'
       'type': type.name, // ENUM
       'status': status.name,
-      'supplier_id': activeUserId,
+      if (type == OrderType.collection) 'company_id': activeUserId else 'supplier_id': activeUserId,
       'waste_types': wasteTypes.map((e) => e.name).toList(),
       if (wasteForm != null) 'waste_form': wasteForm!.name,
       if (weightCategory != null) 'weight_category': weightCategory!.name,
@@ -24,6 +24,15 @@ extension OrderSupabaseExt on Order {
       if (supplierNotes != null) 'notes': supplierNotes,
       'is_marketplace_shared': isMarketplaceShared,
       'requires_rider': requiresRider,
+      if (linkedJobId != null) 'linked_job_id': linkedJobId,
+      if (collectionDeliveryMethod != null) 'collection_delivery_method': collectionDeliveryMethod!.name,
+      if (collectionTransactionType != null) 'collection_transaction_type': collectionTransactionType!.name,
+      if (jobDescription != null) 'job_description': jobDescription,
+      if (paymentModel != null) 'payment_model': paymentModel!.name,
+      if (pricePerKg != null) 'price_per_kg': pricePerKg,
+      if (itemPrice != null) 'item_price': itemPrice,
+      if (minQuantityKg != null) 'min_quantity_kg': minQuantityKg,
+      if (weightKg != null) 'actual_weight_kg': weightKg,
     };
   }
 }
@@ -64,6 +73,7 @@ Order orderFromSupabaseJson(Map<String, dynamic> json) {
     reward: (json['reward_jd'] as num?)?.toDouble() ?? 0,
     createdAt: parseDt(json['created_at'] as String?) ?? DateTime.now(),
     acceptedAt: parseDt(json['accepted_at'] as String?),
+    inTransitAt: parseDt(json['in_transit_at'] as String?),
     completedAt: parseDt(json['completed_at'] as String?),
     distanceKm: (json['distance_km'] as num?)?.toDouble(),
     supplierNotes: json['notes'] as String?,
@@ -73,5 +83,14 @@ Order orderFromSupabaseJson(Map<String, dynamic> json) {
     pickupTarget: parseEnumN(json['pickup_target'] as String?, PickupTarget.values),
     isMarketplaceShared: json['is_marketplace_shared'] as bool? ?? false,
     requiresRider: json['requires_rider'] as bool? ?? false,
+    linkedJobId: json['linked_job_id'] as String?,
+    collectionDeliveryMethod: parseEnumN(json['collection_delivery_method'] as String?, CollectionDeliveryMethod.values),
+    collectionTransactionType: parseEnumN(json['collection_transaction_type'] as String?, CollectionTransactionType.values),
+    jobDescription: json['job_description'] as String?,
+    paymentModel: parseEnumN(json['payment_model'] as String?, PaymentModel.values),
+    pricePerKg: (json['price_per_kg'] as num?)?.toDouble(),
+    itemPrice: (json['item_price'] as num?)?.toDouble(),
+    minQuantityKg: (json['min_quantity_kg'] as num?)?.toDouble(),
+    weightKg: (json['actual_weight_kg'] as num?)?.toDouble(),
   );
 }

@@ -1,80 +1,84 @@
+import 'dart:io';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../backend_integration_locally/local_store.dart';
+import '../../core/result/result.dart';
+import '../../domain/failures/app_failure.dart';
+import '../../domain/repositories/i_file_storage_repository.dart';
 import '../models/user_role.dart';
-import 'user_signup_service.dart' show SignUpRequest, SignUpException;
+import 'user_signup_service.dart' show SignUpRequest;
 
-/// Supabase-backed auth service that replaces [LocalAuthService].
+/// Supabase-backed auth service.
 ///
 /// Authenticates via Supabase Auth (email + password) and stores / reads
-/// profile data from the `public.users` table. Returns the same
-/// `Map<String, dynamic>` shape so ViewModels work unchanged.
+/// profile data from the `public.users` table. All methods return
+/// [AppResult] so call sites can use `result.fold(...)` rather than
+/// try/catch.
 class SupabaseAuthService {
-  SupabaseAuthService({required LocalStore store}) : _store = store;
+  SupabaseAuthService({
+    required LocalStore store,
+    IFileStorageRepository? fileStorage,
+  })  : _store = store,
+        _fileStorage = fileStorage;
 
   final LocalStore _store;
+  final IFileStorageRepository? _fileStorage;
   SupabaseClient get _client => Supabase.instance.client;
 
   // ── Sign-up ──────────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> signUp(SignUpRequest request) async {
-    // Note: ViewModel validates before calling this method.
-    // We only guard the absolute requirements for Supabase Auth here.
-
+  Future<AppResult<Map<String, dynamic>>> signUp(
+    SignUpRequest request, {
+    File? profilePhoto,
+    File? identityDocument,
+  }) async {
+    // The ViewModel runs the full validation suite before calling this
+    // method; we only re-check the absolute requirements for Supabase Auth.
     final pw = request.password;
     if (pw == null || pw.isEmpty) {
-      throw const SignUpException(
-        'كلمة المرور مطلوبة',
+      return const Failure(ValidationFailure(
+        message: 'كلمة المرور مطلوبة',
         fieldErrors: {'password': 'كلمة المرور مطلوبة'},
-      );
+      ));
     }
 
     final email = request.email?.trim().toLowerCase();
     if (email == null || email.isEmpty) {
-      throw const SignUpException(
-        'البريد الإلكتروني مطلوب',
+      return const Failure(ValidationFailure(
+        message: 'البريد الإلكتروني مطلوب',
         fieldErrors: {'email': 'البريد الإلكتروني مطلوب للتسجيل'},
-      );
+      ));
     }
 
-    // 2. Create Supabase Auth user
+    // 1. Create Supabase Auth user
     final AuthResponse authResponse;
     try {
-      authResponse = await _client.auth.signUp(
-        email: email,
-        password: pw,
-      );
+      authResponse = await _client.auth.signUp(email: email, password: pw);
     } on AuthException catch (e) {
-      throw SignUpException(
-        _mapAuthError(e),
-        cause: e,
-      );
+      return Failure(AuthFailure(message: _mapAuthError(e)));
+    } catch (e) {
+      return Failure(UnknownFailure.fromException(e));
     }
 
     final authUser = authResponse.user;
     if (authUser == null) {
-      throw const SignUpException(
-        'فشل إنشاء الحساب، حاول مجدداً',
+      return const Failure(
+        AuthFailure(message: 'فشل إنشاء الحساب، حاول مجدداً'),
       );
     }
 
-    // If email confirmation is enabled, signUp returns a user but NO session.
-    // We need a valid session (JWT) so RLS policies allow the profile INSERT.
+    // If email confirmation is enabled, signUp returns a user but no session.
+    // We need a valid JWT so RLS allows the profile INSERT.
     if (authResponse.session == null) {
       try {
-        await _client.auth.signInWithPassword(
-          email: email,
-          password: pw,
-        );
+        await _client.auth.signInWithPassword(email: email, password: pw);
       } on AuthException catch (e) {
-        throw SignUpException(
-          _mapAuthError(e),
-          cause: e,
-        );
+        return Failure(AuthFailure(message: _mapAuthError(e)));
       }
     }
 
-    // 3. Insert profile row into public.users
+    // 2. Insert profile row into public.users.
     try {
       final profileRow = <String, dynamic>{
         'auth_id': authUser.id,
@@ -107,80 +111,123 @@ class SupabaseAuthService {
           .select()
           .single();
 
-      // Cache locally
-      await _store.setCurrentUserId(inserted['id'] as String);
+      final userId = inserted['id'] as String;
+      await _store.setCurrentUserId(userId);
 
-      return _normalizeProfile(inserted);
-    } catch (e) {
-      // If profile insert fails, clean up the auth user by signing out
-      await _client.auth.signOut();
-      if (e is SignUpException) rethrow;
-
-      String errorMessage = 'فشل حفظ البيانات، حاول مجدداً';
-      if (e is PostgrestException) {
-        errorMessage = 'خطأ بقاعدة البيانات: ${e.message}';
-      } else {
-        errorMessage = 'فشل الحفظ: $e';
+      // 3. Upload media if provided. We swallow upload errors so a flaky
+      //    network on signup day does not lose the freshly-created account;
+      //    the user can re-upload from their profile screen.
+      final updates = <String, dynamic>{};
+      final fs = _fileStorage;
+      if (fs != null) {
+        if (profilePhoto != null) {
+          final res = await fs.uploadProfilePhoto(
+            userId: userId,
+            file: profilePhoto,
+          );
+          res.fold(
+            onSuccess: (url) => updates['profile_photo_url'] = url,
+            onFailure: (_) {},
+          );
+        }
+        if (identityDocument != null) {
+          final res = await fs.uploadIdentityDocument(
+            userId: userId,
+            file: identityDocument,
+          );
+          res.fold(
+            onSuccess: (path) => updates['identity_doc_path'] = path,
+            onFailure: (_) {},
+          );
+        }
       }
 
-      throw SignUpException(
-        errorMessage,
-        cause: e,
-      );
+      Map<String, dynamic> finalRow = inserted;
+      if (updates.isNotEmpty) {
+        try {
+          finalRow = await _client
+              .from('users')
+              .update(updates)
+              .eq('id', userId)
+              .select()
+              .single();
+        } catch (_) {
+          // Keep insert row on failure; URLs will be filled on next login.
+        }
+      }
+
+      return Success(_normalizeProfile(finalRow));
+    } on PostgrestException catch (e) {
+      await _client.auth.signOut();
+      return Failure(UnknownFailure(
+        message: 'خطأ بقاعدة البيانات: ${e.message}',
+        code: e.code,
+      ));
+    } catch (e) {
+      await _client.auth.signOut();
+      return Failure(UnknownFailure(
+        message: 'فشل حفظ البيانات، حاول مجدداً',
+      ));
     }
   }
 
   // ── Sign-in ──────────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> signIn({
+  Future<AppResult<Map<String, dynamic>>> signIn({
     required String identifier,
     required String password,
   }) async {
     final id = identifier.trim().toLowerCase();
     if (id.isEmpty) {
-      throw const SignUpException('أدخل البريد الإلكتروني أو رقم الهاتف');
+      return const Failure(ValidationFailure(
+        message: 'أدخل البريد الإلكتروني أو رقم الهاتف',
+        fieldErrors: {'identifier': 'أدخل البريد الإلكتروني أو رقم الهاتف'},
+      ));
     }
     if (password.isEmpty) {
-      throw const SignUpException('أدخل كلمة المرور');
+      return const Failure(ValidationFailure(
+        message: 'أدخل كلمة المرور',
+        fieldErrors: {'password': 'أدخل كلمة المرور'},
+      ));
     }
 
-    // If the identifier looks like a phone number, look up the email first
+    // If the identifier looks like a phone number, look up the email first.
     String emailToUse = id;
     if (!id.contains('@')) {
-      // Phone-based login: use RPC function that bypasses RLS
       try {
         final result = await _client.rpc(
           'get_email_by_phone',
           params: {'phone_number': id},
         );
         if (result == null || (result is String && result.isEmpty)) {
-          throw const SignUpException('بيانات الدخول غير صحيحة');
+          return const Failure(
+            AuthFailure(message: 'بيانات الدخول غير صحيحة'),
+          );
         }
         emailToUse = result as String;
-      } catch (e) {
-        if (e is SignUpException) rethrow;
-        throw const SignUpException('بيانات الدخول غير صحيحة');
+      } catch (_) {
+        return const Failure(
+          AuthFailure(message: 'بيانات الدخول غير صحيحة'),
+        );
       }
     }
 
-    // Authenticate with Supabase Auth
     try {
       await _client.auth.signInWithPassword(
         email: emailToUse,
         password: password,
       );
     } on AuthException catch (e) {
-      throw SignUpException(_mapAuthError(e), cause: e);
+      return Failure(AuthFailure(message: _mapAuthError(e)));
     }
 
-    // Fetch profile
     final profile = await _fetchCurrentProfile();
     if (profile == null) {
-      throw const SignUpException('بيانات الدخول غير صحيحة');
+      return const Failure(AuthFailure(message: 'بيانات الدخول غير صحيحة'));
     }
 
     await _store.setCurrentUserId(profile['id'] as String);
-    return profile;
+    return Success(profile);
   }
 
   // ── Session ──────────────────────────────────────────────────────────────
@@ -216,8 +263,7 @@ class SupabaseAuthService {
     }
   }
 
-  /// Normalizes the Supabase row to the same key shape the ViewModels expect
-  /// (matching the old LocalAuthService output).
+  /// Normalizes a Supabase row to the same key shape ViewModels expect.
   Map<String, dynamic> _normalizeProfile(Map<String, dynamic> row) {
     return <String, dynamic>{
       'id': row['id'],
@@ -235,6 +281,10 @@ class SupabaseAuthService {
       'total_orders': row['total_orders'],
       'is_verified': row['is_verified'],
       'points': row['points'],
+      if (row['profile_photo_url'] != null)
+        'profile_photo_url': row['profile_photo_url'],
+      if (row['identity_doc_path'] != null)
+        'identity_doc_path': row['identity_doc_path'],
       'created_at': row['created_at'],
     };
   }

@@ -4,11 +4,13 @@ import '../../data/services/user_signup_service.dart' show SignUpRequest;
 
 class AuthSession {
   final String userId;
+  final String userName;
   final UserRole role;
   final SupplierType? supplierType;
 
   const AuthSession({
     required this.userId,
+    required this.userName,
     required this.role,
     this.supplierType,
   });
@@ -29,4 +31,16 @@ abstract interface class IAuthRepository {
   Stream<AuthSession?> watchAuthState();
 
   AuthSession? get currentSession;
+
+  /// Sends a 6-digit recovery OTP to [email] via Supabase.
+  Future<AppResult<void>> requestPasswordReset(String email);
+
+  /// Verifies the 6-digit recovery [code] for [email].
+  /// On success the caller holds a short-lived recovery session.
+  Future<AppResult<void>> verifyResetCode(String email, String code);
+
+  /// Updates the authenticated user's password to [newPassword].
+  /// Should be called immediately after [verifyResetCode] succeeds.
+  /// Signs the user out of the recovery session after the update.
+  Future<AppResult<void>> updatePassword(String newPassword);
 }

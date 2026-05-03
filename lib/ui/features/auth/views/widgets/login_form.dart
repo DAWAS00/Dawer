@@ -33,6 +33,28 @@ class LoginForm extends StatelessWidget {
         _PasswordField(
           onChanged: viewModel.setPassword,
         ),
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: TextButton(
+            onPressed: viewModel.isLoading
+                ? null
+                : () => viewModel.requestPasswordReset(),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              l10n.forgotPasswordLink,
+              style: GoogleFonts.cairo(
+                fontSize: 13,
+                color: const Color(0xFF06402B),
+                fontWeight: FontWeight.w600,
+                decoration: TextDecoration.underline,
+                decorationColor: const Color(0xFF06402B),
+              ),
+            ),
+          ),
+        ),
         if (viewModel.error != null) ...[
           const SizedBox(height: 8),
           Text(

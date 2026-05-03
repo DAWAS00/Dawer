@@ -5,10 +5,10 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/waste_type_icons.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../domain/requests/create_pickup_request.dart';
-import '../../../../../l10n/l10n.dart';
 import '../../../../common/green_button.dart';
 import '../../../../common/map/location_picker_panel.dart';
 import '../viewmodels/supplier_home_viewmodel.dart';
+import 'driver_selection_view.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // NewPickupRequestView — full-screen pickup order form
@@ -93,22 +93,17 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
 
     final navigator = Navigator.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    final successMsg = context.l10n.pickupRequestCreated;
 
     final success = await vm.submitPickupRequest(request);
     if (!mounted) return;
 
-    if (success) {
-      navigator.pop();
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(successMsg, style: GoogleFonts.cairo()),
-          behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    if (success && vm.lastCreatedOrder != null) {
+      navigator.pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => DriverSelectionView(order: vm.lastCreatedOrder!),
         ),
       );
-    } else {
+    } else if (!success) {
       messenger.showSnackBar(
         SnackBar(
           content: Text(

@@ -1,17 +1,7 @@
+import '../../core/result/result.dart';
+import '../../domain/failures/app_failure.dart';
 import '../models/order.dart' show WasteType;
 import '../models/reward_breakdown.dart';
-
-/// Thrown when reward calculation fails. Callers should catch this and
-/// either surface a message or fall back to [RewardBreakdown.zero].
-class RewardServiceException implements Exception {
-  final String message;
-  final Object? cause;
-  const RewardServiceException(this.message, {this.cause});
-
-  @override
-  String toString() =>
-      'RewardServiceException: $message${cause != null ? ' ($cause)' : ''}';
-}
 
 class RewardService {
   static const double _baseFee = 1.50;
@@ -52,10 +42,10 @@ class RewardService {
     return null;
   }
 
-  /// Calculates reward locally and returns the parsed breakdown.
-  ///
-  /// Throws [RewardServiceException] on validation errors.
-  Future<RewardBreakdown> calculate({
+  /// Calculates the reward locally. Returns a [Failure] with
+  /// [ValidationFailure] when inputs are invalid; otherwise returns a
+  /// [Success] carrying the parsed [RewardBreakdown].
+  Future<AppResult<RewardBreakdown>> calculate({
     required List<WasteType> wasteTypes,
     required double estimatedWeightKg,
     required double distanceKm,
@@ -66,7 +56,9 @@ class RewardService {
       estimatedWeightKg: estimatedWeightKg,
       distanceKm: distanceKm,
     );
-    if (err != null) throw RewardServiceException(err);
+    if (err != null) {
+      return Failure(ValidationFailure(message: err));
+    }
 
     final primary = wasteTypes.first;
     final rate = _materialRates[primary];
@@ -78,13 +70,13 @@ class RewardService {
     final urgencyBonus = isUrgent ? _urgencyBonus : 0.0;
     final totalJd = _round3(baseFee + distanceFee + materialFee + urgencyBonus);
 
-    return RewardBreakdown(
+    return Success(RewardBreakdown(
       baseFee: baseFee,
       distanceFee: distanceFee,
       materialFee: materialFee,
       urgencyBonus: urgencyBonus,
       totalJd: totalJd,
       needsManualReview: needsManualReview,
-    );
+    ));
   }
 }

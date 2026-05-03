@@ -764,7 +764,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get postMarketImagesLabel => 'Material Photos — Optional';
 
   @override
-  String get postMarketSubmitButton => 'Publish Listing';
+  String get postMarketSubmitButton => 'Publish Ad';
 
   @override
   String get collectionJobTitle => 'Collection Job Details';
@@ -851,6 +851,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get marketItemFacilityReceived => 'Receipt registered at facility!';
+
+  @override
+  String get marketRiderChoiceTitle => 'Select Action';
+
+  @override
+  String get marketRiderChoiceSubtitle =>
+      'Do you want to buy this item or deliver it?';
+
+  @override
+  String get marketRiderOptionBuy => 'Buy for Myself';
+
+  @override
+  String get marketRiderOptionBuySubtitle =>
+      'Pay and take the item from its location';
+
+  @override
+  String get marketRiderOptionDeliver => 'Deliver Item';
+
+  @override
+  String get marketRiderOptionDeliverSubtitle =>
+      'Transport the item from place to place';
+
+  @override
+  String get marketInvoiceTitle => 'Order Invoice';
+
+  @override
+  String get marketInvoiceTotal => 'Total Amount';
+
+  @override
+  String get marketInvoiceConfirm => 'Confirm and Buy';
+
+  @override
+  String get marketInvoicePickupLocation => 'Pickup Location';
+
+  @override
+  String get marketInvoicePickupSuccess =>
+      'Purchase confirmed! Go to the location to collect your item.';
 
   @override
   String get rateDriverTitle => 'Rate Driver';
@@ -1358,4 +1395,65 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rateDriver => 'Rate Driver';
+
+  @override
+  String get pickupRequestCreated => 'Pickup request sent successfully';
+
+  @override
+  String get forgotPasswordLink => 'Forgot Password?';
+
+  @override
+  String get forgotPasswordOtpTitle => 'Verification Code';
+
+  @override
+  String forgotPasswordOtpSubtitle(String email) {
+    return 'A code was sent to $email';
+  }
+
+  @override
+  String get forgotPasswordOtpLabel => 'Enter the 6-digit code';
+
+  @override
+  String get forgotPasswordVerifyButton => 'Verify Code';
+
+  @override
+  String get forgotPasswordResend => 'Resend Code';
+
+  @override
+  String forgotPasswordResendIn(int s) {
+    return 'Resend in $s seconds';
+  }
+
+  @override
+  String get forgotPasswordCodeSentAgain => 'A new code was sent';
+
+  @override
+  String get resetPasswordTitle => 'Set New Password';
+
+  @override
+  String get resetPasswordNewLabel => 'New Password';
+
+  @override
+  String get resetPasswordConfirmLabel => 'Confirm Password';
+
+  @override
+  String get resetPasswordButton => 'Set Password';
+
+  @override
+  String get resetPasswordSuccess =>
+      'Password changed successfully. You can now log in.';
+
+  @override
+  String get forgotPasswordErrorEmptyEmail =>
+      'Please enter your email address first';
+
+  @override
+  String get forgotPasswordErrorCodeLength => 'Please enter a 6-digit code';
+
+  @override
+  String get resetPasswordErrorMinLength =>
+      'Password must be at least 8 characters';
+
+  @override
+  String get resetPasswordErrorMismatch => 'Passwords do not match';
 }

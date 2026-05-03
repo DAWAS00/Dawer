@@ -71,7 +71,7 @@ class LangPickerSheet extends StatelessWidget {
   }) {
     final isSelected = code == current;
     final color = isSelected
-        ? const Color(0xFF5ED0B4)
+        ? Theme.of(context).primaryColor
         : Theme.of(context).textTheme.bodyMedium?.color;
 
     return InkWell(
@@ -95,8 +95,8 @@ class LangPickerSheet extends StatelessWidget {
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_circle_rounded,
-                  color: Color(0xFF5ED0B4), size: 24),
+              Icon(Icons.check_circle_rounded,
+                  color: Theme.of(context).primaryColor, size: 24),
           ],
         ),
       ),

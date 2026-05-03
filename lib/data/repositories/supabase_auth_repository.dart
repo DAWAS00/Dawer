@@ -127,6 +127,7 @@ final class SupabaseAuthRepository implements IAuthRepository {
     final roleStr = _localStore.getCurrentUserRole();
     if (roleStr == null) return null;
 
+    final userName = _localStore.getCurrentUserName() ?? 'مستخدم';
     final supplierStr = _localStore.getCurrentSupplierType();
 
     UserRole? role;
@@ -150,9 +151,58 @@ final class SupabaseAuthRepository implements IAuthRepository {
 
     return AuthSession(
       userId: userId,
+      userName: userName,
       role: role,
       supplierType: supplierType,
     );
+  }
+
+  // ── Password reset ───────────────────────────────────────────────
+
+  @override
+  Future<AppResult<void>> requestPasswordReset(String email) async {
+    try {
+      await _client.auth.signInWithOtp(
+        email: email.trim().toLowerCase(),
+        shouldCreateUser: false,
+      );
+      return const Success(null);
+    } on AuthException catch (e) {
+      return Failure(AuthFailure(message: e.message));
+    } catch (e) {
+      return Failure(UnknownFailure.fromException(e));
+    }
+  }
+
+  @override
+  Future<AppResult<void>> verifyResetCode(String email, String code) async {
+    try {
+      await _client.auth.verifyOTP(
+        email: email.trim().toLowerCase(),
+        token: code.trim(),
+        type: OtpType.email,
+      );
+      return const Success(null);
+    } on AuthException catch (e) {
+      return Failure(AuthFailure(message: e.message));
+    } catch (e) {
+      return Failure(UnknownFailure.fromException(e));
+    }
+  }
+
+  @override
+  Future<AppResult<void>> updatePassword(String newPassword) async {
+    try {
+      await _client.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
+      await _client.auth.signOut();
+      return const Success(null);
+    } on AuthException catch (e) {
+      return Failure(AuthFailure(message: e.message));
+    } catch (e) {
+      return Failure(UnknownFailure.fromException(e));
+    }
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────
@@ -195,6 +245,7 @@ final class SupabaseAuthRepository implements IAuthRepository {
 
     return AuthSession(
       userId: profile['auth_id'] as String,
+      userName: profile['name'] as String? ?? 'مستخدم',
       role: role,
       supplierType: supplierType,
     );

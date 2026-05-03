@@ -14,6 +14,8 @@ import 'market_item_details/widgets/market_item_info_card.dart';
 import 'market_item_details/widgets/market_item_photo_gallery.dart';
 import 'market_item_details/widgets/market_item_price_card.dart';
 import 'market_item_details/widgets/market_item_purchase_choice_sheet.dart';
+import 'market_item_details/widgets/market_item_rider_choice_sheet.dart';
+import 'market_item_details/widgets/market_item_invoice_sheet.dart';
 
 class MarketItemDetailsView extends StatelessWidget {
   final Order item;
@@ -149,7 +151,7 @@ class MarketItemDetailsView extends StatelessWidget {
           context.l10n.marketItemDriverReceive,
           Icons.local_shipping_rounded,
           const Color(0xFF06402B),
-          () => _handleDriverClaim(context),
+          () => _showRiderChoiceSheet(context),
         ),
       UserRole.supplier => (
           context.l10n.marketItemBuyNow,
@@ -166,7 +168,7 @@ class MarketItemDetailsView extends StatelessWidget {
     };
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -180,27 +182,84 @@ class MarketItemDetailsView extends StatelessWidget {
       child: SafeArea(
         child: SizedBox(
           width: double.infinity,
-          height: 54,
+          height: 48,
           child: ElevatedButton(
             onPressed: onTap,
             style: ElevatedButton.styleFrom(
               backgroundColor: color,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   label,
-                  style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 const SizedBox(width: 8),
-                Icon(icon, color: Colors.white, size: 22),
+                Icon(icon, color: Colors.white, size: 20),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void _showRiderChoiceSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) => MarketItemRiderChoiceSheet(
+        onBuyForSelf: () {
+          Navigator.pop(sheetContext);
+          _showRiderInvoiceSheet(context);
+        },
+        onDeliver: () {
+          Navigator.pop(sheetContext);
+          _handleDriverClaim(context);
+        },
+      ),
+    );
+  }
+
+  void _showRiderInvoiceSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) => MarketItemInvoiceSheet(
+        item: item,
+        onConfirm: () => _handleRiderBuyForSelf(context),
+      ),
+    );
+  }
+
+  void _handleRiderBuyForSelf(BuildContext context) {
+    final marketVm = context.read<MarketplaceViewModel>();
+    final purchased = marketVm.purchaseItem(
+      orderId: item.id,
+      mode: SupplierPurchaseMode.selfPickup,
+    );
+    if (purchased == null) return;
+    
+    Navigator.pop(context); // close invoice sheet
+    Navigator.pop(context); // close details
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(context.l10n.marketInvoicePickupSuccess, style: GoogleFonts.cairo()),
+        backgroundColor: const Color(0xFF1E5C35),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }

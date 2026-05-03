@@ -14,7 +14,24 @@
       "Bash(flutter analyze *)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(flutter pub *)",
+      "Bash(grep -v \"^$\")",
+      "Bash(git check-ignore *)",
+      "Bash(git *)",
+      "Bash(date /t)",
+      "Bash(time /t)",
+      "Bash(obsidian read *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\dawas\\\\dwaar\" -Recurse -Directory -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\dawas\\\\OneDrive\\\\Documents\\\\GitHub\\\\Obsidian-Brain\\\\Projects\\\\Dawer\" -Recurse -File)",
+      "Bash(Select-Object FullName)",
+      "Bash(obsidian open *)",
+      "Bash(grep -r \"0x[A-Fa-f0-9]\\\\{6,8\\\\}\" /c/Users/dawas/dwaar/lib --include=\"*.dart\")",
+      "mcp__claude_ai_Supabase__list_tables",
+      "mcp__claude_ai_Supabase__execute_sql",
+      "mcp__claude_ai_Supabase__apply_migration"
     ]
   }
 }

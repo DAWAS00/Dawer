@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../viewmodels/login_viewmodel.dart';
 import '../../home/home_router.dart';
 import 'verification_view.dart';
+import 'forgot_password_otp_view.dart';
 import '../../../../l10n/l10n.dart';
 
 import 'widgets/role_selection_grid.dart';
@@ -51,6 +52,18 @@ class _LoginScreen extends StatelessWidget {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => VerificationView(phoneNumber: phone),
+          ),
+        );
+      });
+    }
+
+    if (viewModel.passwordResetRequested) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final email = viewModel.email;
+        viewModel.resetPasswordResetRequested();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => ForgotPasswordOtpView(email: email),
           ),
         );
       });

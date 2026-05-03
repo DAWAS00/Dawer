@@ -1,8 +1,7 @@
 /// Plain data class representing a locally persisted user profile.
 ///
-/// Field semantics mirror the previous backend payload shape so existing
-/// ViewModels can keep consuming `Map<String, dynamic>` returned by
-/// `LocalAuthService` without changes.
+/// Field semantics mirror the backend payload shape so ViewModels can keep
+/// consuming `Map<String, dynamic>` without changes.
 class LocalUser {
   final String id;
   final String name;
@@ -43,8 +42,8 @@ class LocalUser {
     this.vehicleColor,
   });
 
-  /// Decodes a stored row. Tolerates missing password fields (legacy OTP-era
-  /// rows) by substituting empty strings — those rows are wiped by the auth
+  /// Decodes a stored row. Tolerates missing password fields from older app
+  /// versions by substituting empty strings — those rows are wiped by the auth
   /// migration runner before any login attempt reaches this decoder.
   factory LocalUser.fromJson(Map<String, dynamic> json) {
     return LocalUser(
