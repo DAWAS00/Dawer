@@ -13,6 +13,7 @@ import 'widgets/login_form.dart';
 import 'widgets/footer.dart';
 import '../../../../core/services/app_lang_notifier.dart';
 import '../../../common/lang_picker_sheet.dart';
+import 'restaurant_signup_view.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -110,10 +111,25 @@ class _LoginScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
-                  children: const [
-                    RoleSelectionGrid(),
-                    SizedBox(height: 32),
-                    LoginForm(),
+                  children: [
+                    const RoleSelectionGrid(),
+                    const SizedBox(height: 32),
+                    const LoginForm(),
+                    const SizedBox(height: 16),
+                    TextButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const RestaurantSignupView(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.storefront),
+                      label: const Text('Register as Restaurant / Company'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF06402B),
+                      ),
+                    ),
                   ],
                 ),
               ),

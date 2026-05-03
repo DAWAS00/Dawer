@@ -236,4 +236,11 @@ A: [FILL: free / subscription / government-funded — confirm.]
 
 ---
 
+## Appendix: Restaurant Registration Architecture (Phase 1)
+
+The new Restaurant and Company registration flow utilizes an **AI-Ready MVVM Architecture**:
+- **ViewModel**: `RestaurantSignupViewModel` manages the 4-step wizard and form validation.
+- **Mock AI Service**: `MockAiSimulationService` currently simulates AI generation (profile stories, category recommendations) and Document OCR verification using `Future.delayed`.
+- **Future Integration**: The `IAiSimulationService` interface is designed to seamlessly swap the mock implementation with real backend API hooks (e.g., OpenAI, Google Vision) when the backend is ready, requiring zero changes to the UI layer.
+
 *Document maintained by the RAKNE team. Last updated: [FILL: date].*
