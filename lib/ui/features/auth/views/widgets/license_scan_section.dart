@@ -506,15 +506,18 @@ class _ExtractedDataCard extends StatelessWidget {
               const Icon(Icons.analytics_outlined,
                   size: 18, color: Color(0xFF06402B)),
               const SizedBox(width: 8),
-              Text(
-                l10n.aiValidationExtractedData,
-                style: GoogleFonts.cairo(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF191C1B),
+              Expanded(
+                child: Text(
+                  l10n.aiValidationExtractedData,
+                  style: GoogleFonts.cairo(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF191C1B),
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               _TrustScoreBadge(score: data.confidenceScore),
             ],
           ),
@@ -605,12 +608,18 @@ class _DataRow extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          Text(
-            value,
-            style: GoogleFonts.dmSans(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF191C1B),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: GoogleFonts.dmSans(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF191C1B),
+              ),
             ),
           ),
         ],
