@@ -9,6 +9,7 @@ import 'core/services/app_lang_notifier.dart';
 import 'core/services/app_theme_notifier.dart';
 import 'core/services/supabase_service.dart';
 import 'core/theme/app_theme.dart';
+import 'core/config/ai_config.dart';
 import 'data/repositories/mock_auth_repository.dart';
 import 'data/repositories/supabase_auth_repository.dart';
 import 'data/repositories/supabase_file_storage_repository.dart';
@@ -26,6 +27,7 @@ import 'ui/features/splash/views/splash_view.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  AiConfig.assertConfigured();
 
   // Initialize Supabase via service
   const supabaseUrl = String.fromEnvironment('SUPABASE_URL');

@@ -414,6 +414,8 @@ class AppOrderStore extends ChangeNotifier {
     double? pricePerKg,
     PaymentModel? paymentModel,
     double? minQuantityKg,
+    double? pickupLat,
+    double? pickupLng,
   }) {
     final orderId =
         'JOB-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
@@ -434,6 +436,8 @@ class AppOrderStore extends ChangeNotifier {
       pricePerKg: pricePerKg,
       paymentModel: paymentModel,
       minQuantityKg: minQuantityKg,
+      pickupLat: pickupLat,
+      pickupLng: pickupLng,
     );
     _orders.insert(0, order);
     notifyListeners();

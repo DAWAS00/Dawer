@@ -848,6 +848,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get postMarketSubmitButton => 'نشر الإعلان';
 
   @override
+  String get postMarketAiAnalyzing => 'الذكاء الاصطناعي يحلل الصورة...';
+
+  @override
+  String get postMarketAiFilled =>
+      'تم تعبئة الحقول تلقائياً بواسطة الذكاء الاصطناعي';
+
+  @override
+  String get postMarketAiFailed =>
+      'فشل تحليل الذكاء الاصطناعي، يرجى التعبئة يدوياً';
+
+  @override
+  String get postMarketNeedImageFirst => 'يرجى إضافة صورة أولاً لتحليلها';
+
+  @override
+  String get postMarketLocationPermissionDenied =>
+      'تم رفض إذن الموقع، سيتم استخدام الموقع الافتراضي';
+
+  @override
+  String get postMarketUseCurrentLocation => 'استخدام موقعي الحالي';
+
+  @override
+  String get postMarketAdjustLocation => 'تعديل الموقع على الخريطة';
+
+  @override
   String get collectionJobTitle => 'تفاصيل وظيفة التجميع';
 
   @override

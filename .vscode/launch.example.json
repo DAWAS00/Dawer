@@ -1,0 +1,15 @@
+{
+  "//": "Copy this file to launch.json and replace YOUR_GEMINI_API_KEY_HERE with a real key from https://aistudio.google.com/app/apikey. launch.json is gitignored so the key is never committed.",
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Dawer (debug)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define=GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE"
+      ]
+    }
+  ]
+}

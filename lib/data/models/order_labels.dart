@@ -27,6 +27,7 @@ extension WasteFormLabelEn on WasteForm {
   String get englishLabel => switch (this) {
     WasteForm.solid => 'Solid',
     WasteForm.liquid => 'Liquid',
+    WasteForm.gas => 'Gas',
     WasteForm.mixed => 'Mixed',
   };
   String labelFor(Locale locale) =>

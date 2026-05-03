@@ -1742,6 +1742,48 @@ abstract class AppLocalizations {
   /// **'نشر الإعلان'**
   String get postMarketSubmitButton;
 
+  /// No description provided for @postMarketAiAnalyzing.
+  ///
+  /// In ar, this message translates to:
+  /// **'الذكاء الاصطناعي يحلل الصورة...'**
+  String get postMarketAiAnalyzing;
+
+  /// No description provided for @postMarketAiFilled.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تعبئة الحقول تلقائياً بواسطة الذكاء الاصطناعي'**
+  String get postMarketAiFilled;
+
+  /// No description provided for @postMarketAiFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل تحليل الذكاء الاصطناعي، يرجى التعبئة يدوياً'**
+  String get postMarketAiFailed;
+
+  /// No description provided for @postMarketNeedImageFirst.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى إضافة صورة أولاً لتحليلها'**
+  String get postMarketNeedImageFirst;
+
+  /// No description provided for @postMarketLocationPermissionDenied.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم رفض إذن الموقع، سيتم استخدام الموقع الافتراضي'**
+  String get postMarketLocationPermissionDenied;
+
+  /// No description provided for @postMarketUseCurrentLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'استخدام موقعي الحالي'**
+  String get postMarketUseCurrentLocation;
+
+  /// No description provided for @postMarketAdjustLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل الموقع على الخريطة'**
+  String get postMarketAdjustLocation;
+
   /// No description provided for @collectionJobTitle.
   ///
   /// In ar, this message translates to:

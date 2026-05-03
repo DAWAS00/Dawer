@@ -314,6 +314,13 @@
   "postMarketPriceLabel": "السعر المطلوب (د.أ) — اختياري",
   "postMarketImagesLabel": "صور المواد — اختياري",
   "postMarketSubmitButton": "نشر الإعلان",
+  "postMarketAiAnalyzing": "الذكاء الاصطناعي يحلل الصورة...",
+  "postMarketAiFilled": "تم تعبئة الحقول تلقائياً بواسطة الذكاء الاصطناعي",
+  "postMarketAiFailed": "فشل تحليل الذكاء الاصطناعي، يرجى التعبئة يدوياً",
+  "postMarketNeedImageFirst": "يرجى إضافة صورة أولاً لتحليلها",
+  "postMarketLocationPermissionDenied": "تم رفض إذن الموقع، سيتم استخدام الموقع الافتراضي",
+  "postMarketUseCurrentLocation": "استخدام موقعي الحالي",
+  "postMarketAdjustLocation": "تعديل الموقع على الخريطة",
 
   "collectionJobTitle": "تفاصيل وظيفة التجميع",
   "collectionJobCollectionArea": "منطقة التجميع: ",

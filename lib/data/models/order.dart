@@ -9,7 +9,7 @@ enum WasteType {
   textile, wood, rubber, oil, chemicals, batteries, furniture, tires, construction,
 }
 
-enum WasteForm { solid, liquid, mixed }
+enum WasteForm { solid, liquid, gas, mixed }
 
 enum PaymentModel { perKg, flatFee }
 
@@ -64,6 +64,7 @@ extension WasteFormLabel on WasteForm {
   String get label => switch (this) {
     WasteForm.solid => 'صلب',
     WasteForm.liquid => 'سائل',
+    WasteForm.gas => 'غاز',
     WasteForm.mixed => 'مختلط',
   };
 }

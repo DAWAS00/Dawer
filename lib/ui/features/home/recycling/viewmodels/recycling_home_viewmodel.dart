@@ -114,6 +114,8 @@ class RecyclingHomeViewModel extends ChangeNotifier {
         weightCategory: weightCategory,
         reward: reward,
         itemPrice: itemPrice,
+        pickupLat: pickupLat,
+        pickupLng: pickupLng,
       );
 
   /// Post a paid collection job to the marketplace.

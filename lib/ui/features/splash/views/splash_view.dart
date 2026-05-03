@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../../auth/viewmodels/login_viewmodel.dart';
 import '../../auth/views/login_view.dart';
 import '../../../../data/models/user_role.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
@@ -17,6 +18,12 @@ class SplashView extends StatefulWidget {
 
 class _SplashViewState extends State<SplashView>
     with SingleTickerProviderStateMixin {
+  // Toggle this flag to re-enable the login/verification flow when needed.
+  static const bool _bypassLogin = true;
+  static const UserRole _bypassRole = UserRole.driver;
+  static const SupplierType _bypassSupplierType = SupplierType.individual;
+  static const String _bypassUserName = 'Demo User';
+
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
@@ -44,7 +51,26 @@ class _SplashViewState extends State<SplashView>
     // Check for existing session & navigate after splash animation
     Timer(const Duration(seconds: 3), () {
       if (!mounted) return;
-      _resolveNavigation();
+
+      if (_bypassLogin) {
+        final Widget destination = const HomeRouter(
+          role: _bypassRole,
+          supplierType: _bypassSupplierType,
+          userName: _bypassUserName,
+        );
+
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => destination,
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            transitionDuration: const Duration(milliseconds: 500),
+          ),
+        );
+      } else {
+        _resolveNavigation();
+      }
     });
   }
 
@@ -115,21 +141,6 @@ class _SplashViewState extends State<SplashView>
         ),
         child: Stack(
           children: [
-            // Subtle noise texture overlay
-            Positioned.fill(
-              child: Opacity(
-                opacity: 0.03,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/texture.png'),
-                      repeat: ImageRepeat.repeat,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
             // Main centered content
             Center(
               child: FadeTransition(

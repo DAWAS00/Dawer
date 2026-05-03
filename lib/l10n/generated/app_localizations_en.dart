@@ -858,7 +858,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get postMarketImagesLabel => 'Material Photos — Optional';
 
   @override
-  String get postMarketSubmitButton => 'Publish Ad';
+  String get postMarketSubmitButton => 'Publish Listing';
+
+  @override
+  String get postMarketAiAnalyzing => 'AI is analyzing the image...';
+
+  @override
+  String get postMarketAiFilled => 'Fields auto-filled by AI';
+
+  @override
+  String get postMarketAiFailed => 'AI analysis failed, please fill manually';
+
+  @override
+  String get postMarketNeedImageFirst =>
+      'Please add an image first for AI analysis';
+
+  @override
+  String get postMarketLocationPermissionDenied =>
+      'Location permission denied, using default location';
+
+  @override
+  String get postMarketUseCurrentLocation => 'Use Current Location';
+
+  @override
+  String get postMarketAdjustLocation => 'Adjust Location on Map';
 
   @override
   String get collectionJobTitle => 'Collection Job Details';
