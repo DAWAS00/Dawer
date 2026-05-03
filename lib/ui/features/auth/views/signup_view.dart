@@ -10,6 +10,7 @@ import '../../home/home_router.dart';
 import 'widgets/footer.dart';
 import 'widgets/photo_picker_card.dart';
 import 'widgets/identity_upload_card.dart';
+import '../../../common/map/location_picker_screen.dart';
 
 class SignUpView extends StatelessWidget {
   final UserRole role;
@@ -99,6 +100,8 @@ class _SignUpScreenState extends State<_SignUpScreen> {
             _buildInfoSection(context, vm),
             const SizedBox(height: 20),
             _buildIdentitySection(context, vm),
+            const SizedBox(height: 20),
+            _buildLocationSection(context, vm),
             const SizedBox(height: 20),
             _buildContactSection(context, vm),
             const SizedBox(height: 28),
@@ -410,6 +413,106 @@ class _SignUpScreenState extends State<_SignUpScreen> {
             context.read<SignUpViewModel>().pickIdentityDocument(source),
         onRemove: () =>
             context.read<SignUpViewModel>().removeIdentityDocument(),
+      ),
+    );
+  }
+
+  // ── Location section ─────────────────────────────────────────────────────
+
+  Widget _buildLocationSection(BuildContext context, SignUpViewModel vm) {
+    return _SectionCard(
+      title: 'الموقع الجغرافي',
+      icon: Icons.location_on_rounded,
+      subtitle: 'اختياري — يساعد على تحديد مناطق الخدمة',
+      child: GestureDetector(
+        onTap: () async {
+          final result = await Navigator.push<(double, double)?>(context,
+              MaterialPageRoute(
+                builder: (_) => LocationPickerScreen(
+                  initialLat: vm.addressLat,
+                  initialLng: vm.addressLng,
+                ),
+              ));
+          if (result != null && context.mounted) {
+            context.read<SignUpViewModel>().setAddress(result.$1, result.$2);
+          }
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          width: double.infinity,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: vm.isAddressSet
+                ? const Color(0xFF06402B).withValues(alpha: 0.06)
+                : const Color(0xFFE6E9E7),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: vm.isAddressSet
+                  ? const Color(0xFF06402B).withValues(alpha: 0.4)
+                  : const Color(0xFFC0C9C1),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF06402B).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  vm.isAddressSet ? 'تغيير' : 'تحديد',
+                  style: GoogleFonts.cairo(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF06402B),
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    vm.isAddressSet
+                        ? '${vm.addressLat!.toStringAsFixed(4)}, ${vm.addressLng!.toStringAsFixed(4)}'
+                        : 'اضغط لتحديد موقعك',
+                    style: GoogleFonts.cairo(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: vm.isAddressSet
+                          ? const Color(0xFF06402B)
+                          : const Color(0xFF404943),
+                    ),
+                  ),
+                  Text(
+                    'اضغط لفتح خريطة الموقع',
+                    style: GoogleFonts.cairo(
+                      fontSize: 11,
+                      color: const Color(0xFF717973),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 12),
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF06402B).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  vm.isAddressSet
+                      ? Icons.location_on_rounded
+                      : Icons.add_location_alt_rounded,
+                  size: 20,
+                  color: const Color(0xFF06402B),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

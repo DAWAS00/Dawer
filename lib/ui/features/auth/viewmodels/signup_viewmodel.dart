@@ -48,6 +48,26 @@ class SignUpViewModel extends ChangeNotifier {
   String ownerOrManagerName = '';
   String coverageArea = '';
 
+  // --- Address / Location ---
+  double? _addressLat;
+  double? _addressLng;
+
+  double? get addressLat => _addressLat;
+  double? get addressLng => _addressLng;
+  bool get isAddressSet => _addressLat != null && _addressLng != null;
+
+  void setAddress(double lat, double lng) {
+    _addressLat = lat;
+    _addressLng = lng;
+    notifyListeners();
+  }
+
+  void clearAddress() {
+    _addressLat = null;
+    _addressLng = null;
+    notifyListeners();
+  }
+
   // --- State ---
   bool _isLoading = false;
   bool _submitted = false;
@@ -135,6 +155,11 @@ class SignUpViewModel extends ChangeNotifier {
           vehicleModel.trim().isEmpty ? null : vehicleModel.trim(),
       vehicleColor:
           vehicleColor.trim().isEmpty ? null : vehicleColor.trim(),
+      address: isAddressSet
+          ? '${_addressLat!.toStringAsFixed(5)}, ${_addressLng!.toStringAsFixed(5)}'
+          : null,
+      addressLat: _addressLat,
+      addressLng: _addressLng,
     );
   }
 

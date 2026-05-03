@@ -31,6 +31,8 @@ class SignUpRequest {
   final String? vehiclePhotoUrl;
 
   final String? address;
+  final double? addressLat;
+  final double? addressLng;
 
   const SignUpRequest({
     required this.name,
@@ -44,6 +46,8 @@ class SignUpRequest {
     this.vehicleColor,
     this.vehiclePhotoUrl,
     this.address,
+    this.addressLat,
+    this.addressLng,
   });
 
   /// Returns a map of `{field: humanReadableError}`. Empty map == valid.
@@ -116,6 +120,8 @@ class SignUpRequest {
         'vehicle_photo_url': vehiclePhotoUrl!.trim(),
       if (address != null && address!.trim().isNotEmpty)
         'address': address!.trim(),
+      if (addressLat != null && addressLng != null)
+        'location': 'SRID=4326;POINT($addressLng $addressLat)',
     };
   }
 

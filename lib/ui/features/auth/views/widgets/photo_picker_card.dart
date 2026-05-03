@@ -85,6 +85,7 @@ class PhotoPickerCard extends StatelessWidget {
             Container(
               width: isBusiness ? 100 : 90,
               height: isBusiness ? 100 : 90,
+              clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
                 shape: isBusiness ? BoxShape.rectangle : BoxShape.circle,
                 borderRadius: isBusiness ? BorderRadius.circular(20) : null,

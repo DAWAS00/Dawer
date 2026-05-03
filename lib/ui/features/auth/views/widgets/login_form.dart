@@ -6,9 +6,11 @@ import '../../../../common/green_button.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../viewmodels/login_viewmodel.dart';
 import '../signup_view.dart';
+import '../recycling_co_onboarding_view.dart';
 import 'supplier_sub_type_selector.dart';
 
 class LoginForm extends StatelessWidget {
+  // [CHANGE] Login validation has been disabled in the ViewModel to allow bypassing checks.
   const LoginForm({super.key});
 
   @override
@@ -85,10 +87,12 @@ class LoginForm extends StatelessWidget {
             final vm = context.read<LoginViewModel>();
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (_) => SignUpView(
-                  role: vm.selectedRole,
-                  supplierType: vm.supplierType,
-                ),
+                builder: (_) => vm.selectedRole == UserRole.recyclingCo
+                    ? const RecyclingCoOnboardingView()
+                    : SignUpView(
+                        role: vm.selectedRole,
+                        supplierType: vm.supplierType,
+                      ),
               ),
             );
           },

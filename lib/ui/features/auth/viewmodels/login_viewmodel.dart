@@ -70,11 +70,14 @@ class LoginViewModel extends ChangeNotifier {
   /// Requests an OTP for the provided phone number.
   Future<void> requestOtp(String phone) async {
     _phone = phone.trim();
+    // [CHANGE] Validation disabled for login flow to allow bypassing checks
+    /*
     if (_phone.isEmpty) {
       _error = 'الرجاء إدخال رقم الهاتف';
       notifyListeners();
       return;
     }
+    */
 
     _isLoading = true;
     _error = null;
@@ -102,11 +105,14 @@ class LoginViewModel extends ChangeNotifier {
 
   /// Sends a 6-digit recovery OTP to the current [_email].
   Future<void> requestPasswordReset() async {
+    // [CHANGE] Validation disabled for login flow to allow bypassing checks
+    /*
     if (_email.trim().isEmpty) {
       _error = 'forgotPasswordErrorEmptyEmail';
       notifyListeners();
       return;
     }
+    */
 
     _isLoading = true;
     _error = null;
@@ -124,6 +130,8 @@ class LoginViewModel extends ChangeNotifier {
 
   /// Signs the user in with email + password.
   Future<void> signIn() async {
+    // [CHANGE] Validation disabled for login flow to allow bypassing checks
+    /*
     if (_email.trim().isEmpty) {
       _error = 'الرجاء إدخال البريد الإلكتروني';
       notifyListeners();
@@ -134,6 +142,7 @@ class LoginViewModel extends ChangeNotifier {
       notifyListeners();
       return;
     }
+    */
 
     _isLoading = true;
     _error = null;
