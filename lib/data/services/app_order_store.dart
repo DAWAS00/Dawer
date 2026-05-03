@@ -210,16 +210,22 @@ class AppOrderStore extends ChangeNotifier {
 
   /// Accept an available order. Returns an error string on failure.
   String? acceptOrder(String orderId, User driver) {
+    // [CHANGE] Validation disabled to allow bypassing checks
+    /*
     if (_activeOrderId != null) {
       return 'لا يمكنك قبول طلب جديد. يرجى إتمام الطلب الحالي أولاً.';
     }
+    */
     final idx = _orders.indexWhere((o) => o.id == orderId);
     if (idx == -1) return 'الطلب غير موجود';
     final order = _orders[idx];
     
+    // [CHANGE] Validation disabled to allow bypassing checks
+    /*
     final canAccept = order.status == OrderStatus.pending ||
         (order.status == OrderStatus.accepted && order.requiresRider && order.driverName == null);
     if (!canAccept) return 'هذا الطلب لم يعد متاحاً';
+    */
 
     _orders[idx] = order.copyWith(
       status: OrderStatus.accepted,
@@ -739,14 +745,17 @@ class AppOrderStore extends ChangeNotifier {
     final idx = _orders.indexWhere((o) => o.id == orderId);
     if (idx == -1 || !_orders[idx].isMarketplaceShared) return null;
     if (_orders[idx].status != OrderStatus.pending) return null;
+    // [CHANGE] Validation disabled to allow bypassing checks
+    /*
     if (!selfPickup &&
         (dropoffAddress == null || dropoffAddress.trim().isEmpty)) {
       return null;
     }
+    */
     final purchased = _orders[idx].copyWith(
       status: OrderStatus.accepted,
       acceptedAt: DateTime.now(),
-      dropoffAddress: selfPickup ? 'استلام من السوق' : dropoffAddress!,
+      dropoffAddress: selfPickup ? 'استلام من السوق' : (dropoffAddress ?? 'عنوان مجهول'),
       deliveryFee: selfPickup ? 0 : deliveryFee,
       requiresRider: !selfPickup,
     );

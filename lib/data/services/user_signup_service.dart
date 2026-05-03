@@ -53,7 +53,8 @@ class SignUpRequest {
   /// Returns a map of `{field: humanReadableError}`. Empty map == valid.
   ValidationErrors validate() {
     final errors = <String, String>{};
-
+    // [CHANGE] Validation disabled for sign-up flow to allow bypassing checks
+    /*
     final trimmedName = name.trim();
     if (trimmedName.isEmpty) {
       errors['name'] = 'الاسم مطلوب';
@@ -98,6 +99,7 @@ class SignUpRequest {
     if (role != UserRole.supplier && supplierType != null) {
       errors['supplierType'] = 'نوع المورد لا يُستخدم إلا مع دور المورد';
     }
+    */
 
     return errors;
   }

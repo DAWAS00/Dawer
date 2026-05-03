@@ -6,8 +6,10 @@ import '../../../../common/green_button.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../viewmodels/login_viewmodel.dart';
 import '../signup_view.dart';
+import '../individual_supplier_onboarding_view.dart';
 import '../recycling_co_onboarding_view.dart';
-import 'supplier_sub_type_selector.dart';
+import '../store_onboarding_view.dart';
+import 'supplier_portal_selector.dart';
 
 class LoginForm extends StatelessWidget {
   // [CHANGE] Login validation has been disabled in the ViewModel to allow bypassing checks.
@@ -18,114 +20,140 @@ class LoginForm extends StatelessWidget {
     final viewModel = context.watch<LoginViewModel>();
     final l10n = context.l10n;
 
+    // For supplier role: show credentials only once a sub-type is chosen.
+    final showCredentials = viewModel.selectedRole != UserRole.supplier ||
+        viewModel.supplierType != null;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Supplier sub-type selector — only visible when Supplier role is active
+        // Portal selector — only for Supplier role
         if (viewModel.selectedRole == UserRole.supplier) ...[
-          const SupplierSubTypeSelector(),
-          const SizedBox(height: 24),
+          const SupplierPortalSelector(),
+          const SizedBox(height: 20),
         ],
-        _EmailField(
-          label: l10n.loginEmailLabel,
-          hint: l10n.loginEmailHint,
-          onChanged: viewModel.setEmail,
-        ),
-        const SizedBox(height: 16),
-        _PasswordField(
-          onChanged: viewModel.setPassword,
-        ),
-        Align(
-          alignment: AlignmentDirectional.centerEnd,
-          child: TextButton(
-            onPressed: viewModel.isLoading
-                ? null
-                : () => viewModel.requestPasswordReset(),
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Text(
-              l10n.forgotPasswordLink,
-              style: GoogleFonts.cairo(
-                fontSize: 13,
-                color: const Color(0xFF06402B),
-                fontWeight: FontWeight.w600,
-                decoration: TextDecoration.underline,
-                decorationColor: const Color(0xFF06402B),
-              ),
-            ),
-          ),
-        ),
-        if (viewModel.error != null) ...[
-          const SizedBox(height: 8),
-          Text(
-            viewModel.error!,
-            style: GoogleFonts.cairo(
-              color: AppColors.statusCancelledText,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.right,
-          ),
-        ],
-        const SizedBox(height: 24),
-        GreenButton(
-          text: l10n.loginButton,
-          onPressed: () => viewModel.signIn(),
-          isLoading: viewModel.isLoading,
-          borderRadius: 14,
-          leadingIcon: const Icon(
-            Icons.login_rounded,
-            color: Colors.white,
-            size: 18,
-          ),
-        ),
-        const SizedBox(height: 16),
-        InkWell(
-          onTap: () {
-            final vm = context.read<LoginViewModel>();
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => vm.selectedRole == UserRole.recyclingCo
-                    ? const RecyclingCoOnboardingView()
-                    : SignUpView(
-                        role: vm.selectedRole,
-                        supplierType: vm.supplierType,
+
+        // Credentials — animate in when supplier sub-type is chosen
+        AnimatedSize(
+          duration: const Duration(milliseconds: 280),
+          curve: Curves.easeInOut,
+          child: showCredentials
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _EmailField(
+                      label: l10n.loginEmailLabel,
+                      hint: l10n.loginEmailHint,
+                      onChanged: viewModel.setEmail,
+                    ),
+                    const SizedBox(height: 16),
+                    _PasswordField(
+                      onChanged: viewModel.setPassword,
+                    ),
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: TextButton(
+                        onPressed: viewModel.isLoading
+                            ? null
+                            : () => viewModel.requestPasswordReset(),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 4, vertical: 4),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: Text(
+                          l10n.forgotPasswordLink,
+                          style: GoogleFonts.cairo(
+                            fontSize: 13,
+                            color: const Color(0xFF06402B),
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                            decorationColor: const Color(0xFF06402B),
+                          ),
+                        ),
                       ),
-              ),
-            );
-          },
-          borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  l10n.loginNoAccount,
-                  style: GoogleFonts.cairo(
-                    fontSize: 16,
-                    color: const Color(0xFF717973),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  l10n.loginSignUpNow,
-                  style: GoogleFonts.cairo(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF06402B),
-                    decoration: TextDecoration.underline,
-                    decorationColor: const Color(0xFF06402B),
-                  ),
-                ),
-              ],
-            ),
-          ),
+                    ),
+                    if (viewModel.error != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        viewModel.error!,
+                        style: GoogleFonts.cairo(
+                          color: AppColors.statusCancelledText,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                    ],
+                    const SizedBox(height: 24),
+                    GreenButton(
+                      text: l10n.loginButton,
+                      onPressed: () => viewModel.signIn(),
+                      isLoading: viewModel.isLoading,
+                      borderRadius: 14,
+                      leadingIcon: const Icon(
+                        Icons.login_rounded,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    InkWell(
+                      onTap: () => _navigateToSignUp(context),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              l10n.loginNoAccount,
+                              style: GoogleFonts.cairo(
+                                fontSize: 16,
+                                color: const Color(0xFF717973),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              l10n.loginSignUpNow,
+                              style: GoogleFonts.cairo(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF06402B),
+                                decoration: TextDecoration.underline,
+                                decorationColor: const Color(0xFF06402B),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : const SizedBox.shrink(),
         ),
       ],
     );
+  }
+
+  void _navigateToSignUp(BuildContext context) {
+    final vm = context.read<LoginViewModel>();
+    Widget destination;
+    if (vm.selectedRole == UserRole.recyclingCo) {
+      destination = const RecyclingCoOnboardingView();
+    } else if (vm.selectedRole == UserRole.supplier &&
+        vm.supplierType == SupplierType.individual) {
+      destination = const IndividualSupplierOnboardingView();
+    } else if (vm.selectedRole == UserRole.supplier &&
+        vm.supplierType == SupplierType.storeBusiness) {
+      destination = const StoreOnboardingView();
+    } else {
+      destination = SignUpView(
+        role: vm.selectedRole,
+        supplierType: vm.supplierType ?? SupplierType.individual,
+      );
+    }
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => destination));
   }
 }
 

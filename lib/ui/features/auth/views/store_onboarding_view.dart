@@ -6,31 +6,38 @@ import '../../../../data/models/user_role.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../common/map/location_picker_screen.dart';
 import '../../home/home_router.dart';
-import '../viewmodels/recycling_co_onboarding_viewmodel.dart';
+import '../viewmodels/store_onboarding_viewmodel.dart';
 import 'widgets/identity_upload_card.dart';
 import 'widgets/onboarding_shared_widgets.dart';
 import 'widgets/photo_picker_card.dart';
 
-class RecyclingCoOnboardingView extends StatelessWidget {
-  const RecyclingCoOnboardingView({super.key});
+// ═══════════════════════════════════════════════════════════════════════════════
+// StoreOnboardingView — single-page sign-up for stores / businesses
+// Accent: #00695C (dark teal)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const _kAccent = Color(0xFF00695C);
+
+class StoreOnboardingView extends StatelessWidget {
+  const StoreOnboardingView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => RecyclingCoOnboardingViewModel(),
-      child: const _SignUpBody(),
+      create: (_) => StoreOnboardingViewModel(),
+      child: const _Body(),
     );
   }
 }
 
-class _SignUpBody extends StatefulWidget {
-  const _SignUpBody();
+class _Body extends StatefulWidget {
+  const _Body();
 
   @override
-  State<_SignUpBody> createState() => _SignUpBodyState();
+  State<_Body> createState() => _BodyState();
 }
 
-class _SignUpBodyState extends State<_SignUpBody> {
+class _BodyState extends State<_Body> {
   final _companyCtrl = TextEditingController();
   final _ownerCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
@@ -53,7 +60,7 @@ class _SignUpBodyState extends State<_SignUpBody> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<RecyclingCoOnboardingViewModel>();
+    final vm = context.watch<StoreOnboardingViewModel>();
     final l10n = context.l10n;
 
     if (vm.submitted) {
@@ -62,7 +69,7 @@ class _SignUpBodyState extends State<_SignUpBody> {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (_) => HomeRouter(
-              role: UserRole.recyclingCo,
+              role: UserRole.supplier,
               supplierType: SupplierType.storeBusiness,
               userName: vm.companyName,
             ),
@@ -79,36 +86,37 @@ class _SignUpBodyState extends State<_SignUpBody> {
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
         child: Column(
           children: [
+            // 1 · Header
             OnboardingHeaderBanner(
-              title: l10n.recyclingCoSignupTitle,
+              title: l10n.storeSignupTitle,
               subtitle: l10n.onboardingHeaderSubtitleAi,
-              icon: Icons.recycling_rounded,
-              accentColor: const Color(0xFF06402B),
+              icon: Icons.storefront_rounded,
+              accentColor: _kAccent,
             ),
             const SizedBox(height: 20),
 
-            // Company profile
+            // 2 · Company profile
             OnboardingSectionCard(
-              title: l10n.onboardingSectionProfileCompany,
-              icon: Icons.business_rounded,
+              title: l10n.onboardingSectionProfileStore,
+              icon: Icons.business_center_rounded,
               child: Column(
                 children: [
                   PhotoPickerCard(
                     image: vm.profilePhoto,
-                    label: l10n.onboardingLabelCompanyLogo,
+                    label: l10n.signupPhotoOrganization,
                     isBusiness: true,
                     onPick: (src) => context
-                        .read<RecyclingCoOnboardingViewModel>()
+                        .read<StoreOnboardingViewModel>()
                         .pickProfilePhoto(src),
                     onRemove: () => context
-                        .read<RecyclingCoOnboardingViewModel>()
+                        .read<StoreOnboardingViewModel>()
                         .removeProfilePhoto(),
                   ),
                   const SizedBox(height: 14),
                   OnboardingInputField(
                     controller: _companyCtrl,
-                    label: l10n.signupCompanyName,
-                    hint: l10n.signupCompanyNameHint,
+                    label: l10n.signupStoreName,
+                    hint: l10n.signupStoreNameHint,
                     error: vm.errors['companyName'],
                     onChanged: (v) {
                       vm.companyName = v;
@@ -118,7 +126,7 @@ class _SignUpBodyState extends State<_SignUpBody> {
                   const SizedBox(height: 14),
                   OnboardingInputField(
                     controller: _ownerCtrl,
-                    label: l10n.signupManagerName,
+                    label: l10n.signupStoreOwnerName,
                     hint: l10n.signupExampleName,
                     error: vm.errors['ownerName'],
                     onChanged: (v) {
@@ -131,7 +139,7 @@ class _SignUpBodyState extends State<_SignUpBody> {
             ),
             const SizedBox(height: 16),
 
-            // Location
+            // 3 · Location
             OnboardingSectionCard(
               title: l10n.signupLocationTitle,
               icon: Icons.location_on_rounded,
@@ -149,7 +157,7 @@ class _SignUpBodyState extends State<_SignUpBody> {
                   );
                   if (result != null && context.mounted) {
                     context
-                        .read<RecyclingCoOnboardingViewModel>()
+                        .read<StoreOnboardingViewModel>()
                         .setAddress(result.$1, result.$2);
                   }
                 },
@@ -159,7 +167,7 @@ class _SignUpBodyState extends State<_SignUpBody> {
             ),
             const SizedBox(height: 16),
 
-            // Account credentials
+            // 4 · Account credentials
             OnboardingSectionCard(
               title: l10n.navAccount,
               icon: Icons.lock_rounded,
@@ -215,25 +223,25 @@ class _SignUpBodyState extends State<_SignUpBody> {
             ),
             const SizedBox(height: 16),
 
-            // License
+            // 5 · Official documents
             OnboardingSectionCard(
-              title: l10n.recyclingLicense,
+              title: l10n.signupSectionDocuments,
               icon: Icons.badge_rounded,
               child: IdentityUploadCard(
-                document: vm.licenseDocument,
-                label: l10n.recyclingLicense,
+                document: vm.identityDocument,
+                label: l10n.signupCommercialRegisterDocument,
                 error: null,
                 onPick: (src) => context
-                    .read<RecyclingCoOnboardingViewModel>()
-                    .pickLicense(src),
+                    .read<StoreOnboardingViewModel>()
+                    .pickIdentityDocument(src),
                 onRemove: () => context
-                    .read<RecyclingCoOnboardingViewModel>()
-                    .removeLicense(),
+                    .read<StoreOnboardingViewModel>()
+                    .removeIdentityDocument(),
               ),
             ),
             const SizedBox(height: 16),
 
-            // AI suggestions
+            // 6 · AI suggestions
             OnboardingAiSuggestionsPanel(
               taglineCtrl: _taglineCtrl,
               isAiLoading: vm.isAiLoading,
@@ -244,41 +252,24 @@ class _SignUpBodyState extends State<_SignUpBody> {
               onGenerate: vm.isAiLoading
                   ? null
                   : () => context
-                      .read<RecyclingCoOnboardingViewModel>()
+                      .read<StoreOnboardingViewModel>()
                       .triggerAiSuggestions(),
               onToggleCategory: (cat) => context
-                  .read<RecyclingCoOnboardingViewModel>()
+                  .read<StoreOnboardingViewModel>()
                   .toggleCategory(cat),
             ),
             const SizedBox(height: 28),
 
-            // Error
-            if (vm.submitError != null) ...[
-              Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.red.shade200),
-                ),
-                child: Text(
-                  vm.submitError!,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
-                      fontSize: 13,
-                      color: Colors.red.shade700,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
+            // Error banner
+            if (vm.submitError != null)
+              _ErrorBanner(message: vm.submitError!),
 
-            // Submit
+            // 7 · Submit
             _SubmitButton(
               isLoading: vm.isSubmitting,
+              accentColor: _kAccent,
               onPressed: () =>
-                  context.read<RecyclingCoOnboardingViewModel>().submit(),
+                  context.read<StoreOnboardingViewModel>().submit(),
             ),
           ],
         ),
@@ -301,8 +292,7 @@ class _SignUpBodyState extends State<_SignUpBody> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.white,
-              border: Border.all(
-                  color: const Color(0xFF06402B).withValues(alpha: 0.12)),
+              border: Border.all(color: _kAccent.withValues(alpha: 0.18)),
               boxShadow: [
                 BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
@@ -311,27 +301,53 @@ class _SignUpBodyState extends State<_SignUpBody> {
               ],
             ),
             child: const Icon(Icons.arrow_back_rounded,
-                size: 18, color: Color(0xFF06402B)),
+                size: 18, color: _kAccent),
           ),
         ),
       ),
       title: Text(
-        l10n.recyclingCoSignupTitle,
+        l10n.storeSignupTitle,
         style: GoogleFonts.cairo(
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF06402B)),
+            fontSize: 17, fontWeight: FontWeight.bold, color: _kAccent),
       ),
     );
   }
 }
 
-// ── Shared submit button ──────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+class _ErrorBanner extends StatelessWidget {
+  final String message;
+  const _ErrorBanner({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.red.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.red.shade200),
+      ),
+      child: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: GoogleFonts.cairo(
+            fontSize: 13,
+            color: Colors.red.shade700,
+            fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+}
 
 class _SubmitButton extends StatelessWidget {
   final bool isLoading;
+  final Color accentColor;
   final VoidCallback? onPressed;
-  const _SubmitButton({required this.isLoading, this.onPressed});
+  const _SubmitButton(
+      {required this.isLoading, required this.accentColor, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -341,8 +357,8 @@ class _SubmitButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF06402B),
-          disabledBackgroundColor: const Color(0xFF06402B).withValues(alpha: 0.5),
+          backgroundColor: accentColor,
+          disabledBackgroundColor: accentColor.withValues(alpha: 0.5),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 0,
@@ -357,13 +373,11 @@ class _SubmitButton extends StatelessWidget {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    context.l10n.signupCreateButton,
-                    style: GoogleFonts.cairo(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
+                  Text(context.l10n.signupCreateButton,
+                      style: GoogleFonts.cairo(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
                   const SizedBox(width: 8),
                   const Icon(Icons.arrow_back_rounded,
                       color: Colors.white, size: 20),

@@ -7,31 +7,19 @@ import '../../../../data/services/mock_ai_service.dart';
 import '../../../../data/services/user_signup_service.dart';
 import '../../../../domain/failures/app_failure.dart';
 
-enum AiAnalysisStatus { none, analyzing, verified, failed }
-
-class RecyclingCoOnboardingViewModel extends ChangeNotifier {
-  RecyclingCoOnboardingViewModel({UserSignUpService? service})
+class IndividualSupplierOnboardingViewModel extends ChangeNotifier {
+  IndividualSupplierOnboardingViewModel({UserSignUpService? service})
       : _service = service ?? UserSignUpService();
 
   final UserSignUpService _service;
   final ImagePicker _picker = ImagePicker();
 
-  // ── AI Status ─────────────────────────────────────────────────────────────
-  AiAnalysisStatus _aiStatus = AiAnalysisStatus.none;
-  AiAnalysisStatus get aiStatus => _aiStatus;
-
-  void setAiStatus(AiAnalysisStatus status) {
-    _aiStatus = status;
-    notifyListeners();
-  }
-
   // ── Profile ───────────────────────────────────────────────────────────────
 
   File? profilePhoto;
-  String companyName = '';
-  String ownerName = '';
-  String email = '';
+  String fullName = '';
   String phone = '';
+  String email = '';
   String password = '';
   String passwordConfirm = '';
 
@@ -70,21 +58,21 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ── License document ──────────────────────────────────────────────────────
+  // ── Identity document ─────────────────────────────────────────────────────
 
-  File? licenseDocument;
+  File? identityDocument;
 
-  Future<void> pickLicense(ImageSource source) async {
+  Future<void> pickIdentityDocument(ImageSource source) async {
     final xf = await _picker.pickImage(
         source: source, imageQuality: 85, maxWidth: 1200);
     if (xf != null) {
-      licenseDocument = File(xf.path);
+      identityDocument = File(xf.path);
       notifyListeners();
     }
   }
 
-  void removeLicense() {
-    licenseDocument = null;
+  void removeIdentityDocument() {
+    identityDocument = null;
     notifyListeners();
   }
 
@@ -100,31 +88,22 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
   List<String> get allCategories => List.unmodifiable(_allCategories);
   Set<String> get selectedCategories => Set.unmodifiable(_selectedCategories);
 
-  /// Calls the mock AI to suggest categories and company highlights.
-  ///
   /// TODO: Replace MockAiService with real AI API — see mock_ai_service.dart
   Future<void> triggerAiSuggestions() async {
     if (isAiLoading) return;
     isAiLoading = true;
-    _aiStatus = AiAnalysisStatus.analyzing;
     notifyListeners();
 
-    try {
-      final result = await MockAiService.generateBrandProfile(
-        companyName: companyName,
-        tagline: tagline,
-      );
+    final result = await MockAiService.generateBrandProfile(
+      companyName: fullName,
+      tagline: tagline,
+    );
 
-      brandProfile = result;
-      _allCategories = List.from(result.suggestedCategories);
-      _selectedCategories
-        ..clear()
-        ..addAll(_allCategories.take(4));
-
-      _aiStatus = AiAnalysisStatus.verified;
-    } catch (e) {
-      _aiStatus = AiAnalysisStatus.failed;
-    }
+    brandProfile = result;
+    _allCategories = List.from(result.suggestedCategories);
+    _selectedCategories
+      ..clear()
+      ..addAll(_allCategories.take(4));
 
     isAiLoading = false;
     notifyListeners();
@@ -139,52 +118,14 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ── Marketplace Interests ─────────────────────────────────────────────────
-
-  final Set<String> _selectedInterests = {};
-  Set<String> get selectedInterests => Set.unmodifiable(_selectedInterests);
-
-  String? marketplaceContent;
-  bool isGeneratingMarketplace = false;
-
-  void toggleInterest(String interest) {
-    if (_selectedInterests.contains(interest)) {
-      _selectedInterests.remove(interest);
-    } else {
-      _selectedInterests.add(interest);
-    }
-    notifyListeners();
-  }
-
-  Future<void> generateMarketplaceContent() async {
-    if (_selectedInterests.isEmpty) return;
-    isGeneratingMarketplace = true;
-    notifyListeners();
-
-    // Simulating AI marketplace content generation
-    await Future<void>.delayed(const Duration(seconds: 2));
-    
-    final interestsStr = _selectedInterests.join(' و ');
-    marketplaceContent = 'بناءً على اهتماماتك في $interestsStr، قمنا بتجهيز عروض حصرية لك في السوق المحلي. '
-        'سوف تجد أفضل الفرص لتوسيع شبكة تدوير البلاستيك والورق في منطقتك.';
-
-    isGeneratingMarketplace = false;
-    notifyListeners();
-  }
-
   // ── Validation ────────────────────────────────────────────────────────────
 
   final Map<String, String> errors = {};
 
   bool validate() {
     errors.clear();
-    // [CHANGE] Validation disabled for onboarding flow to allow bypassing checks
-    /*
-    if (companyName.trim().length < 2) {
-      errors['companyName'] = 'اسم الشركة مطلوب (حرفين على الأقل)';
-    }
-    if (ownerName.trim().length < 2) {
-      errors['ownerName'] = 'اسم المدير مطلوب';
+    if (fullName.trim().length < 2) {
+      errors['fullName'] = 'الاسم مطلوب (حرفين على الأقل)';
     }
     if (!_emailRegex.hasMatch(email.trim())) {
       errors['email'] = 'البريد الإلكتروني غير صحيح';
@@ -197,7 +138,6 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
     if (passwordConfirm != password) {
       errors['passwordConfirm'] = 'كلمتا المرور غير متطابقتين';
     }
-    */
     notifyListeners();
     return errors.isEmpty;
   }
@@ -215,11 +155,12 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
   String? submitError;
 
   SignUpRequest _buildRequest() => SignUpRequest(
-        name: companyName.trim(),
+        name: fullName.trim(),
         phone: phone.trim(),
         email: email.trim().isEmpty ? null : email.trim(),
         password: password,
-        role: UserRole.recyclingCo,
+        role: UserRole.supplier,
+        supplierType: SupplierType.individual,
         address: isAddressSet
             ? '${_addressLat!.toStringAsFixed(5)}, ${_addressLng!.toStringAsFixed(5)}'
             : null,
@@ -234,12 +175,11 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
     submitError = null;
     notifyListeners();
 
-    // TODO: persist selectedCategories + tagline to 'company_profiles' table
-    //       when the backend AI profile store is ready.
+    // TODO: persist selectedCategories + tagline to 'supplier_profiles' table
     final result = await _service.signUp(
       _buildRequest(),
       profilePhoto: profilePhoto,
-      identityDocument: licenseDocument,
+      identityDocument: identityDocument,
     );
 
     result.fold(

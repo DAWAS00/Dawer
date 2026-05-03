@@ -11,6 +11,7 @@ import 'widgets/footer.dart';
 import 'widgets/photo_picker_card.dart';
 import 'widgets/identity_upload_card.dart';
 import '../../../common/map/location_picker_screen.dart';
+import 'widgets/ai_suggestion_card.dart';
 
 class SignUpView extends StatelessWidget {
   final UserRole role;
@@ -50,6 +51,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
   final _passwordConfirmCtrl = TextEditingController();
+  final _primaryCategoryCtrl = TextEditingController();
 
   @override
   void dispose() {
@@ -61,6 +63,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
     _emailCtrl.dispose();
     _passwordCtrl.dispose();
     _passwordConfirmCtrl.dispose();
+    _primaryCategoryCtrl.dispose();
     super.dispose();
   }
 
@@ -147,7 +150,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
       surfaceTintColor: Colors.transparent,
       leadingWidth: 60,
       leading: Padding(
-        padding: const EdgeInsets.only(right: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: GestureDetector(
           onTap: () => Navigator.of(context).pop(),
           child: Container(
@@ -166,7 +169,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
               ],
             ),
             child: const Icon(
-              Icons.arrow_forward_rounded,
+              Icons.arrow_back_rounded,
               size: 18,
               color: Color(0xFF06402B),
             ),
@@ -208,21 +211,31 @@ class _SignUpScreenState extends State<_SignUpScreen> {
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF06402B), Color(0xFF0A5E3E)],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
         ),
         borderRadius: BorderRadius.circular(20),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Row(
         children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: bg.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: Colors.white, size: 28),
+          ),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   roleTitle,
-                  textAlign: TextAlign.right,
+                  textAlign: TextAlign.start,
                   style: GoogleFonts.cairo(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -232,7 +245,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
                 const SizedBox(height: 4),
                 Text(
                   l10n.signupSubtitle,
-                  textAlign: TextAlign.right,
+                  textAlign: TextAlign.start,
                   style: GoogleFonts.cairo(
                     fontSize: 12,
                     color: Colors.white.withValues(alpha: 0.75),
@@ -240,16 +253,6 @@ class _SignUpScreenState extends State<_SignUpScreen> {
                 ),
               ],
             ),
-          ),
-          const SizedBox(width: 16),
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: bg.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(icon, color: Colors.white, size: 28),
           ),
         ],
       ),
@@ -345,12 +348,31 @@ class _SignUpScreenState extends State<_SignUpScreen> {
             },
           ),
           const SizedBox(height: 16),
+          _InputField(
+            controller: _primaryCategoryCtrl,
+            label: l10n.signupPrimaryCategory,
+            hint: l10n.signupPrimaryCategoryHint,
+            error: vm.errors['primaryCategory'],
+            onChanged: (v) {
+              context.read<SignUpViewModel>().primaryCategory = v;
+              context.read<SignUpViewModel>().clearError('primaryCategory');
+            },
+          ),
+          if (vm.primaryCategory.isNotEmpty || vm.isLoadingSuggestion) ...[
+            const SizedBox(height: 16),
+            AiSuggestionCard(
+              isLoading: vm.isLoadingSuggestion,
+              marketplaceLookupPrompt: vm.suggestion?.marketplaceLookupPrompt,
+              appDiscoverySuggestion: vm.suggestion?.appDiscoverySuggestion,
+            ),
+          ],
+          const SizedBox(height: 16),
           // Nationality chip selector
           Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
                     l10n.signupNationality,
@@ -364,16 +386,8 @@ class _SignUpScreenState extends State<_SignUpScreen> {
               ),
               const SizedBox(height: 8),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  _NationalityChip(
-                    label: l10n.signupOther,
-                    isSelected: vm.nationality == 'غير ذلك',
-                    onTap: () => context
-                        .read<SignUpViewModel>()
-                        .setNationality('غير ذلك'),
-                  ),
-                  const SizedBox(width: 10),
                   _NationalityChip(
                     label: l10n.signupJordanian,
                     isSelected: vm.nationality == 'أردني',
@@ -381,6 +395,14 @@ class _SignUpScreenState extends State<_SignUpScreen> {
                         .read<SignUpViewModel>()
                         .setNationality('أردني'),
                     isDefault: true,
+                  ),
+                  const SizedBox(width: 10),
+                  _NationalityChip(
+                    label: l10n.signupOther,
+                    isSelected: vm.nationality == 'غير ذلك',
+                    onTap: () => context
+                        .read<SignUpViewModel>()
+                        .setNationality('غير ذلك'),
                   ),
                 ],
               ),
@@ -420,10 +442,11 @@ class _SignUpScreenState extends State<_SignUpScreen> {
   // ── Location section ─────────────────────────────────────────────────────
 
   Widget _buildLocationSection(BuildContext context, SignUpViewModel vm) {
+    final l10n = context.l10n;
     return _SectionCard(
-      title: 'الموقع الجغرافي',
+      title: l10n.signupLocationTitle,
       icon: Icons.location_on_rounded,
-      subtitle: 'اختياري — يساعد على تحديد مناطق الخدمة',
+      subtitle: l10n.signupLocationSubtitle,
       child: GestureDetector(
         onTap: () async {
           final result = await Navigator.push<(double, double)?>(context,
@@ -455,47 +478,6 @@ class _SignUpScreenState extends State<_SignUpScreen> {
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF06402B).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  vm.isAddressSet ? 'تغيير' : 'تحديد',
-                  style: GoogleFonts.cairo(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF06402B),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    vm.isAddressSet
-                        ? '${vm.addressLat!.toStringAsFixed(4)}, ${vm.addressLng!.toStringAsFixed(4)}'
-                        : 'اضغط لتحديد موقعك',
-                    style: GoogleFonts.cairo(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: vm.isAddressSet
-                          ? const Color(0xFF06402B)
-                          : const Color(0xFF404943),
-                    ),
-                  ),
-                  Text(
-                    'اضغط لفتح خريطة الموقع',
-                    style: GoogleFonts.cairo(
-                      fontSize: 11,
-                      color: const Color(0xFF717973),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(width: 12),
-              Container(
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
@@ -508,6 +490,48 @@ class _SignUpScreenState extends State<_SignUpScreen> {
                       : Icons.add_location_alt_rounded,
                   size: 20,
                   color: const Color(0xFF06402B),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      vm.isAddressSet
+                          ? '${vm.addressLat!.toStringAsFixed(4)}, ${vm.addressLng!.toStringAsFixed(4)}'
+                          : l10n.signupLocationSelectPrompt,
+                      style: GoogleFonts.cairo(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: vm.isAddressSet
+                            ? const Color(0xFF06402B)
+                            : const Color(0xFF404943),
+                      ),
+                    ),
+                    Text(
+                      l10n.signupLocationOpenMap,
+                      style: GoogleFonts.cairo(
+                        fontSize: 11,
+                        color: const Color(0xFF717973),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF06402B).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  vm.isAddressSet ? l10n.signupLocationChange : l10n.signupLocationSelect,
+                  style: GoogleFonts.cairo(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF06402B),
+                  ),
                 ),
               ),
             ],
@@ -645,13 +669,23 @@ class _SectionCard extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF06402B).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, size: 18, color: const Color(0xFF06402B)),
+              ),
+              const SizedBox(width: 10),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
@@ -670,16 +704,6 @@ class _SectionCard extends StatelessWidget {
                       ),
                     ),
                 ],
-              ),
-              const SizedBox(width: 10),
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF06402B).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, size: 18, color: const Color(0xFF06402B)),
               ),
             ],
           ),
@@ -722,16 +746,11 @@ class _InputField extends StatelessWidget {
     final useLtrInput = forceLtrInEnglish && isEnglish;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            if (isRequired)
-              const Text(
-                ' *',
-                style: TextStyle(color: Colors.red, fontSize: 14),
-              ),
             Text(
               label,
               style: GoogleFonts.cairo(
@@ -740,6 +759,11 @@ class _InputField extends StatelessWidget {
                 color: const Color(0xFF404943),
               ),
             ),
+            if (isRequired)
+              const Text(
+                ' *',
+                style: TextStyle(color: Colors.red, fontSize: 14),
+              ),
           ],
         ),
         const SizedBox(height: 6),
@@ -754,7 +778,7 @@ class _InputField extends StatelessWidget {
           child: TextField(
             controller: controller,
             keyboardType: keyboardType,
-            textAlign: useLtrInput ? TextAlign.left : TextAlign.right,
+            textAlign: useLtrInput ? TextAlign.left : TextAlign.start,
             textDirection: useLtrInput ? TextDirection.ltr : null,
             onChanged: onChanged,
             style: GoogleFonts.cairo(
@@ -876,10 +900,10 @@ class _PasswordInputFieldState extends State<_PasswordInputField> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
               widget.label,
@@ -907,23 +931,12 @@ class _PasswordInputFieldState extends State<_PasswordInputField> {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             children: [
-              GestureDetector(
-                onTap: () => setState(() => _obscured = !_obscured),
-                child: Icon(
-                  _obscured
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                  color: const Color(0xFF6B7280),
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 8),
               Expanded(
                 child: TextField(
                   controller: widget.controller,
                   onChanged: widget.onChanged,
                   obscureText: _obscured,
-                  textAlign: TextAlign.right,
+                  textAlign: TextAlign.start,
                   style: GoogleFonts.cairo(
                     fontSize: 15,
                     color: const Color(0xFF191C1B),
@@ -937,6 +950,17 @@ class _PasswordInputFieldState extends State<_PasswordInputField> {
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: () => setState(() => _obscured = !_obscured),
+                child: Icon(
+                  _obscured
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  color: const Color(0xFF6B7280),
+                  size: 20,
                 ),
               ),
             ],

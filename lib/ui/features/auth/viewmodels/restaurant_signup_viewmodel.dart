@@ -1,7 +1,10 @@
-import 'dart:io';
+
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../../../data/models/restaurant_registration_data.dart';
 import '../../../../domain/services/i_ai_simulation_service.dart';
+import '../../../../domain/services/i_ai_marketplace_service.dart';
+import '../../../../data/services/mock_ai_marketplace_service.dart';
 
 class RestaurantSignupViewModel extends ChangeNotifier {
   final IAiSimulationService _aiService;
@@ -19,6 +22,12 @@ class RestaurantSignupViewModel extends ChangeNotifier {
   bool _isLoadingAi = false;
   bool get isLoadingAi => _isLoadingAi;
 
+  bool _isAiCheckingDoc = false;
+  bool get isAiCheckingDoc => _isAiCheckingDoc;
+
+  bool _isDocValid = false;
+  bool get isDocValid => _isDocValid;
+
   bool _isVerifying = false;
   bool get isVerifying => _isVerifying;
 
@@ -28,6 +37,41 @@ class RestaurantSignupViewModel extends ChangeNotifier {
   bool _isSubmitted = false;
   bool get isSubmitted => _isSubmitted;
 
+  // Real-time AI Suggestions
+  String _cuisineType = '';
+  String get cuisineType => _cuisineType;
+
+  final IAiMarketplaceService _aiMarketplaceService = MockAiMarketplaceService();
+  AiMarketplaceSuggestion? _suggestion;
+  AiMarketplaceSuggestion? get suggestion => _suggestion;
+  bool _isLoadingSuggestion = false;
+  bool get isLoadingSuggestion => _isLoadingSuggestion;
+  Timer? _debounce;
+
+  void updateCuisineType(String cuisine) {
+    _cuisineType = cuisine;
+    _fetchSuggestions(cuisine);
+    notifyListeners();
+  }
+
+  void _fetchSuggestions(String input) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      _isLoadingSuggestion = true;
+      notifyListeners();
+
+      try {
+        final result = await _aiMarketplaceService.getSuggestionsForRestaurant(input, _data.companyName ?? '');
+        _suggestion = result;
+      } catch (_) {
+        // Silently ignore AI errors
+      } finally {
+        _isLoadingSuggestion = false;
+        notifyListeners();
+      }
+    });
+  }
+
   // Validation
   bool validateCurrentStep() {
     _errors.clear();
@@ -35,32 +79,32 @@ class RestaurantSignupViewModel extends ChangeNotifier {
 
     if (_currentStep == 1) {
       if (_data.companyName == null || _data.companyName!.trim().isEmpty) {
-        _errors['companyName'] = 'Company name is required';
+        _errors['companyName'] = 'restaurantSignupErrorCompanyNameRequired';
         isValid = false;
       }
       if (_data.ownerName == null || _data.ownerName!.trim().isEmpty) {
-        _errors['ownerName'] = 'Owner name is required';
+        _errors['ownerName'] = 'restaurantSignupErrorOwnerNameRequired';
         isValid = false;
       }
     } else if (_currentStep == 2) {
       if (_data.tagline == null || _data.tagline!.trim().isEmpty) {
-        _errors['tagline'] = 'Please provide a tagline to generate your profile';
+        _errors['tagline'] = 'restaurantSignupErrorTaglineRequired';
         isValid = false;
       } else if (_data.aiGeneratedContent == null || _data.aiGeneratedContent!.trim().isEmpty) {
-        _errors['aiGeneratedContent'] = 'Please generate and review your AI profile';
+        _errors['aiGeneratedContent'] = 'restaurantSignupErrorAiProfileRequired';
         isValid = false;
       }
       if (_data.selectedCategories.isEmpty) {
-        _errors['selectedCategories'] = 'Please select at least one category';
+        _errors['selectedCategories'] = 'restaurantSignupErrorCategoryRequired';
         isValid = false;
       }
     } else if (_currentStep == 3) {
       if (_data.address == null || _data.address!.trim().isEmpty) {
-        _errors['address'] = 'Address is required';
+        _errors['address'] = 'restaurantSignupErrorAddressRequired';
         isValid = false;
       }
       if (!_data.isCertificationVerified) {
-        _errors['verification'] = 'You must verify your documents and address';
+        _errors['verification'] = 'restaurantSignupErrorVerificationRequired';
         isValid = false;
       }
     }
@@ -131,42 +175,13 @@ class RestaurantSignupViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> generateAiProfile() async {
-    if (_data.tagline == null || _data.tagline!.trim().isEmpty) {
-      _errors['tagline'] = 'Please provide a tagline first';
-      notifyListeners();
-      return;
-    }
-
-    _isLoadingAi = true;
-    _errors.remove('aiGeneratedContent');
-    notifyListeners();
-
-    try {
-      final result = await _aiService.generateProfile(_data.tagline!);
-      _data = _data.copyWith(
-        aiGeneratedContent: result.story,
-        selectedCategories: result.categories.take(1).toList(), // Auto-select the first one
-      );
-      
-      // Store recommended categories temporarily in errors for the UI to pick up if needed,
-      // or we can add a new field. For prototyping, we'll assume the UI shows a set list
-      // and highlights the selected ones, or we can add 'recommendedCategories' to the ViewModel state.
-    } catch (e) {
-      _errors['aiGeneratedContent'] = 'Failed to generate profile. Please try again.';
-    } finally {
-      _isLoadingAi = false;
-      notifyListeners();
-    }
-  }
-
   // State to hold recommended categories generated by AI
   List<String> _recommendedCategories = [];
   List<String> get recommendedCategories => _recommendedCategories;
 
   Future<void> generateAiProfileWithRecommendations() async {
     if (_data.tagline == null || _data.tagline!.trim().isEmpty) {
-      _errors['tagline'] = 'Please provide a tagline first';
+      _errors['tagline'] = 'restaurantSignupErrorTaglineFirst';
       notifyListeners();
       return;
     }
@@ -183,7 +198,7 @@ class RestaurantSignupViewModel extends ChangeNotifier {
         selectedCategories: result.categories.isNotEmpty ? [result.categories.first] : [],
       );
     } catch (e) {
-      _errors['aiGeneratedContent'] = 'Failed to generate profile. Please try again.';
+      _errors['aiGeneratedContent'] = 'restaurantSignupErrorAiGenerationFailed';
     } finally {
       _isLoadingAi = false;
       notifyListeners();
@@ -192,25 +207,30 @@ class RestaurantSignupViewModel extends ChangeNotifier {
 
   Future<void> verifyLocationAndDocs(String documentPath) async {
     if (_data.address == null || _data.address!.trim().isEmpty) {
-      _errors['address'] = 'Please provide an address first';
+      _errors['address'] = 'restaurantSignupErrorAddressFirst';
       notifyListeners();
       return;
     }
 
     _isVerifying = true;
+    _isAiCheckingDoc = true;
+    _isDocValid = false;
     _errors.remove('verification');
     notifyListeners();
 
     try {
       final result = await _aiService.verifyDocumentAndAddress(_data.address!, documentPath);
       _data = _data.copyWith(isCertificationVerified: result.isVerified);
+      _isDocValid = result.isVerified;
       if (!result.isVerified) {
         _errors['verification'] = result.statusMessage;
       }
     } catch (e) {
-      _errors['verification'] = 'Verification failed. Please try again.';
+      _errors['verification'] = 'restaurantSignupErrorVerificationFailed';
+      _isDocValid = false;
     } finally {
       _isVerifying = false;
+      _isAiCheckingDoc = false;
       notifyListeners();
     }
   }
@@ -230,5 +250,11 @@ class RestaurantSignupViewModel extends ChangeNotifier {
     _isSubmitted = false;
     notifyListeners();
     return true;
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
   }
 }

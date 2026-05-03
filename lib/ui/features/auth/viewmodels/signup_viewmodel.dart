@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../data/models/user_role.dart';
+import '../../../../data/services/mock_ai_marketplace_service.dart';
+import '../../../../domain/services/i_ai_marketplace_service.dart';
 import '../../../../data/services/user_signup_service.dart';
 import '../../../../domain/failures/app_failure.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -37,6 +40,15 @@ class SignUpViewModel extends ChangeNotifier {
 
   // --- Driver / Individual Supplier ---
   String nationality = 'أردني';
+  String _primaryCategory = '';
+
+  String get primaryCategory => _primaryCategory;
+
+  set primaryCategory(String val) {
+    _primaryCategory = val;
+    _fetchSuggestions(val);
+    notifyListeners();
+  }
 
   // --- Driver-only ---
   String vehiclePlate = '';
@@ -76,6 +88,32 @@ class SignUpViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get submitted => _submitted;
   Map<String, String> get errors => Map.unmodifiable(_errors);
+
+  // AI Suggestions
+  final IAiMarketplaceService _aiMarketplaceService = MockAiMarketplaceService();
+  AiMarketplaceSuggestion? _suggestion;
+  AiMarketplaceSuggestion? get suggestion => _suggestion;
+  bool _isLoadingSuggestion = false;
+  bool get isLoadingSuggestion => _isLoadingSuggestion;
+  Timer? _debounce;
+
+  void _fetchSuggestions(String input) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      _isLoadingSuggestion = true;
+      notifyListeners();
+
+      try {
+        final result = await _aiMarketplaceService.getSuggestionsForSupplier(input);
+        _suggestion = result;
+      } catch (_) {
+        // Silently ignore AI errors
+      } finally {
+        _isLoadingSuggestion = false;
+        notifyListeners();
+      }
+    });
+  }
 
   bool get isBusinessRole =>
       role == UserRole.recyclingCo ||
@@ -189,6 +227,8 @@ class SignUpViewModel extends ChangeNotifier {
       _errors['password'] = dbErrors['password']!;
     }
 
+    // [CHANGE] UI-only validation disabled for sign-up flow to allow bypassing checks
+    /*
     // 2) UI-only rules that are not enforced by the DB.
     if (isBusinessRole && ownerOrManagerName.trim().isEmpty) {
       _errors['ownerOrManagerName'] = l10n.signupErrorManagerName;
@@ -210,6 +250,7 @@ class SignUpViewModel extends ChangeNotifier {
         passwordConfirm.trim() != password) {
       _errors['passwordConfirm'] = l10n.signupErrorPasswordMismatch;
     }
+    */
 
     notifyListeners();
     return _errors.isEmpty;
@@ -245,5 +286,11 @@ class SignUpViewModel extends ChangeNotifier {
 
   void resetSubmitted() {
     _submitted = false;
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
   }
 }

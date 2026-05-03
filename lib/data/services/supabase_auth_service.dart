@@ -33,6 +33,8 @@ class SupabaseAuthService {
     File? profilePhoto,
     File? identityDocument,
   }) async {
+    // [CHANGE] Validation disabled for sign-up flow to allow bypassing checks
+    /*
     // The ViewModel runs the full validation suite before calling this
     // method; we only re-check the absolute requirements for Supabase Auth.
     final pw = request.password;
@@ -50,6 +52,9 @@ class SupabaseAuthService {
         fieldErrors: {'email': 'البريد الإلكتروني مطلوب للتسجيل'},
       ));
     }
+    */
+    final pw = request.password ?? '';
+    final email = request.email?.trim().toLowerCase() ?? '';
 
     // 1. Create Supabase Auth user
     final AuthResponse authResponse;
@@ -177,6 +182,8 @@ class SupabaseAuthService {
     required String identifier,
     required String password,
   }) async {
+    // [CHANGE] Validation disabled to allow bypassing checks
+    /*
     final id = identifier.trim().toLowerCase();
     if (id.isEmpty) {
       return const Failure(ValidationFailure(
@@ -190,6 +197,8 @@ class SupabaseAuthService {
         fieldErrors: {'password': 'أدخل كلمة المرور'},
       ));
     }
+    */
+    final id = identifier.trim().toLowerCase();
 
     // If the identifier looks like a phone number, look up the email first.
     String emailToUse = id;

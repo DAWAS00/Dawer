@@ -31,17 +31,35 @@ class MockAiSimulationService implements IAiSimulationService {
     // Simulate document OCR and Address verification API latency
     await Future.delayed(const Duration(seconds: 2));
 
-    // For prototyping, we assume any non-empty address and document are verified.
+    // Reject empty data
     if (address.trim().isEmpty || documentPath.trim().isEmpty) {
       return const VerificationResult(
         isVerified: false,
-        statusMessage: "Document or address is missing. Please provide valid details.",
+        statusMessage: "restaurantSignupErrorVerificationRequired",
+      );
+    }
+
+    // Simulate invalid document detection for testing purposes:
+    // Use paths containing 'invalid' or 'fail' to trigger failure state
+    final lowerPath = documentPath.toLowerCase();
+    if (lowerPath.contains('invalid') || lowerPath.contains('fail')) {
+      return const VerificationResult(
+        isVerified: false,
+        statusMessage: "restaurantSignupErrorVerificationFailed",
+      );
+    }
+
+    // Simulate missing or unreadable photo
+    if (lowerPath.contains('empty') || lowerPath.contains('blank')) {
+      return const VerificationResult(
+        isVerified: false,
+        statusMessage: "restaurantSignupErrorVerificationFailed",
       );
     }
 
     return const VerificationResult(
       isVerified: true,
-      statusMessage: "Status: Verified",
+      statusMessage: "restaurantSignupStatusVerified",
     );
   }
 }

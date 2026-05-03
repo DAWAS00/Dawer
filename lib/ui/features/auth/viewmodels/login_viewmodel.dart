@@ -14,7 +14,7 @@ class LoginViewModel extends ChangeNotifier {
 
   // --- State ---
   UserRole _selectedRole = UserRole.driver;
-  SupplierType _supplierType = SupplierType.individual;
+  SupplierType? _supplierType;
   String _email = '';
   String _password = '';
   String _phone = '';
@@ -27,7 +27,7 @@ class LoginViewModel extends ChangeNotifier {
 
   // --- Getters ---
   UserRole get selectedRole => _selectedRole;
-  SupplierType get supplierType => _supplierType;
+  SupplierType? get supplierType => _supplierType;
   String get email => _email;
   String get password => _password;
   String get phone => _phone;
@@ -43,12 +43,18 @@ class LoginViewModel extends ChangeNotifier {
   // --- Mutators ---
   void selectRole(UserRole role) {
     _selectedRole = role;
+    _supplierType = null; // reset so portal cards return to un-chosen state
     _error = null;
     notifyListeners();
   }
 
   void setSupplierType(SupplierType type) {
     _supplierType = type;
+    notifyListeners();
+  }
+
+  void clearSupplierType() {
+    _supplierType = null;
     notifyListeners();
   }
 

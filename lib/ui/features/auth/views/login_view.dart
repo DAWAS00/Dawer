@@ -38,7 +38,7 @@ class _LoginScreen extends StatelessWidget {
           MaterialPageRoute(
             builder: (_) => HomeRouter(
               role: viewModel.selectedRole,
-              supplierType: viewModel.supplierType,
+              supplierType: viewModel.supplierType ?? SupplierType.individual,
               userName: viewModel.profileName,
             ),
           ),

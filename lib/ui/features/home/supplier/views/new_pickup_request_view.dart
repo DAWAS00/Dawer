@@ -74,11 +74,14 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
 
   Future<void> _handleSubmit(
       BuildContext context, SupplierHomeViewModel vm) async {
+    // [CHANGE] Validation disabled to allow bypassing checks
+    /*
     if (_selectedTypes.isEmpty) {
       setState(() => _showTypeError = true);
       return;
     }
     if (!_formKey.currentState!.validate()) return;
+    */
 
     final request = CreatePickupRequest(
       supplierId: vm.user.id,

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/restaurant_signup_viewmodel.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../l10n/l10n.dart';
+import '../../../../../core/utils/error_key_resolver.dart';
+import 'ai_suggestion_card.dart';
 
 class RestaurantStepBasicProfile extends StatelessWidget {
   const RestaurantStepBasicProfile({super.key});
@@ -9,18 +12,19 @@ class RestaurantStepBasicProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<RestaurantSignupViewModel>();
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Basic Profile',
+          l10n.restaurantSignupStep1Title,
           style: GoogleFonts.cairo(fontSize: 22, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 8),
         Text(
-          'Let\'s start with your company details. This information helps us verify your business and build trust with customers.',
+          l10n.restaurantSignupStep1Subtitle,
           style: GoogleFonts.cairo(fontSize: 14, color: Colors.grey.shade600),
           textAlign: TextAlign.center,
         ),
@@ -50,9 +54,9 @@ class RestaurantStepBasicProfile extends StatelessWidget {
           initialValue: vm.data.companyName,
           onChanged: (val) => vm.updateBasicProfile(companyName: val, ownerName: vm.data.ownerName),
           decoration: InputDecoration(
-            labelText: 'Restaurant / Company Name',
-            hintText: 'e.g., The Golden Spoon',
-            errorText: vm.errors['companyName'],
+            labelText: l10n.restaurantSignupCompanyNameLabel,
+            hintText: l10n.restaurantSignupCompanyNameHint,
+            errorText: resolveErrorKey(context, vm.errors['companyName']),
             border: OutlineBinding.border(),
           ),
         ),
@@ -61,12 +65,31 @@ class RestaurantStepBasicProfile extends StatelessWidget {
           initialValue: vm.data.ownerName,
           onChanged: (val) => vm.updateBasicProfile(ownerName: val, companyName: vm.data.companyName),
           decoration: InputDecoration(
-            labelText: 'Owner Name',
-            hintText: 'e.g., John Doe',
-            errorText: vm.errors['ownerName'],
+            labelText: l10n.restaurantSignupOwnerNameLabel,
+            hintText: l10n.restaurantSignupOwnerNameHint,
+            errorText: resolveErrorKey(context, vm.errors['ownerName']),
             border: OutlineBinding.border(),
           ),
         ),
+        const SizedBox(height: 16),
+        TextFormField(
+          initialValue: vm.cuisineType,
+          onChanged: vm.updateCuisineType,
+          decoration: InputDecoration(
+            labelText: l10n.signupCuisineType,
+            hintText: l10n.signupCuisineTypeHint,
+            errorText: resolveErrorKey(context, vm.errors['cuisineType']),
+            border: OutlineBinding.border(),
+          ),
+        ),
+        if (vm.cuisineType.isNotEmpty || vm.isLoadingSuggestion) ...[
+          const SizedBox(height: 16),
+          AiSuggestionCard(
+            isLoading: vm.isLoadingSuggestion,
+            marketplaceLookupPrompt: vm.suggestion?.marketplaceLookupPrompt,
+            appDiscoverySuggestion: vm.suggestion?.appDiscoverySuggestion,
+          ),
+        ],
       ],
     );
   }

@@ -333,6 +333,90 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signupErrorSubmitFailed => 'تعذّر إنشاء الحساب، حاول مجدداً';
 
   @override
+  String get signupLocationTitle => 'الموقع الجغرافي';
+
+  @override
+  String get signupLocationSubtitle => 'اختياري — يساعد على تحديد مناطق الخدمة';
+
+  @override
+  String get signupLocationChange => 'تغيير';
+
+  @override
+  String get signupLocationSelect => 'تحديد';
+
+  @override
+  String get signupLocationSelectPrompt => 'اضغط لتحديد موقعك';
+
+  @override
+  String get signupLocationOpenMap => 'اضغط لفتح خريطة الموقع';
+
+  @override
+  String onboardingCategoriesSelected(int count) {
+    return '$count محددة';
+  }
+
+  @override
+  String get onboardingCategoriesSuggested => 'الفئات المقترحة — اختر ما ينطبق';
+
+  @override
+  String get onboardingCategoriesNote =>
+      'يمكنك تعديل اختياراتك في أي وقت من إعدادات الملف الشخصي';
+
+  @override
+  String get onboardingHighlightsTitle => 'ما يميزك في التطبيق';
+
+  @override
+  String get onboardingHighlightsSubtitle =>
+      'مزايا ستحصل عليها بمجرد إنشاء الحساب';
+
+  @override
+  String get onboardingAiPanelTitle => 'اقتراحات الذكاء الاصطناعي';
+
+  @override
+  String get onboardingAiPanelSubtitle => 'فئات موصى بها وما يميزك في التطبيق';
+
+  @override
+  String get onboardingAiPanelContext =>
+      'سيحلل الذكاء الاصطناعي معلوماتك ويقترح الفئات الأنسب لك، ويوضح ما يميزك أمام عملائك في التطبيق.';
+
+  @override
+  String get onboardingTaglineLabel => 'شعارك أو رؤيتك';
+
+  @override
+  String get onboardingTaglineHint => 'مثال: أفضل خدمة بأقل تكلفة';
+
+  @override
+  String get onboardingAiGenerateButton => 'احصل على اقتراحات الذكاء الاصطناعي';
+
+  @override
+  String get onboardingAiGenerating => 'جارٍ التوليد...';
+
+  @override
+  String get individualSupplierSignupTitle => 'إنشاء حساب مورد فردي';
+
+  @override
+  String get recyclingCoSignupTitle => 'إنشاء حساب شركة تدوير';
+
+  @override
+  String get storeSignupTitle => 'إنشاء حساب متجر / شركة';
+
+  @override
+  String get onboardingHeaderSubtitleAi =>
+      'أكمل النموذج وسيساعدك الذكاء الاصطناعي في اختيار الفئات';
+
+  @override
+  String get onboardingSectionProfile => 'الملف الشخصي';
+
+  @override
+  String get onboardingSectionProfileCompany => 'الملف الشخصي للشركة';
+
+  @override
+  String get onboardingSectionProfileStore => 'ملف الشركة / المتجر';
+
+  @override
+  String get onboardingLabelCompanyLogo => 'شعار الشركة';
+
+  @override
   String get driverTitle => 'سائق دوّر';
 
   @override
@@ -1442,4 +1526,205 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get resetPasswordErrorMismatch => 'كلمتا المرور غير متطابقتين';
+
+  @override
+  String get restaurantSignupStep1Title => 'الملف الشخصي الأساسي';
+
+  @override
+  String get restaurantSignupStep1Subtitle =>
+      'لنبدأ بتفاصيل شركتك. تساعدنا هذه المعلومات في التحقق من عملك وبناء الثقة مع العملاء.';
+
+  @override
+  String get restaurantSignupCompanyNameLabel => 'اسم المطعم / الشركة';
+
+  @override
+  String get restaurantSignupCompanyNameHint => 'مثال: الملعقة الذهبية';
+
+  @override
+  String get restaurantSignupOwnerNameLabel => 'اسم المالك';
+
+  @override
+  String get restaurantSignupOwnerNameHint => 'مثال: أحمد محمد';
+
+  @override
+  String get restaurantSignupStep2Title =>
+      'هوية العلامة التجارية والذكاء الاصطناعي';
+
+  @override
+  String get restaurantSignupStep2Subtitle =>
+      'صف مطعمك في سطر واحد. سيساعدك الذكاء الاصطناعي لدينا في صياغة قصة مقنعة والتوصية بفئات البحث.';
+
+  @override
+  String get restaurantSignupTaglineLabel => 'صف مطعمك في سطر واحد';
+
+  @override
+  String get restaurantSignupTaglineHint =>
+      'مثال: مكرونة إيطالية أصيلة مصنوعة يدوياً';
+
+  @override
+  String get restaurantSignupGenerateButton => 'إنشاء الملف الشخصي والفئات';
+
+  @override
+  String get restaurantSignupAiStoryLabel =>
+      'قصة من إنشاء الذكاء الاصطناعي (قابلة للتعديل)';
+
+  @override
+  String get restaurantSignupCategoriesLabel => 'الفئات الموصى بها';
+
+  @override
+  String get restaurantSignupStep3Title => 'الموقع والتحقق';
+
+  @override
+  String get restaurantSignupStep3Subtitle =>
+      'قدم عنوانك الفعلي وحمل مستندات التحقق. سيقوم الذكاء الاصطناعي لدينا بالتحقق من تفاصيلك تلقائياً.';
+
+  @override
+  String get restaurantSignupAddressLabel => 'عنوان المطعم';
+
+  @override
+  String get restaurantSignupAddressHint => 'أدخل عنوان الشارع الكامل';
+
+  @override
+  String get restaurantSignupUploadVerifyButton => 'تحميل الترخيص والتحقق';
+
+  @override
+  String get restaurantSignupAiVerificationNote =>
+      'سيتم فحص هذه الصورة بواسطة الذكاء الاصطناعي للتحقق من مستندك.';
+
+  @override
+  String get restaurantSignupStatusVerified => 'الحالة: تم التحقق';
+
+  @override
+  String get restaurantSignupStatusInvalid => 'الحالة: غير صالح';
+
+  @override
+  String get restaurantSignupVerificationSuccess =>
+      'تم التحقق من مستنداتك وعنوانك تلقائياً.';
+
+  @override
+  String get restaurantSignupStep4Title => 'المراجعة والإرسال';
+
+  @override
+  String get restaurantSignupStep4Subtitle =>
+      'يرجى مراجعة ملفك الشخصي وتفاصيلك قبل الإرسال النهائي.';
+
+  @override
+  String get restaurantSignupSectionBasic => 'معلومات أساسية';
+
+  @override
+  String get restaurantSignupSectionAi => 'الهوية المنشأة بالذكاء الاصطناعي';
+
+  @override
+  String get restaurantSignupSectionLocation => 'الموقع والتحقق';
+
+  @override
+  String get restaurantSignupGeneratedStoryLabel => 'القصة المنشأة:';
+
+  @override
+  String get restaurantSignupNotVerified => 'لم يتم التحقق';
+
+  @override
+  String get restaurantSignupAppBarTitle => 'تسجيل المطعم';
+
+  @override
+  String get restaurantSignupBackButton => 'رجوع';
+
+  @override
+  String get restaurantSignupNextButton => 'التالي';
+
+  @override
+  String get restaurantSignupSubmitButton => 'إرسال';
+
+  @override
+  String get restaurantSignupSuccess => 'تم التسجيل بنجاح!';
+
+  @override
+  String get restaurantSignupErrorCompanyNameRequired => 'اسم الشركة مطلوب';
+
+  @override
+  String get restaurantSignupErrorOwnerNameRequired => 'اسم المالك مطلوب';
+
+  @override
+  String get restaurantSignupErrorTaglineRequired =>
+      'يرجى تقديم وصف قصير لإنشاء ملفك الشخصي';
+
+  @override
+  String get restaurantSignupErrorAiProfileRequired =>
+      'يرجى إنشاء ومراجعة ملفك الشخصي بالذكاء الاصطناعي';
+
+  @override
+  String get restaurantSignupErrorCategoryRequired =>
+      'يرجى اختيار فئة واحدة على الأقل';
+
+  @override
+  String get restaurantSignupErrorAddressRequired => 'العنوان مطلوب';
+
+  @override
+  String get restaurantSignupErrorVerificationRequired =>
+      'يجب التحقق من مستنداتك وعنوانك';
+
+  @override
+  String get restaurantSignupErrorAiGenerationFailed =>
+      'فشل إنشاء الملف الشخصي. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get restaurantSignupErrorVerificationFailed =>
+      'فشل التحقق. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get restaurantSignupErrorTaglineFirst => 'يرجى تقديم وصف قصير أولاً';
+
+  @override
+  String get restaurantSignupErrorAddressFirst => 'يرجى تقديم عنوان أولاً';
+
+  @override
+  String get orderItemPrice => 'سعر العنصر';
+
+  @override
+  String get aiValidationUploadPrompt => 'اضغط لالتقاط أو رفع صورة';
+
+  @override
+  String get aiValidationAnalyzingStep1 => 'الذكاء الاصطناعي يحلل صورتك...';
+
+  @override
+  String get aiValidationAnalyzingStep2 => 'جاري التحقق من وضوح المستند...';
+
+  @override
+  String get aiValidationAnalyzingStep3 => 'جاري التحقق من المصداقية...';
+
+  @override
+  String get aiValidationSuccessTitle => 'تم التحقق من الصورة!';
+
+  @override
+  String get aiValidationSuccessSubtitle => 'تستوفي صورتك جميع المتطلبات.';
+
+  @override
+  String get aiValidationRetryButton => 'حاول مرة أخرى';
+
+  @override
+  String get aiValidationErrorTitle => 'فشل التحقق';
+
+  @override
+  String get aiValidationErrorUnknown => 'حدث خطأ غير متوقع.';
+
+  @override
+  String get aiValidationStatusSuccess => 'تم التحقق بنجاح';
+
+  @override
+  String get aiValidationStatusInvalid => 'الصورة لا تفي بالمعايير.';
+
+  @override
+  String get aiValidationStatusErrorUnknown => 'خطأ تحقق غير معروف.';
+
+  @override
+  String get signupCuisineType => 'المطبخ / نوع العمل';
+
+  @override
+  String get signupCuisineTypeHint => 'مثال: إيطالي، وجبات سريعة، مخبز';
+
+  @override
+  String get signupPrimaryCategory => 'المنتج الأساسي / الفئة';
+
+  @override
+  String get signupPrimaryCategoryHint => 'مثال: منتجات طازجة، ألبان';
 }

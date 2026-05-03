@@ -336,6 +336,94 @@ class AppLocalizationsEn extends AppLocalizations {
       'Failed to create account, please try again';
 
   @override
+  String get signupLocationTitle => 'Location';
+
+  @override
+  String get signupLocationSubtitle =>
+      'Optional — helps determine service areas';
+
+  @override
+  String get signupLocationChange => 'Change';
+
+  @override
+  String get signupLocationSelect => 'Select';
+
+  @override
+  String get signupLocationSelectPrompt => 'Tap to select your location';
+
+  @override
+  String get signupLocationOpenMap => 'Tap to open location map';
+
+  @override
+  String onboardingCategoriesSelected(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get onboardingCategoriesSuggested =>
+      'Suggested Categories — Choose what applies';
+
+  @override
+  String get onboardingCategoriesNote =>
+      'You can edit your choices at any time from profile settings';
+
+  @override
+  String get onboardingHighlightsTitle => 'What distinguishes you in the app';
+
+  @override
+  String get onboardingHighlightsSubtitle =>
+      'Benefits you will get once you create an account';
+
+  @override
+  String get onboardingAiPanelTitle => 'AI Suggestions';
+
+  @override
+  String get onboardingAiPanelSubtitle =>
+      'Recommended categories and what distinguishes you';
+
+  @override
+  String get onboardingAiPanelContext =>
+      'AI will analyze your information and suggest the most appropriate categories for you, and clarify what distinguishes you to your customers in the app.';
+
+  @override
+  String get onboardingTaglineLabel => 'Your tagline or vision';
+
+  @override
+  String get onboardingTaglineHint => 'e.g., Best service at lowest cost';
+
+  @override
+  String get onboardingAiGenerateButton => 'Get AI Suggestions';
+
+  @override
+  String get onboardingAiGenerating => 'Generating...';
+
+  @override
+  String get individualSupplierSignupTitle =>
+      'Individual Supplier Registration';
+
+  @override
+  String get recyclingCoSignupTitle => 'Recycling Company Registration';
+
+  @override
+  String get storeSignupTitle => 'Store / Company Registration';
+
+  @override
+  String get onboardingHeaderSubtitleAi =>
+      'Complete the form and AI will help you choose categories';
+
+  @override
+  String get onboardingSectionProfile => 'Profile';
+
+  @override
+  String get onboardingSectionProfileCompany => 'Company Profile';
+
+  @override
+  String get onboardingSectionProfileStore => 'Store / Company Profile';
+
+  @override
+  String get onboardingLabelCompanyLogo => 'Company Logo';
+
+  @override
   String get driverTitle => 'Dawar Driver';
 
   @override
@@ -1456,4 +1544,208 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resetPasswordErrorMismatch => 'Passwords do not match';
+
+  @override
+  String get restaurantSignupStep1Title => 'Basic Profile';
+
+  @override
+  String get restaurantSignupStep1Subtitle =>
+      'Let\'s start with your company details. This information helps us verify your business and build trust with customers.';
+
+  @override
+  String get restaurantSignupCompanyNameLabel => 'Restaurant / Company Name';
+
+  @override
+  String get restaurantSignupCompanyNameHint => 'e.g., The Golden Spoon';
+
+  @override
+  String get restaurantSignupOwnerNameLabel => 'Owner Name';
+
+  @override
+  String get restaurantSignupOwnerNameHint => 'e.g., John Doe';
+
+  @override
+  String get restaurantSignupStep2Title => 'Brand Identity & AI';
+
+  @override
+  String get restaurantSignupStep2Subtitle =>
+      'Describe your restaurant in one line. Our AI will help craft a compelling story and recommend search categories.';
+
+  @override
+  String get restaurantSignupTaglineLabel =>
+      'Describe your restaurant in one line';
+
+  @override
+  String get restaurantSignupTaglineHint =>
+      'e.g., Authentic Italian pasta made from scratch';
+
+  @override
+  String get restaurantSignupGenerateButton => 'Generate Profile & Categories';
+
+  @override
+  String get restaurantSignupAiStoryLabel => 'AI-Generated Story (Editable)';
+
+  @override
+  String get restaurantSignupCategoriesLabel => 'Recommended Categories';
+
+  @override
+  String get restaurantSignupStep3Title => 'Location & Verification';
+
+  @override
+  String get restaurantSignupStep3Subtitle =>
+      'Provide your physical address and upload verification documents. Our AI will automatically verify your details.';
+
+  @override
+  String get restaurantSignupAddressLabel => 'Restaurant Address';
+
+  @override
+  String get restaurantSignupAddressHint => 'Enter full street address';
+
+  @override
+  String get restaurantSignupUploadVerifyButton => 'Upload License & Verify';
+
+  @override
+  String get restaurantSignupAiVerificationNote =>
+      'This photo will be checked by AI to verify your document.';
+
+  @override
+  String get restaurantSignupStatusVerified => 'Status: Verified';
+
+  @override
+  String get restaurantSignupStatusInvalid => 'Status: Invalid';
+
+  @override
+  String get restaurantSignupVerificationSuccess =>
+      'Your documents and address have been automatically verified.';
+
+  @override
+  String get restaurantSignupStep4Title => 'Review & Submit';
+
+  @override
+  String get restaurantSignupStep4Subtitle =>
+      'Please review your generated profile and details before final submission.';
+
+  @override
+  String get restaurantSignupSectionBasic => 'Basic Information';
+
+  @override
+  String get restaurantSignupSectionAi => 'AI Generated Identity';
+
+  @override
+  String get restaurantSignupSectionLocation => 'Location & Verification';
+
+  @override
+  String get restaurantSignupGeneratedStoryLabel => 'Generated Story:';
+
+  @override
+  String get restaurantSignupNotVerified => 'Not Verified';
+
+  @override
+  String get restaurantSignupAppBarTitle => 'Restaurant Registration';
+
+  @override
+  String get restaurantSignupBackButton => 'Back';
+
+  @override
+  String get restaurantSignupNextButton => 'Next';
+
+  @override
+  String get restaurantSignupSubmitButton => 'Submit';
+
+  @override
+  String get restaurantSignupSuccess => 'Registration completed successfully!';
+
+  @override
+  String get restaurantSignupErrorCompanyNameRequired =>
+      'Company name is required';
+
+  @override
+  String get restaurantSignupErrorOwnerNameRequired => 'Owner name is required';
+
+  @override
+  String get restaurantSignupErrorTaglineRequired =>
+      'Please provide a tagline to generate your profile';
+
+  @override
+  String get restaurantSignupErrorAiProfileRequired =>
+      'Please generate and review your AI profile';
+
+  @override
+  String get restaurantSignupErrorCategoryRequired =>
+      'Please select at least one category';
+
+  @override
+  String get restaurantSignupErrorAddressRequired => 'Address is required';
+
+  @override
+  String get restaurantSignupErrorVerificationRequired =>
+      'You must verify your documents and address';
+
+  @override
+  String get restaurantSignupErrorAiGenerationFailed =>
+      'Failed to generate profile. Please try again.';
+
+  @override
+  String get restaurantSignupErrorVerificationFailed =>
+      'Verification failed. Please try again.';
+
+  @override
+  String get restaurantSignupErrorTaglineFirst =>
+      'Please provide a tagline first';
+
+  @override
+  String get restaurantSignupErrorAddressFirst =>
+      'Please provide an address first';
+
+  @override
+  String get orderItemPrice => 'Item Price';
+
+  @override
+  String get aiValidationUploadPrompt => 'Tap to capture or upload photo';
+
+  @override
+  String get aiValidationAnalyzingStep1 => 'AI is analyzing your photo...';
+
+  @override
+  String get aiValidationAnalyzingStep2 => 'Checking document clarity...';
+
+  @override
+  String get aiValidationAnalyzingStep3 => 'Verifying authenticity...';
+
+  @override
+  String get aiValidationSuccessTitle => 'Photo Verified!';
+
+  @override
+  String get aiValidationSuccessSubtitle =>
+      'Your photo meets all requirements.';
+
+  @override
+  String get aiValidationRetryButton => 'Try Again';
+
+  @override
+  String get aiValidationErrorTitle => 'Validation Failed';
+
+  @override
+  String get aiValidationErrorUnknown => 'An unexpected error occurred.';
+
+  @override
+  String get aiValidationStatusSuccess => 'Verified Successfully';
+
+  @override
+  String get aiValidationStatusInvalid => 'Photo does not meet criteria.';
+
+  @override
+  String get aiValidationStatusErrorUnknown => 'Unknown validation error.';
+
+  @override
+  String get signupCuisineType => 'Cuisine / Business Type';
+
+  @override
+  String get signupCuisineTypeHint => 'e.g., Italian, Fast Food, Bakery';
+
+  @override
+  String get signupPrimaryCategory => 'Primary Product / Category';
+
+  @override
+  String get signupPrimaryCategoryHint => 'e.g., Fresh Produce, Dairy';
 }

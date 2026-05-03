@@ -6,6 +6,7 @@ import 'widgets/restaurant_step_basic_profile.dart';
 import 'widgets/restaurant_step_ai_identity.dart';
 import 'widgets/restaurant_step_verification.dart';
 import 'widgets/restaurant_step_review.dart';
+import '../../../../l10n/l10n.dart';
 
 class RestaurantSignupView extends StatelessWidget {
   const RestaurantSignupView({super.key});
@@ -27,11 +28,12 @@ class _RestaurantSignupContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<RestaurantSignupViewModel>();
+    final l10n = context.l10n;
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Restaurant Registration'),
+        title: Text(l10n.restaurantSignupAppBarTitle),
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
@@ -76,13 +78,15 @@ class _RestaurantSignupContent extends StatelessWidget {
   }
 
   Widget _buildBottomBar(BuildContext context, RestaurantSignupViewModel vm) {
+    final l10n = context.l10n;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -94,10 +98,10 @@ class _RestaurantSignupContent extends StatelessWidget {
           if (vm.currentStep > 1)
             TextButton(
               onPressed: vm.isSubmitted ? null : vm.previousStep,
-              child: const Text('Back'),
+              child: Text(l10n.restaurantSignupBackButton),
             )
           else
-            const SizedBox(width: 64), // Placeholder to keep the 'Next' button on the right
+            const SizedBox(width: 64),
 
           ElevatedButton(
             onPressed: vm.isSubmitted 
@@ -107,7 +111,7 @@ class _RestaurantSignupContent extends StatelessWidget {
                       final success = await vm.submit();
                       if (success && context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Registration completed successfully!')),
+                          SnackBar(content: Text(l10n.restaurantSignupSuccess)),
                         );
                         Navigator.of(context).pop();
                       }
@@ -125,7 +129,9 @@ class _RestaurantSignupContent extends StatelessWidget {
                     height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                   )
-                : Text(vm.currentStep == vm.totalSteps ? 'Submit' : 'Next'),
+                : Text(vm.currentStep == vm.totalSteps
+                    ? l10n.restaurantSignupSubmitButton
+                    : l10n.restaurantSignupNextButton),
           ),
         ],
       ),

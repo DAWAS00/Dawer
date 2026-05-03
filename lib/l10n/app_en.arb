@@ -123,6 +123,37 @@
   "signupErrorPasswordRequired": "Password is required",
   "signupErrorPasswordMismatch": "Passwords do not match",
   "signupErrorSubmitFailed": "Failed to create account, please try again",
+  "signupLocationTitle": "Location",
+  "signupLocationSubtitle": "Optional — helps determine service areas",
+  "signupLocationChange": "Change",
+  "signupLocationSelect": "Select",
+  "signupLocationSelectPrompt": "Tap to select your location",
+  "signupLocationOpenMap": "Tap to open location map",
+  "onboardingCategoriesSelected": "{count} selected",
+  "@onboardingCategoriesSelected": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "onboardingCategoriesSuggested": "Suggested Categories — Choose what applies",
+  "onboardingCategoriesNote": "You can edit your choices at any time from profile settings",
+  "onboardingHighlightsTitle": "What distinguishes you in the app",
+  "onboardingHighlightsSubtitle": "Benefits you will get once you create an account",
+  "onboardingAiPanelTitle": "AI Suggestions",
+  "onboardingAiPanelSubtitle": "Recommended categories and what distinguishes you",
+  "onboardingAiPanelContext": "AI will analyze your information and suggest the most appropriate categories for you, and clarify what distinguishes you to your customers in the app.",
+  "onboardingTaglineLabel": "Your tagline or vision",
+  "onboardingTaglineHint": "e.g., Best service at lowest cost",
+  "onboardingAiGenerateButton": "Get AI Suggestions",
+  "onboardingAiGenerating": "Generating...",
+  "individualSupplierSignupTitle": "Individual Supplier Registration",
+  "recyclingCoSignupTitle": "Recycling Company Registration",
+  "storeSignupTitle": "Store / Company Registration",
+  "onboardingHeaderSubtitleAi": "Complete the form and AI will help you choose categories",
+  "onboardingSectionProfile": "Profile",
+  "onboardingSectionProfileCompany": "Company Profile",
+  "onboardingSectionProfileStore": "Store / Company Profile",
+  "onboardingLabelCompanyLogo": "Company Logo",
 
   "driverTitle": "Dawar Driver",
   "driverActiveOrdersLabel": "Active Order",
@@ -602,5 +633,88 @@
   "forgotPasswordErrorEmptyEmail": "Please enter your email address first",
   "forgotPasswordErrorCodeLength": "Please enter a 6-digit code",
   "resetPasswordErrorMinLength": "Password must be at least 8 characters",
-  "resetPasswordErrorMismatch": "Passwords do not match"
+  "resetPasswordErrorMismatch": "Passwords do not match",
+
+  "restaurantSignupStep1Title": "Basic Profile",
+  "restaurantSignupStep1Subtitle": "Let's start with your company details. This information helps us verify your business and build trust with customers.",
+  "restaurantSignupCompanyNameLabel": "Restaurant / Company Name",
+  "restaurantSignupCompanyNameHint": "e.g., The Golden Spoon",
+  "restaurantSignupOwnerNameLabel": "Owner Name",
+  "restaurantSignupOwnerNameHint": "e.g., John Doe",
+
+  "restaurantSignupStep2Title": "Brand Identity & AI",
+  "restaurantSignupStep2Subtitle": "Describe your restaurant in one line. Our AI will help craft a compelling story and recommend search categories.",
+  "restaurantSignupTaglineLabel": "Describe your restaurant in one line",
+  "restaurantSignupTaglineHint": "e.g., Authentic Italian pasta made from scratch",
+  "restaurantSignupGenerateButton": "Generate Profile & Categories",
+  "restaurantSignupAiStoryLabel": "AI-Generated Story (Editable)",
+  "restaurantSignupCategoriesLabel": "Recommended Categories",
+
+  "restaurantSignupStep3Title": "Location & Verification",
+  "restaurantSignupStep3Subtitle": "Provide your physical address and upload verification documents. Our AI will automatically verify your details.",
+  "restaurantSignupAddressLabel": "Restaurant Address",
+  "restaurantSignupAddressHint": "Enter full street address",
+  "restaurantSignupUploadVerifyButton": "Upload License & Verify",
+  "restaurantSignupAiVerificationNote": "This photo will be checked by AI to verify your document.",
+  "restaurantSignupStatusVerified": "Status: Verified",
+  "restaurantSignupStatusInvalid": "Status: Invalid",
+  "restaurantSignupVerificationSuccess": "Your documents and address have been automatically verified.",
+
+  "restaurantSignupStep4Title": "Review & Submit",
+  "restaurantSignupStep4Subtitle": "Please review your generated profile and details before final submission.",
+  "restaurantSignupSectionBasic": "Basic Information",
+  "restaurantSignupSectionAi": "AI Generated Identity",
+  "restaurantSignupSectionLocation": "Location & Verification",
+  "restaurantSignupGeneratedStoryLabel": "Generated Story:",
+  "restaurantSignupNotVerified": "Not Verified",
+
+  "restaurantSignupAppBarTitle": "Restaurant Registration",
+  "restaurantSignupBackButton": "Back",
+  "restaurantSignupNextButton": "Next",
+  "restaurantSignupSubmitButton": "Submit",
+  "restaurantSignupSuccess": "Registration completed successfully!",
+
+  "restaurantSignupErrorCompanyNameRequired": "Company name is required",
+  "restaurantSignupErrorOwnerNameRequired": "Owner name is required",
+  "restaurantSignupErrorTaglineRequired": "Please provide a tagline to generate your profile",
+  "restaurantSignupErrorAiProfileRequired": "Please generate and review your AI profile",
+  "restaurantSignupErrorCategoryRequired": "Please select at least one category",
+  "restaurantSignupErrorAddressRequired": "Address is required",
+  "restaurantSignupErrorVerificationRequired": "You must verify your documents and address",
+  "restaurantSignupErrorAiGenerationFailed": "Failed to generate profile. Please try again.",
+  "restaurantSignupErrorVerificationFailed": "Verification failed. Please try again.",
+  "restaurantSignupErrorTaglineFirst": "Please provide a tagline first",
+  "restaurantSignupErrorAddressFirst": "Please provide an address first",
+
+  "orderItemPrice": "Item Price",
+
+  "aiValidationUploadPrompt": "Tap to capture or upload photo",
+  "aiValidationAnalyzingStep1": "AI is analyzing your photo...",
+  "aiValidationAnalyzingStep2": "Checking document clarity...",
+  "aiValidationAnalyzingStep3": "Verifying authenticity...",
+  "aiValidationSuccessTitle": "Photo Verified!",
+  "aiValidationSuccessSubtitle": "Your photo meets all requirements.",
+  "aiValidationRetryButton": "Try Again",
+  "aiValidationErrorTitle": "Validation Failed",
+  "aiValidationErrorUnknown": "An unexpected error occurred.",
+  "aiValidationStatusSuccess": "Verified Successfully",
+  "aiValidationStatusInvalid": "Photo does not meet criteria.",
+  "aiValidationStatusErrorUnknown": "Unknown validation error.",
+
+  "signupCuisineType": "Cuisine / Business Type",
+  "@signupCuisineType": {
+    "description": "Label for the restaurant cuisine or type input."
+  },
+  "signupCuisineTypeHint": "e.g., Italian, Fast Food, Bakery",
+  "@signupCuisineTypeHint": {
+    "description": "Hint text for the restaurant cuisine input."
+  },
+  "signupPrimaryCategory": "Primary Product / Category",
+  "@signupPrimaryCategory": {
+    "description": "Label for the individual supplier primary category input."
+  },
+  "signupPrimaryCategoryHint": "e.g., Fresh Produce, Dairy",
+  "@signupPrimaryCategoryHint": {
+    "description": "Hint text for the individual supplier category input."
+  }
 }

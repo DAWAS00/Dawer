@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/restaurant_signup_viewmodel.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../l10n/l10n.dart';
 
 class RestaurantStepReview extends StatelessWidget {
   const RestaurantStepReview({super.key});
@@ -10,32 +11,33 @@ class RestaurantStepReview extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<RestaurantSignupViewModel>();
     final data = vm.data;
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Review & Submit',
+          l10n.restaurantSignupStep4Title,
           style: GoogleFonts.cairo(fontSize: 22, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 8),
         Text(
-          'Please review your generated profile and details before final submission.',
+          l10n.restaurantSignupStep4Subtitle,
           style: GoogleFonts.cairo(fontSize: 14, color: Colors.grey.shade600),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 24),
         
-        _buildSectionTitle('Basic Information'),
-        _buildDetailRow('Company Name', data.companyName ?? '-'),
-        _buildDetailRow('Owner Name', data.ownerName ?? '-'),
+        _buildSectionTitle(context, l10n.restaurantSignupSectionBasic),
+        _buildDetailRow(context, l10n.signupCompanyName, data.companyName ?? '-'),
+        _buildDetailRow(context, l10n.restaurantSignupOwnerNameLabel, data.ownerName ?? '-'),
         const Divider(),
         
-        _buildSectionTitle('AI Generated Identity'),
-        _buildDetailRow('Tagline', data.tagline ?? '-'),
+        _buildSectionTitle(context, l10n.restaurantSignupSectionAi),
+        _buildDetailRow(context, l10n.restaurantSignupTaglineLabel, data.tagline ?? '-'),
         const SizedBox(height: 8),
-        Text('Generated Story:', style: GoogleFonts.cairo(fontSize: 14, color: Colors.grey.shade600)),
+        Text(l10n.restaurantSignupGeneratedStoryLabel, style: GoogleFonts.cairo(fontSize: 14, color: Colors.grey.shade600)),
         const SizedBox(height: 4),
         Container(
           padding: const EdgeInsets.all(12),
@@ -46,18 +48,18 @@ class RestaurantStepReview extends StatelessWidget {
           child: Text(data.aiGeneratedContent ?? '-'),
         ),
         const SizedBox(height: 8),
-        _buildDetailRow('Categories', data.selectedCategories.join(', ')),
+        _buildDetailRow(context, l10n.restaurantSignupCategoriesLabel, data.selectedCategories.join(', ')),
         const Divider(),
         
-        _buildSectionTitle('Location & Verification'),
-        _buildDetailRow('Address', data.address ?? '-'),
+        _buildSectionTitle(context, l10n.restaurantSignupSectionLocation),
+        _buildDetailRow(context, l10n.restaurantSignupAddressLabel, data.address ?? '-'),
         const SizedBox(height: 8),
         Row(
           children: [
-            const Icon(Icons.shield, size: 20, color: Colors.green),
+            Icon(Icons.shield, size: 20, color: data.isCertificationVerified ? Colors.green : Colors.red),
             const SizedBox(width: 8),
             Text(
-              data.isCertificationVerified ? 'Status: Verified' : 'Not Verified',
+              data.isCertificationVerified ? l10n.restaurantSignupStatusVerified : l10n.restaurantSignupNotVerified,
               style: GoogleFonts.cairo(
                 fontWeight: FontWeight.bold,
                 color: data.isCertificationVerified ? Colors.green : Colors.red,
@@ -69,7 +71,7 @@ class RestaurantStepReview extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
       child: Text(
@@ -79,7 +81,7 @@ class RestaurantStepReview extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
+  Widget _buildDetailRow(BuildContext context, String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(

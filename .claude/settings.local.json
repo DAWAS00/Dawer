@@ -31,7 +31,8 @@
       "Bash(grep -r \"0x[A-Fa-f0-9]\\\\{6,8\\\\}\" /c/Users/dawas/dwaar/lib --include=\"*.dart\")",
       "mcp__claude_ai_Supabase__list_tables",
       "mcp__claude_ai_Supabase__execute_sql",
-      "mcp__claude_ai_Supabase__apply_migration"
+      "mcp__claude_ai_Supabase__apply_migration",
+      "Bash(flutter gen-l10n *)"
     ]
   }
 }

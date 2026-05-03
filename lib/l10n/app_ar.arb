@@ -123,6 +123,37 @@
   "signupErrorPasswordRequired": "كلمة المرور مطلوبة",
   "signupErrorPasswordMismatch": "كلمتا المرور غير متطابقتين",
   "signupErrorSubmitFailed": "تعذّر إنشاء الحساب، حاول مجدداً",
+  "signupLocationTitle": "الموقع الجغرافي",
+  "signupLocationSubtitle": "اختياري — يساعد على تحديد مناطق الخدمة",
+  "signupLocationChange": "تغيير",
+  "signupLocationSelect": "تحديد",
+  "signupLocationSelectPrompt": "اضغط لتحديد موقعك",
+  "signupLocationOpenMap": "اضغط لفتح خريطة الموقع",
+  "onboardingCategoriesSelected": "{count} محددة",
+  "@onboardingCategoriesSelected": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "onboardingCategoriesSuggested": "الفئات المقترحة — اختر ما ينطبق",
+  "onboardingCategoriesNote": "يمكنك تعديل اختياراتك في أي وقت من إعدادات الملف الشخصي",
+  "onboardingHighlightsTitle": "ما يميزك في التطبيق",
+  "onboardingHighlightsSubtitle": "مزايا ستحصل عليها بمجرد إنشاء الحساب",
+  "onboardingAiPanelTitle": "اقتراحات الذكاء الاصطناعي",
+  "onboardingAiPanelSubtitle": "فئات موصى بها وما يميزك في التطبيق",
+  "onboardingAiPanelContext": "سيحلل الذكاء الاصطناعي معلوماتك ويقترح الفئات الأنسب لك، ويوضح ما يميزك أمام عملائك في التطبيق.",
+  "onboardingTaglineLabel": "شعارك أو رؤيتك",
+  "onboardingTaglineHint": "مثال: أفضل خدمة بأقل تكلفة",
+  "onboardingAiGenerateButton": "احصل على اقتراحات الذكاء الاصطناعي",
+  "onboardingAiGenerating": "جارٍ التوليد...",
+  "individualSupplierSignupTitle": "إنشاء حساب مورد فردي",
+  "recyclingCoSignupTitle": "إنشاء حساب شركة تدوير",
+  "storeSignupTitle": "إنشاء حساب متجر / شركة",
+  "onboardingHeaderSubtitleAi": "أكمل النموذج وسيساعدك الذكاء الاصطناعي في اختيار الفئات",
+  "onboardingSectionProfile": "الملف الشخصي",
+  "onboardingSectionProfileCompany": "الملف الشخصي للشركة",
+  "onboardingSectionProfileStore": "ملف الشركة / المتجر",
+  "onboardingLabelCompanyLogo": "شعار الشركة",
 
   "driverTitle": "سائق دوّر",
   "driverActiveOrdersLabel": "طلب نشط",
@@ -601,5 +632,88 @@
   "forgotPasswordErrorEmptyEmail": "الرجاء إدخال بريدك الإلكتروني أولاً",
   "forgotPasswordErrorCodeLength": "الرجاء إدخال رمز مكوّن من ٦ أرقام",
   "resetPasswordErrorMinLength": "كلمة المرور يجب أن تكون ٨ أحرف على الأقل",
-  "resetPasswordErrorMismatch": "كلمتا المرور غير متطابقتين"
+  "resetPasswordErrorMismatch": "كلمتا المرور غير متطابقتين",
+
+  "restaurantSignupStep1Title": "الملف الشخصي الأساسي",
+  "restaurantSignupStep1Subtitle": "لنبدأ بتفاصيل شركتك. تساعدنا هذه المعلومات في التحقق من عملك وبناء الثقة مع العملاء.",
+  "restaurantSignupCompanyNameLabel": "اسم المطعم / الشركة",
+  "restaurantSignupCompanyNameHint": "مثال: الملعقة الذهبية",
+  "restaurantSignupOwnerNameLabel": "اسم المالك",
+  "restaurantSignupOwnerNameHint": "مثال: أحمد محمد",
+
+  "restaurantSignupStep2Title": "هوية العلامة التجارية والذكاء الاصطناعي",
+  "restaurantSignupStep2Subtitle": "صف مطعمك في سطر واحد. سيساعدك الذكاء الاصطناعي لدينا في صياغة قصة مقنعة والتوصية بفئات البحث.",
+  "restaurantSignupTaglineLabel": "صف مطعمك في سطر واحد",
+  "restaurantSignupTaglineHint": "مثال: مكرونة إيطالية أصيلة مصنوعة يدوياً",
+  "restaurantSignupGenerateButton": "إنشاء الملف الشخصي والفئات",
+  "restaurantSignupAiStoryLabel": "قصة من إنشاء الذكاء الاصطناعي (قابلة للتعديل)",
+  "restaurantSignupCategoriesLabel": "الفئات الموصى بها",
+
+  "restaurantSignupStep3Title": "الموقع والتحقق",
+  "restaurantSignupStep3Subtitle": "قدم عنوانك الفعلي وحمل مستندات التحقق. سيقوم الذكاء الاصطناعي لدينا بالتحقق من تفاصيلك تلقائياً.",
+  "restaurantSignupAddressLabel": "عنوان المطعم",
+  "restaurantSignupAddressHint": "أدخل عنوان الشارع الكامل",
+  "restaurantSignupUploadVerifyButton": "تحميل الترخيص والتحقق",
+  "restaurantSignupAiVerificationNote": "سيتم فحص هذه الصورة بواسطة الذكاء الاصطناعي للتحقق من مستندك.",
+  "restaurantSignupStatusVerified": "الحالة: تم التحقق",
+  "restaurantSignupStatusInvalid": "الحالة: غير صالح",
+  "restaurantSignupVerificationSuccess": "تم التحقق من مستنداتك وعنوانك تلقائياً.",
+
+  "restaurantSignupStep4Title": "المراجعة والإرسال",
+  "restaurantSignupStep4Subtitle": "يرجى مراجعة ملفك الشخصي وتفاصيلك قبل الإرسال النهائي.",
+  "restaurantSignupSectionBasic": "معلومات أساسية",
+  "restaurantSignupSectionAi": "الهوية المنشأة بالذكاء الاصطناعي",
+  "restaurantSignupSectionLocation": "الموقع والتحقق",
+  "restaurantSignupGeneratedStoryLabel": "القصة المنشأة:",
+  "restaurantSignupNotVerified": "لم يتم التحقق",
+
+  "restaurantSignupAppBarTitle": "تسجيل المطعم",
+  "restaurantSignupBackButton": "رجوع",
+  "restaurantSignupNextButton": "التالي",
+  "restaurantSignupSubmitButton": "إرسال",
+  "restaurantSignupSuccess": "تم التسجيل بنجاح!",
+
+  "restaurantSignupErrorCompanyNameRequired": "اسم الشركة مطلوب",
+  "restaurantSignupErrorOwnerNameRequired": "اسم المالك مطلوب",
+  "restaurantSignupErrorTaglineRequired": "يرجى تقديم وصف قصير لإنشاء ملفك الشخصي",
+  "restaurantSignupErrorAiProfileRequired": "يرجى إنشاء ومراجعة ملفك الشخصي بالذكاء الاصطناعي",
+  "restaurantSignupErrorCategoryRequired": "يرجى اختيار فئة واحدة على الأقل",
+  "restaurantSignupErrorAddressRequired": "العنوان مطلوب",
+  "restaurantSignupErrorVerificationRequired": "يجب التحقق من مستنداتك وعنوانك",
+  "restaurantSignupErrorAiGenerationFailed": "فشل إنشاء الملف الشخصي. يرجى المحاولة مرة أخرى.",
+  "restaurantSignupErrorVerificationFailed": "فشل التحقق. يرجى المحاولة مرة أخرى.",
+  "restaurantSignupErrorTaglineFirst": "يرجى تقديم وصف قصير أولاً",
+  "restaurantSignupErrorAddressFirst": "يرجى تقديم عنوان أولاً",
+
+  "orderItemPrice": "سعر العنصر",
+
+  "aiValidationUploadPrompt": "اضغط لالتقاط أو رفع صورة",
+  "aiValidationAnalyzingStep1": "الذكاء الاصطناعي يحلل صورتك...",
+  "aiValidationAnalyzingStep2": "جاري التحقق من وضوح المستند...",
+  "aiValidationAnalyzingStep3": "جاري التحقق من المصداقية...",
+  "aiValidationSuccessTitle": "تم التحقق من الصورة!",
+  "aiValidationSuccessSubtitle": "تستوفي صورتك جميع المتطلبات.",
+  "aiValidationRetryButton": "حاول مرة أخرى",
+  "aiValidationErrorTitle": "فشل التحقق",
+  "aiValidationErrorUnknown": "حدث خطأ غير متوقع.",
+  "aiValidationStatusSuccess": "تم التحقق بنجاح",
+  "aiValidationStatusInvalid": "الصورة لا تفي بالمعايير.",
+  "aiValidationStatusErrorUnknown": "خطأ تحقق غير معروف.",
+
+  "signupCuisineType": "المطبخ / نوع العمل",
+  "@signupCuisineType": {
+    "description": "تسمية لمدخل نوع أو مطبخ المطعم."
+  },
+  "signupCuisineTypeHint": "مثال: إيطالي، وجبات سريعة، مخبز",
+  "@signupCuisineTypeHint": {
+    "description": "نص تلميح لمدخل مطبخ المطعم."
+  },
+  "signupPrimaryCategory": "المنتج الأساسي / الفئة",
+  "@signupPrimaryCategory": {
+    "description": "تسمية لمدخل الفئة الأساسية للمورد الفردي."
+  },
+  "signupPrimaryCategoryHint": "مثال: منتجات طازجة، ألبان",
+  "@signupPrimaryCategoryHint": {
+    "description": "نص تلميح لمدخل فئة المورد الفردي."
+  }
 }

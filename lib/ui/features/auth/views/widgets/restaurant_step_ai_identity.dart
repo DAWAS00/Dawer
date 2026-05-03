@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../viewmodels/restaurant_signup_viewmodel.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../common/ai_shimmer_loader.dart';
+import '../../../../../l10n/l10n.dart';
+import '../../../../../core/utils/error_key_resolver.dart';
 
 class RestaurantStepAiIdentity extends StatelessWidget {
   const RestaurantStepAiIdentity({super.key});
@@ -10,18 +12,19 @@ class RestaurantStepAiIdentity extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<RestaurantSignupViewModel>();
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Brand Identity & AI',
+          l10n.restaurantSignupStep2Title,
           style: GoogleFonts.cairo(fontSize: 22, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 8),
         Text(
-          'Describe your restaurant in one line. Our AI will help craft a compelling story and recommend search categories.',
+          l10n.restaurantSignupStep2Subtitle,
           style: GoogleFonts.cairo(fontSize: 14, color: Colors.grey.shade600),
           textAlign: TextAlign.center,
         ),
@@ -30,9 +33,9 @@ class RestaurantStepAiIdentity extends StatelessWidget {
           initialValue: vm.data.tagline,
           onChanged: vm.updateTagline,
           decoration: InputDecoration(
-            labelText: 'Describe your restaurant in one line',
-            hintText: 'e.g., Authentic Italian pasta made from scratch',
-            errorText: vm.errors['tagline'],
+            labelText: l10n.restaurantSignupTaglineLabel,
+            hintText: l10n.restaurantSignupTaglineHint,
+            errorText: resolveErrorKey(context, vm.errors['tagline']),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -44,7 +47,7 @@ class RestaurantStepAiIdentity extends StatelessWidget {
           icon: vm.isLoadingAi
               ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
               : const Icon(Icons.auto_awesome),
-          label: Text('Generate Profile & Categories'),
+          label: Text(l10n.restaurantSignupGenerateButton),
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -72,7 +75,7 @@ class RestaurantStepAiIdentity extends StatelessWidget {
                     const Icon(Icons.auto_awesome, color: Colors.blue, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      'AI-Generated Story (Editable)',
+                      l10n.restaurantSignupAiStoryLabel,
                       style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: Colors.blue.shade800),
                     ),
                   ],
@@ -92,7 +95,7 @@ class RestaurantStepAiIdentity extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
-                      vm.errors['aiGeneratedContent']!,
+                      resolveErrorKey(context, vm.errors['aiGeneratedContent']!) ?? '',
                       style: const TextStyle(color: Colors.red, fontSize: 12),
                     ),
                   ),
@@ -101,7 +104,7 @@ class RestaurantStepAiIdentity extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            'Recommended Categories',
+            l10n.restaurantSignupCategoriesLabel,
             style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
@@ -122,7 +125,7 @@ class RestaurantStepAiIdentity extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
-                vm.errors['selectedCategories']!,
+                resolveErrorKey(context, vm.errors['selectedCategories']!) ?? '',
                 style: const TextStyle(color: Colors.red, fontSize: 12),
               ),
             ),
