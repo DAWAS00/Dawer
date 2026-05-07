@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../data/models/user.dart';
+import '../../../../../data/models/user_role.dart';
 import '../../../../../data/services/app_order_store.dart';
 
 class RecyclingHomeViewModel extends ChangeNotifier {
   final AppOrderStore _store;
+  late User _company;
 
-  RecyclingHomeViewModel(this._store) {
+  RecyclingHomeViewModel(this._store, {String? userName}) {
+    _company = User(
+      id: 'REC-${DateTime.now().millisecondsSinceEpoch}',
+      name: userName ?? 'شركة دوّر للتدوير',
+      role: UserRole.recyclingCo,
+      address: 'عمّان، الزرقاء، إربد',
+      isVerified: true,
+      points: 0,
+      totalOrders: 234,
+      rating: 4.9,
+    );
     _store.addListener(_onStoreChanged);
   }
 
@@ -22,17 +34,6 @@ class RecyclingHomeViewModel extends ChangeNotifier {
 
   int _currentTab = 0;
   bool _isOpen = true;
-
-  User _company = const User(
-    id: 'REC-4820',
-    name: 'شركة دوّر للتدوير',
-    role: 'recyclingCo',
-    address: 'عمّان، الزرقاء، إربد',
-    isVerified: true,
-    points: 0,
-    totalOrders: 234,
-    rating: 4.9,
-  );
 
   String _serviceArea = 'عمّان، الزرقاء، إربد';
   String _email = 'info@dawwar-recycle.jo';

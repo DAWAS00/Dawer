@@ -77,7 +77,7 @@ class _RecordingOrderRepository implements IOrderRepository {
 const _driver = User(
   id: 'DRV-LIFECYCLE-01',
   name: 'سائق الاختبار',
-  role: 'سائق',
+  role: UserRole.driver,
   address: '',
   points: 0,
   totalOrders: 0,
@@ -151,7 +151,7 @@ void main() {
       const secondDriver = User(
         id: 'DRV-LIFECYCLE-02',
         name: 'سائق ثانٍ',
-        role: 'سائق',
+        role: UserRole.driver,
         address: '',
         points: 0,
         totalOrders: 0,

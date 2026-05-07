@@ -1,5 +1,6 @@
 import '../../../../../data/models/order.dart';
 import '../../../../../data/models/user.dart';
+import '../../../../../data/models/user_role.dart';
 import '../../../../../domain/failures/app_failure.dart';
 import '../../../../../domain/requests/create_pickup_request.dart';
 import 'base_supplier_viewmodel.dart';
@@ -46,7 +47,7 @@ class SupplierHomeViewModel extends BaseSupplierViewModel {
   User get defaultUser => const User(
         id: 'SUP-7821',
         name: 'مورد دوّر',
-        role: 'مورد',
+        role: UserRole.supplier,
         address: 'شارع الجامعة، عمّان',
         points: 120,
         totalOrders: 18,

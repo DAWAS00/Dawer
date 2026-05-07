@@ -1,6 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../backend_integration_locally/local_store.dart';
+import '../local/local_store.dart';
 import '../../core/result/result.dart';
 import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/i_auth_repository.dart';
@@ -130,23 +130,18 @@ final class SupabaseAuthRepository implements IAuthRepository {
     final userName = _localStore.getCurrentUserName() ?? 'مستخدم';
     final supplierStr = _localStore.getCurrentSupplierType();
 
-    UserRole? role;
-    for (final r in UserRole.values) {
-      if (r.dbValue == roleStr) {
-        role = r;
-        break;
-      }
+    UserRole role;
+    try {
+      role = UserRoleDbMapping.fromDb(roleStr);
+    } catch (_) {
+      return null;
     }
-    if (role == null) return null;
 
     SupplierType? supplierType;
     if (supplierStr != null) {
-      for (final s in SupplierType.values) {
-        if (s.dbValue == supplierStr) {
-          supplierType = s;
-          break;
-        }
-      }
+      try {
+        supplierType = SupplierTypeDbMapping.fromDb(supplierStr);
+      } catch (_) {}
     }
 
     final categories = _localStore.getCurrentUserCategories();
@@ -232,22 +227,18 @@ final class SupabaseAuthRepository implements IAuthRepository {
     final roleStr = profile['role'] as String? ?? '';
     final supplierStr = profile['supplier_type'] as String?;
 
-    UserRole role = UserRole.supplier;
-    for (final r in UserRole.values) {
-      if (r.dbValue == roleStr) {
-        role = r;
-        break;
-      }
+    UserRole role;
+    try {
+      role = UserRoleDbMapping.fromDb(roleStr);
+    } catch (_) {
+      role = UserRole.supplier;
     }
 
     SupplierType? supplierType;
     if (supplierStr != null) {
-      for (final s in SupplierType.values) {
-        if (s.dbValue == supplierStr) {
-          supplierType = s;
-          break;
-        }
-      }
+      try {
+        supplierType = SupplierTypeDbMapping.fromDb(supplierStr);
+      } catch (_) {}
     }
 
     final rawCats = profile['categories'];

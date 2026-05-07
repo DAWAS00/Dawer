@@ -1,4 +1,5 @@
 import '../../../../../data/models/user.dart';
+import '../../../../../data/models/user_role.dart';
 import 'base_supplier_viewmodel.dart';
 
 class IndividualSupplierViewModel extends BaseSupplierViewModel {
@@ -8,7 +9,7 @@ class IndividualSupplierViewModel extends BaseSupplierViewModel {
   User get defaultUser => const User(
         id: 'SUP-IND-001',
         name: 'مورد دوّر',
-        role: 'مورد فردي',
+        role: UserRole.supplier,
         address: 'شارع الجامعة، عمّان',
         points: 120,
         totalOrders: 18,

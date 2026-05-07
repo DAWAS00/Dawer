@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../data/models/user.dart';
+import '../../../../../data/models/user_role.dart';
 import '../../../../common/green_button.dart';
 import '../viewmodels/supplier_home_viewmodel.dart';
 
@@ -27,7 +28,7 @@ class _DriverSelectionViewState extends State<DriverSelectionView>
     const User(
       id: 'DRV-001',
       name: 'أحمد صالح',
-      role: 'driver',
+      role: UserRole.driver,
       rating: 4.9,
       vehicleModel: 'تويوتا هايلكس',
       vehicleColor: 'أبيض',
@@ -37,7 +38,7 @@ class _DriverSelectionViewState extends State<DriverSelectionView>
     const User(
       id: 'DRV-002',
       name: 'سامر علي',
-      role: 'driver',
+      role: UserRole.driver,
       rating: 4.7,
       vehicleModel: 'ميتسوبيشي L200',
       vehicleColor: 'فضي',
@@ -47,7 +48,7 @@ class _DriverSelectionViewState extends State<DriverSelectionView>
     const User(
       id: 'DRV-003',
       name: 'محمود حسن',
-      role: 'driver',
+      role: UserRole.driver,
       rating: 4.8,
       vehicleModel: 'فورد F-150',
       vehicleColor: 'أسود',

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../data/models/user_role.dart';
@@ -254,8 +254,6 @@ class SignUpViewModel extends ChangeNotifier {
       _errors['password'] = dbErrors['password']!;
     }
 
-    // [CHANGE] UI-only validation disabled for sign-up flow to allow bypassing checks
-    /*
     // 2) UI-only rules that are not enforced by the DB.
     if (isBusinessRole && ownerOrManagerName.trim().isEmpty) {
       _errors['ownerOrManagerName'] = l10n.signupErrorManagerName;
@@ -277,7 +275,6 @@ class SignUpViewModel extends ChangeNotifier {
         passwordConfirm.trim() != password) {
       _errors['passwordConfirm'] = l10n.signupErrorPasswordMismatch;
     }
-    */
 
     notifyListeners();
     return _errors.isEmpty;

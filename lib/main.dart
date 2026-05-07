@@ -4,7 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'backend_integration_locally/local_store.dart';
+import 'data/local/local_store.dart';
 import 'core/services/app_lang_notifier.dart';
 import 'core/services/app_theme_notifier.dart';
 import 'core/services/supabase_service.dart';
@@ -14,6 +14,9 @@ import 'data/repositories/supabase_auth_repository.dart';
 import 'data/repositories/supabase_file_storage_repository.dart';
 import 'data/repositories/supabase_order_repository.dart';
 import 'data/services/app_order_store.dart';
+import 'data/services/driver_order_store.dart';
+import 'data/services/recycling_order_store.dart';
+import 'data/services/supplier_order_store.dart';
 import 'data/services/supabase_auth_service.dart';
 import 'data/services/user_signup_service.dart';
 import 'domain/repositories/i_auth_repository.dart';
@@ -40,18 +43,17 @@ void main() async {
     anonKey: supabaseAnonKey.isNotEmpty ? supabaseAnonKey : 'sb_publishable__JiNp6XeCpIOC1rWi9PwpA_JA51eBU7',
   );
 
-  final prefs = await SharedPreferences.getInstance();  
+  final prefs = await SharedPreferences.getInstance();
   final localStore = await LocalStore.init();
 
   final fileStorage = SupabaseFileStorageRepository();
-  UserSignUpService.setGlobalAuthService(
-    SupabaseAuthService(store: localStore, fileStorage: fileStorage),
-  );
+  final authService = SupabaseAuthService(store: localStore, fileStorage: fileStorage);
 
   runApp(DawerApp(
     prefs: prefs,
     localStore: localStore,
     fileStorage: fileStorage,
+    authService: authService,
   ));
 }
 
@@ -59,11 +61,13 @@ class DawerApp extends StatelessWidget {
   final SharedPreferences prefs;
   final LocalStore localStore;
   final IFileStorageRepository fileStorage;
+  final SupabaseAuthService authService;
   const DawerApp({
     super.key,
     required this.prefs,
     required this.localStore,
     required this.fileStorage,
+    required this.authService,
   });
 
   @override
@@ -81,13 +85,29 @@ class DawerApp extends StatelessWidget {
             remote: ctx.read<IOrderRepository>(),
           ),
         ),
+        ProxyProvider<AppOrderStore, DriverOrderStore>(
+          update: (_, store, prev) => prev ?? DriverOrderStore(store),
+          dispose: (_, store) => store.dispose(),
+        ),
+        ProxyProvider<AppOrderStore, SupplierOrderStore>(
+          update: (_, store, prev) => prev ?? SupplierOrderStore(store),
+          dispose: (_, store) => store.dispose(),
+        ),
+        ProxyProvider<AppOrderStore, RecyclingOrderStore>(
+          update: (_, store, prev) => prev ?? RecyclingOrderStore(store),
+          dispose: (_, store) => store.dispose(),
+        ),
         ChangeNotifierProvider(create: (_) => AppThemeNotifier(prefs)),
         ChangeNotifierProvider(create: (_) => AppLangNotifier(prefs)),
+        Provider<SupabaseAuthService>.value(value: authService),
+        Provider<UserSignUpService>(
+          create: (ctx) => UserSignUpService(authService: ctx.read<SupabaseAuthService>()),
+        ),
         Provider<IAuthRepository>(
-          create: (_) => SupabaseService.isInitialized
+          create: (ctx) => SupabaseService.isInitialized
               ? SupabaseAuthRepository(
                   SupabaseService.client,
-                  UserSignUpService(),
+                  ctx.read<UserSignUpService>(),
                   localStore,
                 )
               : MockAuthRepository(),

@@ -1,7 +1,9 @@
+import 'user_role.dart';
+
 class User {
   final String id;
   final String name;
-  final String role; // Recycling Co., Supplier, Driver
+  final UserRole role;
   final String phone;
   final double rating;
   final String? vehicleModel;
@@ -34,7 +36,7 @@ class User {
   User copyWith({
     String? id,
     String? name,
-    String? role,
+    UserRole? role,
     String? phone,
     double? rating,
     String? vehicleModel,

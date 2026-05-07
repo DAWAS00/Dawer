@@ -23,6 +23,7 @@ class RewardService {
     WasteType.batteries: 0.08,
     WasteType.tires: 0.03,
     WasteType.construction: 0.02,
+    WasteType.furniture: 0.015,
   };
 
   double _round3(double value) => (value * 1000).round() / 1000;

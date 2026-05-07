@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import '../../backend_integration_locally/local_store.dart';
+import '../local/local_store.dart';
 import '../../core/result/result.dart';
 import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/i_order_repository.dart';
+import 'fee_calculator.dart';
 import '../../domain/requests/create_pickup_request.dart';
 import '../mock/order_mock_data.dart';
 import '../models/order.dart';
@@ -326,7 +327,7 @@ class AppOrderStore extends ChangeNotifier {
   }) {
     final orderId =
         'ORD-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
-    final fee = _calculateFee(weightCategory);
+    final fee = FeeCalculator.forWeightCategory(weightCategory);
     final order = Order(
       id: orderId,
       type: OrderType.pickup,
@@ -781,18 +782,6 @@ class AppOrderStore extends ChangeNotifier {
   // ─────────────────────────────────────────────────────────────────────────
   // Helpers
   // ─────────────────────────────────────────────────────────────────────────
-
-  static double _calculateFee(WeightCategory? cat) {
-    const base = 2.0;
-    return base +
-        switch (cat) {
-          WeightCategory.light => 0.0,
-          WeightCategory.medium => 1.5,
-          WeightCategory.heavy => 4.0,
-          WeightCategory.veryHeavy => 8.0,
-          null => 0.0,
-        };
-  }
 
   /// Awaits a remote write and lifts any failure into [_lastError] so widgets
   /// can react via [lastError]. Successes are silent.

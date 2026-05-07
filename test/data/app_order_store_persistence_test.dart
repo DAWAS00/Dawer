@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:dwaar/backend_integration_locally/local_store.dart';
+import 'package:dwaar/data/local/local_store.dart';
 import 'package:dwaar/data/models/order.dart';
 import 'package:dwaar/data/services/app_order_store.dart';
 

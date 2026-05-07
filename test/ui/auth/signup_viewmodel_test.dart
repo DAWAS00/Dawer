@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:dwaar/backend_integration_locally/local_store.dart';
+import 'package:dwaar/data/local/local_store.dart';
 import 'package:dwaar/core/result/result.dart';
 import 'package:dwaar/data/models/user_role.dart';
 import 'package:dwaar/data/services/supabase_auth_service.dart';
@@ -89,7 +89,6 @@ void main() {
   setUpAll(() async {
     SharedPreferences.setMockInitialValues(<String, Object>{});
     final store = await LocalStore.init();
-    UserSignUpService.setGlobalStore(store);
 
     final fakeAuth = _FakeSupabaseAuthService(store: store);
     _fakeService = UserSignUpService(authService: fakeAuth);

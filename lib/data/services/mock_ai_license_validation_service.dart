@@ -1,8 +1,9 @@
 import '../../domain/services/i_ai_license_validation_service.dart';
 import '../../domain/services/i_ai_validation_service.dart';
 import '../models/user_role.dart';
+import 'mock_ai_base.dart';
 
-class MockAiLicenseValidationService implements IAiLicenseValidationService {
+class MockAiLicenseValidationService extends MockAiBase implements IAiLicenseValidationService {
   static List<String> _categoriesForRole(UserRole role) => switch (role) {
         UserRole.driver => ['مواد بناء', 'أجهزة كهربائية', 'معادن'],
         UserRole.supplier => ['ورق وكرتون', 'زجاج', 'بلاستيك', 'مطاط'],
@@ -10,25 +11,19 @@ class MockAiLicenseValidationService implements IAiLicenseValidationService {
       };
 
   @override
-  Future<AiValidationResult> validateLicense(
-      String filePath, UserRole role) async {
-    // TODO: replace with real AI license validation API call
-    await Future.delayed(const Duration(milliseconds: 2500));
-
-    final lower = filePath.toLowerCase();
-    if (lower.contains('fail') || lower.contains('invalid')) {
-      return const AiValidationResult(
-        isValid: false,
-        statusMessage: 'aiValidationStatusInvalid',
-        confidenceScore: 0.1,
+  Future<AiValidationResult> validateLicense(String filePath, UserRole role) =>
+      simulate(
+        () => isForcedFailure(filePath)
+            ? const AiValidationResult(
+                isValid: false,
+                statusMessage: 'aiValidationStatusInvalid',
+                confidenceScore: 0.1,
+              )
+            : AiValidationResult(
+                isValid: true,
+                statusMessage: 'aiValidationStatusSuccess',
+                confidenceScore: 0.97,
+                suggestedCategories: _categoriesForRole(role),
+              ),
       );
-    }
-
-    return AiValidationResult(
-      isValid: true,
-      statusMessage: 'aiValidationStatusSuccess',
-      confidenceScore: 0.97,
-      suggestedCategories: _categoriesForRole(role),
-    );
-  }
 }

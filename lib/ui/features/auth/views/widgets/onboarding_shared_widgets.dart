@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../../data/services/mock_ai_service.dart';
+import '../../../../../domain/services/i_brand_profile_ai_service.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../common/green_button.dart';
 

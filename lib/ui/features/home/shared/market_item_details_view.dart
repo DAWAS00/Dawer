@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../data/models/order.dart';
 import '../../../../data/models/order_labels.dart';
 import '../../../../data/models/user.dart';
+import '../../../../data/models/user_role.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../features/auth/viewmodels/login_viewmodel.dart';
 import 'viewmodels/marketplace_viewmodel.dart';
@@ -266,7 +267,7 @@ class MarketItemDetailsView extends StatelessWidget {
 
   void _handleDriverClaim(BuildContext context) {
     final vm = context.read<MarketplaceViewModel>();
-    final claimed = vm.claimItem(item.id, const User(id: 'DRV-19842', name: 'سائق دوّر', role: 'سائق'));
+    final claimed = vm.claimItem(item.id, const User(id: 'DRV-19842', name: 'سائق دوّر', role: UserRole.driver));
     if (claimed != null) {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(

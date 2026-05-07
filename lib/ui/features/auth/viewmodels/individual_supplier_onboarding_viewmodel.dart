@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../data/models/user_role.dart';
-import '../../../../data/services/mock_ai_service.dart';
+import '../../../../data/services/mock_brand_profile_ai_service.dart';
+import '../../../../domain/services/i_brand_profile_ai_service.dart';
 import '../../../../data/services/user_signup_service.dart';
 import '../../../../domain/failures/app_failure.dart';
 import 'license_validation_viewmodel.dart';
@@ -118,7 +119,7 @@ class IndividualSupplierOnboardingViewModel extends ChangeNotifier {
     isAiLoading = true;
     notifyListeners();
 
-    final result = await MockAiService.generateBrandProfile(
+    final result = await MockBrandProfileAiService().generateBrandProfile(
       companyName: fullName,
       tagline: tagline,
     );

@@ -31,7 +31,7 @@ class DriverHomeView extends StatelessWidget {
     final store = context.read<AppOrderStore>();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => DriverHomeViewModel(store)),
+        ChangeNotifierProvider(create: (_) => DriverHomeViewModel(store, userName: userName)),
         ChangeNotifierProvider(
           create: (_) => MarketplaceViewModel(
             store,

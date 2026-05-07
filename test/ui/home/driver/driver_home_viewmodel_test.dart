@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dwaar/data/models/user.dart';
+import 'package:dwaar/data/models/user_role.dart';
 import 'package:dwaar/data/services/app_order_store.dart';
 import 'package:dwaar/domain/services/i_location_publisher.dart';
 import 'package:dwaar/ui/features/home/driver/viewmodels/driver_home_viewmodel.dart';
@@ -141,7 +142,7 @@ void main() {
       const storeDriver = User(
         id: 'DRV-STUB-01',
         name: 'سائق الاستماع',
-        role: 'سائق',
+        role: UserRole.driver,
         address: '',
         points: 0,
         totalOrders: 0,

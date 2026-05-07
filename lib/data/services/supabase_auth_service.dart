@@ -1,8 +1,9 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../backend_integration_locally/local_store.dart';
+import '../local/local_store.dart';
 import '../../core/result/result.dart';
 import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/i_file_storage_repository.dart';
@@ -33,28 +34,24 @@ class SupabaseAuthService {
     File? profilePhoto,
     File? identityDocument,
   }) async {
-    // [CHANGE] Validation disabled for sign-up flow to allow bypassing checks
-    /*
-    // The ViewModel runs the full validation suite before calling this
-    // method; we only re-check the absolute requirements for Supabase Auth.
-    final pw = request.password;
-    if (pw == null || pw.isEmpty) {
-      return const Failure(ValidationFailure(
-        message: 'كلمة المرور مطلوبة',
-        fieldErrors: {'password': 'كلمة المرور مطلوبة'},
-      ));
-    }
-
-    final email = request.email?.trim().toLowerCase();
-    if (email == null || email.isEmpty) {
-      return const Failure(ValidationFailure(
-        message: 'البريد الإلكتروني مطلوب',
-        fieldErrors: {'email': 'البريد الإلكتروني مطلوب للتسجيل'},
-      ));
-    }
-    */
     final pw = request.password ?? '';
     final email = request.email?.trim().toLowerCase() ?? '';
+
+    // In production builds, enforce minimum requirements
+    if (!kDebugMode) {
+      if (pw.isEmpty) {
+        return const Failure(ValidationFailure(
+          message: 'كلمة المرور مطلوبة',
+          fieldErrors: {'password': 'كلمة المرور مطلوبة'},
+        ));
+      }
+      if (email.isEmpty) {
+        return const Failure(ValidationFailure(
+          message: 'البريد الإلكتروني مطلوب',
+          fieldErrors: {'email': 'البريد الإلكتروني مطلوب للتسجيل'},
+        ));
+      }
+    }
 
     // 1. Create Supabase Auth user
     final AuthResponse authResponse;
@@ -183,23 +180,22 @@ class SupabaseAuthService {
     required String identifier,
     required String password,
   }) async {
-    // [CHANGE] Validation disabled to allow bypassing checks
-    /*
     final id = identifier.trim().toLowerCase();
-    if (id.isEmpty) {
-      return const Failure(ValidationFailure(
-        message: 'أدخل البريد الإلكتروني أو رقم الهاتف',
-        fieldErrors: {'identifier': 'أدخل البريد الإلكتروني أو رقم الهاتف'},
-      ));
+
+    if (!kDebugMode) {
+      if (id.isEmpty) {
+        return const Failure(ValidationFailure(
+          message: 'أدخل البريد الإلكتروني أو رقم الهاتف',
+          fieldErrors: {'identifier': 'أدخل البريد الإلكتروني أو رقم الهاتف'},
+        ));
+      }
+      if (password.isEmpty) {
+        return const Failure(ValidationFailure(
+          message: 'أدخل كلمة المرور',
+          fieldErrors: {'password': 'أدخل كلمة المرور'},
+        ));
+      }
     }
-    if (password.isEmpty) {
-      return const Failure(ValidationFailure(
-        message: 'أدخل كلمة المرور',
-        fieldErrors: {'password': 'أدخل كلمة المرور'},
-      ));
-    }
-    */
-    final id = identifier.trim().toLowerCase();
 
     // If the identifier looks like a phone number, look up the email first.
     String emailToUse = id;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../data/models/user.dart';
+import '../../../../../data/models/user_role.dart';
 import '../../../../../data/services/app_order_store.dart';
 import '../../../../../data/services/location_publisher.dart';
 import '../../../../../domain/services/i_location_publisher.dart';
@@ -8,11 +9,19 @@ import '../../../../../domain/services/i_location_publisher.dart';
 class DriverHomeViewModel extends ChangeNotifier {
   final AppOrderStore _store;
   final ILocationPublisher _publisher;
+  late User _user;
 
   DriverHomeViewModel(
     this._store, {
     ILocationPublisher? publisher,
+    String? userName,
   }) : _publisher = publisher ?? LocationPublisher.instance {
+    _user = User(
+      id: 'DRV-${DateTime.now().millisecondsSinceEpoch}',
+      name: userName ?? 'سائق دوّر',
+      role: UserRole.driver,
+      rating: 4.8,
+    );
     _store.addListener(_onStoreChanged);
   }
 
@@ -28,13 +37,6 @@ class DriverHomeViewModel extends ChangeNotifier {
 
   int _currentTab = 0;
   bool _isAvailable = true;
-
-  User _user = const User(
-    id: 'DRV-19842',
-    name: 'سائق دوّر',
-    role: 'سائق',
-    rating: 4.8,
-  );
 
   // ── Getters (delegated to store) ──────────────────────────────────────────
 
@@ -137,7 +139,7 @@ class DriverHomeViewModel extends ChangeNotifier {
       pickupLat: pickupLat,
       pickupLng: pickupLng,
     );
-    notifyListeners();
+    _store.addMarketListing(order);
     return order;
   }
 

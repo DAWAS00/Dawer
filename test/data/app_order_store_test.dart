@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dwaar/data/models/order.dart';
 import 'package:dwaar/data/models/user.dart';
+import 'package:dwaar/data/models/user_role.dart';
 import 'package:dwaar/data/services/app_order_store.dart';
 
 void main() {
@@ -11,7 +12,7 @@ void main() {
   const mockDriver = User(
     id: 'DRV-001',
     name: 'سائق اختبار',
-    role: 'سائق',
+    role: UserRole.driver,
     address: '',
     points: 0,
     totalOrders: 0,

@@ -28,7 +28,7 @@ class RecyclingHomeView extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (ctx) => RecyclingHomeViewModel(ctx.read<AppOrderStore>()),
+          create: (ctx) => RecyclingHomeViewModel(ctx.read<AppOrderStore>(), userName: userName),
         ),
         ChangeNotifierProvider(
           create: (ctx) => MarketplaceViewModel(
