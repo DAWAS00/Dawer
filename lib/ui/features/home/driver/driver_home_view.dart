@@ -12,6 +12,8 @@ import 'widgets/driver_nav_item.dart';
 import '../shared/tabs/marketplace_tab.dart';
 import '../shared/views/collection_sale_detail_view.dart';
 import '../shared/viewmodels/marketplace_viewmodel.dart';
+import 'tabs/driver_earnings_tab.dart';
+import 'viewmodels/driver_earnings_viewmodel.dart';
 import '../shared/widgets/post_to_market_sheet.dart';
 import '../../auth/viewmodels/login_viewmodel.dart';
 import '../../../../../l10n/l10n.dart';
@@ -38,6 +40,7 @@ class DriverHomeView extends StatelessWidget {
             initialSuggestions: aiSuggestedCategories,
           ),
         ),
+        ChangeNotifierProvider(create: (_) => DriverEarningsViewModel(store)),
       ],
       child: _DriverHomeBody(userName: userName),
     );
@@ -131,6 +134,7 @@ class _DriverHomeBody extends StatelessWidget {
         onStartTransit: vm.startCollectionSaleTransit,
         onComplete: vm.completeCollectionSale,
       ),
+      const DriverEarningsTab(),
       const DriverProfileTab(),
     ];
 
@@ -238,10 +242,16 @@ class _DriverHomeBody extends StatelessWidget {
                 onTap: () => vm.setTab(2),
               ),
               DriverNavItem(
-                icon: Icons.person_rounded,
-                label: context.l10n.navProfile,
+                icon: Icons.account_balance_wallet_rounded,
+                label: 'أرباحي',
                 isSelected: vm.currentTab == 3,
                 onTap: () => vm.setTab(3),
+              ),
+              DriverNavItem(
+                icon: Icons.person_rounded,
+                label: context.l10n.navProfile,
+                isSelected: vm.currentTab == 4,
+                onTap: () => vm.setTab(4),
               ),
             ],
           ),

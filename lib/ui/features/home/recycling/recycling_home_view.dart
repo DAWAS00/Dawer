@@ -8,9 +8,11 @@ import '../../../common/app_nav_item.dart';
 import '../shared/tabs/marketplace_tab.dart';
 import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../shared/widgets/post_to_market_sheet.dart';
+import 'tabs/recycling_analytics_tab.dart';
 import 'tabs/recycling_home_tab.dart';
 import 'tabs/recycling_orders_tab.dart';
 import 'tabs/recycling_profile_tab.dart';
+import 'viewmodels/recycling_analytics_viewmodel.dart';
 import 'viewmodels/recycling_home_viewmodel.dart';
 
 class RecyclingHomeView extends StatelessWidget {
@@ -36,6 +38,9 @@ class RecyclingHomeView extends StatelessWidget {
             initialSuggestions: aiSuggestedCategories,
           ),
         ),
+        ChangeNotifierProvider(
+          create: (ctx) => RecyclingAnalyticsViewModel(ctx.read<AppOrderStore>()),
+        ),
       ],
       child: _RecyclingHomeBody(userName: userName),
     );
@@ -60,6 +65,7 @@ class _RecyclingHomeBody extends StatelessWidget {
       ),
       MarketplaceTab(role: UserRole.recyclingCo, currentUserName: userName),
       RecyclingOrdersTab(incoming: vm.incoming, jobs: vm.jobs, salesForJob: vm.salesForJob),
+      const RecyclingAnalyticsTab(),
       RecyclingProfileTab(userName: userName),
     ];
 
@@ -152,7 +158,8 @@ class _RecyclingHomeBody extends StatelessWidget {
               AppNavItem(icon: Icons.home_rounded, label: 'الرئيسية', isSelected: vm.currentTab == 0, onTap: () => vm.setTab(0)),
               AppNavItem(icon: Icons.storefront_rounded, label: 'السوق', isSelected: vm.currentTab == 1, onTap: () => vm.setTab(1)),
               AppNavItem(icon: Icons.receipt_long_rounded, label: 'الطلبات', isSelected: vm.currentTab == 2, onTap: () => vm.setTab(2)),
-              AppNavItem(icon: Icons.business_rounded, label: 'حسابي', isSelected: vm.currentTab == 3, onTap: () => vm.setTab(3)),
+              AppNavItem(icon: Icons.bar_chart_rounded, label: 'التحليلات', isSelected: vm.currentTab == 3, onTap: () => vm.setTab(3)),
+              AppNavItem(icon: Icons.business_rounded, label: 'حسابي', isSelected: vm.currentTab == 4, onTap: () => vm.setTab(4)),
             ],
           ),
         ),

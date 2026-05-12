@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:go_router/go_router.dart';
 import '../viewmodels/login_viewmodel.dart';
-import '../../home/home_router.dart';
-import 'verification_view.dart';
-import 'forgot_password_otp_view.dart';
 import '../../../../l10n/l10n.dart';
 
 import 'widgets/role_selection_grid.dart';
@@ -34,16 +32,7 @@ class _LoginScreen extends StatelessWidget {
     if (viewModel.signedIn) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         viewModel.resetSignedIn();
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (_) => HomeRouter(
-              role: viewModel.selectedRole,
-              supplierType: viewModel.supplierType ?? SupplierType.individual,
-              userName: viewModel.profileName,
-              aiSuggestedCategories: viewModel.session?.categories ?? const [],
-            ),
-          ),
-        );
+        context.go('/home');
       });
     }
 
@@ -51,11 +40,7 @@ class _LoginScreen extends StatelessWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final phone = viewModel.phone;
         viewModel.resetOtpSent();
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => VerificationView(phoneNumber: phone),
-          ),
-        );
+        context.push('/login/verify', extra: phone);
       });
     }
 
@@ -63,11 +48,7 @@ class _LoginScreen extends StatelessWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final email = viewModel.email;
         viewModel.resetPasswordResetRequested();
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => ForgotPasswordOtpView(email: email),
-          ),
-        );
+        context.push('/login/forgot', extra: email);
       });
     }
 
@@ -124,7 +105,7 @@ class _LoginScreen extends StatelessWidget {
                             builder: (_) => const RestaurantSignupView(),
                           ),
                         );
-                      },
+                      }, // TODO(Sprint2): replace with context.push('/signup/restaurant')
                       icon: const Icon(Icons.storefront),
                       label: const Text('Register as Restaurant / Company'),
                       style: TextButton.styleFrom(

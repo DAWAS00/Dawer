@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/app_logger.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../l10n/l10n.dart';
 
@@ -14,7 +15,7 @@ class OrderDriverCard extends StatelessWidget {
     final cleanPhone = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
     final Uri url = Uri.parse('tel:$cleanPhone');
     if (!await launchUrl(url)) {
-      debugPrint('Could not launch $url');
+      AppLogger.warn('OrderDriverCard', 'Could not launch $url');
     }
   }
 
@@ -22,7 +23,7 @@ class OrderDriverCard extends StatelessWidget {
     final cleanPhone = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
     final Uri url = Uri.parse('https://wa.me/$cleanPhone');
     if (!await launchUrl(url)) {
-      debugPrint('Could not launch $url');
+      AppLogger.warn('OrderDriverCard', 'Could not launch $url');
     }
   }
 

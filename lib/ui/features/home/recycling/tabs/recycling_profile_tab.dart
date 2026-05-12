@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/services/app_theme_notifier.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../../domain/repositories/i_auth_repository.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../common/theme_mode_sheet.dart';
-import '../../../../features/auth/views/login_view.dart';
+import '../../../../widgets/carbon_badge.dart';
+import '../../../../widgets/verified_badge.dart';
 import '../viewmodels/recycling_home_viewmodel.dart';
 
 class RecyclingProfileTab extends StatelessWidget {
@@ -27,12 +29,8 @@ class RecyclingProfileTab extends StatelessWidget {
           TextButton(
             onPressed: () async {
               Navigator.pop(ctx);
-              final nav = Navigator.of(context);
               await context.read<IAuthRepository>().signOut();
-              nav.pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const LoginView()),
-                (route) => false,
-              );
+              if (context.mounted) context.go('/login');
             },
             child: Text(ctx.l10n.logoutExit, style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
           ),
@@ -84,11 +82,7 @@ class RecyclingProfileTab extends StatelessWidget {
                           child: const Icon(Icons.recycling_rounded, size: 40, color: Colors.white),
                         ),
                         if (company.isVerified)
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                            child: const Icon(Icons.verified_rounded, color: Color(0xFF0A5E3E), size: 20),
-                          ),
+                          const VerifiedAvatarOverlay(),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -150,6 +144,8 @@ class RecyclingProfileTab extends StatelessWidget {
                   ),
                 ),
               ),
+
+              CarbonBadge(orders: vm.completedOrders),
 
               // Company info section
               Padding(

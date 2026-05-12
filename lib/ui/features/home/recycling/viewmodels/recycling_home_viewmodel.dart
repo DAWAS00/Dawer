@@ -53,6 +53,8 @@ class RecyclingHomeViewModel extends ChangeNotifier {
 
   List<Order> get incoming => _store.companyIncoming;
   List<Order> get jobs => _store.companyJobs;
+  List<Order> get completedOrders =>
+      incoming.where((o) => o.status == OrderStatus.completed).toList();
 
   /// All collectionSale orders linked to this company's jobs.
   /// Used to show who accepted which job and their status.

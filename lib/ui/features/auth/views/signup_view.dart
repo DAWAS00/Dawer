@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import 'package:go_router/go_router.dart';
 import '../viewmodels/login_viewmodel.dart';
 import '../viewmodels/signup_viewmodel.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../common/green_button.dart';
-import '../../home/home_router.dart';
 import 'widgets/footer.dart';
 import 'widgets/photo_picker_card.dart';
 import 'widgets/license_scan_section.dart';
@@ -85,17 +85,7 @@ class _SignUpScreenState extends State<_SignUpScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         vm.resetSubmitted();
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (_) => HomeRouter(
-              role: vm.role,
-              supplierType: vm.supplierType,
-              userName: vm.buildRequest().name,
-              aiSuggestedCategories: vm.aiCategories,
-            ),
-          ),
-          (route) => false,
-        );
+        context.go('/home');
       });
     }
 

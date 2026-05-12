@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../data/models/user_role.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
 import '../../../common/green_button.dart';
-import '../../home/home_router.dart';
 import '../viewmodels/verification_viewmodel.dart';
 
 class VerificationView extends StatelessWidget {
@@ -34,16 +33,7 @@ class _VerificationScreen extends StatelessWidget {
 
     if (viewModel.verified) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (_) => HomeRouter(
-              role: viewModel.session!.role,
-              supplierType: viewModel.session!.supplierType ?? SupplierType.individual,
-              userName: viewModel.phoneNumber,
-            ),
-          ),
-          (route) => false,
-        );
+        context.go('/home');
       });
     }
 
