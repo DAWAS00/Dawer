@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../auth/views/login_view.dart';
-import '../../../../data/models/user_role.dart';
+import '../../../../core/services/supabase_service.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
-import '../../home/home_router.dart';
 import '../../../../l10n/l10n.dart';
 
 class SplashView extends StatefulWidget {
@@ -44,8 +43,18 @@ class _SplashViewState extends State<SplashView>
     // Check for existing session & navigate after splash animation
     Timer(const Duration(seconds: 3), () {
       if (!mounted) return;
-      _resolveNavigation();
+      if (SupabaseService.initError != null) {
+        _showBackendError(SupabaseService.initError!);
+      } else {
+        _resolveNavigation();
+      }
     });
+  }
+
+  /// Shown when [SupabaseService.initError] is set — backend unreachable.
+  void _showBackendError(String detail) {
+    if (!mounted) return;
+    context.go('/error', extra: detail);
   }
 
   /// Checks if an existing session exists via IAuthRepository. If so,
@@ -56,23 +65,7 @@ class _SplashViewState extends State<SplashView>
       final session = authRepo.currentSession;
 
       if (session != null && mounted) {
-        // Session exists — navigate to home with the resolved role
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                HomeRouter(
-              role: session.role,
-              supplierType: session.supplierType ?? SupplierType.individual,
-              userName: session.userName,
-              aiSuggestedCategories: session.categories,
-            ),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            transitionDuration: const Duration(milliseconds: 500),
-          ),
-        );
+        context.go('/home');
         return;
       }
     } catch (_) {
@@ -81,16 +74,7 @@ class _SplashViewState extends State<SplashView>
 
     // No valid session — go to login
     if (!mounted) return;
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const LoginView(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-        transitionDuration: const Duration(milliseconds: 500),
-      ),
-    );
+    context.go('/login');
   }
 
   @override
@@ -233,6 +217,51 @@ class _SplashViewState extends State<SplashView>
         decoration: const BoxDecoration(
           color: Colors.white,
           shape: BoxShape.circle,
+        ),
+      ),
+    );
+  }
+}
+
+/// Shown when the backend fails to initialize. Prevents the app from reaching
+/// any screen that assumes a live Supabase connection.
+class BackendErrorScreen extends StatelessWidget {
+  const BackendErrorScreen({super.key, required this.detail});
+  final String detail;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF06402B),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.cloud_off_rounded, size: 64, color: Colors.white54),
+              const SizedBox(height: 24),
+              Text(
+                'تعذّر الاتصال بالخادم',
+                style: GoogleFonts.cairo(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'يرجى التحقق من اتصالك بالإنترنت والمحاولة مجدداً.\nإذا استمرت المشكلة، تواصل مع الدعم الفني.',
+                style: GoogleFonts.cairo(
+                  fontSize: 14,
+                  color: Colors.white70,
+                  height: 1.7,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );

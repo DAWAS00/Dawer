@@ -4,9 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../../core/utils/app_logger.dart';
 import '../../../../../data/models/user.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../../domain/repositories/i_auth_repository.dart';
-import '../../../../features/auth/views/login_view.dart';
 import '../../../../common/theme_mode_sheet.dart';
 import '../../../../common/lang_picker_sheet.dart';
 import '../../../../../core/services/app_theme_notifier.dart';
@@ -14,6 +15,7 @@ import '../../../../../core/services/app_lang_notifier.dart';
 import '../../../../../l10n/l10n.dart';
 import '../viewmodels/driver_home_viewmodel.dart';
 import '../widgets/driver_profile_tile.dart';
+import '../../../../../ui/widgets/carbon_badge.dart';
 
 class DriverProfileTab extends StatelessWidget {
   const DriverProfileTab({super.key});
@@ -21,7 +23,7 @@ class DriverProfileTab extends StatelessWidget {
   Future<void> _launchHelpCenter() async {
     final Uri url = Uri.parse('mailto:support@dwaar.com?subject=مساعدة%20سائق');
     if (!await launchUrl(url)) {
-      debugPrint('Could not launch $url');
+      AppLogger.warn('DriverProfileTab', 'Could not launch $url');
     }
   }
 
@@ -40,12 +42,8 @@ class DriverProfileTab extends StatelessWidget {
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
-              final nav = Navigator.of(context);
               await context.read<IAuthRepository>().signOut();
-              nav.pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const LoginView()),
-                (route) => false,
-              );
+              if (context.mounted) context.go('/login');
             },
             child: Text(context.l10n.logoutExit, style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
           ),
@@ -80,6 +78,7 @@ class DriverProfileTab extends StatelessWidget {
             children: [
               _buildHeader(context, user),
               _buildStatsRow(vm, context),
+              CarbonBadge(orders: vm.history),
               const SizedBox(height: 24),
               Row(
                 children: [

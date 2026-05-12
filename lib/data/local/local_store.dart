@@ -19,6 +19,7 @@ class LocalStore {
   static const String _ordersKey = 'dwaar_orders';
   static const String _marketKey = 'dwaar_market';
   static const String _firstLaunchKey = 'dwaar_first_launch_done';
+  static const String _driverHistoryKey = 'dwaar_driver_history';
 
   /// Async factory. Must be awaited exactly once during app bootstrap.
   static Future<LocalStore> init() async {
@@ -44,6 +45,20 @@ class LocalStore {
 
   Future<void> writeOrders(List<Map<String, dynamic>> orders) async {
     await _prefs.setString(_ordersKey, jsonEncode(orders));
+  }
+
+  // ── Driver history ───────────────────────────────────────────────────────
+
+  List<String> readDriverHistory() {
+    final raw = _prefs.getString(_driverHistoryKey);
+    if (raw == null || raw.isEmpty) return <String>[];
+    final decoded = jsonDecode(raw);
+    if (decoded is! List) return <String>[];
+    return decoded.whereType<String>().toList();
+  }
+
+  Future<void> writeDriverHistory(List<String> ids) async {
+    await _prefs.setString(_driverHistoryKey, jsonEncode(ids));
   }
 
   List<Map<String, dynamic>> readMarket() => _readMapList(_marketKey);

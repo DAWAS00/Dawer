@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../data/models/user_role.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../common/map/location_picker_screen.dart';
-import '../../home/home_router.dart';
 import '../viewmodels/recycling_co_onboarding_viewmodel.dart';
 import 'widgets/license_scan_section.dart';
 import 'widgets/onboarding_shared_widgets.dart';
@@ -61,17 +60,7 @@ class _SignUpBodyState extends State<_SignUpBody> {
     if (vm.submitted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (_) => HomeRouter(
-              role: UserRole.recyclingCo,
-              supplierType: SupplierType.storeBusiness,
-              userName: vm.companyName,
-              aiSuggestedCategories: vm.combinedCategories,
-            ),
-          ),
-          (route) => false,
-        );
+        context.go('/home');
       });
     }
 

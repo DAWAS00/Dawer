@@ -6,7 +6,7 @@ import '../../../../../core/services/app_theme_notifier.dart';
 import '../../../../common/theme_mode_sheet.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../domain/repositories/i_auth_repository.dart';
-import '../../../../features/auth/views/login_view.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../features/auth/viewmodels/login_viewmodel.dart';
 import '../views/rewards_view.dart';
 
@@ -41,12 +41,8 @@ class SupplierProfileTab extends StatelessWidget {
           TextButton(
             onPressed: () async {
               Navigator.pop(ctx);
-              final nav = Navigator.of(context);
               await context.read<IAuthRepository>().signOut();
-              nav.pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const LoginView()),
-                (route) => false,
-              );
+              if (context.mounted) context.go('/login');
             },
             child: Text(context.l10n.logoutExit, style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
           ),

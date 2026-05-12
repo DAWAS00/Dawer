@@ -1,72 +1,133 @@
 # CLAUDE.md
 
-File guides Claude Code when working in this repo.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Commands
 
 ```bash
-# Run on connected device/emulator
+# Run on connected device/emulator — credentials loaded from .env.local automatically
 flutter run
 
-# Build APK
-flutter build apk
+# CI/CD (no .env.local): pass via --dart-define instead
+flutter run --dart-define=SUPABASE_URL=<url> --dart-define=SUPABASE_ANON_KEY=<key>
 
-# Analyze (lint)
+# Build APK (split per ABI for distribution)
+flutter build apk --split-per-abi \
+  --dart-define=SUPABASE_URL=<url> --dart-define=SUPABASE_ANON_KEY=<key>
+
+# Analyze
 flutter analyze
 
-# Run tests
+# Run all tests
 flutter test
 
 # Run a single test file
-flutter test test/path/to/test_file.dart
+flutter test test/data/app_order_store_test.dart
+
+# Generate localization files (after editing lib/l10n/*.arb)
+flutter gen-l10n
 ```
+
+**No hardcoded credentials anywhere.** The app shows an Arabic error screen if `--dart-define` flags are absent — this is intentional.
+
+---
 
 ## Architecture
 
-**Dwaar (دوّر)** — Arabic waste-recycling logistics app (RTL, Jordan). Three roles, each own home shell: **Driver**, **Supplier**, **Recycling Company**.
+**Dawer (دوّر)** — Arabic-first (RTL) waste-recycling logistics app for Jordan. Three roles share one codebase: **Driver**, **Supplier**, **Recycling Company**. The app is currently on a Supabase backend with a planned migration to Firebase/GCP (`MIGRATION_GCP.md`). The active execution plan is `PHASES.md`.
 
-### Pattern: Feature-Scoped MVVM with Provider
-
-Each role lives under `lib/ui/features/home/<role>/`, same structure:
-- `<role>_home_view.dart` — root scaffold + bottom nav
-- `viewmodels/<role>_home_viewmodel.dart` — `ChangeNotifier`, owns state + logic
-- `tabs/` — tab screens (home, orders, profile)
-- `widgets/` — role-specific UI
-
-VMs provided at home-view via `ChangeNotifierProvider`. Tabs read state with `context.watch<VM>()`, call methods on VM directly.
-
-### Data Layer
+### Layer Boundaries
 
 ```
-lib/data/
-  models/     — plain Dart classes (Order, User) with copyWith
-  mock/       — OrderMockData, used by all three VMs
-  repositories/ — AuthRepository (thin wrapper over AuthService)
-  services/   — local backend-facing services (auth/signup/rewards)
+lib/domain/   — interfaces + entities + failures. Zero Flutter or backend imports.
+lib/data/     — implementations of domain interfaces + AppOrderStore + LocalStore.
+lib/ui/       — views + viewmodels. Reads from stores/repos; never imports Supabase.
+lib/core/     — shared infrastructure (result type, state, logger, theme, routing).
 ```
 
-Data flow is local-first (no cloud backend dependency in runtime flow).
+**The rule**: domain interfaces (`IAuthRepository`, `IOrderRepository`, `IFileStorageRepository`) never change when the backend changes. Only `main.dart` DI wiring changes.
 
-### Shared Order UI
+### Error propagation
 
-`lib/ui/features/home/shared/` — role-agnostic order UI:
-- `order_details_view.dart` + `order_details/` — full order detail screen
-- `marketplace_tab.dart` + `viewmodels/marketplace_viewmodel.dart` — shared marketplace
-- `order_card.dart`, `order_tracking_card.dart` — reusable list items
+All repository and service methods return `AppResult<T>` (`= Result<T, AppFailure>`). Never throw across layer boundaries.
 
-### Auth & Routing
+```dart
+// Result<T,E> lives in lib/core/result/result.dart
+result.fold(onSuccess: (v) { ... }, onFailure: (f) { ... });
+```
 
-`SplashView` → `LoginView` (role picker + phone/email) → `VerificationView` → `HomeRouter`.
+`AppFailure` is a sealed class: `NetworkFailure | AuthFailure | NotFoundFailure | PermissionFailure | StorageFailure | ValidationFailure | UnknownFailure`. All have an Arabic `message` field for direct display.
 
-`HomeRouter` takes `UserRole` (enum: `driver`, `supplier`, `recyclingCo`) + `SupplierType` (enum: `individual`, `storeBusiness`), renders correct home shell. No named routes — imperative nav (`Navigator.push`/`pushReplacement`).
+### ViewModel state
 
-### Key Enums (in `lib/data/models/order.dart`)
+`ViewState<T>` (`lib/core/state/view_state.dart`) is the standard VM state type. Import it with `import '../../core/state/view_state.dart'` — it re-exports `AppFailure` and `AppResult`.
 
-`OrderType`, `OrderStatus`, `WasteType`, `WasteForm`, `WeightCategory`, `PickupTarget` — each has Arabic-label extension. Always use `.label` / `.shortLabel` for display.
+```dart
+sealed class ViewState<T> { ... }
+// Idle | Loading | Loaded(data) | Failed(failure)
 
-### Theme & Assets
+// Standard ViewModel action pattern:
+_state = const Loading(); notifyListeners();
+final result = await _repo.doSomething();
+_state = result.fold(onSuccess: Loaded.new, onFailure: Failed.new);
+notifyListeners();
+```
 
-- Colors: `AppColors` in `lib/core/constants/app_colors.dart` — use token names (`primaryGreen`, `accentAmber`, status colors), not raw hex.
-- Images: `lib/core/constants/app_assets.dart`; files in `assets/images/`.
-- Font: Google Fonts (runtime). Theme in `lib/core/theme/app_theme.dart`.
-- Forced portrait (`DeviceOrientation.portraitUp`), globally RTL (`TextDirection.rtl`).
+In views, switch on `vm.state` — avoid ad-hoc `isLoading` booleans in new code.
+
+### Order store composition
+
+`AppOrderStore` is the **single source of truth** for all orders. It's a `ChangeNotifier` split across five `part` files by domain:
+
+```
+app_order_store.dart              — bootstrap, persistence, remote write helper
+app_order_store/driver_actions    — driverFeed, acceptOrder, markInTransit, completeOrder
+app_order_store/supplier_actions  — supplierOrdersFor, createPickupRequest, cancelOrder
+app_order_store/collection_job_actions
+app_order_store/collection_sale_actions
+app_order_store/marketplace_actions
+```
+
+**Role proxy stores** (`DriverOrderStore`, `SupplierOrderStore`, `RecyclingOrderStore`) are thin `ChangeNotifier` wrappers that subscribe to `AppOrderStore` and expose only the relevant slice of its API. They never hold their own state. Add logic to `AppOrderStore` part files; expose it through the appropriate proxy.
+
+**Mutations are optimistic**: update `_orders` in-memory first, then call `_pushRemote(...)` fire-and-forget. `_lastError` surfaces the failure if it occurs.
+
+### Order model
+
+`Order` is a single immutable class covering all four order types. `OrderType` enum (`pickupRequest | collectionJob | collectionSale | marketplaceListing`) discriminates behavior. `copyWith` is in `order_copy_with.dart`; `toJson`/`orderFromJson` in `order_json.dart`; Supabase mapping in `order_supabase_ext.dart`.
+
+When reading `import 'data/models/order.dart'` you also get `order_enums.dart`, `order_arabic_labels.dart`, `order_copy_with.dart`, and `invoice_item.dart` via re-exports.
+
+### Auth flow
+
+```
+SplashView → checks SupabaseService.initError → if set, shows _BackendErrorScreen
+           → checks LocalStore session → HomeRouter (role dispatch)
+           → else → LoginView → VerificationView → HomeRouter
+```
+
+`HomeRouter` is a plain widget switch on `UserRole` + `SupplierType` (not a router). Navigation is currently imperative (`Navigator.push`/`pushReplacement`). A `go_router` migration is planned in Phase 5.
+
+`AppOrderStore.configureForUser(userId, role)` must be called from `HomeRouter` after the session is established to switch the remote stream to the role-scoped filter.
+
+### Logging
+
+Use `AppLogger` (`lib/core/utils/app_logger.dart`) — never `debugPrint`. Methods: `info`, `warn`, `error`. Debug-only in current build; Crashlytics hook left as a TODO for Phase 3.
+
+### LocalStore
+
+`SharedPreferences` wrapper — **the only place** that reads/writes persistent app state. All keys are private constants prefixed `dwaar_`. Never read `SharedPreferences` directly outside `LocalStore`.
+
+### Localisation
+
+All user-visible strings go through `AppLocalizations` (generated from `lib/l10n/*.arb`). Access via `context.l10n.keyName` (the `l10n.dart` extension). Never hardcode Arabic or English strings in widget code.
+
+### Theme
+
+- Colors: `AppColors` tokens only — never raw hex values.
+- Font: Google Fonts (Cairo for Arabic, DM Sans for Latin) loaded at runtime.
+- Portrait-only, globally RTL. `AppTheme.lightTheme` / `AppTheme.darkTheme`.
+
+### File size rule
+
+Every `.dart` file must stay ≤ 200 lines. Use `part`/`part of` for same-class extensions (as seen in `AppOrderStore`), separate files for separate concepts.

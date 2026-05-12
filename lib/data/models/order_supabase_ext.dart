@@ -37,6 +37,24 @@ extension OrderSupabaseExt on Order {
   }
 }
 
+/// Parses a PostGIS POINT string `'POINT(lng lat)'` into `(lat, lng)`.
+/// Returns null when the string is absent or unparseable.
+(double lat, double lng)? _parsePoint(String? point) {
+  if (point == null) return null;
+  final inner = point.replaceAll('POINT(', '').replaceAll(')', '').trim();
+  final parts = inner.split(' ');
+  if (parts.length != 2) return null;
+  final lng = double.tryParse(parts[0]);
+  final lat = double.tryParse(parts[1]);
+  if (lat == null || lng == null) return null;
+  return (lat, lng);
+}
+
+/// Formats coordinates into a human-readable string.
+/// Shown until a reverse-geocoding service is added (Fix 3 TODO).
+String _coordsLabel(double lat, double lng) =>
+    '${lat.toStringAsFixed(4)}°N, ${lng.toStringAsFixed(4)}°E';
+
 Order orderFromSupabaseJson(Map<String, dynamic> json) {
   T parseEnum<T extends Enum>(String? name, List<T> values, T fallback) {
     if (name == null) return fallback;
@@ -56,6 +74,13 @@ Order orderFromSupabaseJson(Map<String, dynamic> json) {
 
   DateTime? parseDt(String? s) => s == null ? null : DateTime.tryParse(s);
 
+  final pickup = _parsePoint(json['pickup_location'] as String?);
+  final dropoff = _parsePoint(json['dropoff_location'] as String?);
+  final pickupAddr = json['pickup_address_text'] as String? ??
+      (pickup != null ? _coordsLabel(pickup.$1, pickup.$2) : '—');
+  final dropoffAddr = json['dropoff_address_text'] as String? ??
+      (dropoff != null ? _coordsLabel(dropoff.$1, dropoff.$2) : '');
+
   return Order(
     id: json['id'] as String,
     type: parseEnum(json['type'] as String?, OrderType.values, OrderType.pickup),
@@ -63,8 +88,12 @@ Order orderFromSupabaseJson(Map<String, dynamic> json) {
         .map((n) => parseEnumN(n.toString(), WasteType.values))
         .whereType<WasteType>()
         .toList(),
-    pickupAddress: 'موقع السحب المختار', // Needs reverse geo or ignore
-    dropoffAddress: '', // Needs reverse geo or ignore
+    pickupAddress: pickupAddr,
+    dropoffAddress: dropoffAddr,
+    pickupLat: pickup?.$1,
+    pickupLng: pickup?.$2,
+    dropoffLat: dropoff?.$1,
+    dropoffLng: dropoff?.$2,
     status: parseEnum(
       json['status'] as String?,
       OrderStatus.values,
