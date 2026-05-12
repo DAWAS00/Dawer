@@ -43,10 +43,14 @@ extension AppOrderStoreDriverActions on AppOrderStore {
             order.driverName == null);
     if (!canAccept) return 'هذا الطلب لم يعد متاحاً';
 
+    // Rough urban ETA: 1 km ≈ 2 min. Null when distance unknown.
+    final estimatedMins = order.distanceKm != null
+        ? (order.distanceKm! * 2).round().clamp(1, 999)
+        : null;
     _orders[idx] = order.copyWith(
       status: OrderStatus.accepted,
       acceptedAt: DateTime.now(),
-      eta: 'جاري الحساب...',
+      etaMinutes: estimatedMins,
       driverName: driver.name,
       driverPhone: driver.phone,
       driverRating: driver.rating,
@@ -91,6 +95,7 @@ extension AppOrderStoreDriverActions on AppOrderStore {
     _orders[idx] = _orders[idx].copyWith(
       status: OrderStatus.inTransit,
       inTransitAt: DateTime.now(),
+      etaMinutes: null,
     );
     notifyListeners();
 
@@ -108,6 +113,7 @@ extension AppOrderStoreDriverActions on AppOrderStore {
     if (_activeOrderId == completedOrder.id) {
       _driverCompletedIds.add(completedOrder.id);
       _activeOrderId = null;
+      unawaited(_store?.writeDriverHistory(_driverCompletedIds));
     }
     notifyListeners();
 

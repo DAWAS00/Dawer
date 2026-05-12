@@ -1,6 +1,9 @@
 import 'order.dart';
 import 'reward_breakdown.dart';
 
+// Sentinel used to distinguish "not provided" from an explicit null in copyWith.
+const _unset = Object();
+
 /// Extension hosting the full-field `copyWith` for [Order].
 ///
 /// Living as an extension keeps `order.dart` focused on the immutable data
@@ -55,7 +58,7 @@ extension OrderCopyWith on Order {
     double? pickupLng,
     double? dropoffLat,
     double? dropoffLng,
-    int? etaMinutes,
+    Object? etaMinutes = _unset,
     bool? isMarketplaceShared,
     bool? requiresRider,
     RewardBreakdown? rewardBreakdown,
@@ -113,7 +116,7 @@ extension OrderCopyWith on Order {
       pickupLng: pickupLng ?? this.pickupLng,
       dropoffLat: dropoffLat ?? this.dropoffLat,
       dropoffLng: dropoffLng ?? this.dropoffLng,
-      etaMinutes: etaMinutes ?? this.etaMinutes,
+      etaMinutes: etaMinutes == _unset ? this.etaMinutes : etaMinutes as int?,
       isMarketplaceShared: isMarketplaceShared ?? this.isMarketplaceShared,
       requiresRider: requiresRider ?? this.requiresRider,
       rewardBreakdown: rewardBreakdown ?? this.rewardBreakdown,

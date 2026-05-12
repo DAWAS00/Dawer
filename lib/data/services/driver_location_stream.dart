@@ -1,8 +1,9 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../core/utils/app_logger.dart';
 
 /// Subscribes to the `driver_locations` table for a single order and exposes
 /// the driver's position as a [Stream<LatLng>].
@@ -29,7 +30,7 @@ class DriverLocationStream {
         ));
       }
     }).catchError((e) {
-      debugPrint('[DriverLocationStream] initial fetch error: $e');
+      AppLogger.error('DriverLocationStream', e);
     });
 
     // Realtime subscription — fires on INSERT or UPDATE to this order's row.
@@ -58,8 +59,7 @@ class DriverLocationStream {
     ctrl.onCancel = () {
       Supabase.instance.client
           .removeChannel(channel)
-          // ignore: avoid_print
-          .catchError((Object e) { debugPrint('[DriverLocationStream] remove channel: $e'); return ''; });
+          .catchError((Object e) { AppLogger.error('DriverLocationStream', e); return ''; });
       ctrl.close();
     };
 

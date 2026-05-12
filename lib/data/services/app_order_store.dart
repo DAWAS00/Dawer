@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../../core/result/result.dart';
+import '../../core/utils/app_logger.dart';
 import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/i_order_repository.dart';
 import '../../domain/requests/create_pickup_request.dart';
@@ -60,8 +61,9 @@ class AppOrderStore extends ChangeNotifier {
   /// ID of the order currently active for our mock driver session.
   String? _activeOrderId;
 
-  /// IDs of orders completed by our mock driver (their personal history).
-  final List<String> _driverCompletedIds = ['ORD-H01', 'ORD-H02'];
+  /// IDs of orders completed by this driver. Loaded from [LocalStore] on
+  /// bootstrap and persisted on every [completeOrder] call.
+  late List<String> _driverCompletedIds;
 
   /// Last error captured by [_pushRemote].
   AppFailure? _lastError;
@@ -71,11 +73,13 @@ class AppOrderStore extends ChangeNotifier {
   void _bootstrap() {
     final store = _store;
     if (store == null) {
+      _driverCompletedIds = [];
       _orders = [
         ...OrderMockData.seedOrders(),
         ...OrderMockData.seedMarketItems(),
       ];
     } else {
+      _driverCompletedIds = store.readDriverHistory();
       if (store.isFirstLaunch) {
         _orders = [
           ...OrderMockData.seedOrders(),
@@ -109,7 +113,7 @@ class AppOrderStore extends ChangeNotifier {
         }
         notifyListeners();
       },
-      onError: (Object e) => debugPrint('Remote order stream error: $e'),
+      onError: (Object e) => AppLogger.error('AppOrderStore', e),
     );
   }
 
@@ -136,7 +140,7 @@ class AppOrderStore extends ChangeNotifier {
         }
         notifyListeners();
       },
-      onError: (Object e) => debugPrint('Remote order stream error: $e'),
+      onError: (Object e) => AppLogger.error('AppOrderStore', e),
     );
   }
 

@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/utils/app_logger.dart';
 import '../../domain/services/i_location_publisher.dart';
 
 /// Publishes the driver's GPS position to the `driver_locations` table in
@@ -30,7 +30,7 @@ class LocationPublisher implements ILocationPublisher {
 
     final granted = await _ensurePermission();
     if (!granted) {
-      debugPrint('[LocationPublisher] location permission denied');
+      AppLogger.warn('LocationPublisher', 'location permission denied');
       return;
     }
 
@@ -88,7 +88,7 @@ class LocationPublisher implements ILocationPublisher {
         'updated_at': DateTime.now().toUtc().toIso8601String(),
       });
     } catch (e) {
-      debugPrint('[LocationPublisher] upsert error: $e');
+      AppLogger.error('LocationPublisher', e);
     }
   }
 
@@ -102,7 +102,7 @@ class LocationPublisher implements ILocationPublisher {
           .eq('driver_id', uid)
           .eq('order_id', orderId);
     } catch (e) {
-      debugPrint('[LocationPublisher] delete error: $e');
+      AppLogger.error('LocationPublisher', e);
     }
   }
 }

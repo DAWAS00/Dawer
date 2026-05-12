@@ -1,4 +1,4 @@
-import 'order_enums.dart';
+import 'order.dart';
 
 /// Arabic-language labels and short-labels for [Order] enums.
 ///
@@ -102,4 +102,18 @@ extension OrderStatusLabel on OrderStatus {
     OrderStatus.completed => 'مكتمل',
     OrderStatus.cancelled => 'ملغي',
   };
+}
+
+extension OrderEtaLabel on Order {
+  /// Human-readable ETA string. Falls back to 'جاري الحساب...' only when
+  /// etaMinutes is null (e.g. distance not yet known).
+  String get etaLabel {
+    final mins = etaMinutes;
+    if (mins == null) return 'جاري الحساب...';
+    if (mins < 60) return '$mins دقيقة';
+    final hours = (mins / 60).floor();
+    final remaining = mins % 60;
+    if (remaining == 0) return '$hours ساعة';
+    return '$hours س $remaining د';
+  }
 }
