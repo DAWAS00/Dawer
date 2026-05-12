@@ -142,7 +142,7 @@ extension SupabaseAuthHelpers on SupabaseAuthService {
     if (msg.contains('rate') || msg.contains('limit')) {
       return 'تم إيقاف المحاولات مؤقتاً، حاول بعد دقيقة';
     }
-    if (msg.contains('weak') || msg.contains('password')) {
+    if (msg.contains('weak')) {
       return 'كلمة المرور ضعيفة جداً';
     }
     if (msg.contains('network') || msg.contains('connection')) {
