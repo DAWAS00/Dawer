@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'data/local/local_store.dart';
+import 'core/routing/app_router.dart';
 import 'core/services/app_lang_notifier.dart';
 import 'core/services/app_theme_notifier.dart';
 import 'core/services/supabase_service.dart';
 import 'core/theme/app_theme.dart';
+import 'data/local/local_store.dart';
 import 'data/repositories/mock_auth_repository.dart';
 import 'data/repositories/supabase_auth_repository.dart';
 import 'data/repositories/supabase_file_storage_repository.dart';
@@ -24,24 +27,28 @@ import 'domain/repositories/i_file_storage_repository.dart';
 import 'domain/repositories/i_order_repository.dart';
 import 'l10n/l10n.dart';
 import 'ui/features/auth/viewmodels/login_viewmodel.dart';
-import 'ui/features/splash/views/splash_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  // Initialize Supabase via service
-  const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
-  const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
-  
+  // Load .env.local at runtime (dev). CI/CD passes values via --dart-define instead.
+  await dotenv.load(fileName: '.env.local', mergeWith: {}).catchError((_) {});
+
+  final supabaseUrl = dotenv.env['SUPABASE_URL']?.trim().isNotEmpty == true
+      ? dotenv.env['SUPABASE_URL']!
+      : const String.fromEnvironment('SUPABASE_URL');
+
+  final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY']?.trim().isNotEmpty == true
+      ? dotenv.env['SUPABASE_ANON_KEY']!
+      : const String.fromEnvironment('SUPABASE_ANON_KEY');
+
   if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
-    debugPrint('WARNING: SUPABASE_URL or SUPABASE_ANON_KEY is not defined. App will run in mock mode or fail if backend is required.');
+    runApp(const _BackendMissingApp());
+    return;
   }
 
-  await SupabaseService.initialize(
-    url: supabaseUrl.isNotEmpty ? supabaseUrl : 'https://bpzuwwbtqqrpohfqjcuo.supabase.co',
-    anonKey: supabaseAnonKey.isNotEmpty ? supabaseAnonKey : 'sb_publishable__JiNp6XeCpIOC1rWi9PwpA_JA51eBU7',
-  );
+  await SupabaseService.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
 
   final prefs = await SharedPreferences.getInstance();
   final localStore = await LocalStore.init();
@@ -55,6 +62,51 @@ void main() async {
     fileStorage: fileStorage,
     authService: authService,
   ));
+}
+
+/// Shown when the app is launched without the required --dart-define credentials.
+/// Prevents any network calls from reaching a non-existent backend.
+class _BackendMissingApp extends StatelessWidget {
+  const _BackendMissingApp();
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: const Color(0xFF06402B),
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.settings_outlined, size: 64, color: Colors.white54),
+                  const SizedBox(height: 24),
+                  Text(
+                    'لم يتم تهيئة الخادم',
+                    style: GoogleFonts.cairo(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'يرجى التواصل مع الدعم الفني.',
+                    style: GoogleFonts.cairo(fontSize: 14, color: Colors.white70),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class DawerApp extends StatelessWidget {
@@ -110,7 +162,7 @@ class DawerApp extends StatelessWidget {
                   ctx.read<UserSignUpService>(),
                   localStore,
                 )
-              : MockAuthRepository(),
+              : MockAuthRepository(), // dev fallback when init fails
         ),
         ChangeNotifierProvider<LoginViewModel>(
           create: (ctx) => LoginViewModel(
@@ -120,7 +172,7 @@ class DawerApp extends StatelessWidget {
       ],
       child: Consumer2<AppThemeNotifier, AppLangNotifier>(
         builder: (context, themeNotifier, langNotifier, child) {
-          return MaterialApp(
+          return MaterialApp.router(
             title: 'دوّر',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
@@ -128,7 +180,7 @@ class DawerApp extends StatelessWidget {
             themeMode: themeNotifier.mode,
             locale: langNotifier.locale,
             localizationsDelegates: const [
-              AppLocalizations.delegate,  
+              AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
@@ -137,7 +189,7 @@ class DawerApp extends StatelessWidget {
               Locale('ar'),
               Locale('en'),
             ],
-            home: const SplashView(),
+            routerConfig: appRouter,
           );
         },
       ),
