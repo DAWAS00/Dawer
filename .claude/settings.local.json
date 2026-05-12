@@ -36,7 +36,8 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\dawas\\\\dwaar\" -Directory)",
       "Bash(Select-Object Name)",
       "Bash(flutter test *)",
-      "Bash(npx skills *)"
+      "Bash(npx skills *)",
+      "Bash(gh pr *)"
     ]
   }
 }
