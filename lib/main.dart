@@ -94,13 +94,7 @@ class DawerApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AppThemeNotifier(prefs)),
         ChangeNotifierProvider(create: (_) => AppLangNotifier(prefs)),
         Provider<IAuthRepository>(
-          create: (_) => SupabaseService.isInitialized
-              ? SupabaseAuthRepository(
-                  SupabaseService.client,
-                  UserSignUpService(),
-                  localStore,
-                )
-              : MockAuthRepository(),
+          create: (_) => MockAuthRepository(),
         ),
         ChangeNotifierProvider<LoginViewModel>(
           create: (ctx) => LoginViewModel(

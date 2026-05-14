@@ -34,7 +34,8 @@
       "mcp__claude_ai_Supabase__apply_migration",
       "Bash(flutter gen-l10n *)",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\dawas\\\\dwaar\" -Directory)",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "Bash(flutter build *)"
     ]
   }
 }
