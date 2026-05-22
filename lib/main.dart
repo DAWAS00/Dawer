@@ -12,7 +12,6 @@ import 'core/services/supabase_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/config/ai_config.dart';
 import 'data/repositories/mock_auth_repository.dart';
-import 'data/repositories/supabase_auth_repository.dart';
 import 'data/repositories/supabase_file_storage_repository.dart';
 import 'data/repositories/supabase_order_repository.dart';
 import 'data/services/app_order_store.dart';
@@ -24,8 +23,7 @@ import 'domain/repositories/i_order_repository.dart';
 import 'l10n/l10n.dart';
 import 'ui/features/auth/viewmodels/login_viewmodel.dart';
 import 'ui/features/splash/views/splash_view.dart';
-
-void main() async {
+     void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
@@ -40,7 +38,7 @@ void main() async {
   // Initialize Supabase via service
   final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
   final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
-  
+
   if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
     debugPrint('WARNING: SUPABASE_URL or SUPABASE_ANON_KEY is not defined in .env.local. App will run in mock mode or fail if backend is required.');
   }
@@ -50,7 +48,7 @@ void main() async {
     anonKey: supabaseAnonKey.isNotEmpty ? supabaseAnonKey : 'sb_publishable__JiNp6XeCpIOC1rWi9PwpA_JA51eBU7',
   );
 
-  final prefs = await SharedPreferences.getInstance();  
+  final prefs = await SharedPreferences.getInstance();
   final localStore = await LocalStore.init();
 
   final fileStorage = SupabaseFileStorageRepository();
@@ -112,7 +110,7 @@ class DawerApp extends StatelessWidget {
             themeMode: themeNotifier.mode,
             locale: langNotifier.locale,
             localizationsDelegates: const [
-              AppLocalizations.delegate,  
+              AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
@@ -128,4 +126,3 @@ class DawerApp extends StatelessWidget {
     );
   }
 }
-

@@ -9,8 +9,10 @@ import '../../../../domain/services/i_ai_marketplace_service.dart';
 import '../../../../data/services/user_signup_service.dart';
 import '../../../../domain/failures/app_failure.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../data/models/order.dart' show VehicleType;
 import 'license_validation_viewmodel.dart';
 import 'login_viewmodel.dart';
+import 'vehicle_registration_viewmodel.dart';
 
 class SignUpViewModel extends ChangeNotifier {
   final UserRole role;
@@ -18,6 +20,7 @@ class SignUpViewModel extends ChangeNotifier {
 
   final UserSignUpService _service;
   final LicenseValidationViewModel licenseVm = LicenseValidationViewModel();
+  final VehicleRegistrationViewModel vehicleRegistrationVm = VehicleRegistrationViewModel();
 
   SignUpViewModel({
     required this.role,
@@ -56,6 +59,7 @@ class SignUpViewModel extends ChangeNotifier {
   String vehiclePlate = '';
   String vehicleModel = '';
   String vehicleColor = '';
+  VehicleType? vehicleType;
 
   // --- Business fields (Store Supplier / Recycling Co.) ---
   String businessName = '';
@@ -168,6 +172,36 @@ class SignUpViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> pickVehicleRegistration(ImageSource source) async {
+    final xFile = await _picker.pickImage(
+      source: source,
+      imageQuality: 85,
+      maxWidth: 1200,
+    );
+    if (xFile != null) {
+      await vehicleRegistrationVm.analyzeDocument(File(xFile.path));
+    }
+  }
+
+  void clearVehicleRegistration() {
+    vehicleRegistrationVm.reset();
+    vehicleType = null;
+    notifyListeners();
+  }
+
+  void applyExtractedVehicleData({
+    required String? plate,
+    required String? model,
+    required String? color,
+    required VehicleType? type,
+  }) {
+    if (plate != null && plate.isNotEmpty) vehiclePlate = plate;
+    if (model != null && model.isNotEmpty) vehicleModel = model;
+    if (color != null && color.isNotEmpty) vehicleColor = color;
+    vehicleType = type;
+    notifyListeners();
+  }
+
   /// Categories extracted from the AI license scan, passed to the marketplace.
   List<String> get aiCategories => licenseVm.suggestedCategories;
 
@@ -225,6 +259,9 @@ class SignUpViewModel extends ChangeNotifier {
       address: finalAddress,
       addressLat: _addressLat,
       addressLng: _addressLng,
+      vehicleType: role == UserRole.driver ? vehicleType : null,
+      hasChemicalPermit: role == UserRole.driver &&
+          (vehicleRegistrationVm.extractedData?.hasChemicalPermit ?? false),
     );
   }
 

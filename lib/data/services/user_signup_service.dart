@@ -3,6 +3,7 @@ import 'dart:io';
 import '../../backend_integration_locally/local_store.dart';
 import '../../core/result/result.dart';
 import '../../domain/failures/app_failure.dart';
+import '../models/order.dart' show VehicleType;
 import '../models/user_role.dart';
 import 'supabase_auth_service.dart';
 
@@ -34,6 +35,8 @@ class SignUpRequest {
   final double? addressLat;
   final double? addressLng;
   final List<String> categories;
+  final VehicleType? vehicleType;
+  final bool hasChemicalPermit;
 
   const SignUpRequest({
     required this.name,
@@ -50,6 +53,8 @@ class SignUpRequest {
     this.addressLat,
     this.addressLng,
     this.categories = const [],
+    this.vehicleType,
+    this.hasChemicalPermit = false,
   });
 
   /// Returns a map of `{field: humanReadableError}`. Empty map == valid.

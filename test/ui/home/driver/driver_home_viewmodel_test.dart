@@ -42,7 +42,7 @@ void main() {
       final vm = DriverHomeViewModel(store, publisher: publisher);
       addTearDown(vm.dispose);
 
-      final order = store.driverFeed.first;
+      final order = store.driverFeedFor().first;
       final error = await vm.acceptOrder(order);
 
       expect(error, isNull);
@@ -61,7 +61,7 @@ void main() {
       vm.toggleAvailability(false);
       expect(vm.isAvailable, isFalse);
 
-      final order = store.driverFeed.first;
+      final order = store.driverFeedFor().first;
       final error = await vm.acceptOrder(order);
 
       expect(error, isNotNull);
@@ -75,11 +75,11 @@ void main() {
       final vm = DriverHomeViewModel(store, publisher: publisher);
       addTearDown(vm.dispose);
 
-      final firstOrder = store.driverFeed.first;
+      final firstOrder = store.driverFeedFor().first;
       await vm.acceptOrder(firstOrder);
       expect(publisher.startCallCount, 1);
 
-      final secondOrder = store.driverFeed.first;
+      final secondOrder = store.driverFeedFor().first;
       final error = await vm.acceptOrder(secondOrder);
 
       expect(error, isNotNull);
@@ -94,7 +94,7 @@ void main() {
       final vm = DriverHomeViewModel(store, publisher: publisher);
       addTearDown(vm.dispose);
 
-      final order = store.driverFeed.first;
+      final order = store.driverFeedFor().first;
       await vm.acceptOrder(order);
       expect(vm.active, isNotNull);
 
@@ -112,7 +112,7 @@ void main() {
       final vm = DriverHomeViewModel(store, publisher: _FakeLocationPublisher());
       addTearDown(vm.dispose);
 
-      final order = store.driverFeed.first;
+      final order = store.driverFeedFor().first;
       await vm.acceptOrder(order);
 
       final error = vm.toggleAvailability(false);
@@ -147,7 +147,7 @@ void main() {
         totalOrders: 0,
         isVerified: true,
       );
-      store.acceptOrder(store.driverFeed.first.id, storeDriver);
+      store.acceptOrder(store.driverFeedFor().first.id, storeDriver);
 
       expect(vmNotifications, greaterThan(0));
     });

@@ -33,6 +33,25 @@ extension OrderSupabaseExt on Order {
       if (itemPrice != null) 'item_price': itemPrice,
       if (minQuantityKg != null) 'min_quantity_kg': minQuantityKg,
       if (weightKg != null) 'actual_weight_kg': weightKg,
+      if (arrivedAtPickupAt != null) 'arrived_at_pickup_at': arrivedAtPickupAt!.toUtc().toIso8601String(),
+      if (arrivedAtDropoffAt != null) 'arrived_at_dropoff_at': arrivedAtDropoffAt!.toUtc().toIso8601String(),
+      if (arrivalConfirmationStatus != null) 'arrival_confirmation_status': arrivalConfirmationStatus!.name,
+      if (supplierHoldAmount != null) 'supplier_hold_amount': supplierHoldAmount,
+      if (driverCompensationAmount != null) 'driver_compensation_amount': driverCompensationAmount,
+      if (fraudAttemptCount > 0) 'fraud_attempt_count': fraudAttemptCount,
+      if (weightVarianceFlag) 'weight_variance_flag': true,
+      if (requiredVehicleType != null) 'required_vehicle_type': requiredVehicleType!.name,
+      if (requiresChemicalPermit) 'requires_chemical_permit': true,
+      if (adminApprovalStatus != AdminApprovalStatus.notRequired)
+        'admin_approval_status': adminApprovalStatus.name,
+      if (expiresAt != null) 'expires_at': expiresAt!.toUtc().toIso8601String(),
+      if (proof != null) ...{
+        'proof_image_path': proof!.imagePath,
+        'proof_captured_at': proof!.capturedAt.toUtc().toIso8601String(),
+        'proof_lat': proof!.lat,
+        'proof_lng': proof!.lng,
+        'proof_checksum': proof!.checksum,
+      },
     };
   }
 }
@@ -92,5 +111,13 @@ Order orderFromSupabaseJson(Map<String, dynamic> json) {
     itemPrice: (json['item_price'] as num?)?.toDouble(),
     minQuantityKg: (json['min_quantity_kg'] as num?)?.toDouble(),
     weightKg: (json['actual_weight_kg'] as num?)?.toDouble(),
+    requiredVehicleType: parseEnumN(json['required_vehicle_type'] as String?, VehicleType.values),
+    requiresChemicalPermit: json['requires_chemical_permit'] as bool? ?? false,
+    adminApprovalStatus: parseEnum(
+      json['admin_approval_status'] as String?,
+      AdminApprovalStatus.values,
+      AdminApprovalStatus.notRequired,
+    ),
+    expiresAt: parseDt(json['expires_at'] as String?),
   );
 }

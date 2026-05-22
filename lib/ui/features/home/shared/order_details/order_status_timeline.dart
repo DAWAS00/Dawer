@@ -15,11 +15,18 @@ class OrderStatusTimeline extends StatelessWidget {
     final steps = [
       (OrderStatus.pending, l10n.orderStatusStepPending, order.createdAt),
       (OrderStatus.accepted, l10n.orderStatusStepAccepted, order.acceptedAt),
+      (OrderStatus.arrivedAtPickup, l10n.orderStatusStepArrivedAtPickup, order.arrivedAtPickupAt),
       (OrderStatus.inTransit, l10n.orderStatusStepInTransit, order.inTransitAt),
+      (OrderStatus.arrivedAtDropoff, l10n.orderStatusStepArrivedAtDropoff, order.arrivedAtDropoffAt),
       (OrderStatus.completed, l10n.orderStatusStepCompleted, order.completedAt),
     ];
 
-    final currentIndex = steps.indexWhere((s) => s.$1 == order.status);
+    // Map intermediate arrival statuses to their position in the steps list.
+    int currentIndex = steps.indexWhere((s) => s.$1 == order.status);
+    if (currentIndex == -1) {
+      // Cancelled or unknown — treat as the last known completed step.
+      currentIndex = steps.length - 1;
+    }
 
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../../data/models/order.dart';
 import '../../../../data/services/app_order_store.dart';
 import 'widgets/rate_driver_sheet.dart';
+import 'order_details/order_arrival_section.dart';
 import 'order_details/order_details_app_bar.dart';
 import 'order_details/order_map_section.dart';
 import 'order_details/order_status_timeline.dart';
@@ -17,12 +18,18 @@ import '../../../../l10n/l10n.dart';
 class OrderDetailsView extends StatelessWidget {
   final Order order;
   final void Function(Order)? onCompleteOrder;
+  final Future<String?> Function(Order)? onMarkArrivedAtPickup;
+  final Future<String?> Function(Order)? onMarkArrivedAtDropoff;
+  final void Function(bool available)? onSupplierConfirmArrival;
   final bool hideStatus;
 
   const OrderDetailsView({
     super.key,
     required this.order,
     this.onCompleteOrder,
+    this.onMarkArrivedAtPickup,
+    this.onMarkArrivedAtDropoff,
+    this.onSupplierConfirmArrival,
     this.hideStatus = false,
   });
 
@@ -49,14 +56,28 @@ class OrderDetailsView extends StatelessWidget {
             SliverToBoxAdapter(
               child: OrderProofSection(imagePath: order.proofImagePath!),
             ),
-          
-          if ((order.status == OrderStatus.accepted || order.status == OrderStatus.inTransit) && onCompleteOrder != null)
+
+          // Arrival section: driver "I'm Here" buttons + supplier confirm card.
+          if (onMarkArrivedAtPickup != null ||
+              onMarkArrivedAtDropoff != null ||
+              onSupplierConfirmArrival != null)
+            SliverToBoxAdapter(
+              child: OrderArrivalSection(
+                order: order,
+                onMarkArrivedAtPickup: onMarkArrivedAtPickup,
+                onMarkArrivedAtDropoff: onMarkArrivedAtDropoff,
+                onSupplierConfirmArrival: onSupplierConfirmArrival,
+              ),
+            ),
+
+          // Completion section: only shown once driver has arrived at dropoff.
+          if (order.status == OrderStatus.arrivedAtDropoff && onCompleteOrder != null)
             SliverToBoxAdapter(
               child: OrderCompletionSection(
                 order: order,
                 onComplete: (updatedOrder) {
                   onCompleteOrder?.call(updatedOrder);
-                  Navigator.of(context).pop(); // Go back after completion
+                  Navigator.of(context).pop();
                 },
               ),
             ),

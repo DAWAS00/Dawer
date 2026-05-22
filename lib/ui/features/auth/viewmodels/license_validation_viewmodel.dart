@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import '../../../../core/config/ai_config.dart';
+import '../../../../data/services/gemini_license_validation_service.dart';
 import '../../../../domain/services/i_ai_license_validation_service.dart';
 import '../../../../data/models/user_role.dart';
 import '../../../../data/services/mock_ai_license_validation_service.dart';
@@ -10,7 +12,10 @@ class LicenseValidationViewModel extends ChangeNotifier {
   final IAiLicenseValidationService _service;
 
   LicenseValidationViewModel({IAiLicenseValidationService? service})
-      : _service = service ?? MockAiLicenseValidationService();
+      : _service = service ??
+            (AiConfig.hasGeminiKey
+                ? GeminiLicenseValidationService()
+                : MockAiLicenseValidationService());
 
   LicenseValidationState _state = LicenseValidationState.idle;
   LicenseValidationState get state => _state;

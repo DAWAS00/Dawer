@@ -10,6 +10,7 @@ import '../../home/home_router.dart';
 import 'widgets/footer.dart';
 import 'widgets/photo_picker_card.dart';
 import 'widgets/license_scan_section.dart';
+import 'widgets/vehicle_registration_scan_section.dart';
 import '../../../common/map/location_picker_screen.dart';
 import 'widgets/ai_suggestion_card.dart';
 import '../../../../data/models/user_role.dart';
@@ -677,6 +678,43 @@ class _SignUpScreenState extends State<_SignUpScreen> {
       icon: Icons.local_shipping_rounded,
       child: Column(
         children: [
+          ChangeNotifierProvider.value(
+            value: vm.vehicleRegistrationVm,
+            child: VehicleRegistrationScanSection(
+              onPick: (source) =>
+                  context.read<SignUpViewModel>().pickVehicleRegistration(source),
+              onReset: () =>
+                  context.read<SignUpViewModel>().clearVehicleRegistration(),
+              onConfirm: (data) {
+                final sv = context.read<SignUpViewModel>();
+                sv.applyExtractedVehicleData(
+                  plate: data.plateNumber,
+                  model: '${data.make ?? ''} ${data.model ?? ''}'.trim(),
+                  color: data.color,
+                  type: data.vehicleType,
+                );
+                // Sync text controllers to the updated vm values
+                if (data.plateNumber != null) _vehiclePlateCtrl.text = data.plateNumber!;
+                if (data.make != null || data.model != null) {
+                  _vehicleModelCtrl.text = '${data.make ?? ''} ${data.model ?? ''}'.trim();
+                }
+                if (data.color != null) _vehicleColorCtrl.text = data.color!;
+              },
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              const Expanded(child: Divider()),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Text('أو أدخل يدوياً',
+                  style: GoogleFonts.cairo(fontSize: 12, color: const Color(0xFF9099A2))),
+              ),
+              const Expanded(child: Divider()),
+            ],
+          ),
+          const SizedBox(height: 20),
           _InputField(
             controller: _vehiclePlateCtrl,
             label: l10n.signupVehiclePlate,

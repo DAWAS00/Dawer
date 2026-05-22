@@ -321,6 +321,8 @@
   "postMarketLocationPermissionDenied": "تم رفض إذن الموقع، سيتم استخدام الموقع الافتراضي",
   "postMarketUseCurrentLocation": "استخدام موقعي الحالي",
   "postMarketAdjustLocation": "تعديل الموقع على الخريطة",
+  "postMarketMinPriceErrorIndividual": "عذراً، الحد الأدنى للنشر للأفراد هو ٥ دنانير",
+  "postMarketMinPriceErrorBusiness": "عذراً، الحد الأدنى للنشر للشركات هو ٢٠ ديناراً",
 
   "collectionJobTitle": "تفاصيل وظيفة التجميع",
   "collectionJobCollectionArea": "منطقة التجميع: ",
@@ -453,6 +455,8 @@
 
   "orderStatusPending": "قيد الانتظار",
   "orderStatusAccepted": "تم القبول",
+  "orderStatusArrivedAtPickup": "وصل للاستلام",
+  "orderStatusArrivedAtDropoff": "وصل للتسليم",
   "orderStatusInTransit": "في الطريق",
   "orderStatusCompleted": "مكتمل",
   "orderStatusCancelled": "ملغي",
@@ -472,7 +476,9 @@
   "orderStatusTitle": "حالة الطلب",
   "orderStatusStepPending": "انتظار",
   "orderStatusStepAccepted": "قُبل",
+  "orderStatusStepArrivedAtPickup": "وصل",
   "orderStatusStepInTransit": "في الطريق",
+  "orderStatusStepArrivedAtDropoff": "للتسليم",
   "orderStatusStepCompleted": "مكتمل",
 
   "orderDetailsTitle": "تفاصيل الطلب",

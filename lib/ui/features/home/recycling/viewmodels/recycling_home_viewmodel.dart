@@ -117,6 +117,7 @@ class RecyclingHomeViewModel extends ChangeNotifier {
         itemPrice: itemPrice,
         pickupLat: pickupLat,
         pickupLng: pickupLng,
+        expiresAt: DateTime.now().add(const Duration(days: 30)),
       );
 
   /// Post a paid collection job to the marketplace.

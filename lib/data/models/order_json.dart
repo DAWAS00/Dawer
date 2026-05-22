@@ -62,6 +62,19 @@ extension OrderJson on Order {
         'requiresRider': requiresRider,
         if (rewardBreakdown != null) 'rewardBreakdown': rewardBreakdown!.toJson(),
         if (invoices != null) 'invoices': invoices!.map((e) => e.toJson()).toList(),
+        if (arrivedAtPickupAt != null) 'arrivedAtPickupAt': arrivedAtPickupAt!.toIso8601String(),
+        if (arrivedAtDropoffAt != null) 'arrivedAtDropoffAt': arrivedAtDropoffAt!.toIso8601String(),
+        if (arrivalConfirmationStatus != null) 'arrivalConfirmationStatus': arrivalConfirmationStatus!.name,
+        if (proof != null) 'proof': proof!.toJson(),
+        if (supplierHoldAmount != null) 'supplierHoldAmount': supplierHoldAmount,
+        if (driverCompensationAmount != null) 'driverCompensationAmount': driverCompensationAmount,
+        if (fraudAttemptCount > 0) 'fraudAttemptCount': fraudAttemptCount,
+        if (weightVarianceFlag) 'weightVarianceFlag': true,
+        if (requiredVehicleType != null) 'requiredVehicleType': requiredVehicleType!.name,
+        if (requiresChemicalPermit) 'requiresChemicalPermit': true,
+        if (adminApprovalStatus != AdminApprovalStatus.notRequired)
+          'adminApprovalStatus': adminApprovalStatus.name,
+        if (expiresAt != null) 'expiresAt': expiresAt!.toUtc().toIso8601String(),
       };
 }
 
@@ -179,6 +192,27 @@ Order orderFromJson(Map<String, dynamic> json) {
     invoices: (json['invoices'] as List?)
         ?.map((e) => InvoiceItemJson.fromJson(e as Map<String, dynamic>))
         .toList(),
+    arrivedAtPickupAt: parseDt(json['arrivedAtPickupAt'] as String?),
+    arrivedAtDropoffAt: parseDt(json['arrivedAtDropoffAt'] as String?),
+    arrivalConfirmationStatus: parseEnumN(
+      json['arrivalConfirmationStatus'] as String?,
+      ArrivalConfirmationStatus.values,
+    ),
+    proof: json['proof'] != null
+        ? OrderProof.fromJson(json['proof'] as Map<String, dynamic>)
+        : null,
+    supplierHoldAmount: (json['supplierHoldAmount'] as num?)?.toDouble(),
+    driverCompensationAmount: (json['driverCompensationAmount'] as num?)?.toDouble(),
+    fraudAttemptCount: json['fraudAttemptCount'] as int? ?? 0,
+    weightVarianceFlag: json['weightVarianceFlag'] as bool? ?? false,
+    requiredVehicleType: parseEnumN(json['requiredVehicleType'] as String?, VehicleType.values),
+    requiresChemicalPermit: json['requiresChemicalPermit'] as bool? ?? false,
+    adminApprovalStatus: parseEnum(
+      json['adminApprovalStatus'] as String?,
+      AdminApprovalStatus.values,
+      AdminApprovalStatus.notRequired,
+    ),
+    expiresAt: parseDt(json['expiresAt'] as String?),
   );
 }
 

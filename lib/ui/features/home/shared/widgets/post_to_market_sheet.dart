@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/waste_type_icons.dart';
 import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../data/models/user_role.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../common/map/location_picker_screen.dart';
 import '../../supplier/widgets/image_picker_grid.dart';
@@ -12,6 +13,8 @@ import '../../../../../data/services/location_service.dart';
 import '../controllers/post_market_controller.dart';
 
 class PostToMarketSheet extends StatefulWidget {
+  final UserRole role;
+  final SupplierType? supplierType;
   final void Function({
     required List<WasteType> wasteTypes,
     required String pickupAddress,
@@ -24,7 +27,12 @@ class PostToMarketSheet extends StatefulWidget {
     double? pickupLng,
   }) onSubmit;
 
-  const PostToMarketSheet({super.key, required this.onSubmit});
+  const PostToMarketSheet({
+    super.key,
+    required this.role,
+    this.supplierType,
+    required this.onSubmit,
+  });
 
   @override
   State<PostToMarketSheet> createState() => _PostToMarketSheetState();
@@ -207,6 +215,44 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
       );
       return;
     }
+
+    final price = double.tryParse(_priceCtrl.text.trim()) ?? 0.0;
+    final isBusiness = widget.role == UserRole.recyclingCo ||
+        (widget.role == UserRole.supplier &&
+            widget.supplierType == SupplierType.storeBusiness);
+
+    // Business accounts must list at least medium weight (≥ 5 kg).
+    if (isBusiness && (_weightCategory == null || _weightCategory == WeightCategory.light)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('الحد الأدنى للكمية للحسابات التجارية هو ٥ كغ أو أكثر',
+              style: GoogleFonts.cairo()),
+          backgroundColor: const Color(0xFFB91C1C),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      return;
+    }
+
+    final minPrice = isBusiness ? 20.0 : 5.0;
+
+    if (price < minPrice) {
+      final errorMsg = isBusiness
+          ? context.l10n.postMarketMinPriceErrorBusiness
+          : context.l10n.postMarketMinPriceErrorIndividual;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMsg, style: GoogleFonts.cairo()),
+          backgroundColor: const Color(0xFFB91C1C),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      return;
+    }
+
     widget.onSubmit(
       wasteTypes: _selected.toList(),
       pickupAddress: _locationLabel,

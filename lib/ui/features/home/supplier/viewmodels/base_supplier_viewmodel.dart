@@ -27,6 +27,7 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
 
   User get defaultUser;
   String get listingIdPrefix;
+  int get listingTtlDays;
 
   // ── Exposed to subclasses ─────────────────────────────────────────────────
 
@@ -156,6 +157,7 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
       isMarketplaceShared: true,
       pickupLat: pickupLat,
       pickupLng: pickupLng,
+      expiresAt: DateTime.now().add(Duration(days: listingTtlDays)),
     );
   }
 

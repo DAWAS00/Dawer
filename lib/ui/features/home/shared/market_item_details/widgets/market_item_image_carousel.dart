@@ -228,5 +228,6 @@ class MarketItemGradientPlaceholder extends StatelessWidget {
         WasteType.furniture => Icons.chair_rounded,
         WasteType.tires => Icons.tire_repair_rounded,
         WasteType.construction => Icons.construction_rounded,
+        WasteType.copperAluminium => Icons.bolt_rounded,
       };
 }

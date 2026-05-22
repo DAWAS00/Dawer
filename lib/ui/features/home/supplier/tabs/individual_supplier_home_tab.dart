@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../data/services/app_order_store.dart';
 import '../../shared/order_card.dart';
 import '../../shared/order_details_view.dart';
 import '../../../../../l10n/l10n.dart';
@@ -73,7 +74,17 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                     mode: OrderCardMode.supplierActive,
                     onAction: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => OrderDetailsView(order: active[i]),
+                        builder: (_) => OrderDetailsView(
+                          order: active[i],
+                          onSupplierConfirmArrival: (available) {
+                            final store = context.read<AppOrderStore>();
+                            if (available) {
+                              store.handleSupplierAvailable(active[i].id);
+                            } else {
+                              store.handleSupplierUnavailable(active[i].id);
+                            }
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -178,7 +189,19 @@ class IndividualSupplierHomeTab extends StatelessWidget {
   Widget _buildTrackingCard(BuildContext context, Order order) {
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => OrderDetailsView(order: order)),
+        MaterialPageRoute(
+          builder: (_) => OrderDetailsView(
+            order: order,
+            onSupplierConfirmArrival: (available) {
+              final store = context.read<AppOrderStore>();
+              if (available) {
+                store.handleSupplierAvailable(order.id);
+              } else {
+                store.handleSupplierUnavailable(order.id);
+              }
+            },
+          ),
+        ),
       ),
       child: Container(
         margin: const EdgeInsets.fromLTRB(20, 16, 20, 0),

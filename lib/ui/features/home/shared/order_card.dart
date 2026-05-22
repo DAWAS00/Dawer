@@ -428,8 +428,12 @@ class OrderCard extends StatelessWidget {
         return (AppColors.statusPendingBg, AppColors.statusPendingText, l10n.orderStatusPending);
       case OrderStatus.accepted:
         return (AppColors.statusActiveBg, AppColors.statusActiveText, l10n.orderStatusAccepted);
+      case OrderStatus.arrivedAtPickup:
+        return (AppColors.statusActiveBg, AppColors.statusActiveText, l10n.orderStatusArrivedAtPickup);
       case OrderStatus.inTransit:
         return (AppColors.statusInTransitBg, AppColors.statusInTransitText, l10n.orderStatusInTransit);
+      case OrderStatus.arrivedAtDropoff:
+        return (AppColors.statusInTransitBg, AppColors.statusInTransitText, l10n.orderStatusArrivedAtDropoff);
       case OrderStatus.completed:
         return (AppColors.statusCompletedBg, AppColors.statusCompletedText, l10n.orderStatusCompleted);
       case OrderStatus.cancelled:

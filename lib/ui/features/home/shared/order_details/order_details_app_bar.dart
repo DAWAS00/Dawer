@@ -74,8 +74,10 @@ class OrderDetailsAppBar extends StatelessWidget {
       case OrderStatus.pending:
         return AppColors.statusPendingText;
       case OrderStatus.accepted:
+      case OrderStatus.arrivedAtPickup:
         return AppColors.statusActiveText;
       case OrderStatus.inTransit:
+      case OrderStatus.arrivedAtDropoff:
         return AppColors.statusInTransitText;
       case OrderStatus.completed:
         return AppColors.statusCompletedText;

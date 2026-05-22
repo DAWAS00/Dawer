@@ -872,6 +872,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get postMarketAdjustLocation => 'تعديل الموقع على الخريطة';
 
   @override
+  String get postMarketMinPriceErrorIndividual =>
+      'عذراً، الحد الأدنى للنشر للأفراد هو ٥ دنانير';
+
+  @override
+  String get postMarketMinPriceErrorBusiness =>
+      'عذراً، الحد الأدنى للنشر للشركات هو ٢٠ ديناراً';
+
+  @override
   String get collectionJobTitle => 'تفاصيل وظيفة التجميع';
 
   @override
@@ -1128,6 +1136,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get orderStatusAccepted => 'تم القبول';
 
   @override
+  String get orderStatusArrivedAtPickup => 'وصل للاستلام';
+
+  @override
+  String get orderStatusArrivedAtDropoff => 'وصل للتسليم';
+
+  @override
   String get orderStatusInTransit => 'في الطريق';
 
   @override
@@ -1179,7 +1193,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get orderStatusStepAccepted => 'قُبل';
 
   @override
+  String get orderStatusStepArrivedAtPickup => 'وصل';
+
+  @override
   String get orderStatusStepInTransit => 'في الطريق';
+
+  @override
+  String get orderStatusStepArrivedAtDropoff => 'للتسليم';
 
   @override
   String get orderStatusStepCompleted => 'مكتمل';

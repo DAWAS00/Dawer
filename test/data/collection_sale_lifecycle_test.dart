@@ -70,6 +70,16 @@ class _RecordingOrderRepository implements IOrderRepository {
     calls.add('markCompleted');
     return const Success(null);
   }
+
+  @override
+  Future<AppResult<void>> recordTransaction({
+    required String orderId,
+    required breakdown,
+    String? vehicleType,
+  }) async {
+    calls.add('recordTransaction');
+    return const Success(null);
+  }
 }
 
 void main() {

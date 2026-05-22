@@ -7,11 +7,21 @@ enum SupplierPurchaseMode { selfPickup, assignRider }
 
 class MarketplaceViewModel extends ChangeNotifier {
   final AppOrderStore _store;
+  final bool isBusiness;
 
-  MarketplaceViewModel(this._store, {List<String> initialSuggestions = const []}) {
+  MarketplaceViewModel(
+    this._store, {
+    this.isBusiness = false,
+    List<String> initialSuggestions = const [],
+  }) {
     _userCategories = initialSuggestions;
     _store.addListener(_onStoreChanged);
   }
+
+  int get maxListings => isBusiness ? 20 : 5;
+
+  bool canAddListing(String publisherName) =>
+      myListings(publisherName).length < maxListings;
 
   @override
   void dispose() {

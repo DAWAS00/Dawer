@@ -18,6 +18,7 @@ extension WasteTypeLabelEn on WasteType {
     WasteType.furniture => 'Furniture',
     WasteType.tires => 'Tires',
     WasteType.construction => 'Construction Waste',
+    WasteType.copperAluminium => 'Copper & Aluminium',
   };
   String labelFor(Locale locale) =>
       locale.languageCode == 'ar' ? label : englishLabel;
@@ -64,7 +65,9 @@ extension OrderStatusLabelEn on OrderStatus {
   String get englishLabel => switch (this) {
     OrderStatus.pending => 'Pending',
     OrderStatus.accepted => 'Accepted',
+    OrderStatus.arrivedAtPickup => 'Arrived at Pickup',
     OrderStatus.inTransit => 'In Transit',
+    OrderStatus.arrivedAtDropoff => 'Arrived at Dropoff',
     OrderStatus.completed => 'Completed',
     OrderStatus.cancelled => 'Cancelled',
   };

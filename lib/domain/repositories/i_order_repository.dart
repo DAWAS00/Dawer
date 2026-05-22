@@ -1,5 +1,6 @@
 import '../../core/result/result.dart';
 import '../../data/models/order.dart';
+import '../../data/models/reward_breakdown.dart';
 import '../../data/models/user_role.dart';
 
 /// Remote-side gateway for order writes and the live order stream.
@@ -55,6 +56,15 @@ abstract interface class IOrderRepository {
 
   /// Deletes an order (only if status is pending).
   Future<AppResult<void>> deleteOrder(String orderId);
+
+  /// Inserts a row into `transactions` with the full fee breakdown.
+  /// Called once when an order transitions to completed.
+  /// The driver ID is resolved from the current auth session inside each impl.
+  Future<AppResult<void>> recordTransaction({
+    required String orderId,
+    required RewardBreakdown breakdown,
+    String? vehicleType,
+  });
 }
 
 /// Default no-op implementation. Used by tests and any code path that wants to
@@ -107,4 +117,11 @@ final class NoOpOrderRepository implements IOrderRepository {
   @override
   Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg}) async =>
       const Success(null);
+
+  @override
+  Future<AppResult<void>> recordTransaction({
+    required String orderId,
+    required RewardBreakdown breakdown,
+    String? vehicleType,
+  }) async => const Success(null);
 }

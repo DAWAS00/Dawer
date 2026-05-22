@@ -35,6 +35,7 @@ class IndividualSupplierHomeView extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => MarketplaceViewModel(
             ctx.read<AppOrderStore>(),
+            isBusiness: false,
             initialSuggestions: aiSuggestedCategories,
           ),
         ),
@@ -98,7 +99,19 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
         children: tabs,
       ),
       floatingActionButton: vm.currentTab == 0
-          ? PickupFab(onPressed: () => _showPostToMarketSheet(context, vm, marketVm))
+          ? PickupFab(onPressed: () {
+              if (!marketVm.canAddListing(vm.user.name)) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
+                  ),
+                  backgroundColor: const Color(0xFFB91C1C),
+                  behavior: SnackBarBehavior.floating,
+                ));
+                return;
+              }
+              _showPostToMarketSheet(context, vm, marketVm);
+            })
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       bottomNavigationBar: SupplierBottomNav(
@@ -121,6 +134,8 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (_) => PostToMarketSheet(
+        role: UserRole.supplier,
+        supplierType: SupplierType.individual,
         onSubmit: ({
           required List<WasteType> wasteTypes,
           required String pickupAddress,

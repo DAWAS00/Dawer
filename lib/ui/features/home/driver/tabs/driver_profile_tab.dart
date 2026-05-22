@@ -12,6 +12,9 @@ import '../../../../common/lang_picker_sheet.dart';
 import '../../../../../core/services/app_theme_notifier.dart';
 import '../../../../../core/services/app_lang_notifier.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../data/models/order.dart' show VehicleType, VehicleTypeLabel;
+import '../../../../features/auth/viewmodels/vehicle_registration_viewmodel.dart';
+import '../../../../features/auth/views/widgets/vehicle_registration_scan_section.dart';
 import '../viewmodels/driver_home_viewmodel.dart';
 import '../widgets/driver_profile_tile.dart';
 
@@ -330,6 +333,8 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
   final _colorController = TextEditingController();
   final _plateController = TextEditingController();
   String? _photoPath;
+  VehicleType? _vehicleType;
+  late final VehicleRegistrationViewModel _scanVm;
 
   @override
   void initState() {
@@ -339,6 +344,8 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
     _colorController.text = user.vehicleColor ?? '';
     _plateController.text = user.licensePlate ?? '';
     _photoPath = user.vehiclePhotoPath;
+    _vehicleType = user.vehicleType;
+    _scanVm = VehicleRegistrationViewModel();
   }
 
   @override
@@ -346,6 +353,7 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
     _modelController.dispose();
     _colorController.dispose();
     _plateController.dispose();
+    _scanVm.dispose();
     super.dispose();
   }
 
@@ -353,10 +361,25 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() {
-        _photoPath = pickedFile.path;
-      });
+      setState(() { _photoPath = pickedFile.path; });
     }
+  }
+
+  Future<void> _pickRegistration(ImageSource source) async {
+    final picker = ImagePicker();
+    final xFile = await picker.pickImage(source: source, imageQuality: 85, maxWidth: 1200);
+    if (xFile != null) await _scanVm.analyzeDocument(File(xFile.path));
+  }
+
+  void _applyExtracted(data) {
+    setState(() {
+      if (data.plateNumber != null) _plateController.text = data.plateNumber!;
+      if (data.make != null || data.model != null) {
+        _modelController.text = '${data.make ?? ''} ${data.model ?? ''}'.trim();
+      }
+      if (data.color != null) _colorController.text = data.color!;
+      _vehicleType = data.vehicleType;
+    });
   }
 
   void _save() {
@@ -365,6 +388,7 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
       vehicleColor: _colorController.text.trim().isNotEmpty ? _colorController.text.trim() : null,
       licensePlate: _plateController.text.trim().isNotEmpty ? _plateController.text.trim() : null,
       vehiclePhotoPath: _photoPath,
+      vehicleType: _vehicleType,
     );
     Navigator.pop(context);
   }
@@ -388,6 +412,44 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
               style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
             ),
             const SizedBox(height: 24),
+            ChangeNotifierProvider.value(
+              value: _scanVm,
+              child: VehicleRegistrationScanSection(
+                onPick: _pickRegistration,
+                onReset: () => setState(() { _scanVm.reset(); }),
+                onConfirm: _applyExtracted,
+              ),
+            ),
+            if (_vehicleType != null) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFECFDF5),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF86EFAC)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.local_shipping_rounded, size: 16, color: Color(0xFF166534)),
+                    const SizedBox(width: 8),
+                    Text('نوع المركبة: ${_vehicleType!.label}',
+                      style: GoogleFonts.cairo(fontSize: 13, fontWeight: FontWeight.bold, color: const Color(0xFF166534))),
+                  ],
+                ),
+              ),
+            ],
+            const SizedBox(height: 20),
+            Row(children: [
+              const Expanded(child: Divider()),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Text('أو أدخل يدوياً',
+                  style: GoogleFonts.cairo(fontSize: 12, color: const Color(0xFF9099A2))),
+              ),
+              const Expanded(child: Divider()),
+            ]),
+            const SizedBox(height: 20),
             _buildTextField(label: context.l10n.profileVehicleTypeModel, controller: _modelController, hint: context.l10n.profileVehicleTypeModelHint),
             const SizedBox(height: 16),
             _buildTextField(label: context.l10n.profileVehicleColor, controller: _colorController, hint: context.l10n.profileVehicleColorHint),

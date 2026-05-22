@@ -288,15 +288,15 @@ class _RecyclingOrderList extends StatelessWidget {
   Widget _buildAcceptorRow(BuildContext context, Order sale) {
     Color chipBg(OrderStatus s) => switch (s) {
           OrderStatus.pending => const Color(0xFFFEF3C7),
-          OrderStatus.accepted => const Color(0xFFD1FAE5),
-          OrderStatus.inTransit => const Color(0xFFDBEAFE),
+          OrderStatus.accepted || OrderStatus.arrivedAtPickup => const Color(0xFFD1FAE5),
+          OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => const Color(0xFFDBEAFE),
           OrderStatus.completed => const Color(0xFFDCFCE7),
           OrderStatus.cancelled => const Color(0xFFFEE2E2),
         };
     Color chipText(OrderStatus s) => switch (s) {
           OrderStatus.pending => const Color(0xFFC8860A),
-          OrderStatus.accepted => const Color(0xFF1E5C35),
-          OrderStatus.inTransit => const Color(0xFF1E40AF),
+          OrderStatus.accepted || OrderStatus.arrivedAtPickup => const Color(0xFF1E5C35),
+          OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => const Color(0xFF1E40AF),
           OrderStatus.completed => const Color(0xFF166534),
           OrderStatus.cancelled => const Color(0xFF991B1B),
         };

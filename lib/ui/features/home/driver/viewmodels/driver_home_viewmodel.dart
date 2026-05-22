@@ -1,23 +1,44 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
+import '../../../../../data/models/driver_wallet.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/services/app_order_store.dart';
 import '../../../../../data/services/location_publisher.dart';
+import '../../../../../data/services/location_service.dart';
+import '../../../../../data/services/proximity_service.dart';
+import '../../../../../domain/repositories/i_wallet_repository.dart';
 import '../../../../../domain/services/i_location_publisher.dart';
 
 class DriverHomeViewModel extends ChangeNotifier {
   final AppOrderStore _store;
   final ILocationPublisher _publisher;
+  final IWalletRepository _walletRepo;
+  final LocationService _locationService;
+
+  // Ghost timer: fires if driver doesn't reach pickup geofence within 15 min.
+  Timer? _ghostTimer;
+  // Arrival response timer: fires if supplier doesn't respond within 5 min.
+  Timer? _arrivalResponseTimer;
 
   DriverHomeViewModel(
     this._store, {
     ILocationPublisher? publisher,
-  }) : _publisher = publisher ?? LocationPublisher.instance {
+    LocationService? locationService,
+    IWalletRepository? walletRepo,
+  })  : _publisher = publisher ?? LocationPublisher.instance,
+        _locationService = locationService ?? LocationService(),
+        _walletRepo = walletRepo ?? const NoOpWalletRepository() {
     _store.addListener(_onStoreChanged);
+    _refreshWallet();
   }
 
   @override
   void dispose() {
+    _ghostTimer?.cancel();
+    _arrivalResponseTimer?.cancel();
     _store.removeListener(_onStoreChanged);
     super.dispose();
   }
@@ -28,12 +49,27 @@ class DriverHomeViewModel extends ChangeNotifier {
 
   int _currentTab = 0;
   bool _isAvailable = true;
+  DriverWallet _wallet = DriverWallet.zero;
+
+  DriverWallet get wallet => _wallet;
+
+  Future<void> _refreshWallet() async {
+    final result = await _walletRepo.getWallet();
+    result.fold(
+      onSuccess: (w) {
+        _wallet = w;
+        notifyListeners();
+      },
+      onFailure: (_) {},
+    );
+  }
 
   User _user = const User(
     id: 'DRV-19842',
     name: 'سائق دوّر',
     role: 'سائق',
     rating: 4.8,
+    vehicleType: VehicleType.pickup,
   );
 
   // ── Getters (delegated to store) ──────────────────────────────────────────
@@ -42,7 +78,10 @@ class DriverHomeViewModel extends ChangeNotifier {
   bool get isAvailable => _isAvailable;
   User get user => _user;
 
-  List<Order> get available => _store.driverFeed;
+  List<Order> get available => _store.driverFeedFor(
+        vehicleType: _user.vehicleType,
+        hasChemicalPermit: _user.hasChemicalPermit,
+      );
   Order? get active => _store.driverActiveOrder;
   List<Order> get history => _store.driverHistory;
   List<Order> get collectionSaleOrders => _store.collectionSalesFor(_user.name);
@@ -80,17 +119,185 @@ class DriverHomeViewModel extends ChangeNotifier {
     }
     final error = _store.acceptOrder(order.id, _user);
     if (error == null) {
-      _currentTab = 2; // Switch to Orders tab
+      _currentTab = 2;
       notifyListeners();
-      // Start publishing GPS to Supabase driver_locations.
       await _publisher.start(order.id);
+      _startGhostTimer(order.id);
     }
     return error;
   }
 
+  /// Called when driver taps "I'm Here" at the pickup location.
+  /// Client GPS provides instant UX feedback; the Edge Function is the
+  /// authoritative server-side gate (reads Supabase driver_locations).
+  Future<String?> markArrivedAtPickup(Order order) async {
+    final pos = await _locationService.getCurrentLocation();
+    if (pos == null) return 'تعذّر تحديد موقعك. تحقق من صلاحية الموقع.';
+
+    if (order.pickupLat == null || order.pickupLng == null) {
+      _store.markArrivedAtPickup(order.id);
+      _cancelGhostTimer();
+      _startArrivalResponseTimer(order.id);
+      return null;
+    }
+
+    // Fast client-side preflight — avoids an Edge Function round-trip when
+    // the driver is clearly nowhere near the geofence.
+    final clientDist = ProximityService.distanceMeters(
+      pos.lat, pos.lng, order.pickupLat!, order.pickupLng!,
+    );
+    if (clientDist > ProximityService.pickupRadiusMeters * 3) {
+      _store.recordFraudAttempt(order.id);
+      return 'أنت بعيد جداً عن الموقع (${clientDist.round()} م). يجب أن تكون ضمن 200 م.';
+    }
+
+    // Server-side gate: reads the GPS row that LocationPublisher streamed.
+    final serverResult = await _verifyArrivalServerSide(
+      orderId: order.id,
+      targetLat: order.pickupLat!,
+      targetLng: order.pickupLng!,
+    );
+    if (serverResult != null) return serverResult;
+
+    _store.markArrivedAtPickup(order.id);
+    _cancelGhostTimer();
+    _startArrivalResponseTimer(order.id);
+    return null;
+  }
+
+  /// Supplier confirmed availability — clear timer, advance to inTransit.
+  void handleSupplierAvailable(Order order) {
+    _arrivalResponseTimer?.cancel();
+    _arrivalResponseTimer = null;
+    _store.handleSupplierAvailable(order.id);
+  }
+
+  /// Supplier pressed "Not Available" — clear timer, cancel with compensation.
+  void handleSupplierUnavailable(Order order) {
+    _arrivalResponseTimer?.cancel();
+    _arrivalResponseTimer = null;
+    _store.handleSupplierUnavailable(order.id);
+    _publisher.stop();
+  }
+
+  /// Called when driver taps "I'm Here" at the dropoff location.
+  Future<String?> markArrivedAtDropoff(Order order) async {
+    final pos = await _locationService.getCurrentLocation();
+    if (pos == null) return 'تعذّر تحديد موقعك. تحقق من صلاحية الموقع.';
+
+    if (order.dropoffLat == null || order.dropoffLng == null) {
+      _store.markArrivedAtDropoff(order.id);
+      return null;
+    }
+
+    final clientDist = ProximityService.distanceMeters(
+      pos.lat, pos.lng, order.dropoffLat!, order.dropoffLng!,
+    );
+    if (clientDist > ProximityService.dropoffRadiusMeters * 3) {
+      _store.recordFraudAttempt(order.id);
+      return 'أنت بعيد جداً عن موقع التسليم (${clientDist.round()} م). يجب أن تكون ضمن 200 م.';
+    }
+
+    final serverResult = await _verifyArrivalServerSide(
+      orderId: order.id,
+      targetLat: order.dropoffLat!,
+      targetLng: order.dropoffLng!,
+    );
+    if (serverResult != null) return serverResult;
+
+    _store.markArrivedAtDropoff(order.id);
+    return null;
+  }
+
+  // ── Edge Function call ────────────────────────────────────────────────────
+
+  /// Calls the `verify_arrival` Edge Function. Returns an error string if the
+  /// server rejects the attempt, null if allowed. On network failure, returns
+  /// null (graceful degradation — client-side preflight already passed).
+  Future<String?> _verifyArrivalServerSide({
+    required String orderId,
+    required double targetLat,
+    required double targetLng,
+  }) async {
+    final uid = Supabase.instance.client.auth.currentUser?.id;
+    if (uid == null) return null; // not authenticated — dev/mock mode
+
+    try {
+      final res = await Supabase.instance.client.functions.invoke(
+        'verify_arrival',
+        body: {
+          'orderId': orderId,
+          'driverId': uid,
+          'targetLat': targetLat,
+          'targetLng': targetLng,
+        },
+      );
+      final data = res.data as Map<String, dynamic>?;
+      if (data == null) return null;
+      final allowed = data['allowed'] as bool? ?? true;
+      if (!allowed) {
+        final dist = data['distanceMeters'] as int?;
+        final reason = data['reason'] as String?;
+        if (reason == 'no_server_gps') {
+          // Server hasn't received GPS yet — allow and rely on client check.
+          return null;
+        }
+        _store.recordFraudAttempt(orderId);
+        return dist != null
+            ? 'التحقق من الموقع فشل على الخادم ($dist م). يجب أن تكون ضمن 200 م.'
+            : 'التحقق من الموقع فشل على الخادم. يجب أن تكون ضمن 200 م.';
+      }
+      return null;
+    } catch (e) {
+      debugPrint('[verify_arrival] Edge Function error: $e — falling back to client check');
+      return null;
+    }
+  }
+
   Future<void> completeOrder(Order order) async {
+    // Time-anomaly check: flag suspiciously fast completions.
+    final accepted = order.acceptedAt;
+    final dist = order.distanceKm;
+    if (accepted != null && dist != null && dist > 0) {
+      final elapsed = DateTime.now().difference(accepted).inSeconds;
+      final minimum = ProximityService.minimumTravelSeconds(dist);
+      if (elapsed < minimum) {
+        _store.recordFraudAttempt(order.id);
+      }
+    }
     _store.completeOrder(order);
     await _publisher.stop();
+    unawaited(_refreshWallet());
+  }
+
+  // ── Timer helpers ─────────────────────────────────────────────────────────
+
+  void _startGhostTimer(String orderId) {
+    _ghostTimer?.cancel();
+    _ghostTimer = Timer(
+      const Duration(minutes: 15),
+      () {
+        final active = _store.driverActiveOrder;
+        if (active?.id == orderId &&
+            active?.status == OrderStatus.accepted) {
+          _store.cancelForNoShow(orderId);
+          _publisher.stop();
+        }
+      },
+    );
+  }
+
+  void _cancelGhostTimer() {
+    _ghostTimer?.cancel();
+    _ghostTimer = null;
+  }
+
+  void _startArrivalResponseTimer(String orderId) {
+    _arrivalResponseTimer?.cancel();
+    _arrivalResponseTimer = Timer(
+      const Duration(minutes: 5),
+      () => _store.handleArrivalTimeout(orderId),
+    );
   }
 
   /// Move a collectionSale to inTransit. Returns error string or null.
@@ -136,6 +343,7 @@ class DriverHomeViewModel extends ChangeNotifier {
       isMarketplaceShared: true,
       pickupLat: pickupLat,
       pickupLng: pickupLng,
+      expiresAt: DateTime.now().add(const Duration(days: 14)),
     );
     notifyListeners();
     return order;
@@ -148,12 +356,14 @@ class DriverHomeViewModel extends ChangeNotifier {
     String? vehicleColor,
     String? licensePlate,
     String? vehiclePhotoPath,
+    VehicleType? vehicleType,
   }) {
     _user = _user.copyWith(
       vehicleModel: vehicleModel,
       vehicleColor: vehicleColor,
       licensePlate: licensePlate,
       vehiclePhotoPath: vehiclePhotoPath,
+      vehicleType: vehicleType ?? _user.vehicleType,
     );
     notifyListeners();
   }

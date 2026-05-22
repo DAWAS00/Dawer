@@ -23,7 +23,7 @@ void main() {
 
   group('AppOrderStore – seed data', () {
     test('loads seed orders on construction', () {
-      expect(store.driverFeed.isNotEmpty, isTrue);
+      expect(store.driverFeedFor().isNotEmpty, isTrue);
     });
 
     test('loads seed market items on construction', () {
@@ -33,7 +33,7 @@ void main() {
 
   group('AppOrderStore – acceptOrder', () {
     test('accepts a pending order and sets activeOrderId', () {
-      final pendingId = store.driverFeed.first.id;
+      final pendingId = store.driverFeedFor().first.id;
       final error = store.acceptOrder(pendingId, mockDriver);
       expect(error, isNull);
       expect(store.driverActiveOrder?.id, pendingId);
@@ -41,10 +41,10 @@ void main() {
     });
 
     test('returns error if driver already has active order', () {
-      final pendingId = store.driverFeed.first.id;
+      final pendingId = store.driverFeedFor().first.id;
       store.acceptOrder(pendingId, mockDriver);
       final anotherPendingId =
-          store.driverFeed.firstWhere((o) => o.id != pendingId).id;
+          store.driverFeedFor().firstWhere((o) => o.id != pendingId).id;
       final error = store.acceptOrder(anotherPendingId, mockDriver);
       expect(error, isNotNull);
     });
@@ -52,7 +52,7 @@ void main() {
 
   group('AppOrderStore – markInTransit', () {
     test('sets status to inTransit and records inTransitAt', () {
-      final pendingId = store.driverFeed.first.id;
+      final pendingId = store.driverFeedFor().first.id;
       store.acceptOrder(pendingId, mockDriver);
       store.markInTransit(pendingId);
       final order = store.driverActiveOrder!;
@@ -63,7 +63,7 @@ void main() {
 
   group('AppOrderStore – completeOrder', () {
     test('sets status to completed and records completedAt', () {
-      final pendingId = store.driverFeed.first.id;
+      final pendingId = store.driverFeedFor().first.id;
       store.acceptOrder(pendingId, mockDriver);
       final active = store.driverActiveOrder!;
       store.completeOrder(active);
@@ -75,7 +75,7 @@ void main() {
     });
 
     test('clears activeOrderId after completion', () {
-      final pendingId = store.driverFeed.first.id;
+      final pendingId = store.driverFeedFor().first.id;
       store.acceptOrder(pendingId, mockDriver);
       store.completeOrder(store.driverActiveOrder!);
       expect(store.driverHasActiveOrder, isFalse);
@@ -97,7 +97,7 @@ void main() {
     });
 
     test('returns error when cancelling a non-pending order', () {
-      final pendingId = store.driverFeed.first.id;
+      final pendingId = store.driverFeedFor().first.id;
       store.acceptOrder(pendingId, mockDriver);
       final error = store.cancelOrder(pendingId);
       expect(error, isNotNull);
@@ -106,7 +106,7 @@ void main() {
 
   group('AppOrderStore – submitDriverRating', () {
     test('updates driver rating on the order', () {
-      final pendingId = store.driverFeed.first.id;
+      final pendingId = store.driverFeedFor().first.id;
       store.acceptOrder(pendingId, mockDriver);
       store.completeOrder(store.driverActiveOrder!);
       store.submitDriverRating(pendingId, 4.5);

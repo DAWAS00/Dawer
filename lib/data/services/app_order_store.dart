@@ -5,12 +5,14 @@ import '../../backend_integration_locally/local_store.dart';
 import '../../core/result/result.dart';
 import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/i_order_repository.dart';
+import '../../domain/repositories/i_wallet_repository.dart';
 import '../../domain/requests/create_pickup_request.dart';
 import '../mock/order_mock_data.dart';
 import '../models/order.dart';
 import '../models/order_json.dart';
 import '../models/user.dart';
 import '../models/user_role.dart';
+import 'reward_service.dart';
 
 /// Singleton shared order store — the single source of truth for all orders
 /// across Driver, Supplier, and Recycling Company roles.
@@ -22,13 +24,19 @@ class AppOrderStore extends ChangeNotifier {
   AppOrderStore({
     LocalStore? store,
     IOrderRepository? remote,
+    IWalletRepository? wallet,
+    RewardService? rewardService,
   })  : _store = store,
-        _remote = remote ?? const NoOpOrderRepository() {
+        _remote = remote ?? const NoOpOrderRepository(),
+        _wallet = wallet ?? const NoOpWalletRepository(),
+        _rewardService = rewardService ?? RewardService() {
     _bootstrap();
   }
 
   final LocalStore? _store;
   final IOrderRepository _remote;
+  final IWalletRepository _wallet;
+  final RewardService _rewardService;
   StreamSubscription<List<Order>>? _remoteSub;
 
   // ── Error state ───────────────────────────────────────────────────────────
@@ -149,15 +157,26 @@ class AppOrderStore extends ChangeNotifier {
   // Driver views
   // ─────────────────────────────────────────────────────────────────────────
 
-  /// Pending orders available for the driver to accept (no driver yet).
-  List<Order> get driverFeed => _orders
-      .where((o) =>
-          ((o.status == OrderStatus.pending && !o.isMarketplaceShared) ||
-              (o.status == OrderStatus.accepted &&
-                  o.requiresRider &&
-                  o.driverName == null)) &&
-          o.id != _activeOrderId)
-      .toList();
+  /// Pending orders filtered to only those the driver's vehicle can handle.
+  /// Pass [vehicleType] from the driver's profile; null returns all pending orders.
+  List<Order> driverFeedFor({
+    VehicleType? vehicleType,
+    bool hasChemicalPermit = false,
+  }) {
+    return _orders.where((o) {
+      final statusOk =
+          (o.status == OrderStatus.pending && !o.isMarketplaceShared) ||
+          (o.status == OrderStatus.accepted &&
+              o.requiresRider &&
+              o.driverName == null);
+      if (!statusOk || o.id == _activeOrderId) return false;
+      if (vehicleType == null) return true;
+      return vehicleType.canTakeOrder(
+        o,
+        hasChemicalPermit: hasChemicalPermit,
+      );
+    }).toList();
+  }
 
   /// The driver's currently active order (null when not on a trip).
   Order? get driverActiveOrder => _activeOrderId == null
@@ -185,12 +204,14 @@ class AppOrderStore extends ChangeNotifier {
   // Recycling Company views
   // ─────────────────────────────────────────────────────────────────────────
 
-  /// Pickup orders heading to the company (accepted or inTransit).
+  /// Pickup orders heading to the company (any active delivery state).
   List<Order> get companyIncoming => _orders
       .where((o) =>
           o.type == OrderType.pickup &&
           (o.status == OrderStatus.accepted ||
-              o.status == OrderStatus.inTransit))
+              o.status == OrderStatus.arrivedAtPickup ||
+              o.status == OrderStatus.inTransit ||
+              o.status == OrderStatus.arrivedAtDropoff))
       .toList();
 
   /// Collection jobs posted by the company.
@@ -201,8 +222,12 @@ class AppOrderStore extends ChangeNotifier {
   // Marketplace views
   // ─────────────────────────────────────────────────────────────────────────
 
-  List<Order> get marketItems =>
-      List.unmodifiable(_orders.where((o) => o.isMarketplaceShared));
+  List<Order> get marketItems {
+    final now = DateTime.now();
+    return List.unmodifiable(_orders.where((o) =>
+        o.isMarketplaceShared &&
+        (o.expiresAt == null || o.expiresAt!.isAfter(now))));
+  }
 
   // ─────────────────────────────────────────────────────────────────────────
   // Driver actions
@@ -238,6 +263,9 @@ class AppOrderStore extends ChangeNotifier {
     notifyListeners();
 
     unawaited(_pushRemote(_remote.markAccepted(orderId)));
+    if (order.reward > 0) {
+      unawaited(_wallet.holdForOrder(orderId, order.reward));
+    }
     return null;
   }
 
@@ -275,6 +303,100 @@ class AppOrderStore extends ChangeNotifier {
     unawaited(_pushRemote(_remote.markInTransit(orderId)));
   }
 
+  /// Driver entered the 200m pickup geofence (server-verified). Sends customer
+  /// notification and starts the 5-minute response window.
+  void markArrivedAtPickup(String orderId) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return;
+    _orders[idx] = _orders[idx].copyWith(
+      status: OrderStatus.arrivedAtPickup,
+      arrivedAtPickupAt: DateTime.now(),
+      arrivalConfirmationStatus: ArrivalConfirmationStatus.awaiting,
+    );
+    notifyListeners();
+    unawaited(_pushRemote(_remote.markInTransit(orderId)));
+  }
+
+  /// Supplier confirmed they are available. Advance order to inTransit.
+  void handleSupplierAvailable(String orderId) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return;
+    _orders[idx] = _orders[idx].copyWith(
+      status: OrderStatus.inTransit,
+      inTransitAt: DateTime.now(),
+      arrivalConfirmationStatus: ArrivalConfirmationStatus.confirmed,
+    );
+    notifyListeners();
+    unawaited(_pushRemote(_remote.markInTransit(orderId)));
+  }
+
+  /// Supplier pressed "Not Available". Cancel with base trip compensation.
+  void handleSupplierUnavailable(String orderId) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return;
+    final order = _orders[idx];
+    // Driver gets 25% of reward for making the trip; supplier is charged this.
+    final compensation = (order.reward * 0.25).clamp(0.5, 5.0);
+    _orders[idx] = order.copyWith(
+      status: OrderStatus.cancelled,
+      arrivalConfirmationStatus: ArrivalConfirmationStatus.unavailable,
+      driverCompensationAmount: compensation,
+    );
+    if (_activeOrderId == orderId) _activeOrderId = null;
+    notifyListeners();
+    unawaited(_pushRemote(_remote.markCancelled(orderId)));
+  }
+
+  /// 5-minute response window expired with no customer action. Driver gets 50%
+  /// as a penalty charge from the supplier's hold (not a refund).
+  void handleArrivalTimeout(String orderId) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return;
+    final order = _orders[idx];
+    if (order.status != OrderStatus.arrivedAtPickup) return;
+    final compensation = (order.reward * 0.50).clamp(1.0, 10.0);
+    _orders[idx] = order.copyWith(
+      status: OrderStatus.cancelled,
+      arrivalConfirmationStatus: ArrivalConfirmationStatus.timedOut,
+      driverCompensationAmount: compensation,
+    );
+    if (_activeOrderId == orderId) _activeOrderId = null;
+    notifyListeners();
+    unawaited(_pushRemote(_remote.markCancelled(orderId)));
+  }
+
+  /// Driver entered the 200m dropoff geofence (server-verified).
+  void markArrivedAtDropoff(String orderId) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return;
+    _orders[idx] = _orders[idx].copyWith(
+      status: OrderStatus.arrivedAtDropoff,
+      arrivedAtDropoffAt: DateTime.now(),
+    );
+    notifyListeners();
+    unawaited(_pushRemote(_remote.markInTransit(orderId)));
+  }
+
+  /// Record a blocked fraud attempt (driver tried to mark arrived while >200m away).
+  void recordFraudAttempt(String orderId) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return;
+    _orders[idx] = _orders[idx].copyWith(
+      fraudAttemptCount: _orders[idx].fraudAttemptCount + 1,
+    );
+    notifyListeners();
+  }
+
+  /// Cancel the active order due to driver no-show (ghost timer fired).
+  void cancelForNoShow(String orderId) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return;
+    _orders[idx] = _orders[idx].copyWith(status: OrderStatus.cancelled);
+    if (_activeOrderId == orderId) _activeOrderId = null;
+    notifyListeners();
+    unawaited(_pushRemote(_remote.markCancelled(orderId)));
+  }
+
   /// Complete the active order (driver marks delivered).
   void completeOrder(Order completedOrder) {
     final idx = _orders.indexWhere((o) => o.id == completedOrder.id);
@@ -290,6 +412,31 @@ class AppOrderStore extends ChangeNotifier {
     notifyListeners();
 
     unawaited(_pushRemote(_remote.markCompleted(completedOrder.id, actualWeightKg: completedOrder.weightKg)));
+    unawaited(_recordTransactionFor(completedOrder));
+    if (completedOrder.reward > 0) {
+      unawaited(_wallet.releaseForOrder(completedOrder.id, completedOrder.reward));
+    }
+  }
+
+  Future<void> _recordTransactionFor(Order order) async {
+    if (order.wasteTypes.isEmpty || order.distanceKm == null) return;
+
+    final result = await _rewardService.calculate(
+      wasteTypes: order.wasteTypes,
+      estimatedWeightKg: order.estimatedWeightKg ?? 0,
+      distanceKm: order.distanceKm!,
+      actualWeightKg: order.weightKg,
+      vehicleType: order.requiredVehicleType ?? VehicleType.pickup,
+    );
+
+    result.fold(
+      onSuccess: (breakdown) => unawaited(_pushRemote(_remote.recordTransaction(
+        orderId: order.id,
+        breakdown: breakdown,
+        vehicleType: order.requiredVehicleType?.name,
+      ))),
+      onFailure: (_) {},
+    );
   }
 
   /// Record a driver rating after delivery (mock — updates driverRating on order).
@@ -417,6 +564,7 @@ class AppOrderStore extends ChangeNotifier {
     double? minQuantityKg,
     double? pickupLat,
     double? pickupLng,
+    DateTime? expiresAt,
   }) {
     final orderId =
         'JOB-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
@@ -440,6 +588,7 @@ class AppOrderStore extends ChangeNotifier {
       minQuantityKg: minQuantityKg,
       pickupLat: pickupLat,
       pickupLng: pickupLng,
+      expiresAt: expiresAt,
     );
     _orders.insert(0, order);
     notifyListeners();

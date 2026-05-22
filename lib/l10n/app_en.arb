@@ -321,6 +321,8 @@
   "postMarketLocationPermissionDenied": "Location permission denied, using default location",
   "postMarketUseCurrentLocation": "Use Current Location",
   "postMarketAdjustLocation": "Adjust Location on Map",
+  "postMarketMinPriceErrorIndividual": "Minimum price for individuals is 5 JOD",
+  "postMarketMinPriceErrorBusiness": "Minimum price for businesses is 20 JOD",
 
   "collectionJobTitle": "Collection Job Details",
   "collectionJobCollectionArea": "Collection Area: ",
@@ -453,6 +455,8 @@
 
   "orderStatusPending": "Awaiting",
   "orderStatusAccepted": "Accepted",
+  "orderStatusArrivedAtPickup": "At Pickup",
+  "orderStatusArrivedAtDropoff": "At Dropoff",
   "orderStatusInTransit": "In Transit",
   "orderStatusCompleted": "Completed",
   "orderStatusCancelled": "Cancelled",
@@ -472,7 +476,9 @@
   "orderStatusTitle": "Order Status",
   "orderStatusStepPending": "Awaiting",
   "orderStatusStepAccepted": "Accepted",
+  "orderStatusStepArrivedAtPickup": "Arrived",
   "orderStatusStepInTransit": "In Transit",
+  "orderStatusStepArrivedAtDropoff": "At Dropoff",
   "orderStatusStepCompleted": "Completed",
 
   "orderDetailsTitle": "Order Details",

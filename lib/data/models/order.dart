@@ -1,13 +1,20 @@
 import 'reward_breakdown.dart';
 
 enum OrderType { pickup, collection, collectionSale }
-enum OrderStatus { pending, accepted, inTransit, completed, cancelled }
+enum OrderStatus { pending, accepted, arrivedAtPickup, inTransit, arrivedAtDropoff, completed, cancelled }
+
+enum ArrivalConfirmationStatus { awaiting, confirmed, unavailable, timedOut }
 
 enum PickupTarget { company, riderBuy }
 enum WasteType {
   paper, plastic, metal, glass, electronics, organic,
   textile, wood, rubber, oil, chemicals, batteries, furniture, tires, construction,
+  copperAluminium,
 }
+
+enum VehicleType { motorcycle, car, pickup, van, truck, heavyTruck }
+
+enum AdminApprovalStatus { notRequired, pendingApproval, approved, rejected }
 
 enum WasteForm { solid, liquid, gas, mixed }
 
@@ -57,7 +64,67 @@ extension WasteTypeLabel on WasteType {
     WasteType.furniture => 'أثاث',
     WasteType.tires => 'إطارات',
     WasteType.construction => 'مخلفات بناء',
+    WasteType.copperAluminium => 'نحاس وألومنيوم',
   };
+}
+
+extension VehicleTypeLabel on VehicleType {
+  String get label => switch (this) {
+    VehicleType.motorcycle => 'دراجة نارية',
+    VehicleType.car       => 'سيارة خاصة',
+    VehicleType.pickup    => 'بيك آب',
+    VehicleType.van       => 'فان / ونيت',
+    VehicleType.truck     => 'شاحنة',
+    VehicleType.heavyTruck => 'شاحنة ثقيلة',
+  };
+}
+
+extension VehicleTypeCapacity on VehicleType {
+  double get maxWeightKg => switch (this) {
+    VehicleType.motorcycle => 10,
+    VehicleType.car        => 50,
+    VehicleType.pickup     => 500,
+    VehicleType.van        => 1000,
+    VehicleType.truck      => 5000,
+    VehicleType.heavyTruck => 20000,
+  };
+
+  /// Physical hard-ban for non-chemicals waste types.
+  Set<WasteType> get _hardBanned => switch (this) {
+    VehicleType.motorcycle => {
+      WasteType.oil, WasteType.batteries, WasteType.electronics,
+      WasteType.rubber, WasteType.tires, WasteType.construction,
+      WasteType.furniture, WasteType.metal, WasteType.copperAluminium,
+      WasteType.wood,
+    },
+    VehicleType.car => {
+      WasteType.oil, WasteType.tires, WasteType.construction,
+      WasteType.furniture,
+    },
+    _ => {},
+  };
+
+  /// Whether this vehicle type can carry [type].
+  /// Motorcycle/car can never carry chemicals regardless of permit.
+  /// All others require [hasChemicalPermit] to carry chemicals.
+  bool supportsWasteType(WasteType type, {bool hasChemicalPermit = false}) {
+    if (type == WasteType.chemicals) {
+      return switch (this) {
+        VehicleType.motorcycle || VehicleType.car => false,
+        _ => hasChemicalPermit,
+      };
+    }
+    return !_hardBanned.contains(type);
+  }
+
+  bool canTakeOrder(Order order, {bool hasChemicalPermit = false}) {
+    final weightOk = (order.estimatedWeightKg ?? 0) <= maxWeightKg;
+    final typesOk = order.wasteTypes.every(
+      (w) => supportsWasteType(w, hasChemicalPermit: hasChemicalPermit),
+    );
+    final permitOk = !order.requiresChemicalPermit || hasChemicalPermit;
+    return weightOk && typesOk && permitOk;
+  }
 }
 
 extension WasteFormLabel on WasteForm {
@@ -113,10 +180,44 @@ extension OrderStatusLabel on OrderStatus {
   String get label => switch (this) {
         OrderStatus.pending => 'قيد الانتظار',
         OrderStatus.accepted => 'تم القبول',
+        OrderStatus.arrivedAtPickup => 'وصل للاستلام',
         OrderStatus.inTransit => 'في الطريق',
+        OrderStatus.arrivedAtDropoff => 'وصل للتسليم',
         OrderStatus.completed => 'مكتمل',
         OrderStatus.cancelled => 'ملغي',
       };
+}
+
+class OrderProof {
+  final String imagePath;
+  final DateTime capturedAt;
+  final double lat;
+  final double lng;
+  final String checksum;
+
+  const OrderProof({
+    required this.imagePath,
+    required this.capturedAt,
+    required this.lat,
+    required this.lng,
+    required this.checksum,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'imagePath': imagePath,
+        'capturedAt': capturedAt.toIso8601String(),
+        'lat': lat,
+        'lng': lng,
+        'checksum': checksum,
+      };
+
+  factory OrderProof.fromJson(Map<String, dynamic> json) => OrderProof(
+        imagePath: json['imagePath'] as String,
+        capturedAt: DateTime.parse(json['capturedAt'] as String),
+        lat: (json['lat'] as num).toDouble(),
+        lng: (json['lng'] as num).toDouble(),
+        checksum: json['checksum'] as String,
+      );
 }
 
 class Order {
@@ -173,6 +274,21 @@ class Order {
   final bool requiresRider;
   final RewardBreakdown? rewardBreakdown;
   final List<InvoiceItem>? invoices;
+  // ── Security & fraud-prevention fields ───────────────────────────────────
+  final DateTime? arrivedAtPickupAt;
+  final DateTime? arrivedAtDropoffAt;
+  final ArrivalConfirmationStatus? arrivalConfirmationStatus;
+  final OrderProof? proof;
+  final double? supplierHoldAmount;
+  final double? driverCompensationAmount;
+  final int fraudAttemptCount;
+  final bool weightVarianceFlag;
+  // ── Vehicle matching & admin approval ────────────────────────────────────
+  final VehicleType? requiredVehicleType;
+  final bool requiresChemicalPermit;
+  final AdminApprovalStatus adminApprovalStatus;
+  // ── Marketplace TTL ──────────────────────────────────────────────────────
+  final DateTime? expiresAt;
 
   const Order({
     required this.id,
@@ -228,6 +344,18 @@ class Order {
     this.requiresRider = false,
     this.rewardBreakdown,
     this.invoices,
+    this.arrivedAtPickupAt,
+    this.arrivedAtDropoffAt,
+    this.arrivalConfirmationStatus,
+    this.proof,
+    this.supplierHoldAmount,
+    this.driverCompensationAmount,
+    this.fraudAttemptCount = 0,
+    this.weightVarianceFlag = false,
+    this.requiredVehicleType,
+    this.requiresChemicalPermit = false,
+    this.adminApprovalStatus = AdminApprovalStatus.notRequired,
+    this.expiresAt,
   });
 
 
@@ -285,6 +413,18 @@ class Order {
     bool? requiresRider,
     RewardBreakdown? rewardBreakdown,
     List<InvoiceItem>? invoices,
+    DateTime? arrivedAtPickupAt,
+    DateTime? arrivedAtDropoffAt,
+    ArrivalConfirmationStatus? arrivalConfirmationStatus,
+    OrderProof? proof,
+    double? supplierHoldAmount,
+    double? driverCompensationAmount,
+    int? fraudAttemptCount,
+    bool? weightVarianceFlag,
+    VehicleType? requiredVehicleType,
+    bool? requiresChemicalPermit,
+    AdminApprovalStatus? adminApprovalStatus,
+    DateTime? expiresAt,
   }) {
     return Order(
       id: id ?? this.id,
@@ -340,6 +480,18 @@ class Order {
       requiresRider: requiresRider ?? this.requiresRider,
       rewardBreakdown: rewardBreakdown ?? this.rewardBreakdown,
       invoices: invoices ?? this.invoices,
+      arrivedAtPickupAt: arrivedAtPickupAt ?? this.arrivedAtPickupAt,
+      arrivedAtDropoffAt: arrivedAtDropoffAt ?? this.arrivedAtDropoffAt,
+      arrivalConfirmationStatus: arrivalConfirmationStatus ?? this.arrivalConfirmationStatus,
+      proof: proof ?? this.proof,
+      supplierHoldAmount: supplierHoldAmount ?? this.supplierHoldAmount,
+      driverCompensationAmount: driverCompensationAmount ?? this.driverCompensationAmount,
+      fraudAttemptCount: fraudAttemptCount ?? this.fraudAttemptCount,
+      weightVarianceFlag: weightVarianceFlag ?? this.weightVarianceFlag,
+      requiredVehicleType: requiredVehicleType ?? this.requiredVehicleType,
+      requiresChemicalPermit: requiresChemicalPermit ?? this.requiresChemicalPermit,
+      adminApprovalStatus: adminApprovalStatus ?? this.adminApprovalStatus,
+      expiresAt: expiresAt ?? this.expiresAt,
     );
   }
 }

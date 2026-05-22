@@ -109,6 +109,8 @@ class SupabaseAuthService {
         if (request.address != null && request.address!.trim().isNotEmpty)
           'address': request.address!.trim(),
         if (request.categories.isNotEmpty) 'categories': request.categories,
+        if (request.vehicleType != null) 'vehicle_type': request.vehicleType!.name,
+        if (request.hasChemicalPermit) 'has_chemical_permit': true,
       };
 
       final inserted = await _client
@@ -297,6 +299,8 @@ class SupabaseAuthService {
         'identity_doc_path': row['identity_doc_path'],
       'categories': (row['categories'] as List?)?.cast<String>() ?? const <String>[],
       'created_at': row['created_at'],
+      if (row['vehicle_type'] != null) 'vehicle_type': row['vehicle_type'],
+      'has_chemical_permit': row['has_chemical_permit'] ?? false,
     };
   }
 

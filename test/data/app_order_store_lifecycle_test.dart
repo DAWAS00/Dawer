@@ -70,6 +70,13 @@ class _RecordingOrderRepository implements IOrderRepository {
   @override
   Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg}) async =>
       _record('markCompleted');
+
+  @override
+  Future<AppResult<void>> recordTransaction({
+    required String orderId,
+    required breakdown,
+    String? vehicleType,
+  }) async => _record('recordTransaction');
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -102,7 +109,7 @@ void main() {
     tearDown(() => store.dispose());
 
     test('happy-path: pending → accepted → inTransit → completed', () async {
-      final orderId = store.driverFeed.first.id;
+      final orderId = store.driverFeedFor().first.id;
 
       // accept
       expect(store.acceptOrder(orderId, _driver), isNull);
@@ -128,7 +135,7 @@ void main() {
     });
 
     test('each transition fires notifyListeners exactly once', () async {
-      final orderId = store.driverFeed.first.id;
+      final orderId = store.driverFeedFor().first.id;
       int notifications = 0;
       store.addListener(() => notifications++);
 
@@ -146,7 +153,7 @@ void main() {
     });
 
     test('race condition: second acceptOrder on already-accepted order returns error', () {
-      final orderId = store.driverFeed.first.id;
+      final orderId = store.driverFeedFor().first.id;
 
       const secondDriver = User(
         id: 'DRV-LIFECYCLE-02',
@@ -173,7 +180,7 @@ void main() {
     });
 
     test('acceptOrder on already-accepted (non-assignRider) order returns "no longer available"', () {
-      final orderId = store.driverFeed.first.id;
+      final orderId = store.driverFeedFor().first.id;
       store.acceptOrder(orderId, _driver);
 
       // Try to accept the same order again with first driver (should also fail)
@@ -183,7 +190,7 @@ void main() {
 
     test('repository failure on acceptOrder propagates to store.lastError', () async {
       repo.failNextWith(const NetworkFailure());
-      final orderId = store.driverFeed.first.id;
+      final orderId = store.driverFeedFor().first.id;
       store.acceptOrder(orderId, _driver);
 
       // Wait for unawaited future to resolve
@@ -207,7 +214,7 @@ void main() {
     });
 
     test('completeOrder pushes markCompleted to repository', () async {
-      final orderId = store.driverFeed.first.id;
+      final orderId = store.driverFeedFor().first.id;
       store.acceptOrder(orderId, _driver);
       store.completeOrder(store.driverActiveOrder!);
 

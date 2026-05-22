@@ -1784,6 +1784,18 @@ abstract class AppLocalizations {
   /// **'تعديل الموقع على الخريطة'**
   String get postMarketAdjustLocation;
 
+  /// No description provided for @postMarketMinPriceErrorIndividual.
+  ///
+  /// In ar, this message translates to:
+  /// **'عذراً، الحد الأدنى للنشر للأفراد هو ٥ دنانير'**
+  String get postMarketMinPriceErrorIndividual;
+
+  /// No description provided for @postMarketMinPriceErrorBusiness.
+  ///
+  /// In ar, this message translates to:
+  /// **'عذراً، الحد الأدنى للنشر للشركات هو ٢٠ ديناراً'**
+  String get postMarketMinPriceErrorBusiness;
+
   /// No description provided for @collectionJobTitle.
   ///
   /// In ar, this message translates to:
@@ -2252,6 +2264,18 @@ abstract class AppLocalizations {
   /// **'تم القبول'**
   String get orderStatusAccepted;
 
+  /// No description provided for @orderStatusArrivedAtPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصل للاستلام'**
+  String get orderStatusArrivedAtPickup;
+
+  /// No description provided for @orderStatusArrivedAtDropoff.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصل للتسليم'**
+  String get orderStatusArrivedAtDropoff;
+
   /// No description provided for @orderStatusInTransit.
   ///
   /// In ar, this message translates to:
@@ -2354,11 +2378,23 @@ abstract class AppLocalizations {
   /// **'قُبل'**
   String get orderStatusStepAccepted;
 
+  /// No description provided for @orderStatusStepArrivedAtPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصل'**
+  String get orderStatusStepArrivedAtPickup;
+
   /// No description provided for @orderStatusStepInTransit.
   ///
   /// In ar, this message translates to:
   /// **'في الطريق'**
   String get orderStatusStepInTransit;
+
+  /// No description provided for @orderStatusStepArrivedAtDropoff.
+  ///
+  /// In ar, this message translates to:
+  /// **'للتسليم'**
+  String get orderStatusStepArrivedAtDropoff;
 
   /// No description provided for @orderStatusStepCompleted.
   ///

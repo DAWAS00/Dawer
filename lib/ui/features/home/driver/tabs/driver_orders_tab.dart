@@ -107,6 +107,8 @@ class DriverOrdersTab extends StatelessWidget {
   final ValueChanged<String>? onCancelSale;
   final String? Function(String saleId)? onStartTransit;
   final String? Function(String saleId, {double? actualWeightKg})? onComplete;
+  final Future<String?> Function(Order)? onMarkArrivedAtPickup;
+  final Future<String?> Function(Order)? onMarkArrivedAtDropoff;
 
   const DriverOrdersTab({
     super.key,
@@ -117,6 +119,8 @@ class DriverOrdersTab extends StatelessWidget {
     this.onCancelSale,
     this.onStartTransit,
     this.onComplete,
+    this.onMarkArrivedAtPickup,
+    this.onMarkArrivedAtDropoff,
   });
 
   @override
@@ -190,22 +194,11 @@ class DriverOrdersTab extends StatelessWidget {
                 delegate: SliverChildBuilderDelegate(
                   (context, i) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: OrderCard(
+                    child: _DriverOrderCard(
                       order: all[i],
-                      mode: (all[i].status == OrderStatus.inTransit || all[i].status == OrderStatus.accepted)
-                          ? OrderCardMode.driverActive
-                          : OrderCardMode.driverHistory,
-                      onAction: all[i].status == OrderStatus.accepted || all[i].status == OrderStatus.inTransit
-                          ? () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => OrderDetailsView(
-                                    order: all[i],
-                                    onCompleteOrder: onCompleteOrder,
-                                    hideStatus: true,
-                                  ),
-                                ),
-                              )
-                          : null,
+                      onCompleteOrder: onCompleteOrder,
+                      onMarkArrivedAtPickup: onMarkArrivedAtPickup,
+                      onMarkArrivedAtDropoff: onMarkArrivedAtDropoff,
                     ),
                   ),
                   childCount: all.length,
@@ -275,5 +268,51 @@ class DriverOrdersTab extends StatelessWidget {
         ),
       ),
     ];
+  }
+}
+
+// ── Helper: decides card mode and opens OrderDetailsView with correct callbacks ──
+
+class _DriverOrderCard extends StatelessWidget {
+  final Order order;
+  final ValueChanged<Order>? onCompleteOrder;
+  final Future<String?> Function(Order)? onMarkArrivedAtPickup;
+  final Future<String?> Function(Order)? onMarkArrivedAtDropoff;
+
+  const _DriverOrderCard({
+    required this.order,
+    this.onCompleteOrder,
+    this.onMarkArrivedAtPickup,
+    this.onMarkArrivedAtDropoff,
+  });
+
+  static const _activeStatuses = {
+    OrderStatus.accepted,
+    OrderStatus.arrivedAtPickup,
+    OrderStatus.inTransit,
+    OrderStatus.arrivedAtDropoff,
+  };
+
+  bool get _isActive => _activeStatuses.contains(order.status);
+
+  void _openDetails(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => OrderDetailsView(
+        order: order,
+        hideStatus: true,
+        onCompleteOrder: onCompleteOrder,
+        onMarkArrivedAtPickup: onMarkArrivedAtPickup,
+        onMarkArrivedAtDropoff: onMarkArrivedAtDropoff,
+      ),
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return OrderCard(
+      order: order,
+      mode: _isActive ? OrderCardMode.driverActive : OrderCardMode.driverHistory,
+      onAction: _isActive ? () => _openDetails(context) : null,
+    );
   }
 }

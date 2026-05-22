@@ -1,3 +1,5 @@
+import 'order.dart' show VehicleType;
+
 class User {
   final String id;
   final String name;
@@ -13,6 +15,8 @@ class User {
   final int totalOrders;
   final bool isVerified;
   final List<String> categories;
+  final VehicleType? vehicleType;
+  final bool hasChemicalPermit;
 
   const User({
     required this.id,
@@ -29,6 +33,8 @@ class User {
     this.totalOrders = 0,
     this.isVerified = false,
     this.categories = const [],
+    this.vehicleType,
+    this.hasChemicalPermit = false,
   });
 
   User copyWith({
@@ -46,6 +52,8 @@ class User {
     int? totalOrders,
     bool? isVerified,
     List<String>? categories,
+    VehicleType? vehicleType,
+    bool? hasChemicalPermit,
   }) {
     return User(
       id: id ?? this.id,
@@ -62,6 +70,8 @@ class User {
       totalOrders: totalOrders ?? this.totalOrders,
       isVerified: isVerified ?? this.isVerified,
       categories: categories ?? this.categories,
+      vehicleType: vehicleType ?? this.vehicleType,
+      hasChemicalPermit: hasChemicalPermit ?? this.hasChemicalPermit,
     );
   }
 }

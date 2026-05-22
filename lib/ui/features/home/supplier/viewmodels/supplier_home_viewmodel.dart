@@ -55,4 +55,7 @@ class SupplierHomeViewModel extends BaseSupplierViewModel {
 
   @override
   String get listingIdPrefix => 'SUP-MKT-';
+
+  @override
+  int get listingTtlDays => 30;
 }

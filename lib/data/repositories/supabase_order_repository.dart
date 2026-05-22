@@ -5,6 +5,7 @@ import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/i_order_repository.dart';
 import '../models/order.dart';
 import '../models/order_supabase_ext.dart';
+import '../models/reward_breakdown.dart';
 import '../models/user_role.dart';
 
 /// Supabase-backed implementation of [IOrderRepository].
@@ -128,6 +129,28 @@ final class SupabaseOrderRepository implements IOrderRepository {
           'completed_at': DateTime.now().toUtc().toIso8601String(),
           if (actualWeightKg != null) 'actual_weight_kg': actualWeightKg,
         }).eq('id', orderId));
+  }
+
+  @override
+  Future<AppResult<void>> recordTransaction({
+    required String orderId,
+    required RewardBreakdown breakdown,
+    String? vehicleType,
+  }) {
+    if (_client.auth.currentUser == null) return Future.value(const Success(null));
+    return _run(() => _client.rpc('record_order_transaction', params: {
+          'p_order_id': orderId,
+          'p_base_fee': breakdown.baseFee,
+          'p_distance_fee': breakdown.distanceFee,
+          'p_material_fee': breakdown.materialFee,
+          'p_urgency_bonus': breakdown.urgencyBonus,
+          'p_weight_surcharge': breakdown.weightSurcharge,
+          'p_gross_fee': breakdown.grossFee,
+          'p_platform_cut': breakdown.platformCut,
+          'p_driver_payout': breakdown.driverPayout,
+          'p_vehicle_type': vehicleType,
+          'p_needs_manual_review': breakdown.needsManualReview,
+        }));
   }
 
   // ── Internal ───────────────────────────────────────────────────────────────

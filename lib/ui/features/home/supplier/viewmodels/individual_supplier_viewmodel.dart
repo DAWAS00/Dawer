@@ -17,4 +17,7 @@ class IndividualSupplierViewModel extends BaseSupplierViewModel {
 
   @override
   String get listingIdPrefix => 'IND-';
+
+  @override
+  int get listingTtlDays => 14;
 }

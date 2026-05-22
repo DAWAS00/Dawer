@@ -33,6 +33,7 @@ class RecyclingHomeView extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => MarketplaceViewModel(
             ctx.read<AppOrderStore>(),
+            isBusiness: true,
             initialSuggestions: aiSuggestedCategories,
           ),
         ),
@@ -73,7 +74,20 @@ class _RecyclingHomeBody extends StatelessWidget {
       ),
       floatingActionButton: vm.currentTab == 0
           ? FloatingActionButton.extended(
-              onPressed: () => _showPostToMarketSheet(context, vm, marketVm),
+              onPressed: () {
+                if (!marketVm.canAddListing(vm.companyName)) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                      'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
+                      style: GoogleFonts.cairo(),
+                    ),
+                    backgroundColor: const Color(0xFFB91C1C),
+                    behavior: SnackBarBehavior.floating,
+                  ));
+                  return;
+                }
+                _showPostToMarketSheet(context, vm, marketVm);
+              },
               backgroundColor: const Color(0xFF1E40AF),
               icon: const Icon(Icons.storefront_rounded, color: Colors.white),
               label: Text(
@@ -103,6 +117,7 @@ class _RecyclingHomeBody extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (_) => PostToMarketSheet(
+        role: UserRole.recyclingCo,
         onSubmit: ({
           required List<WasteType> wasteTypes,
           required String pickupAddress,

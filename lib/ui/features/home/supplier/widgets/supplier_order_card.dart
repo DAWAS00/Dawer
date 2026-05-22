@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../../../../core/utils/date_formatter.dart';
 import '../../../../../data/models/order.dart';
 import '../../../../../data/models/order_labels.dart'; // labelFor extensions
+import '../../../../../data/services/app_order_store.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../shared/order_details_view.dart';
 
@@ -22,16 +24,16 @@ class SupplierOrderCard extends StatelessWidget {
 
   Color get _statusColor => switch (order.status) {
         OrderStatus.pending => const Color(0xFFC8860A),
-        OrderStatus.accepted => const Color(0xFF1E5C35),
-        OrderStatus.inTransit => const Color(0xFF1E40AF),
+        OrderStatus.accepted || OrderStatus.arrivedAtPickup => const Color(0xFF1E5C35),
+        OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => const Color(0xFF1E40AF),
         OrderStatus.completed => const Color(0xFF166534),
         OrderStatus.cancelled => const Color(0xFF991B1B),
       };
 
   Color get _statusBg => switch (order.status) {
         OrderStatus.pending => const Color(0xFFFEF3C7),
-        OrderStatus.accepted => const Color(0xFFD1FAE5),
-        OrderStatus.inTransit => const Color(0xFFDBEAFE),
+        OrderStatus.accepted || OrderStatus.arrivedAtPickup => const Color(0xFFD1FAE5),
+        OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => const Color(0xFFDBEAFE),
         OrderStatus.completed => const Color(0xFFDCFCE7),
         OrderStatus.cancelled => const Color(0xFFFEE2E2),
       };
@@ -78,7 +80,19 @@ class SupplierOrderCard extends StatelessWidget {
     final locale = Localizations.localeOf(context);
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => OrderDetailsView(order: order)),
+        MaterialPageRoute(
+          builder: (_) => OrderDetailsView(
+            order: order,
+            onSupplierConfirmArrival: (available) {
+              final store = context.read<AppOrderStore>();
+              if (available) {
+                store.handleSupplierAvailable(order.id);
+              } else {
+                store.handleSupplierUnavailable(order.id);
+              }
+            },
+          ),
+        ),
       ),
       child: Container(
         padding: const EdgeInsets.all(16),

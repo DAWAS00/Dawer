@@ -884,6 +884,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get postMarketAdjustLocation => 'Adjust Location on Map';
 
   @override
+  String get postMarketMinPriceErrorIndividual =>
+      'Minimum price for individuals is 5 JOD';
+
+  @override
+  String get postMarketMinPriceErrorBusiness =>
+      'Minimum price for businesses is 20 JOD';
+
+  @override
   String get collectionJobTitle => 'Collection Job Details';
 
   @override
@@ -1143,6 +1151,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orderStatusAccepted => 'Accepted';
 
   @override
+  String get orderStatusArrivedAtPickup => 'At Pickup';
+
+  @override
+  String get orderStatusArrivedAtDropoff => 'At Dropoff';
+
+  @override
   String get orderStatusInTransit => 'In Transit';
 
   @override
@@ -1194,7 +1208,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orderStatusStepAccepted => 'Accepted';
 
   @override
+  String get orderStatusStepArrivedAtPickup => 'Arrived';
+
+  @override
   String get orderStatusStepInTransit => 'In Transit';
+
+  @override
+  String get orderStatusStepArrivedAtDropoff => 'At Dropoff';
 
   @override
   String get orderStatusStepCompleted => 'Completed';

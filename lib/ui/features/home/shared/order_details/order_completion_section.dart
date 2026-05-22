@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../data/services/location_service.dart';
 import '../../../../../l10n/l10n.dart';
 
 class OrderCompletionSection extends StatefulWidget {
@@ -22,7 +24,36 @@ class OrderCompletionSection extends StatefulWidget {
 
 class _OrderCompletionSectionState extends State<OrderCompletionSection> {
   XFile? _proofImage;
+  OrderProof? _proof;
+  bool _capturingProof = false;
   final ImagePicker _picker = ImagePicker();
+  final LocationService _locationService = LocationService();
+
+  bool get _canComplete =>
+      _proof != null &&
+      (widget.order.status == OrderStatus.arrivedAtDropoff ||
+          widget.order.arrivedAtDropoffAt != null);
+
+  Future<void> _buildProof(XFile image) async {
+    setState(() => _capturingProof = true);
+    try {
+      final pos = await _locationService.getCurrentLocation();
+      final bytes = await File(image.path).readAsBytes();
+      final checksum = sha256.convert(bytes).toString();
+      setState(() {
+        _proofImage = image;
+        _proof = OrderProof(
+          imagePath: image.path,
+          capturedAt: DateTime.now(),
+          lat: pos?.lat ?? 0.0,
+          lng: pos?.lng ?? 0.0,
+          checksum: checksum,
+        );
+      });
+    } finally {
+      setState(() => _capturingProof = false);
+    }
+  }
 
   Future<void> _pickImage() async {
     showModalBottomSheet(
@@ -43,7 +74,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
                   onTap: () async {
                     Navigator.pop(context);
                     final picked = await _picker.pickImage(source: ImageSource.camera, imageQuality: 80);
-                    if (picked != null) setState(() => _proofImage = picked);
+                    if (picked != null) await _buildProof(picked);
                   },
                 ),
                 ListTile(
@@ -52,7 +83,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
                   onTap: () async {
                     Navigator.pop(context);
                     final picked = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
-                    if (picked != null) setState(() => _proofImage = picked);
+                    if (picked != null) await _buildProof(picked);
                   },
                 ),
               ],
@@ -98,26 +129,12 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              final updatedOrder = Order(
-                id: widget.order.id,
-                type: widget.order.type,
-                wasteTypes: widget.order.wasteTypes,
-                pickupAddress: widget.order.pickupAddress,
-                dropoffAddress: widget.order.dropoffAddress,
+              final updatedOrder = widget.order.copyWith(
                 status: OrderStatus.completed,
-                reward: widget.order.reward,
-                createdAt: widget.order.createdAt,
-                acceptedAt: widget.order.acceptedAt,
-                driverName: widget.order.driverName,
-                driverPhone: widget.order.driverPhone,
-                driverRating: widget.order.driverRating,
-                driverVehicle: widget.order.driverVehicle,
-                supplierName: widget.order.supplierName,
-                weightKg: widget.order.weightKg,
-                eta: widget.order.eta,
-                distanceKm: widget.order.distanceKm,
-                proofImagePath: _proofImage?.path,
+                completedAt: DateTime.now(),
+                proofImagePath: _proof?.imagePath ?? _proofImage?.path,
                 paidAmount: widget.order.reward,
+                proof: _proof,
               );
               widget.onComplete(updatedOrder);
             },
@@ -262,27 +279,52 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
           ),
           const SizedBox(height: 16),
           
+          if (!_canComplete && _proof != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                'يجب أن تصل إلى موقع التسليم أولاً (ضمن 200 م)',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.cairo(
+                  fontSize: 12,
+                  color: const Color(0xFF991B1B),
+                ),
+              ),
+            ),
           // Complete Button
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _showCompletionDialog,
+              onPressed: _capturingProof
+                  ? null
+                  : (_canComplete ? _showCompletionDialog : null),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF06402B),
+                backgroundColor: _canComplete
+                    ? const Color(0xFF06402B)
+                    : const Color(0xFFB0B8B4),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 elevation: 0,
               ),
-              child: Text(
-                context.l10n.orderFinishButton,
-                style: GoogleFonts.cairo(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
+              child: _capturingProof
+                  ? const SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text(
+                      context.l10n.orderFinishButton,
+                      style: GoogleFonts.cairo(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
             ),
           ),
         ],

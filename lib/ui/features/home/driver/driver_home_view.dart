@@ -35,6 +35,7 @@ class DriverHomeView extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => MarketplaceViewModel(
             store,
+            isBusiness: false,
             initialSuggestions: aiSuggestedCategories,
           ),
         ),
@@ -130,6 +131,8 @@ class _DriverHomeBody extends StatelessWidget {
         onCancelSale: (id) => vm.cancelCollectionSale(id),
         onStartTransit: vm.startCollectionSaleTransit,
         onComplete: vm.completeCollectionSale,
+        onMarkArrivedAtPickup: vm.markArrivedAtPickup,
+        onMarkArrivedAtDropoff: vm.markArrivedAtDropoff,
       ),
       const DriverProfileTab(),
     ];
@@ -144,7 +147,20 @@ class _DriverHomeBody extends StatelessWidget {
       ),
       floatingActionButton: vm.currentTab == 0
           ? FloatingActionButton.extended(
-              onPressed: () => _showPostToMarketSheet(context, vm, marketVm),
+              onPressed: () {
+                if (!marketVm.canAddListing(vm.user.name)) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                      'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
+                      style: GoogleFonts.cairo(),
+                    ),
+                    backgroundColor: const Color(0xFFB91C1C),
+                    behavior: SnackBarBehavior.floating,
+                  ));
+                  return;
+                }
+                _showPostToMarketSheet(context, vm, marketVm);
+              },
               backgroundColor: const Color(0xFF1E40AF),
               icon: const Icon(Icons.storefront_rounded, color: Colors.white),
               label: Text(
@@ -171,6 +187,7 @@ class _DriverHomeBody extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (_) => PostToMarketSheet(
+        role: UserRole.driver,
         onSubmit: ({
           required List<WasteType> wasteTypes,
           required String pickupAddress,

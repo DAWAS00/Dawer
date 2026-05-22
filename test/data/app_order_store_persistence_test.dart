@@ -20,7 +20,7 @@ void main() {
     // Allow ctor fire-and-forget writes to drain.
     await Future<void>.delayed(const Duration(milliseconds: 10));
 
-    expect(sut.driverFeed.isNotEmpty || sut.companyIncoming.isNotEmpty, isTrue);
+    expect(sut.driverFeedFor().isNotEmpty || sut.companyIncoming.isNotEmpty, isTrue);
     expect(store.isFirstLaunch, isFalse);
     expect(store.readOrders().isNotEmpty, isTrue);
   });
