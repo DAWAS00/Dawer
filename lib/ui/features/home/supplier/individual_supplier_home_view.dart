@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../data/models/order.dart';
 import '../../../../data/services/app_order_store.dart';
+import '../../../../backend_integration_locally/local_store.dart';
 import '../../../features/auth/viewmodels/login_viewmodel.dart';
 import 'viewmodels/individual_supplier_viewmodel.dart';
 import 'tabs/individual_supplier_home_tab.dart';
@@ -136,6 +137,7 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
       builder: (_) => PostToMarketSheet(
         role: UserRole.supplier,
         supplierType: SupplierType.individual,
+        localStore: context.read<LocalStore>(),
         onSubmit: ({
           required List<WasteType> wasteTypes,
           required String pickupAddress,

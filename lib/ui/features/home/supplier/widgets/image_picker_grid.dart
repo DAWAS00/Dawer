@@ -10,6 +10,9 @@ class ImagePickerGrid extends StatelessWidget {
   final ValueChanged<String> onAdd;
   final ValueChanged<int> onRemove;
   final int maxImages;
+  final int crossAxisCount;
+  final double? tileHeight;
+  final ValueChanged<String>? onAnalyze;
 
   const ImagePickerGrid({
     super.key,
@@ -17,6 +20,9 @@ class ImagePickerGrid extends StatelessWidget {
     required this.onAdd,
     required this.onRemove,
     this.maxImages = 5,
+    this.crossAxisCount = 3,
+    this.tileHeight,
+    this.onAnalyze,
   });
 
   Future<void> _pickImage(BuildContext context) async {
@@ -103,11 +109,12 @@ class ImagePickerGrid extends StatelessWidget {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        childAspectRatio: 1,
+        mainAxisExtent: tileHeight,
+        childAspectRatio: tileHeight == null ? 1 : (MediaQuery.of(context).size.width / crossAxisCount) / tileHeight!,
       ),
       itemCount: itemCount,
       itemBuilder: (context, index) {
@@ -117,6 +124,7 @@ class ImagePickerGrid extends StatelessWidget {
         return _ImageTile(
           path: imagePaths[index],
           onRemove: () => onRemove(index),
+          onAnalyze: onAnalyze,
         );
       },
     );
@@ -165,7 +173,13 @@ class _AddTile extends StatelessWidget {
 class _ImageTile extends StatelessWidget {
   final String path;
   final VoidCallback onRemove;
-  const _ImageTile({required this.path, required this.onRemove});
+  final ValueChanged<String>? onAnalyze;
+
+  const _ImageTile({
+    required this.path,
+    required this.onRemove,
+    this.onAnalyze,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -202,6 +216,29 @@ class _ImageTile extends StatelessWidget {
             ),
           ),
         ),
+        if (onAnalyze != null)
+          Positioned(
+            bottom: 4,
+            right: 4,
+            child: GestureDetector(
+              onTap: () => onAnalyze!(path),
+              child: Container(
+                width: 26,
+                height: 26,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF06402B),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 14),
+              ),
+            ),
+          ),
       ],
     );
   }

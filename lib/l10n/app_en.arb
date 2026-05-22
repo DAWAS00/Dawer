@@ -587,6 +587,10 @@
   "newOrderDeliveryFeeLabel": "Delivery Fee",
   "newOrderDeliveryFeeSubtitle": "Calculated automatically by distance and size",
   "newOrderSubmitButton": "Submit Request",
+  "chatTitle": "Chat",
+  "chatDevBanner": "Dev Mode: Messages are local only",
+  "chatEmpty": "No messages yet",
+  "chatInputHint": "Type a message...",
 
   "openInGoogleMaps": "Open in Google Maps",
   "mapsNotInstalledTitle": "Google Maps not installed",

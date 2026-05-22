@@ -31,4 +31,10 @@ class LocationService {
 
     return null;
   }
+
+  Future<String?> reverseGeocode(double lat, double lng) async {
+    // In a real app, use the 'geocoding' package or a Web API.
+    // For now, return a placeholder or coordinates as string.
+    return 'عمّان، الأردن ($lat, $lng)';
+  }
 }

@@ -1013,7 +1013,7 @@ abstract class AppLocalizations {
   /// No description provided for @withdrawListingConfirm.
   ///
   /// In ar, this message translates to:
-  /// **'هل تريد سحب هذا الإعلان من السوق؟'**
+  /// **'هل يريد سحب هذا الإعلان من السوق؟'**
   String get withdrawListingConfirm;
 
   /// No description provided for @yesWithdraw.
@@ -2803,6 +2803,30 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إرسال الطلب'**
   String get newOrderSubmitButton;
+
+  /// No description provided for @chatTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحادثة'**
+  String get chatTitle;
+
+  /// No description provided for @chatDevBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنبيه: وضع التطوير — الرسائل محلية حالياً'**
+  String get chatDevBanner;
+
+  /// No description provided for @chatEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد رسائل بعد'**
+  String get chatEmpty;
+
+  /// No description provided for @chatInputHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب رسالة...'**
+  String get chatInputHint;
 
   /// No description provided for @openInGoogleMaps.
   ///

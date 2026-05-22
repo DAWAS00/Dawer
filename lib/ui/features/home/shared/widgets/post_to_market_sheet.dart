@@ -10,11 +10,17 @@ import '../../../../common/map/location_picker_screen.dart';
 import '../../supplier/widgets/image_picker_grid.dart';
 import '../../../../../data/services/market_ai_service.dart';
 import '../../../../../data/services/location_service.dart';
+import '../../../../../backend_integration_locally/local_store.dart';
 import '../controllers/post_market_controller.dart';
+
+part 'post_to_market_sheet/ai_logic.dart';
+part 'post_to_market_sheet/draft_logic.dart';
+part 'post_to_market_sheet/location_logic.dart';
 
 class PostToMarketSheet extends StatefulWidget {
   final UserRole role;
   final SupplierType? supplierType;
+  final LocalStore localStore;
   final void Function({
     required List<WasteType> wasteTypes,
     required String pickupAddress,
@@ -31,6 +37,7 @@ class PostToMarketSheet extends StatefulWidget {
     super.key,
     required this.role,
     this.supplierType,
+    required this.localStore,
     required this.onSubmit,
   });
 
@@ -48,6 +55,9 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
   final List<String> _images = [];
   double? _pickedLat;
   double? _pickedLng;
+  String? _pickedAddress;
+  bool _isDirty = false;
+  double? _aiPriceHint;
 
   // ── AI controller ──────────────────────────────────────────────────────────
   late final PostMarketController _ai;
@@ -90,6 +100,10 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
 
   void _onAiStateChanged() => setState(() {});
 
+  void _updateState(VoidCallback fn) {
+    if (mounted) setState(fn);
+  }
+
   // ── Location ───────────────────────────────────────────────────────────────
 
   Future<void> _initLocation() async {
@@ -130,6 +144,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
   }
 
   String get _locationLabel {
+    if (_pickedAddress != null) return _pickedAddress!;
     if (_pickedLat != null && _pickedLng != null) {
       return 'خط العرض: ${_pickedLat!.toStringAsFixed(4)} | خط الطول: ${_pickedLng!.toStringAsFixed(4)}';
     }
@@ -461,6 +476,7 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
             setState(() => _images.removeAt(index));
             if (_images.isEmpty) _ai.clearAnalysis();
           },
+          onAnalyze: _runAiAnalysis,
         ),
       ],
     );

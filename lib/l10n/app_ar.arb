@@ -175,7 +175,7 @@
   "driverCollectionCommitments": "التزامات التجميع",
 
   "withdrawListing": "سحب الإعلان",
-  "withdrawListingConfirm": "هل تريد سحب هذا الإعلان من السوق؟",
+  "withdrawListingConfirm": "هل يريد سحب هذا الإعلان من السوق؟",
   "yesWithdraw": "نعم، سحب",
 
   "profilePersonalAndVehicle": "المعلومات الشخصية والمركبة",
@@ -587,6 +587,10 @@
   "newOrderDeliveryFeeLabel": "رسوم التوصيل",
   "newOrderDeliveryFeeSubtitle": "تُحسب تلقائياً حسب المسافة والحجم",
   "newOrderSubmitButton": "إرسال الطلب",
+  "chatTitle": "المحادثة",
+  "chatDevBanner": "تنبيه: وضع التطوير — الرسائل محلية حالياً",
+  "chatEmpty": "لا توجد رسائل بعد",
+  "chatInputHint": "اكتب رسالة...",
 
   "openInGoogleMaps": "فتح في خرائط جوجل",
   "mapsNotInstalledTitle": "خرائط جوجل غير مثبتة",

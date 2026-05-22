@@ -1439,6 +1439,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newOrderSubmitButton => 'Submit Request';
 
   @override
+  String get chatTitle => 'Chat';
+
+  @override
+  String get chatDevBanner => 'Dev Mode: Messages are local only';
+
+  @override
+  String get chatEmpty => 'No messages yet';
+
+  @override
+  String get chatInputHint => 'Type a message...';
+
+  @override
   String get openInGoogleMaps => 'Open in Google Maps';
 
   @override

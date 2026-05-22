@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../data/models/order.dart';
 import '../../../../data/services/app_order_store.dart';
-import '../../../../ui/features/auth/viewmodels/login_viewmodel.dart';
+import '../../../../backend_integration_locally/local_store.dart';
+import '../../../features/auth/viewmodels/login_viewmodel.dart';
+
 import 'viewmodels/supplier_home_viewmodel.dart';
 import 'tabs/supplier_home_tab.dart';
 import 'tabs/supplier_orders_tab.dart';
@@ -138,6 +140,7 @@ class _SupplierHomeBody extends StatelessWidget {
       builder: (_) => PostToMarketSheet(
         role: UserRole.supplier,
         supplierType: supplierType,
+        localStore: context.read<LocalStore>(),
         onSubmit: ({
           required List<WasteType> wasteTypes,
           required String pickupAddress,

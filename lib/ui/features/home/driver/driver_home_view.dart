@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../data/models/order.dart';
 import '../../../../../data/services/app_order_store.dart';
+import '../../../../../backend_integration_locally/local_store.dart';
 import 'viewmodels/driver_home_viewmodel.dart';
 import 'tabs/driver_home_tab.dart';
 import 'tabs/driver_orders_tab.dart';
@@ -188,6 +189,7 @@ class _DriverHomeBody extends StatelessWidget {
       ),
       builder: (_) => PostToMarketSheet(
         role: UserRole.driver,
+        localStore: context.read<LocalStore>(),
         onSubmit: ({
           required List<WasteType> wasteTypes,
           required String pickupAddress,

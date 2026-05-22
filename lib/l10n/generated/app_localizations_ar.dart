@@ -475,7 +475,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get withdrawListing => 'سحب الإعلان';
 
   @override
-  String get withdrawListingConfirm => 'هل تريد سحب هذا الإعلان من السوق؟';
+  String get withdrawListingConfirm => 'هل يريد سحب هذا الإعلان من السوق؟';
 
   @override
   String get yesWithdraw => 'نعم، سحب';
@@ -1419,6 +1419,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get newOrderSubmitButton => 'إرسال الطلب';
+
+  @override
+  String get chatTitle => 'المحادثة';
+
+  @override
+  String get chatDevBanner => 'تنبيه: وضع التطوير — الرسائل محلية حالياً';
+
+  @override
+  String get chatEmpty => 'لا توجد رسائل بعد';
+
+  @override
+  String get chatInputHint => 'اكتب رسالة...';
 
   @override
   String get openInGoogleMaps => 'فتح في خرائط جوجل';

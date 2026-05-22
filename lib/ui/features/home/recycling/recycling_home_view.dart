@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../data/models/order.dart';
 import '../../../../data/services/app_order_store.dart';
+import '../../../../backend_integration_locally/local_store.dart';
 import '../../auth/viewmodels/login_viewmodel.dart';
 import '../../../common/app_nav_item.dart';
 import '../shared/tabs/marketplace_tab.dart';
@@ -118,6 +119,7 @@ class _RecyclingHomeBody extends StatelessWidget {
       ),
       builder: (_) => PostToMarketSheet(
         role: UserRole.recyclingCo,
+        localStore: context.read<LocalStore>(),
         onSubmit: ({
           required List<WasteType> wasteTypes,
           required String pickupAddress,
