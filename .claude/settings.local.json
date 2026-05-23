@@ -40,7 +40,13 @@
       "Bash(cat C:\\\\\\\\Users\\\\\\\\laith\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\C--Users-laith-CascadeProjects-Dawer\\\\\\\\a13052d2-46df-403d-99c9-aee3cd846699\\\\\\\\tasks\\\\\\\\b42v1ntir.output)",
       "Bash(find *)",
       "mcp__claude_ai_Supabase__list_projects",
-      "mcp__claude_ai_Supabase__list_migrations"
+      "mcp__claude_ai_Supabase__list_migrations",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\dawas\\\\dwaar\\\\lib\\\\ui\\\\features\\\\home\" -Recurse -Directory)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\dawas\\\\dwaar\\\\lib\\\\ui\\\\features\\\\home\\\\supplier\\\\tabs\" -File)",
+      "Bash(python3 \"C:\\\\Users\\\\dawas\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"recycling logistics sustainability mobile app arabic rtl\" --design-system -p \"Dwaar\")",
+      "Bash(python \"C:\\\\Users\\\\dawas\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"recycling logistics sustainability mobile app arabic rtl\" --design-system -p \"Dwaar\")",
+      "Bash(py *)",
+      "PowerShell(python \"C:\\\\Users\\\\dawas\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"recycling logistics sustainability mobile app\" --design-system -p \"Dwaar\")"
     ]
   }
 }

@@ -5,10 +5,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../common/green_button.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../viewmodels/login_viewmodel.dart';
-import '../signup_view.dart';
-import '../individual_supplier_onboarding_view.dart';
-import '../recycling_co_onboarding_view.dart';
-import '../store_onboarding_view.dart';
+import '../signup_wizard_view.dart';
 import 'supplier_portal_selector.dart';
 
 class LoginForm extends StatelessWidget {
@@ -138,22 +135,14 @@ class LoginForm extends StatelessWidget {
 
   void _navigateToSignUp(BuildContext context) {
     final vm = context.read<LoginViewModel>();
-    Widget destination;
-    if (vm.selectedRole == UserRole.recyclingCo) {
-      destination = const RecyclingCoOnboardingView();
-    } else if (vm.selectedRole == UserRole.supplier &&
-        vm.supplierType == SupplierType.individual) {
-      destination = const IndividualSupplierOnboardingView();
-    } else if (vm.selectedRole == UserRole.supplier &&
-        vm.supplierType == SupplierType.storeBusiness) {
-      destination = const StoreOnboardingView();
-    } else {
-      destination = SignUpView(
-        role: vm.selectedRole,
-        supplierType: vm.supplierType ?? SupplierType.individual,
-      );
-    }
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => destination));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => SignUpWizardView(
+          initialRole: vm.selectedRole,
+          initialSupplierType: vm.supplierType ?? SupplierType.individual,
+        ),
+      ),
+    );
   }
 }
 

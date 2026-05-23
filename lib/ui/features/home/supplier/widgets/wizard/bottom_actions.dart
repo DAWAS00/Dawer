@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../controllers/publish_form_controller.dart';
+import 'package:dwaar/ui/features/home/supplier/controllers/publish_form_controller.dart';
 
 class WizardBottomActions extends StatelessWidget {
   final PublishFormController controller;
@@ -108,7 +108,7 @@ class _PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final enabled = onTap != null;
     return GestureDetector(
-      onTap: onTap,
+      onTap: enabled ? onTap : null,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         height: 52,

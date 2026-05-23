@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../../../data/models/order.dart';
-import '../../../../../../core/constants/waste_type_icons.dart';
-import '../../controllers/publish_form_controller.dart';
-import '../image_picker_grid.dart';
+import 'package:dwaar/data/models/order.dart';
+import 'package:dwaar/core/constants/waste_type_icons.dart';
+import 'package:dwaar/ui/features/home/supplier/controllers/publish_form_controller.dart';
+import 'package:dwaar/ui/features/home/supplier/widgets/image_picker_grid.dart';
 
 class Step1MaterialAndPhoto extends StatelessWidget {
   final PublishFormController controller;
@@ -63,6 +63,7 @@ class Step1MaterialAndPhoto extends StatelessWidget {
       ),
     );
   }
+
   Widget _aiAnalyzingBanner() => Container(
     margin: const EdgeInsets.only(bottom: 12),
     padding: const EdgeInsets.all(16),

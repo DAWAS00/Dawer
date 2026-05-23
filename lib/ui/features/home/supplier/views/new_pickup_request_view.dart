@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../../../../data/models/order.dart';
-import '../../../../../data/models/user_role.dart';
-import '../../../../../data/services/location_service.dart';
-import '../../shared/controllers/post_market_controller.dart';
-import '../controllers/publish_form_controller.dart';
-import '../../../../../core/utils/haptic_util.dart';
+import 'package:dwaar/data/models/order.dart';
+import 'package:dwaar/data/models/user_role.dart';
+import 'package:dwaar/data/services/location_service.dart';
+import 'package:dwaar/ui/features/home/shared/controllers/post_market_controller.dart';
+import 'package:dwaar/ui/features/home/supplier/controllers/publish_form_controller.dart';
+import 'package:dwaar/ui/features/home/supplier/viewmodels/supplier_home_viewmodel.dart';
+import 'package:dwaar/core/utils/haptic_util.dart';
 
-import '../widgets/wizard/top_bar.dart';
-import '../widgets/wizard/progress_bar.dart';
-import '../widgets/wizard/step_1_material_photo.dart';
-import '../widgets/wizard/step_2_quantity_price.dart';
-import '../widgets/wizard/step_3_location_review.dart';
-import '../widgets/wizard/bottom_actions.dart';
+import 'package:dwaar/ui/common/wizard/common_wizard_top_bar.dart';
+import 'package:dwaar/ui/common/wizard/common_wizard_progress_bar.dart';
+import 'package:dwaar/ui/features/home/supplier/widgets/wizard/step_1_material_photo.dart';
+import 'package:dwaar/ui/features/home/supplier/widgets/wizard/step_2_quantity_price.dart';
+import 'package:dwaar/ui/features/home/supplier/widgets/wizard/step_3_location_review.dart';
+import 'package:dwaar/ui/features/home/supplier/widgets/wizard/bottom_actions.dart';
 
 // ─── Main screen ───────────────────────────────────────────────────────────
 
@@ -97,14 +99,53 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
   }
 
   Future<void> _handleDefaultSubmit() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تم إرسال الطلب بنجاح! ✓'),
-        backgroundColor: Color(0xFF2E7D32),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-    Navigator.pop(context);
+    final vm = context.read<SupplierHomeViewModel>();
+    final wasteTypes = _controller.selectedTypes.toList();
+    final pickupAddress = _controller.pickedAddress ?? 'موقع محدد';
+    final notes = _controller.notesCtrl.text.trim().isNotEmpty 
+        ? _controller.notesCtrl.text.trim() 
+        : null;
+    final itemPrice = double.tryParse(_controller.priceCtrl.text.trim());
+
+    Order order;
+    if (_controller.mode == OrderMode.marketplace) {
+      order = vm.createListing(
+        wasteTypes: wasteTypes,
+        pickupAddress: pickupAddress,
+        images: List.from(_controller.images),
+        notes: notes,
+        wasteForm: _controller.wasteForm,
+        weightCategory: _controller.weightCategory,
+        itemPrice: itemPrice,
+        pickupLat: _controller.pickedLat,
+        pickupLng: _controller.pickedLng,
+      );
+    } else {
+      order = vm.createOrder(
+        wasteTypes: wasteTypes,
+        pickupAddress: pickupAddress,
+        images: List.from(_controller.images),
+        notes: notes,
+        wasteForm: _controller.wasteForm,
+        weightCategory: _controller.weightCategory,
+        itemPrice: itemPrice,
+      );
+    }
+
+    vm.addOrder(order);
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_controller.mode == OrderMode.marketplace 
+              ? 'تم النشر في السوق بنجاح! ✓' 
+              : 'تم إرسال طلب الاستلام بنجاح! ✓'),
+          backgroundColor: const Color(0xFF2E7D32),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -114,7 +155,7 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
       body: SafeArea(
         child: Column(
           children: [
-            WizardTopBar(
+            CommonWizardTopBar(
               currentStep: _controller.currentStep,
               totalSteps: 3,
               title: _controller.mode == OrderMode.marketplace ? 'نشر في السوق' : 'طلب استلام جديد',
@@ -126,8 +167,13 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
                   Navigator.pop(context);
                 }
               },
+              stepTitles: const [
+                'نوع المواد والصور',
+                'الكمية والسعر',
+                'الموقع والنشر',
+              ],
             ),
-            WizardProgressBar(
+            CommonWizardProgressBar(
               currentStep: _controller.currentStep,
               totalSteps: 3,
             ),

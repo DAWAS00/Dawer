@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../../../data/models/order.dart';
-import '../../controllers/publish_form_controller.dart';
+import 'package:dwaar/data/models/order.dart';
+import 'package:dwaar/ui/features/home/supplier/controllers/publish_form_controller.dart';
 
 class Step2QuantityAndPrice extends StatelessWidget {
   final PublishFormController controller;

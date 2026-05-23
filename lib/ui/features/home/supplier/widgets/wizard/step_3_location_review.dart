@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../../../data/models/order.dart';
-import '../../../../../../data/utils/eco_impact_calculator.dart';
-import '../../../../../common/map/location_picker_screen.dart';
-import '../../controllers/publish_form_controller.dart';
+import 'package:dwaar/data/models/order.dart';
+import 'package:dwaar/data/utils/eco_impact_calculator.dart';
+import 'package:dwaar/ui/common/map/location_picker_screen.dart';
+import 'package:dwaar/ui/features/home/supplier/controllers/publish_form_controller.dart';
 
 class Step3LocationAndReview extends StatelessWidget {
   final PublishFormController controller;
@@ -125,7 +125,7 @@ class _LocationCard extends StatelessWidget {
                     decoration: const BoxDecoration(
                       color: Color(0xFFDCEDDC),
                       image: DecorationImage(
-                        image: AssetImage('assets/images/sample_wood.jpg'), // Placeholder for map look
+                        image: AssetImage('assets/images/sample_wood.jpg'),
                         fit: BoxFit.cover,
                         opacity: 0.1,
                       ),
@@ -133,22 +133,6 @@ class _LocationCard extends StatelessWidget {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        // Map grid simulation
-                        for (var i = 0; i < 6; i++)
-                          Positioned(
-                            left: i * 70.0,
-                            top: 0,
-                            bottom: 0,
-                            child: Container(width: 0.5, color: const Color(0xFFA5C8A5)),
-                          ),
-                        for (var i = 0; i < 4; i++)
-                          Positioned(
-                            top: i * 40.0,
-                            left: 0,
-                            right: 0,
-                            child: Container(height: 0.5, color: const Color(0xFFA5C8A5)),
-                          ),
-                        
                         Icon(
                           Icons.location_pin,
                           size: 48,

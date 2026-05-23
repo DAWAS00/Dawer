@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class WizardTopBar extends StatelessWidget {
+class CommonWizardTopBar extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
   final VoidCallback onBack;
   final String title;
+  final List<String> stepTitles;
 
-  const WizardTopBar({
+  const CommonWizardTopBar({
     super.key,
     required this.currentStep,
     required this.totalSteps,
     required this.onBack,
     required this.title,
+    required this.stepTitles,
   });
-
-  static const List<String> _stepTitles = [
-    'نوع المواد والصور',
-    'الكمية والسعر',
-    'الموقع والنشر',
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -43,13 +39,14 @@ class WizardTopBar extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  _stepTitles[currentStep],
-                  style: GoogleFonts.cairo(
-                    fontSize: 12,
-                    color: const Color(0xFF6B6B6B),
+                if (currentStep < stepTitles.length)
+                  Text(
+                    stepTitles[currentStep],
+                    style: GoogleFonts.cairo(
+                      fontSize: 12,
+                      color: const Color(0xFF6B6B6B),
+                    ),
                   ),
-                ),
               ],
             ),
           ),
