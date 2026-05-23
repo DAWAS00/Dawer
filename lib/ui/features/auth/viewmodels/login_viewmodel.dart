@@ -5,6 +5,7 @@ export '../../../../data/models/user_role.dart' show UserRole, SupplierType;
 
 import '../../../../data/models/user_role.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
+import '../../../../data/repositories/mock_auth_repository.dart';
 
 class LoginViewModel extends ChangeNotifier {
   LoginViewModel({required IAuthRepository authRepository})
@@ -144,6 +145,14 @@ class LoginViewModel extends ChangeNotifier {
     _isLoading = true;
     _error = null;
     notifyListeners();
+
+    // If using mock repo, sync the UI selection so it knows what to generate
+    if (_authRepository is MockAuthRepository) {
+      _authRepository.updateTargetRole(
+        _selectedRole,
+        _supplierType,
+      );
+    }
 
     final result = await _authRepository.signInWithEmail(
       _email.trim(),

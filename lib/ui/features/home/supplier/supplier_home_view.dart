@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../data/models/order.dart';
 import '../../../../data/services/app_order_store.dart';
-import '../../../../backend_integration_locally/local_store.dart';
 import '../../../features/auth/viewmodels/login_viewmodel.dart';
 
 import 'viewmodels/supplier_home_viewmodel.dart';
@@ -14,7 +12,7 @@ import '../shared/tabs/marketplace_tab.dart';
 import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../shared/views/collection_sale_detail_view.dart';
 import '../shared/widgets/pickup_fab.dart';
-import '../shared/widgets/post_to_market_sheet.dart';
+import 'views/new_pickup_request_view.dart';
 
 class SupplierHomeView extends StatelessWidget {
   final String userName;
@@ -94,8 +92,6 @@ class _SupplierHomeBody extends StatelessWidget {
       ),
     ];
 
-    final marketVm = context.watch<MarketplaceViewModel>();
-
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: IndexedStack(
@@ -104,17 +100,12 @@ class _SupplierHomeBody extends StatelessWidget {
       ),
       floatingActionButton: vm.currentTab == 0
           ? PickupFab(onPressed: () {
-              if (!marketVm.canAddListing(vm.user.name)) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                    'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
-                  ),
-                  backgroundColor: const Color(0xFFB91C1C),
-                  behavior: SnackBarBehavior.floating,
-                ));
-                return;
-              }
-              _showPostToMarketSheet(context, vm, marketVm);
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => ChangeNotifierProvider.value(
+                  value: vm,
+                  child: const NewPickupRequestView(),
+                ),
+              ));
             })
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
@@ -124,49 +115,4 @@ class _SupplierHomeBody extends StatelessWidget {
       ),
     );
   }
-
-  void _showPostToMarketSheet(
-    BuildContext context,
-    SupplierHomeViewModel vm,
-    MarketplaceViewModel marketVm,
-  ) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) => PostToMarketSheet(
-        role: UserRole.supplier,
-        supplierType: supplierType,
-        localStore: context.read<LocalStore>(),
-        onSubmit: ({
-          required List<WasteType> wasteTypes,
-          required String pickupAddress,
-          List<String> images = const [],
-          String? notes,
-          WasteForm? wasteForm,
-          WeightCategory? weightCategory,
-          double? itemPrice,
-          double? pickupLat,
-          double? pickupLng,
-        }) {
-          final order = vm.createListing(
-            wasteTypes: wasteTypes,
-            pickupAddress: pickupAddress,
-            images: images,
-            notes: notes,
-            wasteForm: wasteForm,
-            weightCategory: weightCategory,
-            itemPrice: itemPrice,
-            pickupLat: pickupLat,
-            pickupLng: pickupLng,
-          );
-          marketVm.addListing(order);
-        },
-      ),
-    );
-  }
-
 }

@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../data/models/order.dart';
 import '../../../../../data/services/app_order_store.dart';
-import '../../../../../backend_integration_locally/local_store.dart';
 import 'viewmodels/driver_home_viewmodel.dart';
 import 'tabs/driver_home_tab.dart';
 import 'tabs/driver_orders_tab.dart';
@@ -13,7 +12,7 @@ import 'widgets/driver_nav_item.dart';
 import '../shared/tabs/marketplace_tab.dart';
 import '../shared/views/collection_sale_detail_view.dart';
 import '../shared/viewmodels/marketplace_viewmodel.dart';
-import '../shared/widgets/post_to_market_sheet.dart';
+import '../supplier/views/new_pickup_request_view.dart';
 import '../../auth/viewmodels/login_viewmodel.dart';
 import '../../../../../l10n/l10n.dart';
 
@@ -180,40 +179,37 @@ class _DriverHomeBody extends StatelessWidget {
     DriverHomeViewModel vm,
     MarketplaceViewModel marketVm,
   ) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) => PostToMarketSheet(
-        role: UserRole.driver,
-        localStore: context.read<LocalStore>(),
-        onSubmit: ({
-          required List<WasteType> wasteTypes,
-          required String pickupAddress,
-          List<String> images = const [],
-          String? notes,
-          WasteForm? wasteForm,
-          WeightCategory? weightCategory,
-          double? itemPrice,
-          double? pickupLat,
-          double? pickupLng,
-        }) {
-          final order = vm.createListing(
-            wasteTypes: wasteTypes,
-            pickupAddress: pickupAddress,
-            images: images,
-            notes: notes,
-            wasteForm: wasteForm,
-            weightCategory: weightCategory,
-            itemPrice: itemPrice,
-            pickupLat: pickupLat,
-            pickupLng: pickupLng,
-          );
-          marketVm.addListing(order);
-        },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => NewPickupRequestView(
+          role: UserRole.driver,
+          initialMode: OrderMode.marketplace,
+          onSubmit: ({
+            required List<WasteType> wasteTypes,
+            required String pickupAddress,
+            List<String> images = const [],
+            String? notes,
+            WasteForm? wasteForm,
+            WeightCategory? weightCategory,
+            double? itemPrice,
+            double? pickupLat,
+            double? pickupLng,
+          }) {
+            final order = vm.createListing(
+              wasteTypes: wasteTypes,
+              pickupAddress: pickupAddress,
+              images: images,
+              notes: notes,
+              wasteForm: wasteForm,
+              weightCategory: weightCategory,
+              itemPrice: itemPrice,
+              pickupLat: pickupLat,
+              pickupLng: pickupLng,
+            );
+            marketVm.addListing(order);
+          },
+        ),
       ),
     );
   }

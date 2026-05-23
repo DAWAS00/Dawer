@@ -57,7 +57,6 @@ class _PostToMarketSheetState extends State<PostToMarketSheet> {
   double? _pickedLng;
   String? _pickedAddress;
   bool _isDirty = false;
-  double? _aiPriceHint;
 
   // ── AI controller ──────────────────────────────────────────────────────────
   late final PostMarketController _ai;

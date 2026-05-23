@@ -2,17 +2,26 @@ import '../../core/result/result.dart';
 import '../../domain/repositories/i_auth_repository.dart';
 import '../models/user_role.dart';
 import '../services/user_signup_service.dart' show SignUpRequest;
+import 'package:faker/faker.dart';
 
 /// A fake auth implementation that allows bypassing real Supabase auth
 /// for development and UI testing.
+/// 
+/// Magic Emails:
+/// - driver@dawar.com -> Driver
+/// - supplier@dawar.com -> Individual Supplier
+/// - store@dawar.com -> Store Business Supplier
+/// - recycling@dawar.com -> Recycling Company
 final class MockAuthRepository implements IAuthRepository {
-  final UserRole initialRole;
-  final SupplierType? initialSupplierType;
+  UserRole _currentRole;
+  SupplierType? _currentSupplierType;
+  AuthSession? _activeSession;
 
   MockAuthRepository({
-    this.initialRole = UserRole.driver,
-    this.initialSupplierType,
-  });
+    UserRole initialRole = UserRole.driver,
+    SupplierType? initialSupplierType,
+  }) : _currentRole = initialRole,
+       _currentSupplierType = initialSupplierType;
 
   @override
   Future<AppResult<AuthSession>> signInWithEmail(
@@ -20,26 +29,69 @@ final class MockAuthRepository implements IAuthRepository {
     String password,
   ) async {
     // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 800));
     
-    // In mock mode, any non-empty credentials succeed
-    return Success(AuthSession(
-      userId: 'mock-uuid-1234',
-      userName: 'Mock User',
-      role: initialRole,
-      supplierType: initialSupplierType,
-    ));
+    final emailLower = email.toLowerCase().trim();
+    
+    // Magic email mapping
+    AuthSession session;
+    if (emailLower == 'driver@dawar.com') {
+      session = const AuthSession(
+        userId: 'm-driver-123',
+        userName: 'أحمد السائق (تجريبي)',
+        role: UserRole.driver,
+      );
+    } else if (emailLower == 'supplier@dawar.com') {
+      session = const AuthSession(
+        userId: 'm-supp-456',
+        userName: 'خالد المورد (فردي)',
+        role: UserRole.supplier,
+        supplierType: SupplierType.individual,
+      );
+    } else if (emailLower == 'store@dawar.com') {
+      session = const AuthSession(
+        userId: 'm-store-789',
+        userName: 'مطعم أبو علي (تجاري)',
+        role: UserRole.supplier,
+        supplierType: SupplierType.storeBusiness,
+      );
+    } else if (emailLower == 'recycling@dawar.com') {
+      session = const AuthSession(
+        userId: 'm-recy-000',
+        userName: 'شركة تدويركم (تجريبي)',
+        role: UserRole.recyclingCo,
+      );
+    } else {
+      // Fallback: Use selected role from UI (if any) or default
+      session = AuthSession(
+        userId: 'm-user-${DateTime.now().millisecondsSinceEpoch}',
+        userName: '${faker.person.firstName()} (تجريبي)',
+        role: _currentRole,
+        supplierType: _currentSupplierType,
+      );
+    }
+
+    _activeSession = session;
+    return Success(session);
+  }
+
+  /// Called by ViewModel to sync the UI selection before login
+  void updateTargetRole(UserRole role, [SupplierType? type]) {
+    _currentRole = role;
+    _currentSupplierType = type;
   }
 
   @override
   Future<AppResult<AuthSession>> signUp(SignUpRequest request) async {
     await Future.delayed(const Duration(seconds: 1));
-    return Success(AuthSession(
-      userId: 'mock-uuid-5678',
-      userName: 'Mock User',
+    final session = AuthSession(
+      userId: 'm-new-${DateTime.now().millisecondsSinceEpoch}',
+      userName: request.name,
       role: request.role,
       supplierType: request.supplierType,
-    ));
+    );
+    _activeSession = session;
+    return Success(session);
   }
 
   @override
@@ -51,27 +103,28 @@ final class MockAuthRepository implements IAuthRepository {
   @override
   Future<AppResult<AuthSession>> verifyOtp(String phone, String otp) async {
     await Future.delayed(const Duration(seconds: 1));
-    return Success(AuthSession(
-      userId: 'mock-uuid-otp',
-      userName: 'Mock User',
-      role: initialRole,
-      supplierType: initialSupplierType,
-    ));
+    final session = AuthSession(
+      userId: 'm-otp-user',
+      userName: 'مستخدم OTP',
+      role: _currentRole,
+      supplierType: _currentSupplierType,
+    );
+    _activeSession = session;
+    return Success(session);
   }
 
   @override
   Future<void> signOut() async {
-    // No-op
+    _activeSession = null;
   }
 
   @override
   Stream<AuthSession?> watchAuthState() {
-    // Never changes in this simple mock
     return const Stream.empty();
   }
 
   @override
-  AuthSession? get currentSession => null;
+  AuthSession? get currentSession => _activeSession;
 
   @override
   Future<AppResult<void>> requestPasswordReset(String email) async {

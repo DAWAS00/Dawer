@@ -12,13 +12,12 @@ class AiConfig {
   static void assertConfigured() {
     if (!hasGeminiKey) {
       debugPrint(
-        '[AiConfig] WARNING: GEMINI_API_KEY is empty. '
-        'AI features (PostToMarket auto-fill) will fail. '
-        'Run with --dart-define=GEMINI_API_KEY=... or use the VSCode '
-        '"Dawer (debug)" launch profile.',
+        '\x1B[33m[AiConfig] WARNING: GEMINI_API_KEY is empty.\n'
+        'AI features will run in MOCK MODE.\n'
+        'To use real AI, add GEMINI_API_KEY to your .env.local file.\x1B[0m',
       );
     } else {
-      debugPrint('[AiConfig] Gemini key loaded (length=${geminiApiKey.length}).');
+      debugPrint('\x1B[32m[AiConfig] Gemini key loaded (length=${geminiApiKey.length}).\x1B[0m');
     }
   }
 }

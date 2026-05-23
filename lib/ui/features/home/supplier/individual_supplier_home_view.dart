@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../data/models/order.dart';
 import '../../../../data/services/app_order_store.dart';
-import '../../../../backend_integration_locally/local_store.dart';
 import '../../../features/auth/viewmodels/login_viewmodel.dart';
 import 'viewmodels/individual_supplier_viewmodel.dart';
 import 'tabs/individual_supplier_home_tab.dart';
@@ -14,7 +13,7 @@ import '../shared/tabs/marketplace_tab.dart';
 import '../shared/views/collection_sale_detail_view.dart';
 import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../shared/widgets/pickup_fab.dart';
-import '../shared/widgets/post_to_market_sheet.dart';
+import 'views/new_pickup_request_view.dart';
 
 class IndividualSupplierHomeView extends StatelessWidget {
   final String userName;
@@ -127,41 +126,37 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
     IndividualSupplierViewModel vm,
     MarketplaceViewModel marketVm,
   ) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) => PostToMarketSheet(
-        role: UserRole.supplier,
-        supplierType: SupplierType.individual,
-        localStore: context.read<LocalStore>(),
-        onSubmit: ({
-          required List<WasteType> wasteTypes,
-          required String pickupAddress,
-          List<String> images = const [],
-          String? notes,
-          WasteForm? wasteForm,
-          WeightCategory? weightCategory,
-          double? itemPrice,
-          double? pickupLat,
-          double? pickupLng,
-        }) {
-          final order = vm.createListing(
-            wasteTypes: wasteTypes,
-            pickupAddress: pickupAddress,
-            images: images,
-            notes: notes,
-            wasteForm: wasteForm,
-            weightCategory: weightCategory,
-            itemPrice: itemPrice,
-            pickupLat: pickupLat,
-            pickupLng: pickupLng,
-          );
-          marketVm.addListing(order);
-        },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => NewPickupRequestView(
+          role: UserRole.supplier,
+          initialMode: OrderMode.marketplace,
+          onSubmit: ({
+            required List<WasteType> wasteTypes,
+            required String pickupAddress,
+            List<String> images = const [],
+            String? notes,
+            WasteForm? wasteForm,
+            WeightCategory? weightCategory,
+            double? itemPrice,
+            double? pickupLat,
+            double? pickupLng,
+          }) {
+            final order = vm.createListing(
+              wasteTypes: wasteTypes,
+              pickupAddress: pickupAddress,
+              images: images,
+              notes: notes,
+              wasteForm: wasteForm,
+              weightCategory: weightCategory,
+              itemPrice: itemPrice,
+              pickupLat: pickupLat,
+              pickupLng: pickupLng,
+            );
+            marketVm.addListing(order);
+          },
+        ),
       ),
     );
   }

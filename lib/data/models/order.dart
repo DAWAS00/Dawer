@@ -1,7 +1,10 @@
 import 'reward_breakdown.dart';
 
 enum OrderType { pickup, collection, collectionSale }
-enum OrderStatus { pending, accepted, arrivedAtPickup, inTransit, arrivedAtDropoff, completed, cancelled }
+enum OrderMode { pickup, marketplace }
+
+enum OrderStatus {
+ pending, accepted, arrivedAtPickup, inTransit, arrivedAtDropoff, completed, cancelled }
 
 enum ArrivalConfirmationStatus { awaiting, confirmed, unavailable, timedOut }
 
@@ -138,13 +141,13 @@ extension WasteFormLabel on WasteForm {
 
 extension PickupTargetLabel on PickupTarget {
   String get label => switch (this) {
-    PickupTarget.company => 'Make Pickup Order',
-    PickupTarget.riderBuy => 'Put it in the restaurant and the market',
+    PickupTarget.company => 'إرسال لشركة التدوير',
+    PickupTarget.riderBuy => 'بيع للسائق في السوق',
   };
 
   String get shortLabel => switch (this) {
-    PickupTarget.company => 'Make Pickup Order',
-    PickupTarget.riderBuy => 'Put it in the restaurant and the market',
+    PickupTarget.company => 'شركة التدوير',
+    PickupTarget.riderBuy => 'بيع للسائق',
   };
 }
 

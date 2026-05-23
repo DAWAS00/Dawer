@@ -39,8 +39,7 @@ extension AiLogicExt on _PostToMarketSheetState {
         filled.add(context.l10n.newOrderWeightCategoryLabel);
       }
       if (result.approxPriceJd != null) {
-        // Show as a hint chip rather than auto-filling so user sees their own estimate
-        _aiPriceHint = result.approxPriceJd;
+        _priceCtrl.text = result.approxPriceJd!.toStringAsFixed(2);
         filled.add(context.l10n.postMarketPriceLabel);
       }
       if (result.note != null && result.note!.isNotEmpty) {

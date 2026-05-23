@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order.dart';
-import '../../../../../data/models/order_labels.dart';
 import '../viewmodels/driver_earnings_viewmodel.dart';
 
 class DriverEarningsBreakdownChart extends StatelessWidget {
