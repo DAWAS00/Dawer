@@ -324,6 +324,7 @@ class DriverHomeViewModel extends ChangeNotifier {
     double? pickupLng,
   }) {
     final orderId = 'DRV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final hasChemicals = wasteTypes.contains(WasteType.chemicals);
     final order = Order(
       id: orderId,
       type: OrderType.pickup,
@@ -344,6 +345,9 @@ class DriverHomeViewModel extends ChangeNotifier {
       pickupLat: pickupLat,
       pickupLng: pickupLng,
       expiresAt: DateTime.now().add(const Duration(days: 14)),
+      adminApprovalStatus: hasChemicals
+          ? AdminApprovalStatus.pendingApproval
+          : AdminApprovalStatus.notRequired,
     );
     notifyListeners();
     return order;

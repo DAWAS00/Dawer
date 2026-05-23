@@ -45,6 +45,8 @@ extension OrderSupabaseExt on Order {
       if (adminApprovalStatus != AdminApprovalStatus.notRequired)
         'admin_approval_status': adminApprovalStatus.name,
       if (expiresAt != null) 'expires_at': expiresAt!.toUtc().toIso8601String(),
+      if (isVatApplicable) 'is_vat_applicable': true,
+      if (vatAmountJd != null) 'vat_amount_jd': vatAmountJd,
       if (proof != null) ...{
         'proof_image_path': proof!.imagePath,
         'proof_captured_at': proof!.capturedAt.toUtc().toIso8601String(),
@@ -119,5 +121,7 @@ Order orderFromSupabaseJson(Map<String, dynamic> json) {
       AdminApprovalStatus.notRequired,
     ),
     expiresAt: parseDt(json['expires_at'] as String?),
+    isVatApplicable: json['is_vat_applicable'] as bool? ?? false,
+    vatAmountJd: (json['vat_amount_jd'] as num?)?.toDouble(),
   );
 }

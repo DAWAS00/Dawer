@@ -289,6 +289,9 @@ class Order {
   final AdminApprovalStatus adminApprovalStatus;
   // ── Marketplace TTL ──────────────────────────────────────────────────────
   final DateTime? expiresAt;
+  // ── VAT ──────────────────────────────────────────────────────────────────
+  final bool isVatApplicable;
+  final double? vatAmountJd;
 
   const Order({
     required this.id,
@@ -356,6 +359,8 @@ class Order {
     this.requiresChemicalPermit = false,
     this.adminApprovalStatus = AdminApprovalStatus.notRequired,
     this.expiresAt,
+    this.isVatApplicable = false,
+    this.vatAmountJd,
   });
 
 
@@ -425,6 +430,8 @@ class Order {
     bool? requiresChemicalPermit,
     AdminApprovalStatus? adminApprovalStatus,
     DateTime? expiresAt,
+    bool? isVatApplicable,
+    double? vatAmountJd,
   }) {
     return Order(
       id: id ?? this.id,
@@ -492,6 +499,8 @@ class Order {
       requiresChemicalPermit: requiresChemicalPermit ?? this.requiresChemicalPermit,
       adminApprovalStatus: adminApprovalStatus ?? this.adminApprovalStatus,
       expiresAt: expiresAt ?? this.expiresAt,
+      isVatApplicable: isVatApplicable ?? this.isVatApplicable,
+      vatAmountJd: vatAmountJd ?? this.vatAmountJd,
     );
   }
 }

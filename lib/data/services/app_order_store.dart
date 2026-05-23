@@ -170,6 +170,10 @@ class AppOrderStore extends ChangeNotifier {
               o.requiresRider &&
               o.driverName == null);
       if (!statusOk || o.id == _activeOrderId) return false;
+      if (o.adminApprovalStatus == AdminApprovalStatus.pendingApproval ||
+          o.adminApprovalStatus == AdminApprovalStatus.rejected) {
+        return false;
+      }
       if (vehicleType == null) return true;
       return vehicleType.canTakeOrder(
         o,
@@ -226,7 +230,9 @@ class AppOrderStore extends ChangeNotifier {
     final now = DateTime.now();
     return List.unmodifiable(_orders.where((o) =>
         o.isMarketplaceShared &&
-        (o.expiresAt == null || o.expiresAt!.isAfter(now))));
+        (o.expiresAt == null || o.expiresAt!.isAfter(now)) &&
+        o.adminApprovalStatus != AdminApprovalStatus.pendingApproval &&
+        o.adminApprovalStatus != AdminApprovalStatus.rejected));
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -474,6 +480,7 @@ class AppOrderStore extends ChangeNotifier {
     final orderId =
         'ORD-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
     final fee = _calculateFee(weightCategory);
+    final hasChemicals = wasteTypes.contains(WasteType.chemicals);
     final order = Order(
       id: orderId,
       type: OrderType.pickup,
@@ -497,6 +504,9 @@ class AppOrderStore extends ChangeNotifier {
       pickupLng: pickupLng,
       dropoffLat: dropoffLat,
       dropoffLng: dropoffLng,
+      adminApprovalStatus: hasChemicals
+          ? AdminApprovalStatus.pendingApproval
+          : AdminApprovalStatus.notRequired,
     );
     _orders.insert(0, order);
     notifyListeners();
