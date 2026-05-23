@@ -28,6 +28,7 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
   User get defaultUser;
   String get listingIdPrefix;
   int get listingTtlDays;
+  bool get isBusiness;
 
   // ── Exposed to subclasses ─────────────────────────────────────────────────
 
@@ -138,6 +139,11 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
   }) {
     final orderId =
         '$listingIdPrefix${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final hasChemicals = wasteTypes.contains(WasteType.chemicals);
+    // Jordan VAT 16% applies to B2B marketplace transactions.
+    const vatRate = 0.16;
+    final effectivePrice = itemPrice ?? 0.0;
+    final vatApplicable = isBusiness && effectivePrice > 0;
     return Order(
       id: orderId,
       type: OrderType.pickup,
@@ -158,6 +164,11 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
       pickupLat: pickupLat,
       pickupLng: pickupLng,
       expiresAt: DateTime.now().add(Duration(days: listingTtlDays)),
+      adminApprovalStatus: hasChemicals
+          ? AdminApprovalStatus.pendingApproval
+          : AdminApprovalStatus.notRequired,
+      isVatApplicable: vatApplicable,
+      vatAmountJd: vatApplicable ? (effectivePrice * vatRate) : null,
     );
   }
 

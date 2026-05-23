@@ -20,4 +20,7 @@ class IndividualSupplierViewModel extends BaseSupplierViewModel {
 
   @override
   int get listingTtlDays => 14;
+
+  @override
+  bool get isBusiness => false;
 }

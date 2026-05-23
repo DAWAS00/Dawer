@@ -58,4 +58,7 @@ class SupplierHomeViewModel extends BaseSupplierViewModel {
 
   @override
   int get listingTtlDays => 30;
+
+  @override
+  bool get isBusiness => true;
 }
