@@ -41,18 +41,22 @@ class MarketplaceViewModel extends ChangeNotifier {
 
   // Keep legacy getters for any widgets that still reference them.
   List<String> get aiSuggestedCategories => _userCategories;
-  bool get showSuggestionBanner => false;
+  bool get showSuggestionBanner => _userCategories.isNotEmpty;
 
   void setAiSuggestions(List<String> categories) {
     _userCategories = categories;
     notifyListeners();
   }
 
-  void dismissSuggestions() {}
+  void dismissSuggestions() {
+    _userCategories = [];
+    notifyListeners();
+  }
 
   void showAllOrders() {
     _searchQuery = '';
     _selectedCategory = null;
+    _userCategories = [];
     notifyListeners();
   }
 

@@ -87,6 +87,7 @@ class DawerApp extends StatelessWidget {
           create: (ctx) => AppOrderStore(
             store: localStore,
             remote: ctx.read<IOrderRepository>(),
+            seedDriverOrderId: 'ORD-S01',
           ),
         ),
         ChangeNotifierProvider(create: (_) => AppThemeNotifier(prefs)),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../chatbot/dawa_chat_widget.dart';
 
 /// Single FAB on the marketplace tab. Tapping opens [DawaChatWidget]

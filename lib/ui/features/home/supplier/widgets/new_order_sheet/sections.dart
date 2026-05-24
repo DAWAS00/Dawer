@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+﻿// ignore_for_file: library_private_types_in_public_api
 part of '../new_order_sheet.dart';
 
 extension SectionsExt on _NewOrderSheetState {

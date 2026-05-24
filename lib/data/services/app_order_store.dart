@@ -26,11 +26,13 @@ class AppOrderStore extends ChangeNotifier {
     IOrderRepository? remote,
     IWalletRepository? wallet,
     RewardService? rewardService,
+    String? seedDriverOrderId,
   })  : _store = store,
         _remote = remote ?? const NoOpOrderRepository(),
         _wallet = wallet ?? const NoOpWalletRepository(),
         _rewardService = rewardService ?? RewardService() {
     _bootstrap();
+    if (seedDriverOrderId != null) _activeOrderId = seedDriverOrderId;
   }
 
   final LocalStore? _store;

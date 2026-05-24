@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../data/services/mock_ai_simulation_service.dart';
 import '../viewmodels/restaurant_signup_viewmodel.dart';

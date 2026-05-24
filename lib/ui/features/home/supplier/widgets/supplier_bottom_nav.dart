@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../../../l10n/l10n.dart';
 import 'supplier_nav_item.dart';
 

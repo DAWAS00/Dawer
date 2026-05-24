@@ -3,7 +3,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AiConfig {
   /// Gemini API key, loaded from .env.local
-  static String get geminiApiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
+  static String get geminiApiKey {
+    try {
+      return dotenv.env['GEMINI_API_KEY'] ?? '';
+    } catch (_) {
+      return '';
+    }
+  }
 
   static bool get hasGeminiKey => geminiApiKey.isNotEmpty;
 

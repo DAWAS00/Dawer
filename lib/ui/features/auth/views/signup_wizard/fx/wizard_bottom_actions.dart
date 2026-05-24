@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dwaar/core/utils/haptic_util.dart';
 import 'package:dwaar/ui/features/auth/controllers/signup_wizard_controller.dart';

@@ -57,7 +57,7 @@ class _SupplierHomeBody extends StatelessWidget {
     final vm = context.watch<SupplierHomeViewModel>();
 
     final tabs = [
-      SupplierHomeTab(userName: userName, supplierType: supplierType),
+      SupplierHomeTab(userName: userName),
       MarketplaceTab(
         role: UserRole.supplier,
         currentUserName: userName,
