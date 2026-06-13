@@ -1,7 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../../core/utils/date_formatter.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../l10n/l10n.dart';
 
 class OrderStatusTimeline extends StatelessWidget {
@@ -29,16 +30,16 @@ class OrderStatusTimeline extends StatelessWidget {
     }
 
     return Container(
-      margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -60,7 +61,7 @@ class OrderStatusTimeline extends StatelessWidget {
                 final filled = (i ~/ 2) < currentIndex;
                 return Expanded(
                   child: Container(
-                    height: 3,
+                    height: 2,
                     color: filled
                         ? const Color(0xFF06402B)
                         : const Color(0xFFE0E6E1),
@@ -110,19 +111,28 @@ class _TimelineStep extends StatelessWidget {
                 ? const Color(0xFF06402B)
                 : const Color(0xFFE0E6E1),
             shape: BoxShape.circle,
+            boxShadow: active
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF06402B).withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    )
+                  ]
+                : null,
           ),
           child: Icon(
-            done ? Icons.check_rounded : Icons.circle,
+            done ? LucideIcons.check : Icons.circle,
             size: done ? 16 : 8,
             color: Colors.white,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         Text(
           label,
           style: GoogleFonts.cairo(
             fontSize: 10,
-            fontWeight: active ? FontWeight.bold : FontWeight.w400,
+            fontWeight: active ? FontWeight.bold : FontWeight.w500,
             color: active || done
                 ? const Color(0xFF002819)
                 : const Color(0xFF9099A2),
@@ -133,6 +143,7 @@ class _TimelineStep extends StatelessWidget {
             DateFormatter.time(timestamp!),
             style: GoogleFonts.dmSans(
               fontSize: 9,
+              fontWeight: active ? FontWeight.bold : FontWeight.w500,
               color: const Color(0xFF9099A2),
             ),
           ),

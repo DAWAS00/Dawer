@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:dwaar/core/constants/app_colors.dart';
-import 'package:dwaar/data/models/order.dart';
+import 'package:dwaar/data/models/order/order.dart';
 import 'package:dwaar/data/services/driver_location_stream.dart';
 import 'package:dwaar/l10n/l10n.dart';
 import 'package:dwaar/ui/common/map/live_tracking_map_view.dart';
@@ -32,12 +32,14 @@ class OrderMapSection extends StatelessWidget {
     final dLat = order.dropoffLat;
     final dLng = order.dropoffLng;
 
+    Widget mapContent;
+
     // Live tracking: driver accepted and is en-route — show moving driver marker.
     if (hasDriver &&
         order.status == OrderStatus.inTransit &&
         pLat != null &&
         pLng != null) {
-      return _isUuid(order.id)
+      mapContent = _isUuid(order.id)
           ? _RealTrackingWrapper(
               orderId: order.id,
               pickupLat: pLat,
@@ -51,23 +53,37 @@ class OrderMapSection extends StatelessWidget {
               etaMinutes: order.etaMinutes,
               height: 240,
             );
-    }
-
-    if (pLat != null && dLat != null) {
-      return RouteMapPlaceholder(
+    } else if (pLat != null && dLat != null) {
+      mapContent = RouteMapPlaceholder(
         pickupLat: pLat,
         pickupLng: pLng!,
         dropoffLat: dLat,
         dropoffLng: dLng!,
         height: 240,
       );
+    } else if (pLat != null) {
+      mapContent = PickupMapView(lat: pLat, lng: pLng!, height: 240);
+    } else {
+      mapContent = const _MapPlaceholder();
     }
 
-    if (pLat != null) {
-      return PickupMapView(lat: pLat, lng: pLng!, height: 240);
-    }
-
-    return const _MapPlaceholder();
+    return Container(
+      margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: mapContent,
+      ),
+    );
   }
 }
 
