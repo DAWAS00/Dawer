@@ -136,14 +136,17 @@ void main() {
   });
 
   group('SignUpViewModel.submit — validation gates navigation', () {
-    test('empty driver form produces name + phone + email errors', () async {
+    test('empty driver form produces name + phone + document errors', () async {
+      // Note: email + password validation was removed when signup moved to
+      // phone-OTP-only (matching the SupabaseAuthRepository contract). Only
+      // name, phone, and identity document remain required.
       final vm = _driverVm();
       await vm.submit(_l10n);
 
       expect(vm.submitted, isFalse);
       expect(
         vm.errors.keys,
-        containsAll(['fullName', 'contactPhone', 'contactEmail']),
+        containsAll(['fullName', 'contactPhone']),
       );
       expect(vm.errors.keys, contains('identityDocument'));
     });
@@ -239,28 +242,23 @@ void main() {
       expect(vm.errors['contactPhone'], isNotNull);
     });
 
-    test('malformed email produces contactEmail error', () async {
+    test('email is optional under phone-OTP signup (no contactEmail error)',
+        () async {
+      // Email validation was removed at the viewmodel layer when signup moved
+      // toward phone-OTP. Password is still enforced by SignUpRequest.validate
+      // (pending full OTP-only migration), so it's set here.
       final vm = _driverVm()
         ..fullName = 'أحمد'
         ..contactPhone = '0791234567'
-        ..contactEmail = 'not-an-email'
+        ..password = 'Password123'
+        ..passwordConfirm = 'Password123'
         ..identityDocument = _fakeDoc();
 
       await vm.submit(_l10n);
 
-      expect(vm.errors['contactEmail'], isNotNull);
-    });
-
-    test('missing email blocks submission', () async {
-      final vm = _driverVm()
-        ..fullName = 'أحمد'
-        ..contactPhone = '0791234567'
-        ..identityDocument = _fakeDoc();
-
-      await vm.submit(_l10n);
-
-      expect(vm.errors['contactEmail'], isNotNull);
-      expect(vm.submitted, isFalse);
+      expect(vm.errors['contactEmail'], isNull);
+      expect(vm.errors, isEmpty);
+      expect(vm.submitted, isTrue);
     });
 
     test('missing phone still blocks submission (DB requires phone)',

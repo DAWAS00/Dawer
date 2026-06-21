@@ -7,13 +7,11 @@ import '../viewmodels/login_viewmodel.dart';
 import 'verification_view.dart';
 import '../../../../l10n/l10n.dart';
 
-import 'widgets/role_selection_grid.dart';
 import 'widgets/login_form.dart';
 import 'widgets/footer.dart';
 import '../../../../core/services/app_lang_notifier.dart';
 import '../../../common/lang_picker_sheet.dart';
-import 'restaurant_signup_view.dart';
-import 'signup_view.dart';
+import 'signup_wizard_view.dart';
 import '../../home/home_router.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
 
@@ -144,10 +142,8 @@ class _LoginScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 48),
-                  
+
                   // Main Interaction Sections
-                  const RoleSelectionGrid(),
-                  const SizedBox(height: 40),
                   const LoginForm(),
                   const SizedBox(height: 32),
                   
@@ -339,41 +335,17 @@ class _DynamicRegisterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<LoginViewModel>();
     final l10n = context.l10n;
 
-    final (label, icon, destination) = switch (viewModel.selectedRole) {
-      UserRole.driver => (
-          l10n.registerAsDriver,
-          Icons.local_shipping_rounded,
-          const SignUpView(
-            role: UserRole.driver,
-            supplierType: SupplierType.individual,
-          ),
-        ),
-      UserRole.recyclingCo => (
-          l10n.registerAsRecyclingCo,
-          Icons.recycling_rounded,
-          const SignUpView(
-            role: UserRole.recyclingCo,
-            supplierType: SupplierType.individual,
-          ),
-        ),
-      UserRole.supplier => viewModel.supplierType == SupplierType.storeBusiness
-          ? (
-              l10n.registerAsStore,
-              Icons.storefront_rounded,
-              const RestaurantSignupView(),
-            )
-          : (
-              l10n.registerAsIndividual,
-              Icons.person_rounded,
-              const SignUpView(
-                role: UserRole.supplier,
-                supplierType: SupplierType.individual,
-              ),
-            ),
-    };
+    // Role selection now happens INSIDE the signup wizard (Step 1), not on the
+    // login page. Always navigate to the wizard; the user picks Rider /
+    // Supplier / Company there. See step1_identity.dart _buildRoleSelector.
+    final label = l10n.loginSignUpNow;
+    final icon = Icons.person_add_rounded;
+    final destination = SignUpWizardView(
+      initialRole: UserRole.supplier,
+      initialSupplierType: SupplierType.individual,
+    );
 
     return Center(
       child: TextButton.icon(
