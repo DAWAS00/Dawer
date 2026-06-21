@@ -1,9 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../data/models/order.dart';
-import '../../../../../data/models/user_role.dart';
+import '../../../../../data/mock/order_mock_data.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/services/app_order_store.dart';
 import '../../shared/order_details_view.dart';
 import '../../shared/viewmodels/marketplace_viewmodel.dart';
@@ -16,6 +16,7 @@ import '../../shared/widgets/home/kpi_row.dart';
 import '../../shared/widgets/home/driver_bar.dart';
 import '../../shared/widgets/home/order_card.dart';
 import '../../shared/widgets/home/section_header.dart';
+import '../../../../core/components/dwaar_skeleton.dart';
 
 class SupplierHomeTab extends StatelessWidget {
   final String userName;
@@ -32,6 +33,8 @@ class SupplierHomeTab extends StatelessWidget {
     final tracked = vm.trackedOrder;
     final active = vm.activeOrders;
     final myListings = marketVm.myListings(vm.user.name);
+    final loading = vm.isLoading;
+    final displayOrders = loading ? OrderMockData.skeletonOrders() : active;
 
     return CustomScrollView(
       slivers: [
@@ -44,14 +47,17 @@ class SupplierHomeTab extends StatelessWidget {
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 10)),
         SliverToBoxAdapter(
-          child: HomeKpiRow(
-            activeCount: active.length,
-            earnings: 8.5, // Mock
-            avgEta: 12, // Mock
+          child: DwaarSkeleton(
+            enabled: loading,
+            child: HomeKpiRow(
+              activeCount: active.length,
+              earnings: 8.5,
+              avgEta: 12,
+            ),
           ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 16)),
-        if (tracked != null)
+        if (!loading && tracked != null)
           SliverToBoxAdapter(
             child: HomeDriverBar(
               name: tracked.driverName ?? 'سائق دوّر',
@@ -60,40 +66,17 @@ class SupplierHomeTab extends StatelessWidget {
             ),
           ),
         const SliverToBoxAdapter(child: SizedBox(height: 14)),
-        
-        if (myListings.isNotEmpty) ..._buildMyListingsSection(context, myListings),
+
+        if (!loading && myListings.isNotEmpty) ..._buildMyListingsSection(context, myListings),
 
         SliverToBoxAdapter(
           child: HomeSectionHeader(
             title: context.l10n.supplierActiveOrders,
-            count: active.length,
+            count: loading ? 0 : active.length,
           ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 10)),
-        if (active.isNotEmpty)
-          SliverList.separated(
-            itemCount: active.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, i) => HomeOrderCard(
-              order: active[i],
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => OrderDetailsView(
-                    order: active[i],
-                    onSupplierConfirmArrival: (available) {
-                      final store = context.read<AppOrderStore>();
-                      if (available) {
-                        store.handleSupplierAvailable(active[i].id);
-                      } else {
-                        store.handleSupplierUnavailable(active[i].id);
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ),
-          )
-        else
+        if (!loading && active.isEmpty)
           SliverFillRemaining(
             hasScrollBody: false,
             child: Padding(
@@ -106,6 +89,39 @@ class SupplierHomeTab extends StatelessWidget {
                     context.l10n.supplierNoOrdersYet,
                     style: GoogleFonts.cairo(fontSize: 16, color: const Color(0xFF717973)),
                   ),
+                ],
+              ),
+            ),
+          )
+        else
+          SliverToBoxAdapter(
+            child: DwaarSkeleton(
+              enabled: loading,
+              child: Column(
+                children: [
+                  for (int i = 0; i < displayOrders.length; i++) ...[
+                    if (i > 0) const SizedBox(height: 8),
+                    HomeOrderCard(
+                      order: displayOrders[i],
+                      onTap: loading
+                          ? null
+                          : () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => OrderDetailsView(
+                                    order: displayOrders[i],
+                                    onSupplierConfirmArrival: (available) {
+                                      final store = context.read<AppOrderStore>();
+                                      if (available) {
+                                        store.handleSupplierAvailable(displayOrders[i].id);
+                                      } else {
+                                        store.handleSupplierUnavailable(displayOrders[i].id);
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                    ),
+                  ],
                 ],
               ),
             ),

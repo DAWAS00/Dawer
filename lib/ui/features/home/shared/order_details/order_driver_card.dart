@@ -1,9 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../chat/views/chat_view.dart';
 
 class OrderDriverCard extends StatelessWidget {
   final Order order;
@@ -18,12 +19,8 @@ class OrderDriverCard extends StatelessWidget {
     }
   }
 
-  Future<void> _openWhatsApp(String phoneNumber) async {
-    final cleanPhone = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
-    final Uri url = Uri.parse('https://wa.me/$cleanPhone');
-    if (!await launchUrl(url)) {
-      debugPrint('Could not launch $url');
-    }
+  void _openChat(BuildContext context) {
+    ChatView.push(context, orderId: order.id);
   }
 
   @override
@@ -146,10 +143,10 @@ class OrderDriverCard extends StatelessWidget {
               ),
               if (order.driverPhone != null) ...[
                 IconButton(
-                  onPressed: () => _openWhatsApp(order.driverPhone!),
-                  icon: Image.asset('assets/images/whatsapp_icon.png', width: 28, height: 28, errorBuilder: (c, e, s) => const Icon(Icons.chat_bubble_outline_rounded, color: Color(0xFF25D366), size: 28)),
+                  onPressed: () => _openChat(context),
+                  icon: const Icon(Icons.chat_bubble_outline_rounded, color: Color(0xFF06402B), size: 22),
                   style: IconButton.styleFrom(
-                    backgroundColor: const Color(0xFF25D366).withValues(alpha: 0.1),
+                    backgroundColor: const Color(0xFF06402B).withValues(alpha: 0.1),
                     padding: const EdgeInsets.all(8),
                   ),
                 ),

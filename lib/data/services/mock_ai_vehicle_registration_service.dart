@@ -1,4 +1,4 @@
-import '../../data/models/order.dart' show VehicleType;
+import '../../data/models/order/order.dart' show VehicleType;
 import '../../domain/services/i_ai_vehicle_registration_service.dart';
 
 class MockAiVehicleRegistrationService implements IAiVehicleRegistrationService {

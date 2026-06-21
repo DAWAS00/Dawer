@@ -1,7 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../../../data/models/order.dart';
+import '../../../../data/models/order/order.dart';
 import '../../../../data/services/app_order_store.dart';
 import '../../auth/viewmodels/login_viewmodel.dart';
 import '../../../common/app_nav_item.dart';

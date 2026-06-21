@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +12,7 @@ import '../../../../common/lang_picker_sheet.dart';
 import '../../../../../core/services/app_theme_notifier.dart';
 import '../../../../../core/services/app_lang_notifier.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../../data/models/order.dart' show VehicleType, VehicleTypeLabel;
+import '../../../../../data/models/order/order.dart' show VehicleType, VehicleTypeLabel;
 import '../../../../features/auth/viewmodels/vehicle_registration_viewmodel.dart';
 import '../../../../features/auth/views/widgets/vehicle_registration_scan_section.dart';
 import '../viewmodels/driver_home_viewmodel.dart';

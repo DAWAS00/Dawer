@@ -1,4 +1,4 @@
-import '../../data/models/order.dart' show VehicleType;
+import '../../data/models/order/order.dart' show VehicleType;
 
 class ExtractedVehicleData {
   final VehicleType vehicleType;

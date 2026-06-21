@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dwaar/ui/features/home/supplier/controllers/publish_form_controller.dart';
+import 'wizard_style_tokens.dart';
 
 class WizardBottomActions extends StatelessWidget {
   final PublishFormController controller;
@@ -19,8 +20,8 @@ class WizardBottomActions extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
       decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE0E0E0))),
+        color: WizardColors.scaffold,
+        border: Border(top: BorderSide(color: WizardColors.border)),
       ),
       child: Row(
         children: [
@@ -42,14 +43,14 @@ class WizardBottomActions extends StatelessWidget {
                       label: 'نشر الإعلان',
                       icon: Icons.campaign_outlined,
                       onTap: controller.canProceed ? onPublish : null,
-                      color: const Color(0xFF2E7D32),
+                      color: WizardColors.success,
                     )
                   : _PrimaryButton(
                       key: const ValueKey('next'),
                       label: 'التالي',
                       icon: Icons.arrow_back_ios_rounded,
                       onTap: controller.canProceed ? controller.nextStep : null,
-                      color: const Color(0xFF06402B),
+                      color: WizardColors.primaryMid,
                     ),
             ),
           ),
@@ -80,11 +81,11 @@ class _CircleIconBtn extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F5),
+          color: WizardColors.surface,
           borderRadius: BorderRadius.circular(size / 3),
-          border: bordered ? Border.all(color: const Color(0xFFE0E0E0)) : null,
+          border: bordered ? Border.all(color: WizardColors.border) : null,
         ),
-        child: Icon(icon, size: 18, color: const Color(0xFF6B6B6B)),
+        child: Icon(icon, size: 18, color: WizardColors.textSecondary),
       ),
     );
   }
@@ -113,7 +114,7 @@ class _PrimaryButton extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         height: 52,
         decoration: BoxDecoration(
-          color: enabled ? color : const Color(0xFFE0E0E0),
+          color: enabled ? color : WizardColors.border,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(

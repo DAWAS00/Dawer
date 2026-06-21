@@ -15,6 +15,9 @@ import 'order_details/order_earnings_section.dart';
 import 'order_details/order_action_buttons.dart';
 import 'order_details/order_completion_section.dart';
 import 'order_details/order_proof_section.dart';
+import 'order_details/order_customer_card.dart';
+import 'order_details/order_route_card.dart';
+import 'order_details/order_contents_section.dart';
 import '../../../../l10n/l10n.dart';
 
 class OrderDetailsView extends StatelessWidget {
@@ -24,6 +27,7 @@ class OrderDetailsView extends StatelessWidget {
   final Future<String?> Function(Order)? onMarkArrivedAtDropoff;
   final void Function(bool available)? onSupplierConfirmArrival;
   final bool hideStatus;
+  final bool isDriverView;
 
   const OrderDetailsView({
     super.key,
@@ -33,6 +37,7 @@ class OrderDetailsView extends StatelessWidget {
     this.onMarkArrivedAtDropoff,
     this.onSupplierConfirmArrival,
     this.hideStatus = false,
+    this.isDriverView = false,
   });
 
   @override
@@ -43,22 +48,52 @@ class OrderDetailsView extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           OrderDetailsAppBar(order: order, hideStatus: hideStatus),
+
+          // ── Map ──
           SliverToBoxAdapter(
             child: OrderMapSection(order: order, hasDriver: order.driverName != null),
           ),
-          if (!hideStatus)
+
+          // ── Status timeline (supplier view or when explicitly shown) ──
+          if (!hideStatus && !isDriverView)
             SliverToBoxAdapter(
               child: OrderStatusTimeline(order: order),
             ),
-          if (order.driverName != null)
-            SliverToBoxAdapter(child: OrderDriverCard(order: order)),
-          SliverToBoxAdapter(child: OrderInfoSection(order: order)),
-          SliverToBoxAdapter(child: OrderEarningsSection(order: order)),
-          
-          if (order.status == OrderStatus.completed && order.proofImagePath != null)
-            SliverToBoxAdapter(
-              child: OrderProofSection(imagePath: order.proofImagePath!),
-            ),
+
+          // ════════════════════════════════════════
+          // DRIVER VIEW — customer-first layout
+          // ════════════════════════════════════════
+          if (isDriverView) ...[
+            // 4-step compact stepper
+            SliverToBoxAdapter(child: _DriverStatusStepper(order: order)),
+            // Customer contact card
+            SliverToBoxAdapter(child: OrderCustomerCard(order: order)),
+            // Visual route
+            SliverToBoxAdapter(child: OrderRouteCard(order: order)),
+            // Waste types + weight + notes
+            SliverToBoxAdapter(child: OrderContentsSection(order: order)),
+            // Earnings
+            SliverToBoxAdapter(child: OrderEarningsSection(order: order)),
+            // Proof photo (if completed)
+            if (order.status == OrderStatus.completed && order.proofImagePath != null)
+              SliverToBoxAdapter(
+                child: OrderProofSection(imagePath: order.proofImagePath!),
+              ),
+          ]
+
+          // ════════════════════════════════════════
+          // SUPPLIER / GENERAL VIEW — original layout
+          // ════════════════════════════════════════
+          else ...[
+            if (order.driverName != null)
+              SliverToBoxAdapter(child: OrderDriverCard(order: order)),
+            SliverToBoxAdapter(child: OrderInfoSection(order: order)),
+            SliverToBoxAdapter(child: OrderEarningsSection(order: order)),
+            if (order.status == OrderStatus.completed && order.proofImagePath != null)
+              SliverToBoxAdapter(
+                child: OrderProofSection(imagePath: order.proofImagePath!),
+              ),
+          ],
 
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
@@ -69,42 +104,64 @@ class OrderDetailsView extends StatelessWidget {
   Widget? _buildBottomBar(BuildContext context) {
     final List<Widget> bottomWidgets = [];
 
-    // 1. Chat & WhatsApp Actions
-    if (order.driverName != null && order.status != OrderStatus.completed && order.status != OrderStatus.cancelled) {
-       bottomWidgets.add(OrderActionButtons(order: order));
-    }
+    if (isDriverView) {
+      // ── Driver bottom bar: arrival + completion only ──
+      final hasArrivalActions =
+          onMarkArrivedAtPickup != null || onMarkArrivedAtDropoff != null;
 
-    // 2. Arrival Actions
-    final hasArrivalActions = onMarkArrivedAtPickup != null ||
-        onMarkArrivedAtDropoff != null ||
-        onSupplierConfirmArrival != null;
-    
-    if (hasArrivalActions) {
-      bottomWidgets.add(OrderArrivalSection(
-        order: order,
-        onMarkArrivedAtPickup: onMarkArrivedAtPickup,
-        onMarkArrivedAtDropoff: onMarkArrivedAtDropoff,
-        onSupplierConfirmArrival: onSupplierConfirmArrival,
-      ));
-    }
+      if (hasArrivalActions) {
+        bottomWidgets.add(OrderArrivalSection(
+          order: order,
+          onMarkArrivedAtPickup: onMarkArrivedAtPickup,
+          onMarkArrivedAtDropoff: onMarkArrivedAtDropoff,
+        ));
+      }
 
-    // 3. Completion Action
-    if (order.status == OrderStatus.arrivedAtDropoff && onCompleteOrder != null) {
-      bottomWidgets.add(OrderCompletionSection(
-        order: order,
-        onComplete: (updatedOrder) {
-          onCompleteOrder?.call(updatedOrder);
-          Navigator.of(context).pop();
-        },
-      ));
-    }
+      if (order.status == OrderStatus.arrivedAtDropoff && onCompleteOrder != null) {
+        bottomWidgets.add(OrderCompletionSection(
+          order: order,
+          onComplete: (updatedOrder) {
+            onCompleteOrder?.call(updatedOrder);
+            Navigator.of(context).pop();
+          },
+        ));
+      }
+    } else {
+      // ── Supplier / general bottom bar ──
 
-    // 4. Rate Driver
-    if (order.status == OrderStatus.completed && order.driverName != null) {
-      bottomWidgets.add(_RateDriverButton(
-        order: order,
-        onRate: (r) => context.read<AppOrderStore>().submitDriverRating(order.id, r),
-      ));
+      // Contact driver buttons (chat + WhatsApp)
+      if (order.driverName != null &&
+          order.status != OrderStatus.completed &&
+          order.status != OrderStatus.cancelled) {
+        bottomWidgets.add(OrderActionButtons(order: order));
+      }
+
+      // Arrival confirmation (supplier confirming driver arrived)
+      if (onSupplierConfirmArrival != null) {
+        bottomWidgets.add(OrderArrivalSection(
+          order: order,
+          onSupplierConfirmArrival: onSupplierConfirmArrival,
+        ));
+      }
+
+      // Completion
+      if (order.status == OrderStatus.arrivedAtDropoff && onCompleteOrder != null) {
+        bottomWidgets.add(OrderCompletionSection(
+          order: order,
+          onComplete: (updatedOrder) {
+            onCompleteOrder?.call(updatedOrder);
+            Navigator.of(context).pop();
+          },
+        ));
+      }
+
+      // Rate driver
+      if (order.status == OrderStatus.completed && order.driverName != null) {
+        bottomWidgets.add(_RateDriverButton(
+          order: order,
+          onRate: (r) => context.read<AppOrderStore>().submitDriverRating(order.id, r),
+        ));
+      }
     }
 
     if (bottomWidgets.isEmpty) return null;
@@ -135,6 +192,140 @@ class OrderDetailsView extends StatelessWidget {
   }
 }
 
+// ── Compact 4-step driver status stepper ─────────────────────────────────────
+
+class _DriverStatusStepper extends StatelessWidget {
+  const _DriverStatusStepper({required this.order});
+  final Order order;
+
+  static const _steps = [
+    (label: 'مقبول', icon: Icons.check_circle_rounded),
+    (label: 'في الطريق', icon: Icons.local_shipping_rounded),
+    (label: 'وصلت', icon: Icons.location_on_rounded),
+    (label: 'مكتمل', icon: Icons.flag_rounded),
+  ];
+
+  int get _currentStep => switch (order.status) {
+        OrderStatus.accepted => 0,
+        OrderStatus.arrivedAtPickup => 1,
+        OrderStatus.inTransit => 2,
+        OrderStatus.arrivedAtDropoff || OrderStatus.completed => 3,
+        _ => 0,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final step = _currentStep;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFEEF2EE)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: List.generate(_steps.length * 2 - 1, (i) {
+          if (i.isOdd) {
+            final connectorIdx = i ~/ 2;
+            final active = connectorIdx < step;
+            return Expanded(
+              child: Container(
+                height: 2,
+                decoration: BoxDecoration(
+                  color: active
+                      ? const Color(0xFF06402B)
+                      : const Color(0xFFDDE3DD),
+                  borderRadius: BorderRadius.circular(1),
+                ),
+              ),
+            );
+          }
+          final idx = i ~/ 2;
+          final done = idx < step;
+          final current = idx == step;
+          return _StepDot(
+            label: _steps[idx].label,
+            icon: _steps[idx].icon,
+            done: done,
+            current: current,
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class _StepDot extends StatelessWidget {
+  const _StepDot({
+    required this.label,
+    required this.icon,
+    required this.done,
+    required this.current,
+  });
+  final String label;
+  final IconData icon;
+  final bool done;
+  final bool current;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color bg = done || current
+        ? const Color(0xFF06402B)
+        : const Color(0xFFEEF2EE);
+    final Color fg = done || current ? Colors.white : const Color(0xFF9EA89E);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          width: current ? 32 : 26,
+          height: current ? 32 : 26,
+          decoration: BoxDecoration(
+            color: bg,
+            shape: BoxShape.circle,
+            boxShadow: current
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF06402B).withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      spreadRadius: 1,
+                    )
+                  ]
+                : null,
+          ),
+          child: Icon(
+            done ? Icons.check_rounded : icon,
+            size: current ? 16 : 13,
+            color: fg,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: GoogleFonts.cairo(
+            fontSize: 9,
+            fontWeight: current ? FontWeight.bold : FontWeight.w500,
+            color: current
+                ? const Color(0xFF06402B)
+                : done
+                    ? const Color(0xFF404943)
+                    : const Color(0xFF9EA89E),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 // ── Rate Driver Button ────────────────────────────────────────────────────────
 
 class _RateDriverButton extends StatelessWidget {
@@ -156,13 +347,15 @@ class _RateDriverButton extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           foregroundColor: const Color(0xFF1E40AF),
           side: const BorderSide(color: Color(0xFFBFD3F5)),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           padding: const EdgeInsets.symmetric(vertical: 14),
           minimumSize: const Size(double.infinity, 56),
         ),
         icon: const Icon(Icons.star_outline_rounded, size: 20),
-        label: Text(context.l10n.rateDriver, style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold)),
+        label: Text(
+          context.l10n.rateDriver,
+          style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

@@ -1,6 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/order_labels.dart';
 import '../../../../../l10n/l10n.dart';
 import '../views/collection_sale_detail_view.dart';

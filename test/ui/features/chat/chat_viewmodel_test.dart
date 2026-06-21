@@ -141,12 +141,16 @@ void main() {
     test('markRead is called with correct orderId after stream emits', () async {
       vm.init();
       await _settle();
+      fakeRepo.emit([_msg('m1', 'other-user')]);
+      await _settle();
 
       expect(fakeRepo.lastMarkReadOrderId, 'ORD-TEST');
     });
 
     test('markRead is called with currentUserId', () async {
       vm.init();
+      await _settle();
+      fakeRepo.emit([_msg('m1', 'other-user')]);
       await _settle();
 
       expect(fakeRepo.lastMarkReadUserId, 'mock-user-01');

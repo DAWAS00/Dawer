@@ -1,6 +1,11 @@
 import '../../core/result/result.dart';
 import '../../data/models/user_role.dart';
-import '../../data/services/user_signup_service.dart' show SignUpRequest;
+import 'package:dwaar/data/models/signup_request.dart';
+
+abstract final class AuthErrorCodes {
+  static const phoneNotRegistered = 'phone_not_registered';
+  static const invalidOtp = 'invalid_otp';
+}
 
 class AuthSession {
   final String userId;
@@ -19,9 +24,6 @@ class AuthSession {
 }
 
 abstract interface class IAuthRepository {
-  Future<AppResult<AuthSession>> signInWithEmail(
-      String email, String password);
-
   Future<AppResult<AuthSession>> signUp(SignUpRequest request);
 
   Future<AppResult<void>> requestOtp(String phone);
@@ -33,16 +35,4 @@ abstract interface class IAuthRepository {
   Stream<AuthSession?> watchAuthState();
 
   AuthSession? get currentSession;
-
-  /// Sends a 6-digit recovery OTP to [email] via Supabase.
-  Future<AppResult<void>> requestPasswordReset(String email);
-
-  /// Verifies the 6-digit recovery [code] for [email].
-  /// On success the caller holds a short-lived recovery session.
-  Future<AppResult<void>> verifyResetCode(String email, String code);
-
-  /// Updates the authenticated user's password to [newPassword].
-  /// Should be called immediately after [verifyResetCode] succeeds.
-  /// Signs the user out of the recovery session after the update.
-  Future<AppResult<void>> updatePassword(String newPassword);
 }

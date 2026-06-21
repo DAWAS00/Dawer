@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import '../../viewmodels/vehicle_registration_viewmodel.dart';
 import '../../../../common/ai_shimmer_loader.dart';
 import '../../../../common/animated_status_text.dart';
-import '../../../../../data/models/order.dart' show VehicleTypeLabel;
+import '../../../../../data/models/order/order.dart' show VehicleTypeLabel;
 import '../../../../../domain/services/i_ai_vehicle_registration_service.dart';
 
 /// Reuses the same scanning UX as [LicenseScanSection] but targets vehicle

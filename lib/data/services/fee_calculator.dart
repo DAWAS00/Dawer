@@ -1,4 +1,4 @@
-import '../models/order.dart';
+import '../models/order/order.dart';
 
 class FeeCalculator {
   static const double base = 2.0;

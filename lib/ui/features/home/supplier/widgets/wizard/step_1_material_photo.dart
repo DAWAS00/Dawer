@@ -1,9 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:dwaar/data/models/order.dart';
+import 'package:dwaar/data/models/order/order.dart';
 import 'package:dwaar/core/constants/waste_type_icons.dart';
 import 'package:dwaar/ui/features/home/supplier/controllers/publish_form_controller.dart';
 import 'package:dwaar/ui/features/home/supplier/widgets/image_picker_grid.dart';
+import 'wizard_style_tokens.dart';
 
 class Step1MaterialAndPhoto extends StatelessWidget {
   final PublishFormController controller;
@@ -129,14 +130,14 @@ class _StepHeader extends StatelessWidget {
             style: GoogleFonts.cairo(
               fontSize: 22,
               fontWeight: FontWeight.w800,
-              color: const Color(0xFF1A1A1A),
+              color: WizardColors.textPrimary,
             ),
             textAlign: TextAlign.right,
           ),
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF6B6B6B)),
+            style: GoogleFonts.cairo(fontSize: 13, color: WizardColors.textSecondary),
             textAlign: TextAlign.right,
           ),
         ],
@@ -158,7 +159,7 @@ class _FieldLabel extends StatelessWidget {
         style: GoogleFonts.cairo(
           fontSize: 12,
           fontWeight: FontWeight.w700,
-          color: const Color(0xFF6B6B6B),
+          color: WizardColors.textSecondary,
         ),
       ),
     );
@@ -185,10 +186,10 @@ class _MaterialTypeCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFFE8F5E9) : const Color(0xFFF5F5F5),
+          color: selected ? WizardColors.primaryLight : WizardColors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: selected ? const Color(0xFF2E7D32) : const Color(0xFFE0E0E0),
+            color: selected ? WizardColors.borderSelected : WizardColors.border,
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -199,13 +200,13 @@ class _MaterialTypeCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: selected ? const Color(0xFFA5D6A7) : const Color(0xFFEEEEEE),
+                color: selected ? WizardColors.primaryBorder : WizardColors.surfaceAlt,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 icon,
                 size: 22,
-                color: selected ? const Color(0xFF2E7D32) : const Color(0xFF6B6B6B),
+                color: selected ? WizardColors.primaryMid : WizardColors.textSecondary,
               ),
             ),
             const SizedBox(height: 6),
@@ -214,7 +215,7 @@ class _MaterialTypeCard extends StatelessWidget {
               style: GoogleFonts.cairo(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: selected ? const Color(0xFF2E7D32) : const Color(0xFF6B6B6B),
+                color: selected ? WizardColors.primaryMid : WizardColors.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),

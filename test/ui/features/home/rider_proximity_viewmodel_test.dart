@@ -1,10 +1,47 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
-import 'package:dwaar/data/models/order.dart';
-import 'package:dwaar/data/services/mock_notification_service.dart';
-import 'package:dwaar/data/services/mock_proximity_service.dart';
+import 'package:signals_flutter/signals_flutter.dart';
+import 'package:dwaar/data/models/order/order.dart';
 import 'package:dwaar/domain/entities/rider_proximity_state.dart';
 import 'package:dwaar/domain/services/i_notification_service.dart';
+import 'package:dwaar/domain/services/i_proximity_service.dart';
 import 'package:dwaar/ui/features/home/driver/viewmodels/rider_proximity_viewmodel.dart';
+
+// ── Inline mocks ──────────────────────────────────────────────────────────────
+
+class MockProximityService implements IProximityService {
+  final _controller = StreamController<LatLng>.broadcast();
+
+  @override
+  Stream<LatLng> get positions => _controller.stream;
+
+  @override
+  void simulatePosition(double lat, double lng) {
+    if (!_controller.isClosed) _controller.add((lat: lat, lng: lng));
+  }
+
+  @override
+  void dispose() => _controller.close();
+}
+
+class NotificationEntry {
+  final String orderId;
+  final ProximityNotificationKind kind;
+  NotificationEntry({required this.orderId, required this.kind});
+}
+
+class MockNotificationService implements INotificationService {
+  final List<NotificationEntry> log = [];
+
+  @override
+  Future<void> notifyProximity({
+    required String orderId,
+    required ProximityNotificationKind kind,
+  }) async {
+    log.add(NotificationEntry(orderId: orderId, kind: kind));
+  }
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -72,11 +109,11 @@ void main() {
     });
 
     test('chat is disabled when idle', () {
-      expect(vm.isChatEnabled, isFalse);
+      expect(vm.isChatEnabled.value, isFalse);
     });
 
     test('nearPickup convenience getter is null when idle', () {
-      expect(vm.nearPickup, isNull);
+      expect(vm.nearPickup.value, isNull);
     });
   });
 
@@ -85,37 +122,38 @@ void main() {
   group('near pickup (accepted order)', () {
     test('transitions to NearPickup when within threshold', () async {
       var notified = 0;
-      vm.addListener(() => notified++);
+      final disposeEffect = effect(() => { vm.proximityState, notified++ });
 
       proxSvc.simulatePosition(_nearPickupLat, _nearPickupLng);
       await _settle();
 
       expect(vm.proximityState, isA<NearPickup>());
       expect(notified, greaterThanOrEqualTo(1));
+      disposeEffect();
     });
 
     test('chat is enabled when NearPickup', () async {
       proxSvc.simulatePosition(_nearPickupLat, _nearPickupLng);
       await _settle();
-      expect(vm.isChatEnabled, isTrue);
+      expect(vm.isChatEnabled.value, isTrue);
     });
 
     test('nearPickup getter is non-null when NearPickup', () async {
       proxSvc.simulatePosition(_nearPickupLat, _nearPickupLng);
       await _settle();
-      expect(vm.nearPickup, isNotNull);
+      expect(vm.nearPickup.value, isNotNull);
     });
 
     test('NearPickup.elapsed starts at zero', () async {
       proxSvc.simulatePosition(_nearPickupLat, _nearPickupLng);
       await _settle();
-      expect(vm.nearPickup!.elapsed, Duration.zero);
+      expect(vm.nearPickup.value!.elapsed, Duration.zero);
     });
 
     test('NearPickup.waitExpired is false at start', () async {
       proxSvc.simulatePosition(_nearPickupLat, _nearPickupLng);
       await _settle();
-      expect(vm.nearPickup!.waitExpired, isFalse);
+      expect(vm.nearPickup.value!.waitExpired, isFalse);
     });
 
     test('sends riderNearPickup notification exactly once', () async {
@@ -152,7 +190,7 @@ void main() {
 
       proxSvc.simulatePosition(_farLat, _farLng);
       await _settle();
-      expect(vm.isChatEnabled, isFalse);
+      expect(vm.isChatEnabled.value, isFalse);
     });
   });
 
@@ -180,7 +218,7 @@ void main() {
     test('chat is enabled when NearDropoff', () async {
       proxSvc.simulatePosition(_nearDropoffLat, _nearDropoffLng);
       await _settle();
-      expect(transitVm.isChatEnabled, isTrue);
+      expect(transitVm.isChatEnabled.value, isTrue);
     });
 
     test('sends riderNearDropoff notification exactly once', () async {

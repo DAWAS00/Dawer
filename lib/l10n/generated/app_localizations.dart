@@ -350,6 +350,30 @@ abstract class AppLocalizations {
   /// **'سجّل الآن'**
   String get loginSignUpNow;
 
+  /// No description provided for @registerAsDriver.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل كسائق'**
+  String get registerAsDriver;
+
+  /// No description provided for @registerAsIndividual.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل كمورد فردي'**
+  String get registerAsIndividual;
+
+  /// No description provided for @registerAsStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل كمتجر / شركة'**
+  String get registerAsStore;
+
+  /// No description provided for @registerAsRecyclingCo.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل كشركة إعادة تدوير'**
+  String get registerAsRecyclingCo;
+
   /// No description provided for @loginCountrySearch.
   ///
   /// In ar, this message translates to:
@@ -667,6 +691,120 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'أدخل كلمة المرور'**
   String get loginPasswordHint;
+
+  /// No description provided for @roleDriverTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سائق'**
+  String get roleDriverTitle;
+
+  /// No description provided for @roleDriverSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'قم بجمع ونقل النفايات لكسب المال'**
+  String get roleDriverSubtitle;
+
+  /// No description provided for @roleSupplierTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مورد'**
+  String get roleSupplierTitle;
+
+  /// No description provided for @roleSupplierSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'قم ببيع نفاياتك وساهم في حماية البيئة'**
+  String get roleSupplierSubtitle;
+
+  /// No description provided for @roleRecyclingCoTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شركة إعادة تدوير'**
+  String get roleRecyclingCoTitle;
+
+  /// No description provided for @roleRecyclingCoSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'استقبل المواد مباشرة في منشأتك'**
+  String get roleRecyclingCoSubtitle;
+
+  /// No description provided for @loginPhoneHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'سنرسل لك رمزاً قصيراً لهذا الرقم للتحقق من هويتك'**
+  String get loginPhoneHelp;
+
+  /// No description provided for @loginPhoneHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'7X XXX XXXX'**
+  String get loginPhoneHint;
+
+  /// No description provided for @loginContinueButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'متابعة'**
+  String get loginContinueButton;
+
+  /// No description provided for @loginPhoneEmptyError.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجاء إدخال رقم الهاتف'**
+  String get loginPhoneEmptyError;
+
+  /// No description provided for @loginNewNumberHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم جديد؟ سيتم إنشاء حسابك بعد التحقق'**
+  String get loginNewNumberHint;
+
+  /// No description provided for @otpTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز التحقق'**
+  String get otpTitle;
+
+  /// No description provided for @otpSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل الرمز المكون من 6 أرقام المرسل إلى {phone}'**
+  String otpSubtitle(String phone);
+
+  /// No description provided for @otpVerifyButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحقق'**
+  String get otpVerifyButton;
+
+  /// No description provided for @otpResendButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة إرسال الرمز'**
+  String get otpResendButton;
+
+  /// No description provided for @otpResentMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال الرمز مرة أخرى'**
+  String get otpResentMessage;
+
+  /// No description provided for @otpErrorIncomplete.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجاء إدخال الرمز كاملاً'**
+  String get otpErrorIncomplete;
+
+  /// No description provided for @otpErrorInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرمز غير صحيح، حاول مرة أخرى'**
+  String get otpErrorInvalid;
+
+  /// No description provided for @otpSimulatedHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'للتجربة استخدم الرمز 123456'**
+  String get otpSimulatedHint;
 
   /// No description provided for @signupRoleDriver.
   ///
@@ -1003,6 +1141,138 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'التزامات التجميع'**
   String get driverCollectionCommitments;
+
+  /// No description provided for @driverToggleOnline.
+  ///
+  /// In ar, this message translates to:
+  /// **'متاح'**
+  String get driverToggleOnline;
+
+  /// No description provided for @driverToggleOffline.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير متاح'**
+  String get driverToggleOffline;
+
+  /// No description provided for @driverStatusOnline.
+  ///
+  /// In ar, this message translates to:
+  /// **'متصل الآن'**
+  String get driverStatusOnline;
+
+  /// No description provided for @driverStatusOffline.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير متصل'**
+  String get driverStatusOffline;
+
+  /// No description provided for @driverActiveMission.
+  ///
+  /// In ar, this message translates to:
+  /// **'مهمة نشطة'**
+  String get driverActiveMission;
+
+  /// No description provided for @driverHeadingToPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'متجه للاستلام'**
+  String get driverHeadingToPickup;
+
+  /// No description provided for @driverHeadingToDelivery.
+  ///
+  /// In ar, this message translates to:
+  /// **'متجه للتسليم'**
+  String get driverHeadingToDelivery;
+
+  /// No description provided for @driverOrderAccepted.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم قبول الطلب'**
+  String get driverOrderAccepted;
+
+  /// No description provided for @driverNewOrderBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب جديد'**
+  String get driverNewOrderBadge;
+
+  /// No description provided for @driverActivateNow.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفعيل الآن'**
+  String get driverActivateNow;
+
+  /// No description provided for @driverNoOrdersNotifySubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ستصلك إشعارات عند توفر طلبات جديدة'**
+  String get driverNoOrdersNotifySubtitle;
+
+  /// No description provided for @driverOrdersTabAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get driverOrdersTabAll;
+
+  /// No description provided for @driverOrdersTabActive.
+  ///
+  /// In ar, this message translates to:
+  /// **'النشطة'**
+  String get driverOrdersTabActive;
+
+  /// No description provided for @driverOrdersTabCompleted.
+  ///
+  /// In ar, this message translates to:
+  /// **'المكتملة'**
+  String get driverOrdersTabCompleted;
+
+  /// No description provided for @driverPickupLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاستلام'**
+  String get driverPickupLabel;
+
+  /// No description provided for @driverDeliveryLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'التسليم'**
+  String get driverDeliveryLabel;
+
+  /// No description provided for @driverViewPickupDetails.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض تفاصيل الاستلام'**
+  String get driverViewPickupDetails;
+
+  /// No description provided for @driverViewDeliveryDetails.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض تفاصيل التسليم'**
+  String get driverViewDeliveryDetails;
+
+  /// No description provided for @driverRewardLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'العائد'**
+  String get driverRewardLabel;
+
+  /// No description provided for @driverDistanceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المسافة'**
+  String get driverDistanceLabel;
+
+  /// No description provided for @driverTimeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوقت'**
+  String get driverTimeLabel;
+
+  /// No description provided for @driverWasteTypeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع المواد'**
+  String get driverWasteTypeLabel;
 
   /// No description provided for @withdrawListing.
   ///
@@ -2167,6 +2437,36 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لا توجد وظائف تجميع حالياً'**
   String get marketNoJobs;
+
+  /// No description provided for @marketCategoryAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get marketCategoryAll;
+
+  /// No description provided for @marketNoOffersBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيظهر هنا ما يتم نشره من مواد للبيع'**
+  String get marketNoOffersBody;
+
+  /// No description provided for @marketNoJobsBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'ستظهر هنا وظائف التجميع المتاحة'**
+  String get marketNoJobsBody;
+
+  /// No description provided for @marketSuggestedByLicense.
+  ///
+  /// In ar, this message translates to:
+  /// **'اقتراحات بناءً على رخصتك'**
+  String get marketSuggestedByLicense;
+
+  /// No description provided for @marketShowAllOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض كل الطلبات'**
+  String get marketShowAllOrders;
 
   /// No description provided for @collectionJobBadge.
   ///
@@ -3613,6 +3913,36 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'مثال: أبيض'**
   String get signupVehicleColorHint;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإشعارات'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد إشعارات بعد'**
+  String get notificationsEmpty;
+
+  /// No description provided for @notificationsMarkAllRead.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديد الكل كمقروء'**
+  String get notificationsMarkAllRead;
+
+  /// No description provided for @orderSearchingDriver.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ البحث عن أقرب سائق متاح...'**
+  String get orderSearchingDriver;
+
+  /// No description provided for @orderSearchingDriverRetry.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة البحث عن سائق'**
+  String get orderSearchingDriverRetry;
 }
 
 class _AppLocalizationsDelegate

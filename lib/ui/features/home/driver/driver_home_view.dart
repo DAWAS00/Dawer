@@ -1,14 +1,15 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/services/app_order_store.dart';
+import '../../../../../core/constants/app_colors.dart';
 import 'viewmodels/driver_home_viewmodel.dart';
 import 'tabs/driver_home_tab.dart';
 import 'tabs/driver_orders_tab.dart';
 import 'tabs/driver_profile_tab.dart';
-import 'widgets/driver_nav_item.dart';
 import '../shared/tabs/marketplace_tab.dart';
 import '../shared/views/collection_sale_detail_view.dart';
 import '../shared/viewmodels/marketplace_viewmodel.dart';
@@ -49,35 +50,34 @@ class _DriverHomeBody extends StatelessWidget {
   final String userName;
   const _DriverHomeBody({required this.userName});
 
-  void _handleAcceptOrder(
-      BuildContext context, DriverHomeViewModel vm, order) {
-    vm.acceptOrder(order).then((error) {
-      if (error != null && context.mounted) {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16)),
-            title: Text(context.l10n.alert,
-                textAlign: TextAlign.right,
-                style:
-                    GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-            content: Text(error,
-                textAlign: TextAlign.right,
-                style: GoogleFonts.cairo()),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(context.l10n.ok,
-                    style: GoogleFonts.cairo(
-                        color: const Color(0xFF06402B),
-                        fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ),
-        );
-      }
-    });
+  Future<String?> _handleAcceptOrder(
+      BuildContext context, DriverHomeViewModel vm, order) async {
+    final error = await vm.acceptOrder(order);
+    if (error != null && context.mounted) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16)),
+          title: Text(context.l10n.alert,
+              textAlign: TextAlign.right,
+              style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+          content: Text(error,
+              textAlign: TextAlign.right,
+              style: GoogleFonts.cairo()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(context.l10n.ok,
+                  style: GoogleFonts.cairo(
+                      color: AppColors.primaryGreen,
+                      fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      );
+    }
+    return error;
   }
 
   void _handleToggleAvailability(
@@ -107,9 +107,10 @@ class _DriverHomeBody extends StatelessWidget {
         available: vm.available,
         history: vm.history,
         active: vm.active,
-        onAcceptOrder: (order) =>
-            _handleAcceptOrder(context, vm, order),
+        onAcceptOrder: (order) => _handleAcceptOrder(context, vm, order),
         onCompleteOrder: vm.completeOrder,
+        onMarkArrivedAtPickup: vm.markArrivedAtPickup,
+        onMarkArrivedAtDropoff: vm.markArrivedAtDropoff,
       ),
       MarketplaceTab(
         role: UserRole.driver,
@@ -165,7 +166,8 @@ class _DriverHomeBody extends StatelessWidget {
               icon: const Icon(Icons.storefront_rounded, color: Colors.white),
               label: Text(
                 context.l10n.driverPublishToMarket,
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: Colors.white),
+                style: GoogleFonts.cairo(
+                    fontWeight: FontWeight.bold, color: Colors.white),
               ),
             )
           : null,
@@ -214,54 +216,43 @@ class _DriverHomeBody extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomNav(
-      BuildContext context, DriverHomeViewModel vm) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 20, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              DriverNavItem(
-                icon: Icons.home_rounded,
-                label: context.l10n.navHome,
-                isSelected: vm.currentTab == 0,
-                onTap: () => vm.setTab(0),
-              ),
-              DriverNavItem(
-                icon: Icons.storefront_rounded,
-                label: context.l10n.navMarket,
-                isSelected: vm.currentTab == 1,
-                onTap: () => vm.setTab(1),
-              ),
-              DriverNavItem(
-                icon: Icons.receipt_long_rounded,
-                label: context.l10n.navMyOrders,
-                isSelected: vm.currentTab == 2,
-                onTap: () => vm.setTab(2),
-              ),
-              DriverNavItem(
-                icon: Icons.person_rounded,
-                label: context.l10n.navProfile,
-                isSelected: vm.currentTab == 3,
-                onTap: () => vm.setTab(3),
-              ),
-            ],
-          ),
+  Widget _buildBottomNav(BuildContext context, DriverHomeViewModel vm) {
+    return NavigationBar(
+      selectedIndex: vm.currentTab,
+      onDestinationSelected: vm.setTab,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      indicatorColor: AppColors.primaryGreen.withValues(alpha: 0.12),
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      destinations: [
+        NavigationDestination(
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home_rounded, color: AppColors.primaryGreen),
+          label: context.l10n.navHome,
         ),
-      ),
+        NavigationDestination(
+          icon: const Icon(LucideIcons.store),
+          selectedIcon: const Icon(LucideIcons.store, color: AppColors.primaryGreen),
+          label: context.l10n.navMarket,
+        ),
+        NavigationDestination(
+          icon: Badge(
+            isLabelVisible: vm.active != null,
+            backgroundColor: Colors.red,
+            child: const Icon(Icons.receipt_long_outlined),
+          ),
+          selectedIcon: Badge(
+            isLabelVisible: vm.active != null,
+            backgroundColor: Colors.red,
+            child: const Icon(Icons.receipt_long_rounded, color: AppColors.primaryGreen),
+          ),
+          label: context.l10n.navMyOrders,
+        ),
+        NavigationDestination(
+          icon: const Icon(LucideIcons.user),
+          selectedIcon: const Icon(LucideIcons.user, color: AppColors.primaryGreen),
+          label: context.l10n.navProfile,
+        ),
+      ],
     );
   }
 }

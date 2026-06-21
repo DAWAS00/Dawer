@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../../core/config/ai_config.dart';
-import '../models/order.dart';
+import '../models/order/order.dart';
 
 // ── Contract ──────────────────────────────────────────────────────────────────
 

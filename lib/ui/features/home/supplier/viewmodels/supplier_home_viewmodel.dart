@@ -1,4 +1,4 @@
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../domain/failures/app_failure.dart';
 import '../../../../../domain/requests/create_pickup_request.dart';

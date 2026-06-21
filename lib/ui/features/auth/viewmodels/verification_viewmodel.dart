@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import '../../../../domain/failures/app_failure.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
 
 class VerificationViewModel extends ChangeNotifier {
@@ -14,12 +15,14 @@ class VerificationViewModel extends ChangeNotifier {
   String? _error;
   bool _isLoading = false;
   bool _verified = false;
+  bool _needsSignup = false;
   AuthSession? _session;
 
   String get otp => _otp;
   String? get error => _error;
   bool get isLoading => _isLoading;
   bool get verified => _verified;
+  bool get needsSignup => _needsSignup;
   AuthSession? get session => _session;
 
   void setOtp(String value) {
@@ -29,23 +32,34 @@ class VerificationViewModel extends ChangeNotifier {
   }
 
   Future<void> verify() async {
-    if (_otp.length < 6) {
-      _error = 'الرجاء إدخال رمز التحقق كاملاً';
-      notifyListeners();
-      return;
-    }
+    // [DEV] Validation temporarily disabled
+    // if (_otp.length < 6) {
+    //   _error = 'otpErrorIncomplete';
+    //   notifyListeners();
+    //   return;
+    // }
 
     _isLoading = true;
     _error = null;
     notifyListeners();
 
-    final result = await _authRepository.verifyOtp(phoneNumber, _otp);
+    final normalizedPhone = phoneNumber.startsWith('0') && phoneNumber.length == 10
+        ? '+962${phoneNumber.substring(1)}'
+        : phoneNumber;
+
+    final result = await _authRepository.verifyOtp(normalizedPhone, _otp);
     result.fold(
       onSuccess: (session) {
         _session = session;
         _verified = true;
       },
-      onFailure: (f) => _error = f.message,
+      onFailure: (f) {
+        if (f is NotFoundFailure && f.code == AuthErrorCodes.phoneNotRegistered) {
+          _needsSignup = true;
+        } else {
+          _error = f.message;
+        }
+      },
     );
 
     _isLoading = false;
@@ -57,10 +71,14 @@ class VerificationViewModel extends ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    final result = await _authRepository.requestOtp(phoneNumber);
+    final normalizedPhone = phoneNumber.startsWith('0') && phoneNumber.length == 10
+        ? '+962${phoneNumber.substring(1)}'
+        : phoneNumber;
+
+    final result = await _authRepository.requestOtp(normalizedPhone);
     result.fold(
       onSuccess: (_) {
-        _error = 'تم إعادة إرسال الرمز';
+        _error = 'otpResentMessage';
       },
       onFailure: (f) => _error = f.message,
     );

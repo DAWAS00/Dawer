@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 
 enum EarningsPeriod { day, week, month }
 

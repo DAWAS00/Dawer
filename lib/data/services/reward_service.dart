@@ -1,6 +1,6 @@
 import '../../core/result/result.dart';
 import '../../domain/failures/app_failure.dart';
-import '../models/order.dart' show VehicleType, WasteType;
+import '../models/order/order.dart' show VehicleType, WasteType;
 import '../models/reward_breakdown.dart';
 
 class RewardService {

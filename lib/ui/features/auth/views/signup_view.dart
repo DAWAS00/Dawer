@@ -1,6 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../../../../data/services/user_signup_service.dart';
 
 import '../viewmodels/login_viewmodel.dart';
 import '../viewmodels/signup_viewmodel.dart';
@@ -28,9 +29,10 @@ class SignUpView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => SignUpViewModel(
+      create: (ctx) => SignUpViewModel(
         role: role,
         supplierType: supplierType,
+        service: ctx.read<UserSignUpService>(),
       ),
       child: const _SignUpScreen(),
     );
@@ -586,9 +588,9 @@ class _SignUpScreenState extends State<_SignUpScreen> {
           _InputField(
             controller: _phoneCtrl,
             label: l10n.signupPhone,
-            hint: l10n.signupPhoneHint,
+            hint: '07XXXXXXXX',
             keyboardType: TextInputType.phone,
-            prefixText: '+962  ',
+            maxLength: 10,
             forceLtrInEnglish: true,
             isRequired: false,
             error: vm.errors['contactPhone'],
@@ -835,11 +837,11 @@ class _InputField extends StatelessWidget {
   final String label;
   final String hint;
   final String? error;
-  final String? prefixText;
   final bool isRequired;
   final TextInputType keyboardType;
   final bool forceLtrInEnglish;
   final ValueChanged<String> onChanged;
+  final int? maxLength;
 
   const _InputField({
     required this.controller,
@@ -847,10 +849,10 @@ class _InputField extends StatelessWidget {
     required this.hint,
     required this.onChanged,
     this.error,
-    this.prefixText,
     this.isRequired = true,
     this.keyboardType = TextInputType.text,
     this.forceLtrInEnglish = false,
+    this.maxLength,
   });
 
   @override
@@ -891,6 +893,7 @@ class _InputField extends StatelessWidget {
           child: TextField(
             controller: controller,
             keyboardType: keyboardType,
+            maxLength: maxLength,
             textAlign: useLtrInput ? TextAlign.left : TextAlign.start,
             textDirection: useLtrInput ? TextDirection.ltr : null,
             onChanged: onChanged,
@@ -900,11 +903,6 @@ class _InputField extends StatelessWidget {
             ),
             decoration: InputDecoration(
               hintText: hint,
-              prefixText: prefixText,
-              prefixStyle: GoogleFonts.dmSans(
-                fontSize: 14,
-                color: const Color(0xFF717973),
-              ),
               hintStyle: GoogleFonts.cairo(
                 fontSize: 14,
                 color: const Color(0xFF6B7280).withValues(alpha: 0.5),
@@ -912,6 +910,7 @@ class _InputField extends StatelessWidget {
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16, vertical: 14),
+              counterText: '',
             ),
           ),
         ),

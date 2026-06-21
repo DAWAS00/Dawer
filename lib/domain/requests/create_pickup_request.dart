@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import '../../data/models/order.dart';
+import '../../data/models/order/order.dart';
 
 class CreatePickupRequest {
   final String supplierId;

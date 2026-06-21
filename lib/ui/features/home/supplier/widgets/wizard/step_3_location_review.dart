@@ -1,9 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:dwaar/data/models/order.dart';
+import 'package:dwaar/data/models/order/order.dart';
 import 'package:dwaar/data/utils/eco_impact_calculator.dart';
 import 'package:dwaar/ui/common/map/location_picker_screen.dart';
 import 'package:dwaar/ui/features/home/supplier/controllers/publish_form_controller.dart';
+import 'wizard_style_tokens.dart';
 
 class Step3LocationAndReview extends StatelessWidget {
   final PublishFormController controller;
@@ -21,13 +22,12 @@ class Step3LocationAndReview extends StatelessWidget {
             title: 'آخر خطوة!',
             subtitle: 'حدد موقع الاستلام وراجع الإعلان قبل النشر',
           ),
+
           const _FieldLabel(text: 'عنوان الاستلام *'),
           const SizedBox(height: 10),
           _LocationCard(
             hasLocation: controller.pickedLat != null,
-            address: controller.pickedAddress,
-            resolving: controller.resolvingAddress,
-            controller: controller,
+            address: controller.pickedAddress ?? 'اضغط لتحديد الموقع على الخريطة',
             onTap: () async {
               final result = await Navigator.push<(double, double)?>(
                 context,
@@ -43,34 +43,38 @@ class Step3LocationAndReview extends StatelessWidget {
               }
             },
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
+          _CurrentLocationButton(controller: controller),
+          const SizedBox(height: 20),
+
           const _FieldLabel(text: 'ملاحظات — اختياري'),
           const SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
-              color: const Color(0xFFF5F5F5),
+              color: WizardColors.surface,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFE0E0E0)),
+              border: Border.all(color: WizardColors.border),
             ),
             child: TextField(
               controller: controller.notesCtrl,
               maxLines: 3,
               textAlign: TextAlign.right,
               textDirection: TextDirection.rtl,
-              style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF1A1A1A)),
+              style: GoogleFonts.cairo(fontSize: 13, color: WizardColors.textPrimary),
               decoration: const InputDecoration(
-                hintText: 'مثال: الكمية تقريباً ٣٠ كيس بلاستيك...',
-                hintStyle: TextStyle(fontSize: 13, color: Color(0xFFAAAAAA)),
+                hintText: 'مثال: المواد موجودة خلف المستودع...',
+                hintStyle: TextStyle(fontSize: 13, color: WizardColors.textHint),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.all(14),
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
+
           const _FieldLabel(text: 'ملخص الإعلان والتأثير البيئي'),
           const SizedBox(height: 10),
           _SummaryCard(controller: controller),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
         ],
       ),
     );
@@ -79,126 +83,102 @@ class Step3LocationAndReview extends StatelessWidget {
 
 class _LocationCard extends StatelessWidget {
   final bool hasLocation;
-  final String? address;
-  final bool resolving;
+  final String address;
   final VoidCallback onTap;
-  final PublishFormController controller;
 
   const _LocationCard({
     required this.hasLocation,
-    this.address,
-    required this.resolving,
+    required this.address,
     required this.onTap,
-    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            decoration: BoxDecoration(
-              color: hasLocation ? const Color(0xFFE8F5E9) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: hasLocation ? const Color(0xFF2E7D32) : const Color(0xFFE0E0E0),
-                width: hasLocation ? 1.5 : 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-                  child: Container(
-                    height: 120,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFDCEDDC),
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/sample_wood.jpg'),
-                        fit: BoxFit.cover,
-                        opacity: 0.1,
-                      ),
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Icon(
-                          Icons.location_pin,
-                          size: 48,
-                          color: hasLocation ? const Color(0xFF2E7D32) : const Color(0xFFAAAAAA),
-                        ),
-                        if (resolving)
-                          const CircularProgressIndicator(strokeWidth: 3, color: Color(0xFF2E7D32)),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2E7D32),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          'تغيير الموقع',
-                          style: GoogleFonts.cairo(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              resolving
-                                  ? 'جاري تحديد العنوان...'
-                                  : (hasLocation ? (address ?? 'موقع محدد') : 'تحديد الموقع على الخريطة'),
-                              style: GoogleFonts.cairo(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: hasLocation ? const Color(0xFF1A1A1A) : const Color(0xFF6B6B6B),
-                              ),
-                              textAlign: TextAlign.right,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            if (hasLocation && !resolving)
-                              Text(
-                                'المنطقة المحددة للاستلام',
-                                style: GoogleFonts.cairo(fontSize: 10, color: const Color(0xFF6B6B6B)),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+          color: hasLocation ? WizardColors.primaryLight : WizardColors.surface,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: hasLocation ? WizardColors.borderSelected : WizardColors.border,
+            width: hasLocation ? 1.5 : 1,
           ),
         ),
-        const SizedBox(height: 12),
-        _CurrentLocationButton(controller: controller),
-      ],
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(13)),
+              child: Container(
+                height: 90,
+                color: const Color(0xFFDCEDDC),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ...List.generate(5, (i) => Positioned(
+                      left: i * 60.0,
+                      top: 0,
+                      bottom: 0,
+                      child: Container(width: 0.5, color: const Color(0xFFA5C8A5)),
+                    )),
+                    ...List.generate(4, (i) => Positioned(
+                      top: i * 22.5,
+                      left: 0,
+                      right: 0,
+                      child: Container(height: 0.5, color: const Color(0xFFA5C8A5)),
+                    )),
+                    Icon(
+                      Icons.location_pin,
+                      size: 36,
+                      color: hasLocation ? WizardColors.primaryMid : WizardColors.textHint,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                    decoration: BoxDecoration(
+                      color: WizardColors.primaryMid,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      'تغيير الموقع',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Expanded(
+                    child: Text(
+                      address,
+                      style: hasLocation
+                          ? GoogleFonts.robotoMono(
+                              fontSize: 11,
+                              color: WizardColors.primaryMid,
+                            )
+                          : GoogleFonts.cairo(
+                              fontSize: 11,
+                              color: WizardColors.textSecondary,
+                            ),
+                      textAlign: TextAlign.right,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -217,11 +197,11 @@ class _CurrentLocationButton extends StatelessWidget {
         }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: WizardColors.scaffold,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE0E0E0)),
+          border: Border.all(color: WizardColors.border),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -229,13 +209,13 @@ class _CurrentLocationButton extends StatelessWidget {
             Text(
               'استخدام موقعي الحالي',
               style: GoogleFonts.cairo(
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF2E7D32),
+                color: WizardColors.primaryMid,
               ),
             ),
             const SizedBox(width: 8),
-            const Icon(Icons.my_location_rounded, size: 18, color: Color(0xFF2E7D32)),
+            const Icon(Icons.my_location_rounded, size: 16, color: WizardColors.primaryMid),
           ],
         ),
       ),
@@ -256,17 +236,25 @@ class _SummaryCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: WizardColors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
+        border: Border.all(color: WizardColors.border),
       ),
       child: Column(
         children: [
           _SummaryRow(
             icon: Icons.recycling_outlined,
             label: 'نوع المواد',
-            value: controller.selectedTypes.map((t) => t.label).join('، '),
+            value: controller.selectedTypes.isNotEmpty 
+                ? controller.selectedTypes.map((t) => t.label).join('، ') 
+                : '—',
             hasValue: controller.selectedTypes.isNotEmpty,
+          ),
+          _SummaryRow(
+            icon: Icons.category_outlined,
+            label: 'الحالة',
+            value: controller.wasteForm?.label ?? '—',
+            hasValue: controller.wasteForm != null,
           ),
           _SummaryRow(
             icon: Icons.monitor_weight_outlined,
@@ -275,6 +263,14 @@ class _SummaryCard extends StatelessWidget {
                 ? '${controller.weightCategory!.shortLabel} (${controller.weightCategory!.label})'
                 : '—',
             hasValue: controller.weightCategory != null,
+          ),
+          _SummaryRow(
+            icon: Icons.sell_outlined,
+            label: 'السعر',
+            value: controller.priceCtrl.text.isNotEmpty 
+                ? '${controller.priceCtrl.text} دينار' 
+                : 'غير محدد',
+            hasValue: controller.priceCtrl.text.isNotEmpty,
           ),
           _SummaryRow(
             icon: Icons.eco_rounded,
@@ -321,15 +317,15 @@ class _SummaryRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: isLast
             ? null
-            : const Border(bottom: BorderSide(color: Color(0xFFE0E0E0), width: 0.5)),
+            : const Border(bottom: BorderSide(color: WizardColors.border, width: 0.5)),
       ),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: color ?? const Color(0xFF6B6B6B)),
+          Icon(icon, size: 16, color: color ?? WizardColors.textSecondary),
           const SizedBox(width: 6),
           Text(
             label,
-            style: GoogleFonts.cairo(fontSize: 12, color: const Color(0xFF6B6B6B)),
+            style: GoogleFonts.cairo(fontSize: 12, color: WizardColors.textSecondary),
           ),
           const Spacer(),
           Expanded(
@@ -337,11 +333,10 @@ class _SummaryRow extends StatelessWidget {
               value,
               style: GoogleFonts.cairo(
                 fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: hasValue ? (color ?? const Color(0xFF06402B)) : const Color(0xFFAAAAAA),
+                fontWeight: FontWeight.w600,
+                color: hasValue ? (color ?? WizardColors.primaryMid) : WizardColors.textHint,
               ),
-              textAlign: TextAlign.left,
-              maxLines: 1,
+              textAlign: TextAlign.right,
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -368,14 +363,14 @@ class _StepHeader extends StatelessWidget {
             style: GoogleFonts.cairo(
               fontSize: 22,
               fontWeight: FontWeight.w800,
-              color: const Color(0xFF1A1A1A),
+              color: WizardColors.textPrimary,
             ),
             textAlign: TextAlign.right,
           ),
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF6B6B6B)),
+            style: GoogleFonts.cairo(fontSize: 13, color: WizardColors.textSecondary),
             textAlign: TextAlign.right,
           ),
         ],
@@ -397,7 +392,7 @@ class _FieldLabel extends StatelessWidget {
         style: GoogleFonts.cairo(
           fontSize: 12,
           fontWeight: FontWeight.w700,
-          color: const Color(0xFF6B6B6B),
+          color: WizardColors.textSecondary,
         ),
       ),
     );

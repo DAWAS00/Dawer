@@ -137,6 +137,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSignUpNow => 'Register Now';
 
   @override
+  String get registerAsDriver => 'Register as Driver';
+
+  @override
+  String get registerAsIndividual => 'Register as Individual Supplier';
+
+  @override
+  String get registerAsStore => 'Register as Restaurant / Company';
+
+  @override
+  String get registerAsRecyclingCo => 'Register as Recycling Company';
+
+  @override
   String get loginCountrySearch => 'Search';
 
   @override
@@ -295,6 +307,68 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginPasswordHint => 'Enter your password';
+
+  @override
+  String get roleDriverTitle => 'Driver';
+
+  @override
+  String get roleDriverSubtitle => 'Collect and transport waste to earn money';
+
+  @override
+  String get roleSupplierTitle => 'Supplier';
+
+  @override
+  String get roleSupplierSubtitle => 'Sell your waste and help the environment';
+
+  @override
+  String get roleRecyclingCoTitle => 'Recycling Company';
+
+  @override
+  String get roleRecyclingCoSubtitle =>
+      'Receive materials directly at your facility';
+
+  @override
+  String get loginPhoneHelp =>
+      'We will send a short code to this number to verify it\'s you';
+
+  @override
+  String get loginPhoneHint => '7X XXX XXXX';
+
+  @override
+  String get loginContinueButton => 'Continue';
+
+  @override
+  String get loginPhoneEmptyError => 'Please enter your phone number';
+
+  @override
+  String get loginNewNumberHint =>
+      'New number? Your account will be created after verification';
+
+  @override
+  String get otpTitle => 'Verification Code';
+
+  @override
+  String otpSubtitle(String phone) {
+    return 'Enter the 6-digit code sent to $phone';
+  }
+
+  @override
+  String get otpVerifyButton => 'Verify';
+
+  @override
+  String get otpResendButton => 'Resend Code';
+
+  @override
+  String get otpResentMessage => 'Code sent again';
+
+  @override
+  String get otpErrorIncomplete => 'Please enter the full code';
+
+  @override
+  String get otpErrorInvalid => 'Invalid code, please try again';
+
+  @override
+  String get otpSimulatedHint => 'For testing, use code 123456';
 
   @override
   String get signupRoleDriver => 'Driver Registration';
@@ -477,6 +551,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get driverCollectionCommitments => 'Collection Commitments';
+
+  @override
+  String get driverToggleOnline => 'Available';
+
+  @override
+  String get driverToggleOffline => 'Unavailable';
+
+  @override
+  String get driverStatusOnline => 'Online Now';
+
+  @override
+  String get driverStatusOffline => 'Offline';
+
+  @override
+  String get driverActiveMission => 'Active Mission';
+
+  @override
+  String get driverHeadingToPickup => 'Heading to Pickup';
+
+  @override
+  String get driverHeadingToDelivery => 'Heading to Delivery';
+
+  @override
+  String get driverOrderAccepted => 'Order Accepted';
+
+  @override
+  String get driverNewOrderBadge => 'New Order';
+
+  @override
+  String get driverActivateNow => 'Activate Now';
+
+  @override
+  String get driverNoOrdersNotifySubtitle =>
+      'You\'ll be notified when new orders are available';
+
+  @override
+  String get driverOrdersTabAll => 'All';
+
+  @override
+  String get driverOrdersTabActive => 'Active';
+
+  @override
+  String get driverOrdersTabCompleted => 'Completed';
+
+  @override
+  String get driverPickupLabel => 'Pickup';
+
+  @override
+  String get driverDeliveryLabel => 'Delivery';
+
+  @override
+  String get driverViewPickupDetails => 'View Pickup Details';
+
+  @override
+  String get driverViewDeliveryDetails => 'View Delivery Details';
+
+  @override
+  String get driverRewardLabel => 'Reward';
+
+  @override
+  String get driverDistanceLabel => 'Distance';
+
+  @override
+  String get driverTimeLabel => 'Time';
+
+  @override
+  String get driverWasteTypeLabel => 'Waste Type';
 
   @override
   String get withdrawListing => 'Withdraw Listing';
@@ -1087,6 +1228,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get marketNoJobs => 'No collection jobs currently';
+
+  @override
+  String get marketCategoryAll => 'All';
+
+  @override
+  String get marketNoOffersBody => 'Posted materials will appear here';
+
+  @override
+  String get marketNoJobsBody => 'Available collection jobs will appear here';
+
+  @override
+  String get marketSuggestedByLicense => 'Suggestions Based on Your License';
+
+  @override
+  String get marketShowAllOrders => 'Show All Orders';
 
   @override
   String get collectionJobBadge => 'Collection Job';
@@ -1870,4 +2026,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signupVehicleColorHint => 'e.g., White';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsEmpty => 'No notifications yet';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all as read';
+
+  @override
+  String get orderSearchingDriver =>
+      'Searching for the nearest available driver...';
+
+  @override
+  String get orderSearchingDriverRetry => 'Search for a driver again';
 }

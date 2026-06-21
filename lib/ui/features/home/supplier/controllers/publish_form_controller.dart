@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/services/market_ai_service.dart';
 import '../../../../../data/services/location_service.dart';
 import '../../shared/controllers/post_market_controller.dart';

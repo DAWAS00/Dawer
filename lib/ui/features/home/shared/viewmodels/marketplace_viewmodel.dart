@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/services/app_order_store.dart';
 
@@ -30,6 +30,8 @@ class MarketplaceViewModel extends ChangeNotifier {
   }
 
   void _onStoreChanged() => notifyListeners();
+
+  bool get isLoading => _store.isLoading;
 
   // ── User categories (persisted from signup/login) ─────────────────────────
 

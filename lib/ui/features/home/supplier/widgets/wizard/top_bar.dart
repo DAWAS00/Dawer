@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'wizard_style_tokens.dart';
 
 class WizardTopBar extends StatelessWidget {
   final int currentStep;
@@ -39,7 +40,7 @@ class WizardTopBar extends StatelessWidget {
                   style: GoogleFonts.cairo(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: const Color(0xFF1A1A1A),
+                    color: WizardColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -47,7 +48,7 @@ class WizardTopBar extends StatelessWidget {
                   _stepTitles[currentStep],
                   style: GoogleFonts.cairo(
                     fontSize: 12,
-                    color: const Color(0xFF6B6B6B),
+                    color: WizardColors.textSecondary,
                   ),
                 ),
               ],
@@ -56,7 +57,7 @@ class WizardTopBar extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: const Color(0xFFE8F5E9),
+              color: WizardColors.primaryLight,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -64,7 +65,7 @@ class WizardTopBar extends StatelessWidget {
               style: GoogleFonts.dmSans(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF2E7D32),
+                color: WizardColors.primaryMid,
               ),
             ),
           ),
@@ -91,10 +92,10 @@ class _CircleIconBtn extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: const BoxDecoration(
-          color: Color(0xFFF5F5F5),
+          color: WizardColors.surface,
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, size: 18, color: const Color(0xFF6B6B6B)),
+        child: Icon(icon, size: 18, color: WizardColors.textSecondary),
       ),
     );
   }

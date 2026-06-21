@@ -3,8 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/state/view_state.dart';
+import '../../../../data/models/user_role.dart';
 import '../../../../domain/chat/entities/chat_message.dart';
 import '../../../../domain/chat/repositories/i_chat_repository.dart';
+import '../../../../domain/repositories/i_auth_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../viewmodels/chat_viewmodel.dart';
 import '../widgets/chat_bubble.dart';
@@ -14,9 +16,6 @@ import '../widgets/chat_input_bar.dart';
 //
 // Full-screen chat for a single order. Creates its own [ChatViewModel] locally
 // so it doesn't pollute the global provider tree.
-//
-// Backend extension: pass real currentUserId / currentUserName / currentUserRole
-// from the auth session instead of the defaults in [ChatViewModel].
 
 class ChatView extends StatelessWidget {
   final String orderId;
@@ -32,11 +31,15 @@ class ChatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final session = context.read<IAuthRepository>().currentSession;
+    
     return ChangeNotifierProvider(
       create: (ctx) => ChatViewModel(
         repo: ctx.read<IChatRepository>(),
         orderId: orderId,
-        // TODO(backend): replace with real auth session values
+        currentUserId: session?.userId ?? 'guest',
+        currentUserName: session?.userName ?? 'Guest',
+        currentUserRole: session?.role ?? UserRole.supplier,
       )..init(),
       child: _ChatScaffold(orderId: orderId),
     );
@@ -59,10 +62,29 @@ class _ChatScaffold extends StatelessWidget {
         children: [
           _frontendOnlyBanner(context),
           Expanded(child: _MessageList(vm: vm)),
-          ChatInputBar(onSend: vm.send),
+          ChatInputBar(
+            onSend: vm.send,
+            quickReplies: _getQuickReplies(vm.currentUserRole),
+          ),
         ],
       ),
     );
+  }
+
+  List<String> _getQuickReplies(UserRole role) {
+    return switch (role) {
+      UserRole.driver => [
+          "أنا في الطريق",
+          "أنا على بعد 5 دقائق",
+          "لقد وصلت",
+          "الرجاء تجهيز المواد",
+        ],
+      UserRole.supplier || UserRole.recyclingCo => [
+          "المواد جاهزة",
+          "بانتظارك",
+          "سأكون متواجداً خلال دقيقة",
+        ],
+    };
   }
 
   // Frontend-only notice bar — remove this widget when backend is enabled.

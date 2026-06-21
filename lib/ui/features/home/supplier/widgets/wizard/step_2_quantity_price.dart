@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:dwaar/data/models/order.dart';
+import 'package:dwaar/data/models/order/order.dart';
 import 'package:dwaar/ui/features/home/supplier/controllers/publish_form_controller.dart';
+import 'wizard_style_tokens.dart';
 
 class Step2QuantityAndPrice extends StatelessWidget {
   final PublishFormController controller;
@@ -30,7 +31,7 @@ class Step2QuantityAndPrice extends StatelessWidget {
               final isSelected = controller.wasteForm == form;
               return _ConditionChip(
                 label: form.label,
-                icon: Icons.layers_outlined, // Fallback icon
+                icon: _getIconForWasteForm(form),
                 selected: isSelected,
                 onTap: () => controller.selectWasteForm(form),
               );
@@ -46,7 +47,7 @@ class Step2QuantityAndPrice extends StatelessWidget {
               child: _QuantityCard(
                 label: cat.shortLabel,
                 range: cat.label,
-                icon: Icons.fitness_center_outlined, // Fallback icon
+                icon: _getIconForWeightCategory(cat),
                 selected: isSelected,
                 onTap: () => controller.selectWeightCategory(cat),
               ),
@@ -60,6 +61,24 @@ class Step2QuantityAndPrice extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  IconData _getIconForWasteForm(WasteForm form) {
+    switch (form) {
+      case WasteForm.solid: return Icons.crop_square_outlined;
+      case WasteForm.liquid: return Icons.water_drop_outlined;
+      case WasteForm.gas: return Icons.air_outlined;
+      case WasteForm.mixed: return Icons.layers_outlined;
+    }
+  }
+
+  IconData _getIconForWeightCategory(WeightCategory cat) {
+    switch (cat) {
+      case WeightCategory.light: return Icons.eco_outlined;
+      case WeightCategory.medium: return Icons.straighten_outlined;
+      case WeightCategory.heavy: return Icons.fitness_center_outlined;
+      case WeightCategory.veryHeavy: return Icons.local_shipping_outlined;
+    }
   }
 }
 
@@ -84,10 +103,10 @@ class _ConditionChip extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFFE8F5E9) : const Color(0xFFF5F5F5),
+          color: selected ? WizardColors.primaryLight : WizardColors.surface,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: selected ? const Color(0xFF2E7D32) : const Color(0xFFE0E0E0),
+            color: selected ? WizardColors.borderSelected : WizardColors.border,
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -99,14 +118,14 @@ class _ConditionChip extends StatelessWidget {
               style: GoogleFonts.cairo(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: selected ? const Color(0xFF2E7D32) : const Color(0xFF6B6B6B),
+                color: selected ? WizardColors.primaryMid : WizardColors.textSecondary,
               ),
             ),
             const SizedBox(width: 6),
             Icon(
               icon,
               size: 16,
-              color: selected ? const Color(0xFF2E7D32) : const Color(0xFF6B6B6B),
+              color: selected ? WizardColors.primaryMid : WizardColors.textSecondary,
             ),
           ],
         ),
@@ -138,20 +157,19 @@ class _QuantityCard extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFFE8F5E9) : const Color(0xFFF5F5F5),
+          color: selected ? WizardColors.primaryLight : WizardColors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: selected ? const Color(0xFF2E7D32) : const Color(0xFFE0E0E0),
+            color: selected ? WizardColors.borderSelected : WizardColors.border,
             width: selected ? 1.5 : 1,
           ),
         ),
         child: Row(
           children: [
-            Radio<bool>(
-              value: true,
-              groupValue: selected,
-              onChanged: (_) => onTap(),
-              activeColor: const Color(0xFF2E7D32),
+            Icon(
+              selected ? Icons.radio_button_checked : Icons.radio_button_off,
+              size: 20,
+              color: selected ? WizardColors.primaryMid : WizardColors.border,
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -163,15 +181,17 @@ class _QuantityCard extends StatelessWidget {
                     style: GoogleFonts.cairo(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: selected ? const Color(0xFF2E7D32) : const Color(0xFF1A1A1A),
+                      color: selected ? WizardColors.primaryMid : WizardColors.textPrimary,
                     ),
+                    textDirection: TextDirection.rtl,
                   ),
                   Text(
                     range,
                     style: GoogleFonts.cairo(
                       fontSize: 12,
-                      color: const Color(0xFF6B6B6B),
+                      color: WizardColors.textSecondary,
                     ),
+                    textDirection: TextDirection.rtl,
                   ),
                 ],
               ),
@@ -181,13 +201,13 @@ class _QuantityCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: selected ? const Color(0xFFA5D6A7) : const Color(0xFFEEEEEE),
+                color: selected ? WizardColors.primaryBorder : WizardColors.surfaceAlt,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 icon,
                 size: 20,
-                color: selected ? const Color(0xFF2E7D32) : const Color(0xFF6B6B6B),
+                color: selected ? WizardColors.primaryMid : WizardColors.textSecondary,
               ),
             ),
           ],
@@ -206,9 +226,9 @@ class _PriceInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: WizardColors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
+        border: Border.all(color: WizardColors.border),
       ),
       child: TextField(
         controller: controller,
@@ -221,23 +241,23 @@ class _PriceInput extends StatelessWidget {
         style: GoogleFonts.dmSans(
           fontSize: 18,
           fontWeight: FontWeight.w700,
-          color: const Color(0xFF1A1A1A),
+          color: WizardColors.textPrimary,
         ),
         decoration: InputDecoration(
           hintText: '0.00',
           hintStyle: GoogleFonts.dmSans(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: const Color(0xFFAAAAAA),
+            color: WizardColors.textHint,
           ),
           suffixText: 'دينار',
           suffixStyle: GoogleFonts.cairo(
             fontSize: 13,
-            color: const Color(0xFF6B6B6B),
+            color: WizardColors.textSecondary,
           ),
           prefixIcon: const Icon(
             Icons.sell_outlined,
-            color: Color(0xFF2E7D32),
+            color: WizardColors.primaryMid,
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -264,14 +284,14 @@ class _StepHeader extends StatelessWidget {
             style: GoogleFonts.cairo(
               fontSize: 22,
               fontWeight: FontWeight.w800,
-              color: const Color(0xFF1A1A1A),
+              color: WizardColors.textPrimary,
             ),
             textAlign: TextAlign.right,
           ),
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF6B6B6B)),
+            style: GoogleFonts.cairo(fontSize: 13, color: WizardColors.textSecondary),
             textAlign: TextAlign.right,
           ),
         ],
@@ -293,7 +313,7 @@ class _FieldLabel extends StatelessWidget {
         style: GoogleFonts.cairo(
           fontSize: 12,
           fontWeight: FontWeight.w700,
-          color: const Color(0xFF6B6B6B),
+          color: WizardColors.textSecondary,
         ),
       ),
     );

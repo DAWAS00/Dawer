@@ -1,10 +1,15 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../../data/models/order.dart';
+import 'package:provider/provider.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../data/mock/order_mock_data.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../../l10n/l10n.dart';
 import '../../shared/order_card.dart';
 import '../../shared/order_details_view.dart';
 import '../../shared/widgets/collection_sale_card.dart';
+import '../viewmodels/driver_home_viewmodel.dart';
+import '../../../../core/components/dwaar_skeleton.dart';
 
 void _handleStartTransit(
   BuildContext context,
@@ -41,8 +46,7 @@ void _showCompleteDialog(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(context.l10n.orderDeliveryConfirmMsg,
-              textAlign: TextAlign.right,
-              style: GoogleFonts.cairo()),
+              textAlign: TextAlign.right, style: GoogleFonts.cairo()),
           if (sale.paymentModel == PaymentModel.perKg) ...[
             const SizedBox(height: 16),
             TextField(
@@ -71,8 +75,7 @@ void _showCompleteDialog(
             final weightText = weightController.text.trim();
             final weight =
                 weightText.isEmpty ? null : double.tryParse(weightText);
-            final error =
-                onComplete(sale.id, actualWeightKg: weight);
+            final error = onComplete(sale.id, actualWeightKg: weight);
             if (error != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -85,7 +88,7 @@ void _showCompleteDialog(
             }
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF1E40AF),
+            backgroundColor: AppColors.jobBlue,
             foregroundColor: Colors.white,
             elevation: 0,
             shape: RoundedRectangleBorder(
@@ -99,7 +102,14 @@ void _showCompleteDialog(
   );
 }
 
-class DriverOrdersTab extends StatelessWidget {
+const _activeStatuses = {
+  OrderStatus.accepted,
+  OrderStatus.arrivedAtPickup,
+  OrderStatus.inTransit,
+  OrderStatus.arrivedAtDropoff,
+};
+
+class DriverOrdersTab extends StatefulWidget {
   final List<Order> history;
   final Order? active;
   final List<Order> collectionSaleOrders;
@@ -124,154 +134,357 @@ class DriverOrdersTab extends StatelessWidget {
   });
 
   @override
+  State<DriverOrdersTab> createState() => _DriverOrdersTabState();
+}
+
+class _DriverOrdersTabState extends State<DriverOrdersTab>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // ignore: use_null_aware_elements
-    final all = [if (active != null) active!, ...history];
-    final allEmpty = all.isEmpty && collectionSaleOrders.isEmpty;
-    return CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-                20, MediaQuery.of(context).padding.top + 20, 20, 16),
-            child: Text(
-              context.l10n.driverOrdersHistory,
-              textAlign: TextAlign.right,
-              style: GoogleFonts.cairo(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF002819),
-              ),
+    final l10n = context.l10n;
+    final loading = context.watch<DriverHomeViewModel>().isLoading;
+    final skeletons = OrderMockData.skeletonOrders();
+    final all = loading
+        ? skeletons
+        : [if (widget.active != null) widget.active!, ...widget.history];
+    final activeList = loading
+        ? skeletons
+        : all.where((o) => _activeStatuses.contains(o.status)).toList();
+    final completedList = loading
+        ? <Order>[]
+        : all.where((o) => o.status == OrderStatus.completed).toList();
+
+    return Column(
+      children: [
+        // ── Gradient header ──
+        Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF0A3D20), Color(0xFF1A6B3C)],
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
             ),
           ),
-        ),
-        if (allEmpty)
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+          padding: EdgeInsets.fromLTRB(
+              20, MediaQuery.of(context).padding.top + 20, 20, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
                 children: [
+                  // Stats bubble
                   Container(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF06402B).withValues(alpha: 0.05),
-                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Icon(
-                      Icons.receipt_long_rounded,
-                      size: 64,
-                      color: Color(0xFF06402B),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.receipt_long_rounded,
+                            size: 13, color: Colors.white70),
+                        const SizedBox(width: 5),
+                        Text(
+                          '${all.length}',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const Spacer(),
+                  // Title
                   Text(
-                    context.l10n.driverNoOrders,
+                    l10n.driverOrdersHistory,
                     style: GoogleFonts.cairo(
                       fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF002819),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    context.l10n.driverNoOrdersYet,
-                    style: GoogleFonts.cairo(
-                      fontSize: 14,
-                      color: const Color(0xFF717973),
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
                     ),
                   ),
                 ],
               ),
-            ),
-          )
-        else ...[
-          if (collectionSaleOrders.isNotEmpty) ..._buildCollectionSalesSection(context),
-          if (all.isNotEmpty)
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, i) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: _DriverOrderCard(
-                      order: all[i],
-                      onCompleteOrder: onCompleteOrder,
-                      onMarkArrivedAtPickup: onMarkArrivedAtPickup,
-                      onMarkArrivedAtDropoff: onMarkArrivedAtDropoff,
+              const SizedBox(height: 16),
+              // Tab bar inside gradient
+              TabBar(
+                controller: _tabController,
+                tabs: [
+                  Tab(
+                    child: Text(
+                      '${l10n.driverOrdersTabAll} (${all.length})',
+                      style: GoogleFonts.cairo(fontSize: 12),
                     ),
                   ),
-                  childCount: all.length,
-                ),
-              ),
-            ),
-        ],
-      ],
-    );
-  }
-
-  List<Widget> _buildCollectionSalesSection(BuildContext context) {
-    return [
-      SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-          child: Row(
-            children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF14401F).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  '${collectionSaleOrders.length}',
-                  style: GoogleFonts.dmSans(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF14401F)),
-                ),
-              ),
-              const Spacer(),
-              Text(
-                context.l10n.driverCollectionCommitments,
-                style: GoogleFonts.cairo(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF002819)),
+                  Tab(
+                    child: Text(
+                      '${l10n.driverOrdersTabActive} (${activeList.length})',
+                      style: GoogleFonts.cairo(fontSize: 12),
+                    ),
+                  ),
+                  Tab(
+                    child: Text(
+                      '${l10n.driverOrdersTabCompleted} (${completedList.length})',
+                      style: GoogleFonts.cairo(fontSize: 12),
+                    ),
+                  ),
+                ],
+                labelStyle: GoogleFonts.cairo(fontWeight: FontWeight.w700),
+                unselectedLabelStyle: GoogleFonts.cairo(fontWeight: FontWeight.w500),
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.white60,
+                indicatorColor: Colors.white,
+                indicatorWeight: 2.5,
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: Colors.white.withValues(alpha: 0.2),
               ),
             ],
           ),
         ),
-      ),
-      SliverPadding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-        sliver: SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (ctx, i) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: CollectionSaleCard(
-                sale: collectionSaleOrders[i],
-                onCancel: collectionSaleOrders[i].status == OrderStatus.pending
-                    ? () => onCancelSale?.call(collectionSaleOrders[i].id)
-                    : null,
-                onStartTransit: collectionSaleOrders[i].status == OrderStatus.pending && onStartTransit != null
-                    ? () => _handleStartTransit(ctx, collectionSaleOrders[i], onStartTransit!)
-                    : null,
-                onComplete: collectionSaleOrders[i].status == OrderStatus.inTransit && onComplete != null
-                    ? () => _showCompleteDialog(ctx, collectionSaleOrders[i], onComplete!)
-                    : null,
-              ),
+
+        // ── Tab views ──
+        Expanded(
+          child: DwaarSkeleton(
+            enabled: loading,
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _OrderListView(
+                  orders: all,
+                  collectionSaleOrders:
+                      loading ? const [] : widget.collectionSaleOrders,
+                  tab: this,
+                ),
+                _OrderListView(
+                  orders: activeList,
+                  collectionSaleOrders: loading
+                      ? const []
+                      : widget.collectionSaleOrders
+                          .where((o) => _activeStatuses.contains(o.status))
+                          .toList(),
+                  tab: this,
+                ),
+                _OrderListView(
+                  orders: completedList,
+                  collectionSaleOrders: const [],
+                  tab: this,
+                ),
+              ],
             ),
-            childCount: collectionSaleOrders.length,
           ),
         ),
-      ),
-    ];
+      ],
+    );
   }
 }
 
-// ── Helper: decides card mode and opens OrderDetailsView with correct callbacks ──
+class _OrderListView extends StatelessWidget {
+  const _OrderListView({
+    required this.orders,
+    required this.collectionSaleOrders,
+    required this.tab,
+  });
+
+  final List<Order> orders;
+  final List<Order> collectionSaleOrders;
+  final _DriverOrdersTabState tab;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final isEmpty = orders.isEmpty && collectionSaleOrders.isEmpty;
+
+    if (isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: AppColors.primaryGreen.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: const Icon(
+                Icons.receipt_long_rounded,
+                size: 40,
+                color: AppColors.primaryGreen,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              l10n.driverNoOrders,
+              style: GoogleFonts.cairo(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textMain,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              l10n.driverNoOrdersYet,
+              style: GoogleFonts.cairo(
+                fontSize: 13,
+                color: AppColors.mutedText,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return CustomScrollView(
+      slivers: [
+        if (collectionSaleOrders.isNotEmpty) ...[
+          SliverToBoxAdapter(
+            child: _SectionHeader(
+              title: l10n.driverCollectionCommitments,
+              count: collectionSaleOrders.length,
+              color: AppColors.jobBlue,
+              icon: Icons.local_shipping_rounded,
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (ctx, i) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: CollectionSaleCard(
+                    sale: collectionSaleOrders[i],
+                    onCancel:
+                        collectionSaleOrders[i].status == OrderStatus.pending &&
+                                tab.widget.onCancelSale != null
+                            ? () =>
+                                tab.widget.onCancelSale!(collectionSaleOrders[i].id)
+                            : null,
+                    onStartTransit:
+                        collectionSaleOrders[i].status == OrderStatus.pending &&
+                                tab.widget.onStartTransit != null
+                            ? () => _handleStartTransit(ctx, collectionSaleOrders[i],
+                                tab.widget.onStartTransit!)
+                            : null,
+                    onComplete:
+                        collectionSaleOrders[i].status == OrderStatus.inTransit &&
+                                tab.widget.onComplete != null
+                            ? () => _showCompleteDialog(ctx, collectionSaleOrders[i],
+                                tab.widget.onComplete!)
+                            : null,
+                  ),
+                ),
+                childCount: collectionSaleOrders.length,
+              ),
+            ),
+          ),
+        ],
+        if (orders.isNotEmpty) ...[
+          if (collectionSaleOrders.isNotEmpty)
+            SliverToBoxAdapter(
+              child: _SectionHeader(
+                title: l10n.driverOrdersHistory,
+                count: orders.length,
+                color: AppColors.primaryGreen,
+                icon: Icons.receipt_long_rounded,
+              ),
+            ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, i) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _DriverOrderCard(
+                    order: orders[i],
+                    onCompleteOrder: tab.widget.onCompleteOrder,
+                    onMarkArrivedAtPickup: tab.widget.onMarkArrivedAtPickup,
+                    onMarkArrivedAtDropoff: tab.widget.onMarkArrivedAtDropoff,
+                  ),
+                ),
+                childCount: orders.length,
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  final int count;
+  final Color color;
+  final IconData icon;
+
+  const _SectionHeader({
+    required this.title,
+    required this.count,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Row(
+        children: [
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 12, color: color),
+                const SizedBox(width: 4),
+                Text(
+                  '$count',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: color,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Spacer(),
+          Text(
+            title,
+            style: GoogleFonts.cairo(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textMain,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _DriverOrderCard extends StatelessWidget {
   final Order order;
@@ -286,13 +499,6 @@ class _DriverOrderCard extends StatelessWidget {
     this.onMarkArrivedAtDropoff,
   });
 
-  static const _activeStatuses = {
-    OrderStatus.accepted,
-    OrderStatus.arrivedAtPickup,
-    OrderStatus.inTransit,
-    OrderStatus.arrivedAtDropoff,
-  };
-
   bool get _isActive => _activeStatuses.contains(order.status);
 
   void _openDetails(BuildContext context) {
@@ -300,6 +506,7 @@ class _DriverOrderCard extends StatelessWidget {
       builder: (_) => OrderDetailsView(
         order: order,
         hideStatus: true,
+        isDriverView: true,
         onCompleteOrder: onCompleteOrder,
         onMarkArrivedAtPickup: onMarkArrivedAtPickup,
         onMarkArrivedAtDropoff: onMarkArrivedAtDropoff,

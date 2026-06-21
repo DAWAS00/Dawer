@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
-import '../models/order.dart';
+import '../models/order/order.dart';
 import 'market_ai_service.dart';
 
 class MockMarketAiService implements IMarketAiService {

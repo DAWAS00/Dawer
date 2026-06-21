@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dwaar/core/theme/app_tokens.dart';
 import 'package:dwaar/core/constants/app_colors.dart';
-import 'package:dwaar/data/models/order.dart';
+import 'package:dwaar/data/models/order/order.dart';
 
 class DriverListingCard extends StatelessWidget {
   const DriverListingCard({

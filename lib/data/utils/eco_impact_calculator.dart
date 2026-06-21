@@ -1,4 +1,4 @@
-import '../../data/models/order.dart';
+import '../../data/models/order/order.dart';
 
 class EcoImpactResult {
   final double co2SavedKg;

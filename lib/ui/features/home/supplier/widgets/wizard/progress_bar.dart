@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'wizard_style_tokens.dart';
 
 class WizardProgressBar extends StatelessWidget {
   final int currentStep;
@@ -27,10 +28,10 @@ class WizardProgressBar extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
                   color: isDone
-                      ? const Color(0xFF059669)
+                      ? WizardColors.success
                       : isActive
-                          ? const Color(0xFF06402B)
-                          : const Color(0xFFE5E7EB),
+                          ? WizardColors.primaryMid
+                          : WizardColors.border,
                 ),
               ),
             ),

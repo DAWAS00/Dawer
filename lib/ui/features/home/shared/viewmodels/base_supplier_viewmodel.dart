@@ -1,5 +1,7 @@
+import 'dart:math' show Random;
+
 import 'package:flutter/material.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/services/app_order_store.dart';
 
@@ -9,10 +11,16 @@ import '../../../../../data/services/app_order_store.dart';
 abstract class BaseSupplierViewModel extends ChangeNotifier {
   final AppOrderStore _store;
   late User _user;
+  String? _authUserId;
 
   BaseSupplierViewModel(this._store) {
     _user = defaultUser;
     _store.addListener(_onStoreChanged);
+  }
+
+  void setAuthUserId(String id) {
+    _authUserId = id;
+    notifyListeners();
   }
 
   @override
@@ -34,6 +42,8 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
 
   @protected
   AppOrderStore get store => _store;
+
+  bool get isLoading => _store.isLoading;
 
   // ── Local state ───────────────────────────────────────────────────────────
 
@@ -61,7 +71,9 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Order> get orders => _store.supplierOrdersFor(_user.name);
+  List<Order> get orders => _authUserId != null
+      ? _store.supplierOrdersForId(_authUserId!)
+      : _store.supplierOrdersFor(_user.name);
   List<Order> get collectionSaleOrders => _store.collectionSalesFor(_user.name);
 
   List<Order> get activeOrders => orders
@@ -137,8 +149,7 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
     double? pickupLat,
     double? pickupLng,
   }) {
-    final orderId =
-        '$listingIdPrefix${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final orderId = _generateUuid();
     final hasChemicals = wasteTypes.contains(WasteType.chemicals);
     // Jordan VAT 16% applies to B2B marketplace transactions.
     const vatRate = 0.16;
@@ -185,6 +196,15 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
       _store.cancelCollectionSale(saleId);
 
   String? cancelOrder(String orderId) => _store.cancelOrder(orderId);
+
+  static String _generateUuid() {
+    final r = Random.secure();
+    final b = List<int>.generate(16, (_) => r.nextInt(256));
+    b[6] = (b[6] & 0x0f) | 0x40;
+    b[8] = (b[8] & 0x3f) | 0x80;
+    final h = b.map((x) => x.toRadixString(16).padLeft(2, '0')).join();
+    return '${h.substring(0, 8)}-${h.substring(8, 12)}-${h.substring(12, 16)}-${h.substring(16, 20)}-${h.substring(20)}';
+  }
 
   void assignDriver(String orderId, User driver) =>
       _store.assignDriver(orderId, driver);

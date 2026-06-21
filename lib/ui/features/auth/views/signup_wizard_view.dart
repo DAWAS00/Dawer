@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dwaar/data/models/user_role.dart';
+import 'package:dwaar/domain/repositories/i_auth_repository.dart';
+import 'package:dwaar/data/services/user_signup_service.dart';
 import 'package:dwaar/ui/common/wizard/common_wizard_top_bar.dart';
 import 'package:dwaar/ui/common/wizard/common_wizard_progress_bar.dart';
 import 'package:dwaar/ui/features/auth/controllers/signup_wizard_controller.dart';
@@ -14,11 +16,13 @@ import 'package:dwaar/ui/features/home/home_router.dart';
 class SignUpWizardView extends StatefulWidget {
   final UserRole initialRole;
   final SupplierType initialSupplierType;
+  final String initialPhone;
 
   const SignUpWizardView({
     super.key,
     required this.initialRole,
     required this.initialSupplierType,
+    this.initialPhone = '',
   });
 
   @override
@@ -32,7 +36,11 @@ class _SignUpWizardViewState extends State<SignUpWizardView> {
   @override
   void initState() {
     super.initState();
-    _controller = SignupWizardController();
+    _controller = SignupWizardController(
+      signupService: context.read<UserSignUpService>(),
+      authRepository: context.read<IAuthRepository>(),
+      initialPhone: widget.initialPhone,
+    );
     _controller.updateRole(widget.initialRole, widget.initialSupplierType);
     _controller.addListener(_onControllerChanged);
   }
@@ -98,7 +106,7 @@ class _SignUpWizardViewState extends State<SignUpWizardView> {
                   'الهوية والدور',
                   'التحقق الذكي',
                   'تفاصيل العمل',
-                  'بيانات الدخول',
+                  'بيانات التواصل',
                 ],
               ),
               CommonWizardProgressBar(
@@ -117,6 +125,15 @@ class _SignUpWizardViewState extends State<SignUpWizardView> {
                   ],
                 ),
               ),
+              if (_controller.error != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  child: Text(
+                    _controller.error!,
+                    style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               SignupWizardBottomActions(controller: _controller),
             ],
           ),

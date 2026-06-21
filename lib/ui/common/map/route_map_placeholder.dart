@@ -129,24 +129,28 @@ class _LabelsColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 72),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _RouteEndpointRow(
-            icon: Icons.radio_button_checked,
-            color: AppColors.mapPickupPin,
-            label: pickupLabel,
+      child: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _RouteEndpointRow(
+                icon: Icons.radio_button_checked,
+                color: AppColors.mapPickupPin,
+                label: pickupLabel,
+              ),
+              const SizedBox(height: 4),
+              const _DottedConnector(),
+              const SizedBox(height: 4),
+              _RouteEndpointRow(
+                icon: Icons.location_on_rounded,
+                color: AppColors.mapDropoffPin,
+                label: dropoffLabel,
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          const _DottedConnector(),
-          const SizedBox(height: 4),
-          _RouteEndpointRow(
-            icon: Icons.location_on_rounded,
-            color: AppColors.mapDropoffPin,
-            label: dropoffLabel,
-          ),
-        ],
+        ),
       ),
     );
   }

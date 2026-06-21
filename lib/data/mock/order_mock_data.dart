@@ -1,4 +1,4 @@
-import '../models/order.dart';
+import '../models/order/order.dart';
 
 class OrderMockData {
   static List<Order> seedOrders() => [
@@ -11,6 +11,7 @@ class OrderMockData {
           dropoffAddress: 'شركة دوّر للتدوير',
           status: OrderStatus.inTransit,
           supplierName: 'مورد دوّر',
+          supplierPhone: '0791234567',
           driverName: 'خالد محمد',
           driverRating: 4.9,
           driverVehicle: 'بيك آب',
@@ -52,6 +53,7 @@ class OrderMockData {
           dropoffAddress: 'شركة الأفق الخضراء، الزرقاء',
           status: OrderStatus.pending,
           supplierName: 'مطعم الأصيل',
+          supplierPhone: '0799876543',
           reward: 8.5,
           distanceKm: 3.2,
           createdAt: DateTime.now().subtract(const Duration(minutes: 12)),
@@ -68,6 +70,7 @@ class OrderMockData {
           dropoffAddress: 'شركة الإعادة الوطنية، صويلح',
           status: OrderStatus.pending,
           supplierName: 'محل البقالة الكبير',
+          supplierPhone: '0785551234',
           reward: 12.0,
           distanceKm: 5.8,
           createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
@@ -187,6 +190,24 @@ class OrderMockData {
           dropoffLng: 36.0025,
         ),
       ];
+
+  /// Placeholder orders used by Skeletonizer during loading.
+  /// Never displayed — only shimmered over.
+  static List<Order> skeletonOrders() => List.generate(
+        3,
+        (i) => Order(
+          id: 'SKEL-$i',
+          type: OrderType.pickup,
+          wasteTypes: const [WasteType.paper],
+          pickupAddress: 'شارع الاستلام، عمّان',
+          dropoffAddress: 'شركة دوّر للتدوير',
+          status: OrderStatus.pending,
+          reward: 8.5,
+          createdAt: DateTime(2025),
+          distanceKm: 2.1,
+          weightCategory: WeightCategory.medium,
+        ),
+      );
 
   static List<Order> seedMarketItems() => [
         Order(

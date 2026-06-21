@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../domain/entities/rider_proximity_state.dart';
 import '../../../../../ui/features/chat/views/chat_view.dart';
@@ -11,12 +12,7 @@ import '../viewmodels/rider_proximity_viewmodel.dart';
 // Sticky banner displayed at the top of the active-order card/screen.
 // Collapsed (hidden) when state is [ProximityIdle].
 //
-// Layout:
-//   [icon] [label]  [timer? or ETA label]  [Chat ▶]
-//
-// Colors:
-//   NearPickup  → amber   (waiting for customer)
-//   NearDropoff → primary green (about to deliver)
+// Optimized with Signals: Only the timer component rebuilds on every tick.
 
 class ProximityStatusBanner extends StatelessWidget {
   const ProximityStatusBanner({super.key});
@@ -25,26 +21,28 @@ class ProximityStatusBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<RiderProximityViewModel>();
 
-    return switch (vm.proximityState) {
-      ProximityIdle() => const SizedBox.shrink(),
-      final NearPickup nearPickup => _buildBanner(
-          context: context,
-          bg: AppColors.amberContainer,
-          fg: AppColors.accentAmber,
-          icon: Icons.location_pin,
-          label: 'أنت قريب من نقطة الاستلام',
-          orderId: vm.order.id,
-          timerChip: _PickupTimerChip(state: nearPickup, fg: AppColors.accentAmber),
-        ),
-      NearDropoff() => _buildBanner(
-          context: context,
-          bg: AppColors.statusActiveBg,
-          fg: AppColors.statusActiveText,
-          icon: Icons.check_circle_outline_rounded,
-          label: 'أنت قريب من الزبون',
-          orderId: vm.order.id,
-        ),
-    };
+    return Watch((context) {
+      return switch (vm.proximityState) {
+        ProximityIdle() => const SizedBox.shrink(),
+        final NearPickup _ => _buildBanner(
+            context: context,
+            bg: AppColors.amberContainer,
+            fg: AppColors.accentAmber,
+            icon: Icons.location_pin,
+            label: 'أنت قريب من نقطة الاستلام',
+            orderId: vm.order.id,
+            timerChip: _PickupTimerChip(vm: vm, fg: AppColors.accentAmber),
+          ),
+        NearDropoff() => _buildBanner(
+            context: context,
+            bg: AppColors.statusActiveBg,
+            fg: AppColors.statusActiveText,
+            icon: Icons.check_circle_outline_rounded,
+            label: 'أنت قريب من الزبون',
+            orderId: vm.order.id,
+          ),
+      };
+    });
   }
 
   Widget _buildBanner({
@@ -96,50 +94,55 @@ class ProximityStatusBanner extends StatelessWidget {
 // ── Timer chip ────────────────────────────────────────────────────────────────
 
 class _PickupTimerChip extends StatelessWidget {
-  final NearPickup state;
+  final RiderProximityViewModel vm;
   final Color fg;
-  const _PickupTimerChip({required this.state, required this.fg});
+  const _PickupTimerChip({required this.vm, required this.fg});
 
   @override
   Widget build(BuildContext context) {
-    final expired = state.waitExpired;
-    final remaining = state.remaining;
-    final mm = remaining.inMinutes.toString().padLeft(2, '0');
-    final ss = (remaining.inSeconds % 60).toString().padLeft(2, '0');
-    final label = expired ? 'انتهى الوقت' : '$mm:$ss';
-    final chipFg = expired ? AppColors.statusCancelledText : fg;
-    final chipBg = expired
-        ? AppColors.statusCancelledBg
-        : Colors.white.withValues(alpha: 0.7);
+    return Watch((context) {
+      final state = vm.nearPickup.value;
+      if (state == null) return const SizedBox.shrink();
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: chipBg,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            expired
-                ? Icons.timer_off_rounded
-                : Icons.hourglass_bottom_rounded,
-            size: 14,
-            color: chipFg,
-          ),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: GoogleFonts.dmSans(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
+      final expired = state.waitExpired;
+      final remaining = state.remaining;
+      final mm = remaining.inMinutes.toString().padLeft(2, '0');
+      final ss = (remaining.inSeconds % 60).toString().padLeft(2, '0');
+      final label = expired ? 'انتهى الوقت' : '$mm:$ss';
+      final chipFg = expired ? AppColors.statusCancelledText : fg;
+      final chipBg = expired
+          ? AppColors.statusCancelledBg
+          : Colors.white.withValues(alpha: 0.7);
+
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: chipBg,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              expired
+                  ? Icons.timer_off_rounded
+                  : Icons.hourglass_bottom_rounded,
+              size: 14,
               color: chipFg,
             ),
-          ),
-        ],
-      ),
-    );
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: GoogleFonts.dmSans(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: chipFg,
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 

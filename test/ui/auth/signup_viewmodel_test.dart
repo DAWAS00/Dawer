@@ -6,47 +6,81 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dwaar/backend_integration_locally/local_store.dart';
 import 'package:dwaar/core/result/result.dart';
 import 'package:dwaar/data/models/user_role.dart';
-import 'package:dwaar/data/services/supabase_auth_service.dart';
+import 'package:dwaar/data/models/signup_request.dart';
+import 'package:dwaar/domain/repositories/i_auth_repository.dart';
+import 'package:dwaar/domain/repositories/i_file_storage_repository.dart';
 import 'package:dwaar/data/services/user_signup_service.dart';
 import 'package:dwaar/l10n/generated/app_localizations.dart';
 import 'package:dwaar/l10n/generated/app_localizations_ar.dart';
 import 'package:dwaar/ui/features/auth/viewmodels/signup_viewmodel.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Fake auth service that returns canned data instead of hitting Supabase.
+// Fake auth and storage repositories for testing.
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _FakeSupabaseAuthService extends SupabaseAuthService {
-  _FakeSupabaseAuthService({required super.store});
+class _FakeAuthRepository implements IAuthRepository {
+  final LocalStore store;
+  _FakeAuthRepository({required this.store});
 
+  @override
+  Future<AppResult<AuthSession>> signUp(SignUpRequest request) async {
+    return Success(AuthSession(
+      userId: 'fake-uuid',
+      userName: request.name,
+      role: request.role,
+      supplierType: request.supplierType,
+    ));
+  }
+
+  @override
+  Future<AppResult<void>> requestOtp(String phone) async => const Success(null);
+
+  @override
+  Future<AppResult<AuthSession>> verifyOtp(String phone, String otp) async {
+    return Success(AuthSession(
+      userId: 'fake-uuid',
+      userName: 'fake-user',
+      role: UserRole.driver,
+    ));
+  }
+
+  @override
+  Future<void> signOut() async {}
+
+  @override
+  Stream<AuthSession?> watchAuthState() => const Stream<AuthSession?>.empty();
+
+  @override
+  AuthSession? get currentSession => null;
+}
+
+class _FakeFileStorageRepository implements IFileStorageRepository {
   File? lastProfilePhoto;
   File? lastIdentityDocument;
 
   @override
-  Future<AppResult<Map<String, dynamic>>> signUp(
-    SignUpRequest request, {
-    File? profilePhoto,
-    File? identityDocument,
+  Future<AppResult<String>> uploadProfilePhoto({
+    required String userId,
+    required File file,
   }) async {
-    lastProfilePhoto = profilePhoto;
-    lastIdentityDocument = identityDocument;
-    return Success(<String, dynamic>{
-      'id': 'fake-uuid',
-      'auth_id': 'fake-auth-uuid',
-      'name': request.name,
-      'phone': request.phone,
-      'email': request.email,
-      'role': request.role.dbValue,
-      if (request.supplierType != null)
-        'supplier_type': request.supplierType!.dbValue,
-      if (request.vehiclePlate != null) 'vehicle_plate': request.vehiclePlate,
-      'rating': 0.0,
-      'total_orders': 0,
-      'is_verified': false,
-      'points': 0,
-      'created_at': DateTime.now().toIso8601String(),
-    });
+    lastProfilePhoto = file;
+    return Success('mock://profile/$userId.jpg');
   }
+
+  @override
+  Future<AppResult<String>> uploadIdentityDocument({
+    required String userId,
+    required File file,
+  }) async {
+    lastIdentityDocument = file;
+    return Success('$userId/identity.jpg');
+  }
+
+  @override
+  Future<AppResult<String>> signedIdentityUrl({
+    required String objectPath,
+    Duration validity = const Duration(minutes: 5),
+  }) async => Success('mock://signed/$objectPath');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -58,6 +92,7 @@ File _fakeDoc() => File('C:/tmp/nonexistent.jpg');
 final AppLocalizations _l10n = AppLocalizationsAr();
 
 late UserSignUpService _fakeService;
+late _FakeFileStorageRepository _fakeStorage;
 
 SignUpViewModel _driverVm() => SignUpViewModel(
       role: UserRole.driver,
@@ -91,8 +126,13 @@ void main() {
     final store = await LocalStore.init();
     UserSignUpService.setGlobalStore(store);
 
-    final fakeAuth = _FakeSupabaseAuthService(store: store);
-    _fakeService = UserSignUpService(authService: fakeAuth);
+    final fakeAuth = _FakeAuthRepository(store: store);
+    _fakeStorage = _FakeFileStorageRepository();
+
+    _fakeService = UserSignUpService(
+      authRepository: fakeAuth,
+      fileStorage: _fakeStorage,
+    );
   });
 
   group('SignUpViewModel.submit — validation gates navigation', () {
@@ -111,7 +151,7 @@ void main() {
     test('driver with all required fields passes validation', () async {
       final vm = _driverVm()
         ..fullName = 'أحمد'
-        ..contactPhone = '+962791234567'
+        ..contactPhone = '0791234567'
         ..contactEmail = 'ahmad@example.com'
         ..password = 'Password123'
         ..passwordConfirm = 'Password123'
@@ -128,7 +168,7 @@ void main() {
         () async {
       final vm = _individualSupplierVm()
         ..fullName = 'مريم'
-        ..contactPhone = '+962791234567'
+        ..contactPhone = '0791234567'
         ..contactEmail = 'maryam@example.com'
         ..password = 'Password123'
         ..passwordConfirm = 'Password123'
@@ -144,7 +184,7 @@ void main() {
       final vm = _businessVm()
         ..businessName = 'متجر دوّار 2'
         ..ownerOrManagerName = 'أحمد'
-        ..contactPhone = '+962791234568'
+        ..contactPhone = '0791234568'
         ..contactEmail = 'store2@example.com'
         ..password = 'Password123'
         ..passwordConfirm = 'Password123'
@@ -160,7 +200,7 @@ void main() {
       final vm = _businessVm()
         ..businessName = 'متجر دوّار'
         ..ownerOrManagerName = ''
-        ..contactPhone = '+962791234567'
+        ..contactPhone = '0791234567'
         ..contactEmail = 'store@example.com'
         ..identityDocument = _fakeDoc();
 
@@ -174,7 +214,7 @@ void main() {
       final vm = _recyclingCoVm()
         ..businessName = 'شركة التدوير'
         ..ownerOrManagerName = 'المدير'
-        ..contactPhone = '+962792222222'
+        ..contactPhone = '0792222222'
         ..contactEmail = 'ops@recycle.jo'
         ..password = 'Password123'
         ..passwordConfirm = 'Password123'
@@ -202,7 +242,7 @@ void main() {
     test('malformed email produces contactEmail error', () async {
       final vm = _driverVm()
         ..fullName = 'أحمد'
-        ..contactPhone = '+962791234567'
+        ..contactPhone = '0791234567'
         ..contactEmail = 'not-an-email'
         ..identityDocument = _fakeDoc();
 
@@ -214,7 +254,7 @@ void main() {
     test('missing email blocks submission', () async {
       final vm = _driverVm()
         ..fullName = 'أحمد'
-        ..contactPhone = '+962791234567'
+        ..contactPhone = '0791234567'
         ..identityDocument = _fakeDoc();
 
       await vm.submit(_l10n);
@@ -241,7 +281,7 @@ void main() {
     test('driver request carries role + null supplier_type', () {
       final vm = _driverVm()
         ..fullName = 'أحمد'
-        ..contactPhone = '+962791234567';
+        ..contactPhone = '0791234567';
 
       final req = vm.buildRequest();
       expect(req.role, UserRole.driver);
@@ -251,7 +291,7 @@ void main() {
     test('supplier request carries matching supplier_type', () {
       final vm = _individualSupplierVm()
         ..fullName = 'مريم'
-        ..contactPhone = '+962791234567';
+        ..contactPhone = '0791234567';
 
       final req = vm.buildRequest();
       expect(req.role, UserRole.supplier);
@@ -261,7 +301,7 @@ void main() {
     test('email is omitted when blank', () {
       final vm = _driverVm()
         ..fullName = 'أحمد'
-        ..contactPhone = '+962791234567';
+        ..contactPhone = '0791234567';
 
       expect(vm.buildRequest().email, isNull);
     });
@@ -270,10 +310,14 @@ void main() {
   group('SignUpViewModel.submit — media forwarding', () {
     test('forwards picked profilePhoto + identityDocument to the service',
         () async {
-      // Build a fresh fake & service so we can read its captured args.
       final store = await LocalStore.init();
-      final fakeAuth = _FakeSupabaseAuthService(store: store);
-      final service = UserSignUpService(authService: fakeAuth);
+      final fakeAuth = _FakeAuthRepository(store: store);
+      final fakeStorage = _FakeFileStorageRepository();
+
+      final service = UserSignUpService(
+        authRepository: fakeAuth,
+        fileStorage: fakeStorage,
+      );
 
       final profilePhoto = File('C:/tmp/avatar.jpg');
       final idDoc = File('C:/tmp/national-id.jpg');
@@ -284,7 +328,7 @@ void main() {
         service: service,
       )
         ..fullName = 'أحمد'
-        ..contactPhone = '+962791234567'
+        ..contactPhone = '0791234567'
         ..contactEmail = 'ahmad@example.com'
         ..password = 'Password123'
         ..passwordConfirm = 'Password123'
@@ -296,8 +340,8 @@ void main() {
 
       expect(vm.errors, isEmpty);
       expect(vm.submitted, isTrue);
-      expect(fakeAuth.lastProfilePhoto?.path, profilePhoto.path);
-      expect(fakeAuth.lastIdentityDocument?.path, idDoc.path);
+      expect(fakeStorage.lastProfilePhoto?.path, profilePhoto.path);
+      expect(fakeStorage.lastIdentityDocument?.path, idDoc.path);
     });
   });
 

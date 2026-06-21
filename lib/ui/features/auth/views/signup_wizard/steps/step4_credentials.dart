@@ -17,38 +17,55 @@ class Step4Credentials extends StatelessWidget {
           const SizedBox(height: 32),
           _buildFieldLabel('رقم الهاتف *'),
           const SizedBox(height: 8),
-          _buildTextField(
-            hint: '07X XXX XXXX',
-            onChanged: (v) => controller.phone = v,
-            initialValue: controller.phone,
-            keyboardType: TextInputType.phone,
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFF5F5F5),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFE0E0E0)),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    controller.phone,
+                    textAlign: TextAlign.left,
+                    textDirection: TextDirection.ltr,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF1A1A1A),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 24),
           _buildFieldLabel('البريد الإلكتروني'),
           const SizedBox(height: 8),
-          _buildTextField(
-            hint: 'example@domain.com',
-            onChanged: (v) => controller.email = v,
-            initialValue: controller.email,
-            keyboardType: TextInputType.emailAddress,
-          ),
-          const SizedBox(height: 24),
-          _buildFieldLabel('كلمة المرور *'),
-          const SizedBox(height: 8),
-          _buildTextField(
-            hint: '••••••••',
-            onChanged: (v) => controller.password = v,
-            initialValue: controller.password,
-            obscureText: true,
-          ),
-          const SizedBox(height: 24),
-          _buildFieldLabel('تأكيد كلمة المرور *'),
-          const SizedBox(height: 8),
-          _buildTextField(
-            hint: '••••••••',
-            onChanged: (v) => controller.passwordConfirm = v,
-            initialValue: controller.passwordConfirm,
-            obscureText: true,
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFF5F5F5),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFE0E0E0)),
+            ),
+            child: TextFormField(
+              initialValue: controller.email,
+              onChanged: (v) => controller.email = v,
+              textAlign: TextAlign.left,
+              textDirection: TextDirection.ltr,
+              keyboardType: TextInputType.emailAddress,
+              style: GoogleFonts.dmSans(fontSize: 15),
+              decoration: InputDecoration(
+                hintText: 'example@domain.com',
+                hintStyle: GoogleFonts.dmSans(color: const Color(0xFFAAAAAA), fontSize: 14),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              ),
+            ),
           ),
           const SizedBox(height: 24),
         ],
@@ -61,7 +78,7 @@ class Step4Credentials extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          'بيانات الدخول',
+          'بيانات التواصل',
           style: GoogleFonts.cairo(
             fontSize: 24,
             fontWeight: FontWeight.w800,
@@ -86,36 +103,6 @@ class Step4Credentials extends StatelessWidget {
         fontSize: 13,
         fontWeight: FontWeight.bold,
         color: const Color(0xFF4B5563),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required String hint,
-    required ValueChanged<String> onChanged,
-    String? initialValue,
-    TextInputType keyboardType = TextInputType.text,
-    bool obscureText = false,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
-      child: TextFormField(
-        initialValue: initialValue,
-        onChanged: onChanged,
-        textAlign: TextAlign.right,
-        obscureText: obscureText,
-        keyboardType: keyboardType,
-        style: GoogleFonts.cairo(fontSize: 15),
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: GoogleFonts.cairo(color: const Color(0xFFAAAAAA), fontSize: 14),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        ),
       ),
     );
   }

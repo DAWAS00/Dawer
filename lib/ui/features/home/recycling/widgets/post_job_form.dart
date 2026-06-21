@@ -1,8 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/waste_type_icons.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 
 /// Pure form-body widget for the collection job sheet.
 /// Receives all mutable state and callbacks from [PostJobSheet].

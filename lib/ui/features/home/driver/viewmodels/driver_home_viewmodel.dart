@@ -1,9 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import '../../../../../data/models/driver_wallet.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/services/app_order_store.dart';
 import '../../../../../data/services/location_publisher.dart';
@@ -76,6 +75,7 @@ class DriverHomeViewModel extends ChangeNotifier {
 
   int get currentTab => _currentTab;
   bool get isAvailable => _isAvailable;
+  bool get isLoading => _store.isLoading;
   User get user => _user;
 
   List<Order> get available => _store.driverFeedFor(
@@ -211,7 +211,7 @@ class DriverHomeViewModel extends ChangeNotifier {
 
   // ── Edge Function call ────────────────────────────────────────────────────
 
-  /// Calls the `verify_arrival` Edge Function. Returns an error string if the
+  /// Calls the verifyArrival method on store. Returns an error string if the
   /// server rejects the attempt, null if allowed. On network failure, returns
   /// null (graceful degradation — client-side preflight already passed).
   Future<String?> _verifyArrivalServerSide({
@@ -219,39 +219,20 @@ class DriverHomeViewModel extends ChangeNotifier {
     required double targetLat,
     required double targetLng,
   }) async {
-    final uid = Supabase.instance.client.auth.currentUser?.id;
-    if (uid == null) return null; // not authenticated — dev/mock mode
-
-    try {
-      final res = await Supabase.instance.client.functions.invoke(
-        'verify_arrival',
-        body: {
-          'orderId': orderId,
-          'driverId': uid,
-          'targetLat': targetLat,
-          'targetLng': targetLng,
-        },
-      );
-      final data = res.data as Map<String, dynamic>?;
-      if (data == null) return null;
-      final allowed = data['allowed'] as bool? ?? true;
-      if (!allowed) {
-        final dist = data['distanceMeters'] as int?;
-        final reason = data['reason'] as String?;
-        if (reason == 'no_server_gps') {
-          // Server hasn't received GPS yet — allow and rely on client check.
-          return null;
+    final res = await _store.verifyArrival(orderId, targetLat, targetLng);
+    return res.fold(
+      onSuccess: (allowed) {
+        if (!allowed) {
+          _store.recordFraudAttempt(orderId);
+          return 'التحقق من الموقع فشل على الخادم. يجب أن تكون ضمن 200 م.';
         }
-        _store.recordFraudAttempt(orderId);
-        return dist != null
-            ? 'التحقق من الموقع فشل على الخادم ($dist م). يجب أن تكون ضمن 200 م.'
-            : 'التحقق من الموقع فشل على الخادم. يجب أن تكون ضمن 200 م.';
-      }
-      return null;
-    } catch (e) {
-      debugPrint('[verify_arrival] Edge Function error: $e — falling back to client check');
-      return null;
-    }
+        return null;
+      },
+      onFailure: (failure) {
+        debugPrint('[verify_arrival] error: ${failure.message} — falling back to client check');
+        return null;
+      },
+    );
   }
 
   Future<void> completeOrder(Order order) async {

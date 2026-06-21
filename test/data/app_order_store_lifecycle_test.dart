@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dwaar/core/result/result.dart';
-import 'package:dwaar/data/models/order.dart';
+import 'package:dwaar/data/models/order/order.dart';
 import 'package:dwaar/data/models/user.dart';
 import 'package:dwaar/data/models/user_role.dart';
 import 'package:dwaar/data/services/app_order_store.dart';
@@ -68,6 +68,14 @@ class _RecordingOrderRepository implements IOrderRepository {
       _record('markInTransit');
 
   @override
+  Future<AppResult<void>> markArrivedAtPickup(String orderId) async =>
+      _record('markArrivedAtPickup');
+
+  @override
+  Future<AppResult<void>> markArrivedAtDropoff(String orderId) async =>
+      _record('markArrivedAtDropoff');
+
+  @override
   Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg}) async =>
       _record('markCompleted');
 
@@ -77,6 +85,12 @@ class _RecordingOrderRepository implements IOrderRepository {
     required breakdown,
     String? vehicleType,
   }) async => _record('recordTransaction');
+
+  @override
+  Future<AppResult<bool>> verifyArrival(String orderId, double lat, double lng) async {
+    _record('verifyArrival');
+    return const Success(true);
+  }
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -34,7 +34,7 @@ class OrderMapSection extends StatelessWidget {
 
     Widget mapContent;
 
-    // Live tracking: driver accepted and is en-route — show moving driver marker.
+    // Live tracking: driver accepted and is en-route â€” show moving driver marker.
     if (hasDriver &&
         order.status == OrderStatus.inTransit &&
         pLat != null &&
@@ -45,13 +45,13 @@ class OrderMapSection extends StatelessWidget {
               pickupLat: pLat,
               pickupLng: pLng,
               etaMinutes: order.etaMinutes,
-              height: 240,
+              height: 232,
             )
           : _MockTrackingWrapper(
               pickupLat: pLat,
               pickupLng: pLng,
               etaMinutes: order.etaMinutes,
-              height: 240,
+              height: 232,
             );
     } else if (pLat != null && dLat != null) {
       mapContent = RouteMapPlaceholder(
@@ -59,10 +59,10 @@ class OrderMapSection extends StatelessWidget {
         pickupLng: pLng!,
         dropoffLat: dLat,
         dropoffLng: dLng!,
-        height: 240,
+        height: 232,
       );
     } else if (pLat != null) {
-      mapContent = PickupMapView(lat: pLat, lng: pLng!, height: 240);
+      mapContent = PickupMapView(lat: pLat, lng: pLng!, height: 232);
     } else {
       mapContent = const _MapPlaceholder();
     }
@@ -87,7 +87,7 @@ class OrderMapSection extends StatelessWidget {
   }
 }
 
-// ── Real tracking — Supabase Realtime (Phase 3) ───────────────────────────────
+// â”€â”€ Real tracking â€” Supabase Realtime (Phase 3) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _RealTrackingWrapper extends StatefulWidget {
   final String orderId;
@@ -122,7 +122,7 @@ class _RealTrackingWrapperState extends State<_RealTrackingWrapper> {
     return LiveTrackingMapView(
       pickupLat: widget.pickupLat,
       pickupLng: widget.pickupLng,
-      // No initial position — LiveTrackingMapView shows "جاري تحديد الموقع"
+      // No initial position â€” LiveTrackingMapView shows "Ø¬Ø§Ø±ÙŠ ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ù…ÙˆÙ‚Ø¹"
       // until the stream emits the first event from Supabase.
       driverStream: _stream,
       etaMinutes: widget.etaMinutes,
@@ -131,7 +131,7 @@ class _RealTrackingWrapperState extends State<_RealTrackingWrapper> {
   }
 }
 
-// ── Phase-1 mock driver stream (used for local / non-Supabase orders) ─────────
+// â”€â”€ Phase-1 mock driver stream (used for local / non-Supabase orders) â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _MockTrackingWrapper extends StatefulWidget {
   final double pickupLat;
@@ -191,7 +191,7 @@ class _MockTrackingWrapperState extends State<_MockTrackingWrapper> {
   }
 }
 
-// ── Fallback placeholder (used when coords are null) ─────────────────────────
+// â”€â”€ Fallback placeholder (used when coords are null) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _MapPlaceholder extends StatelessWidget {
   const _MapPlaceholder();
@@ -199,7 +199,7 @@ class _MapPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 240,
+      height: 232,
       color: AppColors.mapSurface,
       child: Center(
         child: Column(
@@ -222,3 +222,4 @@ class _MapPlaceholder extends StatelessWidget {
     );
   }
 }
+

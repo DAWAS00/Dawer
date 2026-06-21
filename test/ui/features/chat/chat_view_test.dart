@@ -5,8 +5,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:dwaar/core/result/result.dart';
 import 'package:dwaar/data/models/user_role.dart';
+import 'package:dwaar/data/repositories/mock_auth_repository.dart';
 import 'package:dwaar/domain/chat/entities/chat_message.dart';
 import 'package:dwaar/domain/chat/repositories/i_chat_repository.dart';
+import 'package:dwaar/domain/repositories/i_auth_repository.dart';
 import 'package:dwaar/l10n/generated/app_localizations.dart';
 import 'package:dwaar/ui/features/chat/views/chat_view.dart';
 import 'package:dwaar/ui/features/chat/widgets/chat_bubble.dart';
@@ -77,8 +79,11 @@ Future<void> _pumpChatView(
   String orderId = 'ORD-TEST',
 }) async {
   await tester.pumpWidget(
-    Provider<IChatRepository>.value(
-      value: repo,
+    MultiProvider(
+      providers: [
+        Provider<IChatRepository>.value(value: repo),
+        Provider<IAuthRepository>(create: (_) => MockAuthRepository()),
+      ],
       child: MaterialApp(
         locale: const Locale('ar'),
         localizationsDelegates: const [
@@ -92,6 +97,7 @@ Future<void> _pumpChatView(
       ),
     ),
   );
+
   // Let stream microtask + locale settle
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 50));

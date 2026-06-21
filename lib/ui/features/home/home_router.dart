@@ -4,9 +4,9 @@ import '../../../data/services/app_order_store.dart';
 import '../../../domain/repositories/i_auth_repository.dart';
 import '../auth/viewmodels/login_viewmodel.dart';
 import 'driver/driver_home_view.dart';
-import 'supplier/supplier_home_view.dart';
 import 'supplier/individual_supplier_home_view.dart';
 import 'recycling/recycling_home_view.dart';
+import 'restaurant/restaurant_home_view.dart';
 
 class HomeRouter extends StatelessWidget {
   final UserRole role;
@@ -43,7 +43,7 @@ class HomeRouter extends StatelessWidget {
               userName: userName,
               aiSuggestedCategories: aiSuggestedCategories,
             ),
-          SupplierType.storeBusiness => SupplierHomeView(
+          SupplierType.storeBusiness => RestaurantHomeView(
               userName: userName,
               supplierType: supplierType,
               aiSuggestedCategories: aiSuggestedCategories,

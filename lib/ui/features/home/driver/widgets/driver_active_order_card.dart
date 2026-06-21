@@ -1,9 +1,13 @@
-﻿import 'package:flutter/material.dart';
-import 'package:dwaar/core/theme/app_tokens.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:dwaar/core/constants/app_colors.dart';
-import 'package:dwaar/data/models/order.dart';
+import 'package:dwaar/data/models/order/order.dart';
+import 'package:dwaar/l10n/l10n.dart';
 
-class DriverActiveOrderCard extends StatelessWidget {
+class DriverActiveOrderCard extends StatefulWidget {
   const DriverActiveOrderCard({
     super.key,
     required this.order,
@@ -14,135 +18,149 @@ class DriverActiveOrderCard extends StatelessWidget {
   final VoidCallback onConfirmArrival;
 
   @override
-  Widget build(BuildContext context) {
-    final dt = context.dt;
-    
-    // Mock progress based on status
-    double progress = 0.1;
-    if (order.status == OrderStatus.accepted) progress = 0.3;
-    if (order.status == OrderStatus.arrivedAtPickup) progress = 0.5;
-    if (order.status == OrderStatus.inTransit) progress = 0.8;
-    if (order.status == OrderStatus.completed) progress = 1.0;
+  State<DriverActiveOrderCard> createState() => _DriverActiveOrderCardState();
+}
 
+class _DriverActiveOrderCardState extends State<DriverActiveOrderCard> {
+
+  bool get _hasCoords =>
+      widget.order.pickupLat != null &&
+      widget.order.pickupLng != null &&
+      widget.order.dropoffLat != null &&
+      widget.order.dropoffLng != null;
+
+  LatLng get _midpoint => LatLng(
+        ((widget.order.pickupLat ?? 0) + (widget.order.dropoffLat ?? 0)) / 2,
+        ((widget.order.pickupLng ?? 0) + (widget.order.dropoffLng ?? 0)) / 2,
+      );
+
+  Set<Marker> get _markers => {
+        Marker(
+          markerId: const MarkerId('pickup'),
+          position:
+              LatLng(widget.order.pickupLat!, widget.order.pickupLng!),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueGreen),
+        ),
+        Marker(
+          markerId: const MarkerId('dropoff'),
+          position:
+              LatLng(widget.order.dropoffLat!, widget.order.dropoffLng!),
+        ),
+      };
+
+  int get _currentStep => switch (widget.order.status) {
+        OrderStatus.accepted => 0,
+        OrderStatus.arrivedAtPickup => 1,
+        OrderStatus.inTransit => 2,
+        OrderStatus.arrivedAtDropoff || OrderStatus.completed => 3,
+        _ => 0,
+      };
+
+  bool get _isHeadingToPickup => widget.order.status == OrderStatus.accepted;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: dt.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFF4CAF50), width: 2),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: AppColors.primaryGreen.withValues(alpha: 0.12),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF4CAF50).withValues(alpha: 0.15),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: AppColors.primaryGreen.withValues(alpha: 0.1),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // ── Gradient header ──
+          _buildHeader(context),
+
+          // ── Progress stepper ──
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+            child: _OrderProgressStepper(currentStep: _currentStep),
+          ),
+
+          // ── Mini map OR route line ──
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            child: _hasCoords ? _buildMiniMap() : _buildRouteLine(),
+          ),
+
+          // ── Address rows ──
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            child: _buildAddressRows(),
+          ),
+
+          // ── Metrics ──
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            child: _buildMetricsRow(),
+          ),
+
+          // ── Action button ──
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+            child: _buildActionButton(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    final l10n = context.l10n;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
+          begin: Alignment.centerRight,
+          end: Alignment.centerLeft,
+        ),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            _isHeadingToPickup ? l10n.driverHeadingToPickup : l10n.driverHeadingToDelivery,
+            style: GoogleFonts.cairo(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: AppColors.shamrock200,
+            ),
+          ).animate(onPlay: (c) => c.repeat(reverse: true))
+           .fade(duration: 1.seconds, begin: 0.5, end: 1.0),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: const BoxDecoration(
-              color: Color(0xFFE8F5E9),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-              ),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(100),
             ),
             child: Row(
               children: [
+                const Icon(LucideIcons.radio, size: 13, color: Colors.white),
+                const SizedBox(width: 6),
                 Text(
-                  '#${order.id} · ${order.wasteTypes.map((e) => e.label).join('، ')}',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primaryDark,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  '${(progress * 100).round()}% مكتمل',
-                  style: TextStyle(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primaryGreen,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _RouteRow(from: order.pickupAddress, to: order.dropoffAddress),
-                const SizedBox(height: 6),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    backgroundColor: dt.surfaceVariant,
-                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
-                    minHeight: 3,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Text(
-                      '${order.reward.toStringAsFixed(1)} دينار',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: dt.onSurface,
-                      ),
-                    ),
-                    const Spacer(),
-                    if (order.etaMinutes != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE3F2FD),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.access_time_rounded,
-                                size: 10, color: Color(0xFF1565C0)),
-                            const SizedBox(width: 3),
-                            Text(
-                              '${order.etaMinutes} دقيقة',
-                              style: const TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF1565C0),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    onPressed: onConfirmArrival,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.primaryGreen,
-                      side: const BorderSide(color: AppColors.primaryGreen, width: 1.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: Text(
-                      order.status == OrderStatus.accepted 
-                        ? 'تأكيد الوصول للاستلام' 
-                        : 'تأكيد الوصول للتسليم'
-                    ),
+                  l10n.driverActiveMission,
+                  style: GoogleFonts.cairo(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
               ],
@@ -152,55 +170,334 @@ class DriverActiveOrderCard extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildMiniMap() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: SizedBox(
+        height: 180,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: _midpoint, zoom: 12.5),
+          markers: _markers,
+          zoomGesturesEnabled: false,
+          scrollGesturesEnabled: false,
+          rotateGesturesEnabled: false,
+          tiltGesturesEnabled: false,
+          myLocationButtonEnabled: false,
+          mapToolbarEnabled: false,
+          zoomControlsEnabled: false,
+          onMapCreated: (_) {},
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRouteLine() {
+    return Row(
+      textDirection: TextDirection.rtl,
+      children: [
+        _buildRouteNode(
+          active: _isHeadingToPickup,
+          icon: LucideIcons.packageOpen,
+          title: 'الاستلام',
+        ),
+        Expanded(
+          child: Container(
+            height: 2,
+            margin: const EdgeInsets.symmetric(horizontal: 12),
+            color: _isHeadingToPickup
+                ? AppColors.borderSubtle
+                : AppColors.primaryGreen,
+          ),
+        ),
+        _buildRouteNode(
+          active: !_isHeadingToPickup,
+          icon: LucideIcons.building2,
+          title: 'التسليم',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRouteNode({
+    required bool active,
+    required IconData icon,
+    required String title,
+  }) {
+    return Column(
+      children: [
+        Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: active ? AppColors.primaryGreen : AppColors.background,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: active ? AppColors.primaryGreen : AppColors.borderSubtle,
+              width: 2,
+            ),
+          ),
+          child: Icon(
+            icon,
+            color: active ? Colors.white : AppColors.mutedText,
+            size: 20,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          title,
+          style: GoogleFonts.cairo(
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textMain,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAddressRows() {
+    return Column(
+      children: [
+        _AddressRow(
+          color: AppColors.primaryGreen,
+          label: 'الاستلام',
+          address: widget.order.pickupAddress,
+        ),
+        const SizedBox(height: 8),
+        _AddressRow(
+          color: const Color(0xFFD32F2F),
+          label: 'التسليم',
+          address: widget.order.dropoffAddress,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMetricsRow() {
+    final distanceText = widget.order.distanceKm != null
+        ? '${widget.order.distanceKm!.toStringAsFixed(1)} كم'
+        : '--';
+    final etaText =
+        widget.order.etaMinutes != null ? '${widget.order.etaMinutes} د' : '--';
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _MetricItem(
+            icon: LucideIcons.coins,
+            label: 'العائد',
+            value: '${widget.order.reward.toStringAsFixed(1)} د.أ',
+            valueColor: AppColors.primaryGreen,
+          ),
+          Container(width: 1, height: 28, color: AppColors.borderSubtle),
+          _MetricItem(
+            icon: LucideIcons.clock,
+            label: 'الوقت',
+            value: etaText,
+          ),
+          Container(width: 1, height: 28, color: AppColors.borderSubtle),
+          _MetricItem(
+            icon: LucideIcons.map,
+            label: 'المسافة',
+            value: distanceText,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 66,
+      child: ElevatedButton(
+        onPressed: widget.onConfirmArrival,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primaryGreen,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(LucideIcons.mapPin, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              _isHeadingToPickup
+                  ? 'عرض تفاصيل الاستلام'
+                  : 'عرض تفاصيل التسليم',
+              style: GoogleFonts.cairo(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _RouteRow extends StatelessWidget {
-  const _RouteRow({required this.from, required this.to});
-  final String from;
-  final String to;
+// ── Widgets ──
+
+class _OrderProgressStepper extends StatelessWidget {
+  const _OrderProgressStepper({required this.currentStep});
+  final int currentStep;
+
+  static const _steps = ['مقبول', 'وصلت\nللاستلام', 'في\nالطريق', 'تم\nالتسليم'];
 
   @override
   Widget build(BuildContext context) {
-    final dt = context.dt;
     return Row(
+      children: List.generate(_steps.length * 2 - 1, (i) {
+        if (i.isOdd) {
+          final connectorStep = i ~/ 2;
+          return Expanded(
+            child: Container(
+              height: 2,
+              color: connectorStep < currentStep
+                  ? AppColors.primaryGreen
+                  : AppColors.borderSubtle,
+            ),
+          );
+        }
+        final step = i ~/ 2;
+        final done = step <= currentStep;
+        return Column(
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: done ? AppColors.primaryGreen : AppColors.background,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: done ? AppColors.primaryGreen : AppColors.borderSubtle,
+                  width: 1.5,
+                ),
+              ),
+              child: done
+                  ? const Icon(Icons.check, size: 14, color: Colors.white)
+                  : null,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              _steps[step],
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cairo(
+                fontSize: 9,
+                fontWeight: done ? FontWeight.bold : FontWeight.normal,
+                color: done ? AppColors.primaryGreen : AppColors.mutedText,
+                height: 1.2,
+              ),
+            ),
+          ],
+        );
+      }),
+    );
+  }
+}
+
+class _AddressRow extends StatelessWidget {
+  const _AddressRow({
+    required this.color,
+    required this.label,
+    required this.address,
+  });
+  final Color color;
+  final String label;
+  final String address;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      textDirection: TextDirection.rtl,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _RouteDot(color: Color(0xFF2E7D32)),
-        const SizedBox(width: 4),
+        Container(
+          width: 10,
+          height: 10,
+          margin: const EdgeInsets.only(top: 4, left: 10),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
         Expanded(
-          child: Text(
-            from,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 9, color: dt.onSurfaceVariant),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                label,
+                style: GoogleFonts.cairo(
+                  fontSize: 11,
+                  color: AppColors.mutedText,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                address,
+                textAlign: TextAlign.right,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.cairo(
+                  fontSize: 13,
+                  color: AppColors.textMain,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(width: 4),
-        Expanded(child: Container(height: 1, color: dt.border)),
-        const SizedBox(width: 4),
-        Expanded(
-          child: Text(
-            to,
-            textAlign: TextAlign.right,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 9, color: dt.onSurfaceVariant),
-          ),
-        ),
-        const SizedBox(width: 4),
-        const _RouteDot(color: Color(0xFFD32F2F)),
       ],
     );
   }
 }
 
-class _RouteDot extends StatelessWidget {
-  const _RouteDot({required this.color});
-  final Color color;
+class _MetricItem extends StatelessWidget {
+  const _MetricItem({
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.valueColor,
+  });
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color? valueColor;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 6,
-      height: 6,
-      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    return Column(
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 12, color: AppColors.mutedText),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: GoogleFonts.cairo(fontSize: 10, color: AppColors.mutedText),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: GoogleFonts.dmSans(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: valueColor ?? AppColors.textMain,
+          ),
+        ),
+      ],
     );
   }
 }

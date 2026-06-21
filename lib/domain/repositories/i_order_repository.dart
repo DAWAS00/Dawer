@@ -1,5 +1,5 @@
 import '../../core/result/result.dart';
-import '../../data/models/order.dart';
+import '../../data/models/order/order.dart';
 import '../../data/models/reward_breakdown.dart';
 import '../../data/models/user_role.dart';
 
@@ -47,6 +47,12 @@ abstract interface class IOrderRepository {
   /// `in_transit_at` server-side.
   Future<AppResult<void>> markInTransit(String orderId);
 
+  /// Driver entered the 200 m pickup geofence. Stamps `arrived_at_pickup_at`.
+  Future<AppResult<void>> markArrivedAtPickup(String orderId);
+
+  /// Driver entered the 200 m dropoff geofence. Stamps `arrived_at_dropoff_at`.
+  Future<AppResult<void>> markArrivedAtDropoff(String orderId);
+
   /// Marks [orderId] as completed. Stamps `completed_at` server-side.
   /// [actualWeightKg] is optional, used for collectionSale final settlement.
   Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg});
@@ -65,6 +71,9 @@ abstract interface class IOrderRepository {
     required RewardBreakdown breakdown,
     String? vehicleType,
   });
+
+  /// Verifies driver arrival at order destination.
+  Future<AppResult<bool>> verifyArrival(String orderId, double lat, double lng);
 }
 
 /// Default no-op implementation. Used by tests and any code path that wants to
@@ -115,6 +124,14 @@ final class NoOpOrderRepository implements IOrderRepository {
       const Success(null);
 
   @override
+  Future<AppResult<void>> markArrivedAtPickup(String orderId) async =>
+      const Success(null);
+
+  @override
+  Future<AppResult<void>> markArrivedAtDropoff(String orderId) async =>
+      const Success(null);
+
+  @override
   Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg}) async =>
       const Success(null);
 
@@ -124,4 +141,8 @@ final class NoOpOrderRepository implements IOrderRepository {
     required RewardBreakdown breakdown,
     String? vehicleType,
   }) async => const Success(null);
+
+  @override
+  Future<AppResult<bool>> verifyArrival(String orderId, double lat, double lng) async =>
+      const Success(true);
 }

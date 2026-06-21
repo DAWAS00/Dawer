@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../data/models/order.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../data/models/order/order.dart';
 import '../../../../data/services/app_order_store.dart';
 import '../../../features/auth/viewmodels/login_viewmodel.dart';
-
 import 'viewmodels/restaurant_home_viewmodel.dart';
 import 'tabs/restaurant_home_tab.dart';
 import '../supplier/tabs/supplier_orders_tab.dart';
@@ -12,7 +12,6 @@ import '../supplier/widgets/supplier_bottom_nav.dart';
 import '../shared/tabs/marketplace_tab.dart';
 import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../shared/views/collection_sale_detail_view.dart';
-import '../shared/widgets/home/new_request_fab.dart';
 import '../supplier/views/new_pickup_request_view.dart';
 
 class RestaurantHomeView extends StatelessWidget {
@@ -56,9 +55,10 @@ class _RestaurantHomeBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<RestaurantHomeViewModel>();
+    final marketVm = context.watch<MarketplaceViewModel>();
 
     final tabs = [
-      RestaurantHomeTab(userName: userName, supplierType: supplierType),
+      RestaurantHomeTab(userName: userName),
       MarketplaceTab(
         role: UserRole.supplier,
         currentUserName: userName,
@@ -94,22 +94,67 @@ class _RestaurantHomeBody extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: AppColors.background,
       body: IndexedStack(
         index: vm.currentTab,
         children: tabs,
       ),
       floatingActionButton: vm.currentTab == 0
-          ? HomeNewRequestFab(onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => ChangeNotifierProvider.value(
-                  value: vm,
-                  child: const NewPickupRequestView(initialMode: OrderMode.marketplace),
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                if (!marketVm.canAddListing(vm.user.name)) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                      'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
+                    ),
+                    backgroundColor: const Color(0xFFB91C1C),
+                    behavior: SnackBarBehavior.floating,
+                  ));
+                  return;
+                }
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => NewPickupRequestView(
+                    role: UserRole.supplier,
+                    initialMode: OrderMode.marketplace,
+                    onSubmit: ({
+                      required List<WasteType> wasteTypes,
+                      required String pickupAddress,
+                      List<String> images = const [],
+                      String? notes,
+                      WasteForm? wasteForm,
+                      WeightCategory? weightCategory,
+                      double? itemPrice,
+                      double? pickupLat,
+                      double? pickupLng,
+                    }) {
+                      final order = vm.createListing(
+                        wasteTypes: wasteTypes,
+                        pickupAddress: pickupAddress,
+                        images: images,
+                        notes: notes,
+                        wasteForm: wasteForm,
+                        weightCategory: weightCategory,
+                        itemPrice: itemPrice,
+                        pickupLat: pickupLat,
+                        pickupLng: pickupLng,
+                      );
+                      marketVm.addListing(order);
+                    },
+                  ),
+                ));
+              },
+              backgroundColor: AppColors.primaryGreen,
+              icon: const Icon(Icons.add_rounded, color: Colors.white),
+              label: const Text(
+                'إضافة عرض',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-              ));
-            }, label: 'إضافة عرض في السوق')
+              ),
+            )
           : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       bottomNavigationBar: SupplierBottomNav(
         currentTab: vm.currentTab,
         onTabChanged: vm.setTab,

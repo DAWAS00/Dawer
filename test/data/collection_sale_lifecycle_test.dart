@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dwaar/core/result/result.dart';
-import 'package:dwaar/data/models/order.dart';
+import 'package:dwaar/data/models/order/order.dart';
 import 'package:dwaar/data/models/user_role.dart';
 import 'package:dwaar/data/services/app_order_store.dart';
 import 'package:dwaar/domain/repositories/i_order_repository.dart';
@@ -66,6 +66,18 @@ class _RecordingOrderRepository implements IOrderRepository {
   }
 
   @override
+  Future<AppResult<void>> markArrivedAtPickup(String orderId) async {
+    calls.add('markArrivedAtPickup');
+    return const Success(null);
+  }
+
+  @override
+  Future<AppResult<void>> markArrivedAtDropoff(String orderId) async {
+    calls.add('markArrivedAtDropoff');
+    return const Success(null);
+  }
+
+  @override
   Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg}) async {
     calls.add('markCompleted');
     return const Success(null);
@@ -79,6 +91,12 @@ class _RecordingOrderRepository implements IOrderRepository {
   }) async {
     calls.add('recordTransaction');
     return const Success(null);
+  }
+
+  @override
+  Future<AppResult<bool>> verifyArrival(String orderId, double lat, double lng) async {
+    calls.add('verifyArrival');
+    return const Success(true);
   }
 }
 

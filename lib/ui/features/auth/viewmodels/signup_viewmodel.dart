@@ -7,9 +7,10 @@ import '../../../../data/models/user_role.dart';
 import '../../../../data/services/mock_ai_marketplace_service.dart';
 import '../../../../domain/services/i_ai_marketplace_service.dart';
 import '../../../../data/services/user_signup_service.dart';
+import 'package:dwaar/data/models/signup_request.dart';
 import '../../../../domain/failures/app_failure.dart';
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../../../data/models/order.dart' show VehicleType;
+import '../../../../data/models/order/order.dart' show VehicleType;
 import 'license_validation_viewmodel.dart';
 import 'login_viewmodel.dart';
 import 'vehicle_registration_viewmodel.dart';
@@ -25,8 +26,8 @@ class SignUpViewModel extends ChangeNotifier {
   SignUpViewModel({
     required this.role,
     required this.supplierType,
-    UserSignUpService? service,
-  }) : _service = service ?? UserSignUpService();
+    required UserSignUpService service,
+  }) : _service = service;
 
   /// The created profile returned by [submit] (null until success).
   Map<String, dynamic>? _createdProfile;

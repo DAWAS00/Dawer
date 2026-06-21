@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:dwaar/core/constants/app_colors.dart';
+import 'package:dwaar/core/layout/app_layout.dart';
 
 class HomeAppHeader extends StatelessWidget {
   const HomeAppHeader({
@@ -19,8 +20,8 @@ class HomeAppHeader extends StatelessWidget {
       color: AppColors.primaryGreen,
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 14,
-        left: 16,
-        right: 16,
+        left: context.layout.hPad,
+        right: context.layout.hPad,
         bottom: 24,
       ),
       child: Column(

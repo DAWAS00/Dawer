@@ -16,30 +16,22 @@ class LoginViewModel extends ChangeNotifier {
   // --- State ---
   UserRole _selectedRole = UserRole.driver;
   SupplierType? _supplierType;
-  String _email = '';
-  String _password = '';
   String _phone = '';
   String? _error;
   bool _isLoading = false;
-  bool _signedIn = false;
   bool _otpSent = false;
-  bool _passwordResetRequested = false;
   AuthSession? _session;
+  AuthSession? _quickSession;
 
   // --- Getters ---
   UserRole get selectedRole => _selectedRole;
   SupplierType? get supplierType => _supplierType;
-  String get email => _email;
-  String get password => _password;
   String get phone => _phone;
   String? get error => _error;
   bool get isLoading => _isLoading;
-  bool get signedIn => _signedIn;
   bool get otpSent => _otpSent;
-  bool get passwordResetRequested => _passwordResetRequested;
   AuthSession? get session => _session;
-
-  String get profileName => _session?.userName ?? (_email.isNotEmpty ? _email : _phone);
+  AuthSession? get quickSession => _quickSession;
 
   // --- Mutators ---
   void selectRole(UserRole role) {
@@ -59,16 +51,6 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setEmail(String email) {
-    _email = email;
-    _error = null;
-  }
-
-  void setPassword(String value) {
-    _password = value;
-    _error = null;
-  }
-
   void setPhone(String value) {
     _phone = value;
     _error = null;
@@ -78,7 +60,12 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> requestOtp(String phone) async {
     _phone = phone.trim();
     if (_phone.isEmpty) {
-      _error = 'الرجاء إدخال رقم الهاتف';
+      _error = 'رقم الهاتف مطلوب';
+      notifyListeners();
+      return;
+    }
+    if (_phone.length != 10 || !RegExp(r'^07\d{8}$').hasMatch(_phone)) {
+      _error = 'رقم الهاتف يجب أن يتكون من 10 أرقام ويبدأ بـ 07 (مثال: 07XXXXXXXX)';
       notifyListeners();
       return;
     }
@@ -87,7 +74,18 @@ class LoginViewModel extends ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    final result = await _authRepository.requestOtp(_phone);
+    // Normalize for backend/firebase
+    final normalizedPhone = '+962${_phone.substring(1)}';
+
+    // If using mock repo, sync the UI selection so it knows what to generate
+    if (_authRepository case final MockAuthRepository repo) {
+      repo.updateTargetRole(
+        _selectedRole,
+        _supplierType,
+      );
+    }
+
+    final result = await _authRepository.requestOtp(normalizedPhone);
     result.fold(
       onSuccess: (_) {
         _otpSent = true;
@@ -103,78 +101,15 @@ class LoginViewModel extends ChangeNotifier {
     _otpSent = false;
   }
 
-  void resetPasswordResetRequested() {
-    _passwordResetRequested = false;
-  }
-
-  /// Sends a 6-digit recovery OTP to the current [_email].
-  Future<void> requestPasswordReset() async {
-    if (_email.trim().isEmpty) {
-      _error = 'forgotPasswordErrorEmptyEmail';
-      notifyListeners();
-      return;
+  void quickLogin(AuthSession session) {
+    if (_authRepository case final MockAuthRepository repo) {
+      repo.setActiveSession(session);
     }
-
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
-    final result = await _authRepository.requestPasswordReset(_email.trim());
-    result.fold(
-      onSuccess: (_) => _passwordResetRequested = true,
-      onFailure: (f) => _error = f.message,
-    );
-
-    _isLoading = false;
+    _quickSession = session;
     notifyListeners();
   }
 
-  /// Signs the user in with email + password.
-  Future<void> signIn() async {
-    if (_email.trim().isEmpty) {
-      _error = 'الرجاء إدخال البريد الإلكتروني';
-      notifyListeners();
-      return;
-    }
-    if (_password.isEmpty) {
-      _error = 'الرجاء إدخال كلمة المرور';
-      notifyListeners();
-      return;
-    }
-
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
-    // If using mock repo, sync the UI selection so it knows what to generate
-    if (_authRepository is MockAuthRepository) {
-      _authRepository.updateTargetRole(
-        _selectedRole,
-        _supplierType,
-      );
-    }
-
-    final result = await _authRepository.signInWithEmail(
-      _email.trim(),
-      _password,
-    );
-    result.fold(
-      onSuccess: (session) {
-        _session = session;
-        _selectedRole = session.role;
-        if (session.supplierType != null) {
-          _supplierType = session.supplierType!;
-        }
-        _signedIn = true;
-      },
-      onFailure: (f) => _error = f.message,
-    );
-
-    _isLoading = false;
-    notifyListeners();
-  }
-
-  void resetSignedIn() {
-    _signedIn = false;
+  void resetQuickSession() {
+    _quickSession = null;
   }
 }

@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:dwaar/core/theme/app_tokens.dart';
 import 'package:dwaar/core/constants/app_colors.dart';
+import 'package:dwaar/core/layout/app_layout.dart';
 
 class HomeKpiRow extends StatelessWidget {
   const HomeKpiRow({
@@ -73,6 +74,10 @@ class _KpiCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dt = context.dt;
+    final small = context.layout.isSmall;
+    final iconBox = small ? 24.0 : 28.0;
+    final valueFontSize = small ? 15.0 : 18.0;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       decoration: BoxDecoration(
@@ -91,23 +96,25 @@ class _KpiCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 28,
-            height: 28,
+            width: iconBox,
+            height: iconBox,
             decoration: BoxDecoration(
               color: iconBg,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, size: 15, color: valueColor),
+            child: Icon(icon, size: iconBox * 0.54, color: valueColor),
           ),
           const SizedBox(height: 6),
           Text(
             value,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: valueFontSize,
               fontWeight: FontWeight.w700,
               color: valueColor,
               height: 1,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 3),
           Text(

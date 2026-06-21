@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../../core/config/ai_config.dart';
-import '../../data/models/order.dart' show VehicleType, VehicleTypeLabel;
+import '../../data/models/order/order.dart' show VehicleType, VehicleTypeLabel;
 import '../../domain/services/i_ai_vehicle_registration_service.dart';
 
 class GeminiVehicleRegistrationService implements IAiVehicleRegistrationService {

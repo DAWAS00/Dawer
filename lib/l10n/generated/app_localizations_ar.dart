@@ -137,6 +137,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loginSignUpNow => 'سجّل الآن';
 
   @override
+  String get registerAsDriver => 'سجل كسائق';
+
+  @override
+  String get registerAsIndividual => 'سجل كمورد فردي';
+
+  @override
+  String get registerAsStore => 'سجل كمتجر / شركة';
+
+  @override
+  String get registerAsRecyclingCo => 'سجل كشركة إعادة تدوير';
+
+  @override
   String get loginCountrySearch => 'بحث';
 
   @override
@@ -295,6 +307,66 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get loginPasswordHint => 'أدخل كلمة المرور';
+
+  @override
+  String get roleDriverTitle => 'سائق';
+
+  @override
+  String get roleDriverSubtitle => 'قم بجمع ونقل النفايات لكسب المال';
+
+  @override
+  String get roleSupplierTitle => 'مورد';
+
+  @override
+  String get roleSupplierSubtitle => 'قم ببيع نفاياتك وساهم في حماية البيئة';
+
+  @override
+  String get roleRecyclingCoTitle => 'شركة إعادة تدوير';
+
+  @override
+  String get roleRecyclingCoSubtitle => 'استقبل المواد مباشرة في منشأتك';
+
+  @override
+  String get loginPhoneHelp =>
+      'سنرسل لك رمزاً قصيراً لهذا الرقم للتحقق من هويتك';
+
+  @override
+  String get loginPhoneHint => '7X XXX XXXX';
+
+  @override
+  String get loginContinueButton => 'متابعة';
+
+  @override
+  String get loginPhoneEmptyError => 'الرجاء إدخال رقم الهاتف';
+
+  @override
+  String get loginNewNumberHint => 'رقم جديد؟ سيتم إنشاء حسابك بعد التحقق';
+
+  @override
+  String get otpTitle => 'رمز التحقق';
+
+  @override
+  String otpSubtitle(String phone) {
+    return 'أدخل الرمز المكون من 6 أرقام المرسل إلى $phone';
+  }
+
+  @override
+  String get otpVerifyButton => 'تحقق';
+
+  @override
+  String get otpResendButton => 'إعادة إرسال الرمز';
+
+  @override
+  String get otpResentMessage => 'تم إرسال الرمز مرة أخرى';
+
+  @override
+  String get otpErrorIncomplete => 'الرجاء إدخال الرمز كاملاً';
+
+  @override
+  String get otpErrorInvalid => 'الرمز غير صحيح، حاول مرة أخرى';
+
+  @override
+  String get otpSimulatedHint => 'للتجربة استخدم الرمز 123456';
 
   @override
   String get signupRoleDriver => 'تسجيل سائق';
@@ -470,6 +542,73 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get driverCollectionCommitments => 'التزامات التجميع';
+
+  @override
+  String get driverToggleOnline => 'متاح';
+
+  @override
+  String get driverToggleOffline => 'غير متاح';
+
+  @override
+  String get driverStatusOnline => 'متصل الآن';
+
+  @override
+  String get driverStatusOffline => 'غير متصل';
+
+  @override
+  String get driverActiveMission => 'مهمة نشطة';
+
+  @override
+  String get driverHeadingToPickup => 'متجه للاستلام';
+
+  @override
+  String get driverHeadingToDelivery => 'متجه للتسليم';
+
+  @override
+  String get driverOrderAccepted => 'تم قبول الطلب';
+
+  @override
+  String get driverNewOrderBadge => 'طلب جديد';
+
+  @override
+  String get driverActivateNow => 'تفعيل الآن';
+
+  @override
+  String get driverNoOrdersNotifySubtitle =>
+      'ستصلك إشعارات عند توفر طلبات جديدة';
+
+  @override
+  String get driverOrdersTabAll => 'الكل';
+
+  @override
+  String get driverOrdersTabActive => 'النشطة';
+
+  @override
+  String get driverOrdersTabCompleted => 'المكتملة';
+
+  @override
+  String get driverPickupLabel => 'الاستلام';
+
+  @override
+  String get driverDeliveryLabel => 'التسليم';
+
+  @override
+  String get driverViewPickupDetails => 'عرض تفاصيل الاستلام';
+
+  @override
+  String get driverViewDeliveryDetails => 'عرض تفاصيل التسليم';
+
+  @override
+  String get driverRewardLabel => 'العائد';
+
+  @override
+  String get driverDistanceLabel => 'المسافة';
+
+  @override
+  String get driverTimeLabel => 'الوقت';
+
+  @override
+  String get driverWasteTypeLabel => 'نوع المواد';
 
   @override
   String get withdrawListing => 'سحب الإعلان';
@@ -1072,6 +1211,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get marketNoJobs => 'لا توجد وظائف تجميع حالياً';
+
+  @override
+  String get marketCategoryAll => 'الكل';
+
+  @override
+  String get marketNoOffersBody => 'سيظهر هنا ما يتم نشره من مواد للبيع';
+
+  @override
+  String get marketNoJobsBody => 'ستظهر هنا وظائف التجميع المتاحة';
+
+  @override
+  String get marketSuggestedByLicense => 'اقتراحات بناءً على رخصتك';
+
+  @override
+  String get marketShowAllOrders => 'عرض كل الطلبات';
 
   @override
   String get collectionJobBadge => 'وظيفة تجميع';
@@ -1851,4 +2005,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get signupVehicleColorHint => 'مثال: أبيض';
+
+  @override
+  String get notificationsTitle => 'الإشعارات';
+
+  @override
+  String get notificationsEmpty => 'لا توجد إشعارات بعد';
+
+  @override
+  String get notificationsMarkAllRead => 'تحديد الكل كمقروء';
+
+  @override
+  String get orderSearchingDriver => 'جارٍ البحث عن أقرب سائق متاح...';
+
+  @override
+  String get orderSearchingDriverRetry => 'إعادة البحث عن سائق';
 }

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'package:flutter/foundation.dart';
-import '../../../../../data/models/order.dart';
+import 'package:signals_flutter/signals_flutter.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../domain/entities/rider_proximity_state.dart';
 import '../../../../../domain/services/i_notification_service.dart';
 import '../../../../../domain/services/i_proximity_service.dart';
@@ -12,18 +12,11 @@ import '../../../../../domain/services/i_proximity_service.dart';
 // active [Order]. Drives the proximity banner, 10-minute wait timer, and the
 // chat-unlock gate.
 //
-// Lifecycle:
-//   1. Create with an [Order] and inject [IProximityService].
-//   2. Subscribe: [proximityState] emits [NearPickup] / [NearDropoff].
-//   3. Call [dispose] when the order is complete or the view is destroyed.
-//
-// Backend extension (future):
-//   • Replace [MockProximityService] with [GeolocatorProximityService].
-//   • Replace [MockNotificationService] with an FCM-based implementation.
+// Optimized with Signals for surgical UI updates (rebuilding only the timer text).
 
 const Duration _kTimerTick = Duration(seconds: 1);
 
-class RiderProximityViewModel extends ChangeNotifier {
+class RiderProximityViewModel {
   final Order order;
   final IProximityService _proximityService;
   final INotificationService _notificationService;
@@ -37,19 +30,25 @@ class RiderProximityViewModel extends ChangeNotifier {
     _sub = _proximityService.positions.listen(_onPosition);
   }
 
-  // ── State ──────────────────────────────────────────────────────────────────
+  // ── Signals ────────────────────────────────────────────────────────────────
 
-  RiderProximityState _state = const ProximityIdle();
-  RiderProximityState get proximityState => _state;
+  final _state = signal<RiderProximityState>(const ProximityIdle());
+  
+  /// Reactive state for the proximity banner.
+  RiderProximityState get proximityState => _state.value;
+  Signal<RiderProximityState> get proximityStateSignal => _state;
 
-  /// True when the rider is near pickup OR near drop-off.
+  /// Surgical reactivity — non-null when state is [NearPickup].
+  late final nearPickup = computed(() {
+    final s = _state.value;
+    return s is NearPickup ? s : null;
+  });
+
   /// Unlocks the in-order chat button.
-  bool get isChatEnabled =>
-      _state is NearPickup || _state is NearDropoff;
-
-  /// Convenience cast — non-null when state is [NearPickup].
-  NearPickup? get nearPickup =>
-      _state is NearPickup ? _state as NearPickup : null;
+  late final isChatEnabled = computed(() {
+    final s = _state.value;
+    return s is NearPickup || s is NearDropoff;
+  });
 
   // ── Internals ──────────────────────────────────────────────────────────────
 
@@ -86,13 +85,12 @@ class RiderProximityViewModel extends ChangeNotifier {
   }
 
   void _handleNearPickup() {
-    if (_state is! NearPickup) {
-      _state = NearPickup(
+    if (_state.value is! NearPickup) {
+      _state.value = NearPickup(
         arrivedAt: DateTime.now(),
         elapsed: Duration.zero,
       );
       _startTick();
-      notifyListeners();
     }
     if (!_pickupNotified) {
       _pickupNotified = true;
@@ -104,10 +102,9 @@ class RiderProximityViewModel extends ChangeNotifier {
   }
 
   void _handleNearDropoff() {
-    if (_state is! NearDropoff) {
-      _state = NearDropoff(arrivedAt: DateTime.now());
+    if (_state.value is! NearDropoff) {
+      _state.value = NearDropoff(arrivedAt: DateTime.now());
       _stopTick();
-      notifyListeners();
     }
     if (!_dropoffNotified) {
       _dropoffNotified = true;
@@ -119,10 +116,9 @@ class RiderProximityViewModel extends ChangeNotifier {
   }
 
   void _resetToIdle() {
-    if (_state is! ProximityIdle) {
-      _state = const ProximityIdle();
+    if (_state.value is! ProximityIdle) {
+      _state.value = const ProximityIdle();
       _stopTick();
-      notifyListeners();
     }
   }
 
@@ -132,10 +128,9 @@ class RiderProximityViewModel extends ChangeNotifier {
     _tickTimer?.cancel();
     _tickTimer = Timer.periodic(_kTimerTick, (_) {
       if (_disposed) return;
-      final current = _state;
+      final current = _state.value;
       if (current is NearPickup) {
-        _state = current.tick(_kTimerTick);
-        notifyListeners();
+        _state.value = current.tick(_kTimerTick);
       }
     });
   }
@@ -191,12 +186,10 @@ class RiderProximityViewModel extends ChangeNotifier {
     _proximityService.simulatePosition(90.0, 0.0);
   }
 
-  @override
   void dispose() {
     _disposed = true;
     _stopTick();
     _sub?.cancel();
     _proximityService.dispose();
-    super.dispose();
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/services/app_order_store.dart';
 
@@ -43,6 +43,7 @@ class RecyclingHomeViewModel extends ChangeNotifier {
 
   int get currentTab => _currentTab;
   bool get isOpen => _isOpen;
+  bool get isLoading => _store.isLoading;
   User get company => _company;
   String get companyName => _company.name;
   String get serviceArea => _serviceArea;

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../data/models/order.dart';
+import '../../../../data/models/order/order.dart';
 import '../../../../data/services/app_order_store.dart';
+import '../../../../domain/repositories/i_auth_repository.dart';
 import '../../../features/auth/viewmodels/login_viewmodel.dart';
 import 'viewmodels/individual_supplier_viewmodel.dart';
 import 'tabs/individual_supplier_home_tab.dart';
@@ -30,7 +31,12 @@ class IndividualSupplierHomeView extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (ctx) => IndividualSupplierViewModel(ctx.read<AppOrderStore>()),
+          create: (ctx) {
+            final vm = IndividualSupplierViewModel(ctx.read<AppOrderStore>());
+            final session = ctx.read<IAuthRepository>().currentSession;
+            if (session != null) vm.setAuthUserId(session.userId);
+            return vm;
+          },
         ),
         ChangeNotifierProvider(
           create: (ctx) => MarketplaceViewModel(

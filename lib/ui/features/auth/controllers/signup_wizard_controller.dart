@@ -2,18 +2,24 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:dwaar/data/models/user_role.dart';
 import 'package:dwaar/data/services/user_signup_service.dart';
+import 'package:dwaar/data/models/signup_request.dart';
+import 'package:dwaar/domain/repositories/i_auth_repository.dart';
 import 'package:dwaar/domain/services/i_ai_license_validation_service.dart';
 import 'package:dwaar/ui/features/auth/viewmodels/license_validation_viewmodel.dart';
 
 class SignupWizardController extends ChangeNotifier {
   final UserSignUpService _signupService;
   final LicenseValidationViewModel licenseVm;
+  final IAuthRepository? authRepository;
 
   SignupWizardController({
-    UserSignUpService? signupService,
+    required UserSignUpService signupService,
     LicenseValidationViewModel? licenseViewModel,
-  })  : _signupService = signupService ?? UserSignUpService(),
-        licenseVm = licenseViewModel ?? LicenseValidationViewModel();
+    this.authRepository,
+    String initialPhone = '',
+  })  : _signupService = signupService,
+        licenseVm = licenseViewModel ?? LicenseValidationViewModel(),
+        phone = initialPhone;
 
   // ─── Wizard State ──────────────────────────────────────────────────────────
   int _currentStep = 0;
@@ -24,6 +30,9 @@ class SignupWizardController extends ChangeNotifier {
 
   bool _submitted = false;
   bool get submitted => _submitted;
+
+  String? _error;
+  String? get error => _error;
 
   // ─── Step 1: Identity & Role ──────────────────────────────────────────────
   String fullName = '';
@@ -45,10 +54,8 @@ class SignupWizardController extends ChangeNotifier {
   String primaryCategory = '';
 
   // ─── Step 4: Credentials ──────────────────────────────────────────────────
-  String phone = '';
+  String phone;
   String email = '';
-  String password = '';
-  String passwordConfirm = '';
 
   // ─── Navigation ────────────────────────────────────────────────────────────
 
@@ -114,7 +121,7 @@ class SignupWizardController extends ChangeNotifier {
           : fullName,
       phone: phone,
       email: email.isEmpty ? null : email,
-      password: password,
+      password: null,
       role: role,
       supplierType: role == UserRole.supplier ? supplierType : null,
       vehiclePlate: role == UserRole.driver ? vehiclePlate : null,
@@ -124,18 +131,27 @@ class SignupWizardController extends ChangeNotifier {
 
   Future<void> submit() async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
 
-    final result = await _signupService.signUp(
-      buildRequest(),
-      profilePhoto: profilePhoto,
-      identityDocument: licenseVm.licenseFile,
-    );
+    if (authRepository != null) {
+      final result = await authRepository!.signUp(buildRequest());
+      result.fold(
+        onSuccess: (_) => _submitted = true,
+        onFailure: (f) => _error = f.message,
+      );
+    } else {
+      final result = await _signupService.signUp(
+        buildRequest(),
+        profilePhoto: profilePhoto,
+        identityDocument: licenseVm.licenseFile,
+      );
 
-    result.fold(
-      onSuccess: (_) => _submitted = true,
-      onFailure: (f) {},
-    );
+      result.fold(
+        onSuccess: (_) => _submitted = true,
+        onFailure: (f) => _error = f.message,
+      );
+    }
 
     _isLoading = false;
     notifyListeners();
