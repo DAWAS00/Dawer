@@ -11,17 +11,16 @@ import '../../../../domain/failures/app_failure.dart';
 // Owns message list state for a single order chat room.
 // Created per-view — not registered globally.
 //
-// Backend extension: [currentUserId], [currentUserName], and [currentUserRole]
-// are currently hardcoded to a mock identity. Replace with the real auth
-// session (e.g. LocalStore.currentUser) when backend is enabled.
+// Identity (`currentUserId`/`Name`/`Role`) is injected from the auth session
+// by `ChatView` (which reads `IAuthRepository.currentSession`). The defaults
+// here are only a fallback for offline/mock mode where no session exists.
 
 class ChatViewModel extends ChangeNotifier {
   ChatViewModel({
     required IChatRepository repo,
     required this.orderId,
-    // TODO(backend): inject from auth session instead of defaulting to mock
-    this.currentUserId = 'mock-user-01',
-    this.currentUserName = 'مورد دوّر',
+    this.currentUserId = 'guest',
+    this.currentUserName = 'Guest',
     this.currentUserRole = UserRole.supplier,
   }) : _repo = repo;
 
@@ -46,7 +45,16 @@ class ChatViewModel extends ChangeNotifier {
         if (_disposed) return;
         _state = Loaded(msgs);
         notifyListeners();
-        _repo.markRead(orderId, currentUserId);
+        // Only mark-read when there's actually something unread from others.
+        // Avoids a redundant UPDATE write on every realtime snapshot (the
+        // UPDATE would otherwise fire a realtime event → re-render cycle,
+        // harmless but wasteful — converges in 2 cycles either way).
+        final hasUnreadFromOthers = msgs.any(
+          (m) => m.senderId != currentUserId && !m.isRead,
+        );
+        if (hasUnreadFromOthers) {
+          _repo.markRead(orderId, currentUserId);
+        }
       },
       onError: (_) {
         if (_disposed) return;

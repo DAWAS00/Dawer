@@ -4,50 +4,53 @@ import '../../backend_integration_locally/local_store.dart';
 import '../../core/result/result.dart';
 import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/i_auth_repository.dart';
+import '../models/signup_request.dart';
 import '../models/user_role.dart';
-import '../services/user_signup_service.dart';
 
 final class SupabaseAuthRepository implements IAuthRepository {
-  SupabaseAuthRepository(this._client, this._signUpService, this._localStore);
+  SupabaseAuthRepository(this._client, this._localStore);
 
   final SupabaseClient _client;
-  final UserSignUpService _signUpService;
   final LocalStore _localStore;
 
   // ── IAuthRepository ────────────────────────────────────────────────────────
 
   @override
-  Future<AppResult<AuthSession>> signInWithEmail(
-    String email,
-    String password,
-  ) async {
-    final result = await _signUpService.signIn(
-      identifier: email,
-      password: password,
-    );
-
-    return result.fold(
-      onSuccess: (profile) {
-        final session = _mapProfileToSession(profile);
-        _cacheSession(session);
-        return Success(session);
-      },
-      onFailure: (failure) => Failure(failure),
-    );
-  }
-
-  @override
   Future<AppResult<AuthSession>> signUp(SignUpRequest request) async {
-    final result = await _signUpService.signUp(request);
+    try {
+      final email = request.email?.trim() ?? '';
+      final password = request.password ?? '';
 
-    return result.fold(
-      onSuccess: (profile) {
-        final session = _mapProfileToSession(profile);
-        _cacheSession(session);
-        return Success(session);
-      },
-      onFailure: (failure) => Failure(failure),
-    );
+      final response = await _client.auth.signUp(
+        email: email,
+        password: password,
+      );
+
+      final user = response.user;
+      if (user == null) {
+        return const Failure(AuthFailure(message: 'فشل إنشاء الحساب'));
+      }
+
+      await _client.from('profiles').insert(
+        request.toInsertRow(authId: user.id),
+      );
+
+      final session = AuthSession(
+        userId: user.id,
+        userName: request.name,
+        role: request.role,
+        supplierType: request.supplierType,
+        categories: request.categories,
+      );
+      _cacheSession(session);
+      return Success(session);
+    } on AuthException catch (e) {
+      return Failure(AuthFailure(message: e.message));
+    } on PostgrestException catch (e) {
+      return Failure(UnknownFailure(message: e.message, code: e.code));
+    } catch (e) {
+      return Failure(UnknownFailure.fromException(e));
+    }
   }
 
   @override
@@ -75,7 +78,7 @@ final class SupabaseAuthRepository implements IAuthRepository {
         return const Failure(AuthFailure(message: 'رمز التحقق غير صحيح'));
       }
 
-      final profile = await _signUpService.getCurrentProfile();
+      final profile = await _fetchProfile();
       if (profile == null) {
         return const Failure(AuthFailure(message: 'تعذر العثور على الملف الشخصي'));
       }
@@ -91,9 +94,9 @@ final class SupabaseAuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<void> signOut() {
+  Future<void> signOut() async {
     _clearCache();
-    return _signUpService.logout();
+    await _client.auth.signOut();
   }
 
   @override
@@ -104,8 +107,8 @@ final class SupabaseAuthRepository implements IAuthRepository {
         _clearCache();
         return null;
       }
-      
-      final profile = await _signUpService.getCurrentProfile();
+
+      final profile = await _fetchProfile();
       if (profile == null) {
         _clearCache();
         return null;
@@ -121,9 +124,7 @@ final class SupabaseAuthRepository implements IAuthRepository {
   AuthSession? get currentSession {
     final session = _client.auth.currentSession;
     if (session == null) return null;
-    
-    final userId = session.user.id;
-    // Try to get cached role from local store
+
     final roleStr = _localStore.getCurrentUserRole();
     if (roleStr == null) return null;
 
@@ -149,69 +150,35 @@ final class SupabaseAuthRepository implements IAuthRepository {
       }
     }
 
-    final categories = _localStore.getCurrentUserCategories();
-
     return AuthSession(
-      userId: userId,
+      userId: session.user.id,
       userName: userName,
       role: role,
       supplierType: supplierType,
-      categories: categories,
+      categories: _localStore.getCurrentUserCategories(),
     );
   }
 
-  // ── Password reset ───────────────────────────────────────────────
+  // ── Helpers ────────────────────────────────────────────────────────────────
 
-  @override
-  Future<AppResult<void>> requestPasswordReset(String email) async {
+  Future<Map<String, dynamic>?> _fetchProfile() async {
+    final uid = _client.auth.currentUser?.id;
+    if (uid == null) return null;
     try {
-      await _client.auth.signInWithOtp(
-        email: email.trim().toLowerCase(),
-        shouldCreateUser: false,
-      );
-      return const Success(null);
-    } on AuthException catch (e) {
-      return Failure(AuthFailure(message: e.message));
-    } catch (e) {
-      return Failure(UnknownFailure.fromException(e));
+      return await _client
+          .from('profiles')
+          .select()
+          .eq('auth_id', uid)
+          .maybeSingle();
+    } catch (_) {
+      return null;
     }
   }
-
-  @override
-  Future<AppResult<void>> verifyResetCode(String email, String code) async {
-    try {
-      await _client.auth.verifyOTP(
-        email: email.trim().toLowerCase(),
-        token: code.trim(),
-        type: OtpType.email,
-      );
-      return const Success(null);
-    } on AuthException catch (e) {
-      return Failure(AuthFailure(message: e.message));
-    } catch (e) {
-      return Failure(UnknownFailure.fromException(e));
-    }
-  }
-
-  @override
-  Future<AppResult<void>> updatePassword(String newPassword) async {
-    try {
-      await _client.auth.updateUser(
-        UserAttributes(password: newPassword),
-      );
-      await _client.auth.signOut();
-      return const Success(null);
-    } on AuthException catch (e) {
-      return Failure(AuthFailure(message: e.message));
-    } catch (e) {
-      return Failure(UnknownFailure.fromException(e));
-    }
-  }
-
-  // ── Helpers ──────────────────────────────────────────────────────────────
 
   void _cacheSession(AuthSession session) {
     _localStore.setCurrentUserRole(session.role.dbValue);
+    // ignore: discarded_futures
+    _localStore.setCurrentUserName(session.userName);
     if (session.supplierType != null) {
       _localStore.setCurrentSupplierType(session.supplierType!.dbValue);
     } else {
@@ -223,6 +190,8 @@ final class SupabaseAuthRepository implements IAuthRepository {
 
   void _clearCache() {
     _localStore.clearCurrentUserRole();
+    // ignore: discarded_futures
+    _localStore.clearCurrentUserName();
     _localStore.clearCurrentSupplierType();
     // ignore: discarded_futures
     _localStore.clearCurrentUserCategories();
@@ -251,7 +220,8 @@ final class SupabaseAuthRepository implements IAuthRepository {
     }
 
     final rawCats = profile['categories'];
-    final categories = rawCats is List ? rawCats.cast<String>() : const <String>[];
+    final categories =
+        rawCats is List ? rawCats.cast<String>() : const <String>[];
 
     return AuthSession(
       userId: profile['auth_id'] as String,
@@ -262,4 +232,3 @@ final class SupabaseAuthRepository implements IAuthRepository {
     );
   }
 }
-

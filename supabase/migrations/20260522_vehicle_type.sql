@@ -3,8 +3,8 @@ CREATE TYPE vehicle_type AS ENUM (
   'motorcycle', 'car', 'pickup', 'van', 'truck', 'heavyTruck'
 );
 
--- ── users: add vehicle type + chemical permit ─────────────────────────────────
-ALTER TABLE public.users
+-- ── profiles: add vehicle type + chemical permit ──────────────────────────────
+ALTER TABLE public.profiles
   ADD COLUMN IF NOT EXISTS vehicle_type        vehicle_type,
   ADD COLUMN IF NOT EXISTS has_chemical_permit BOOLEAN NOT NULL DEFAULT false;
 

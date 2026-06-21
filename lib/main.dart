@@ -4,7 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'backend_integration_locally/local_store.dart';
 import 'core/services/app_lang_notifier.dart';
 import 'core/services/app_theme_notifier.dart';
@@ -12,18 +12,26 @@ import 'core/services/supabase_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/config/ai_config.dart';
 import 'data/repositories/mock_auth_repository.dart';
+import 'data/repositories/supabase_auth_repository.dart';
 import 'data/repositories/supabase_file_storage_repository.dart';
 import 'data/repositories/supabase_order_repository.dart';
+import 'data/repositories/supabase_wallet_repository.dart';
 import 'data/services/app_order_store.dart';
-import 'data/services/supabase_auth_service.dart';
+import 'data/services/noop_notification_service.dart';
 import 'data/services/user_signup_service.dart';
 import 'domain/repositories/i_auth_repository.dart';
 import 'domain/repositories/i_file_storage_repository.dart';
 import 'domain/repositories/i_order_repository.dart';
+import 'domain/repositories/i_wallet_repository.dart';
+import 'domain/services/i_notification_service.dart';
+import 'domain/chat/repositories/i_chat_repository.dart';
+import 'data/chat/mock_chat_repository.dart';
+import 'data/chat/supabase_chat_repository.dart';
 import 'l10n/l10n.dart';
 import 'ui/features/auth/viewmodels/login_viewmodel.dart';
 import 'ui/features/splash/views/splash_view.dart';
-     void main() async {
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
@@ -35,43 +43,39 @@ import 'ui/features/splash/views/splash_view.dart';
 
   AiConfig.assertConfigured();
 
-  // Initialize Supabase via service
-  final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
-  final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
-
-  if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
-    debugPrint('WARNING: SUPABASE_URL or SUPABASE_ANON_KEY is not defined in .env.local. App will run in mock mode or fail if backend is required.');
-  }
-
+  // Initialize Supabase from `.env.local`. Best-effort: if the URL/key are
+  // missing or the project is unreachable, `isInitialized` stays false and the
+  // app boots in mock/offline mode. No hardcoded fallback — `.env.local` is the
+  // single source of truth. See docs/architecture-decisions/backend-strategy.md.
   await SupabaseService.initialize(
-    url: supabaseUrl.isNotEmpty ? supabaseUrl : 'https://bpzuwwbtqqrpohfqjcuo.supabase.co',
-    anonKey: supabaseAnonKey.isNotEmpty ? supabaseAnonKey : 'sb_publishable__JiNp6XeCpIOC1rWi9PwpA_JA51eBU7',
+    url: dotenv.env['SUPABASE_URL'] ?? '',
+    anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
   );
 
   final prefs = await SharedPreferences.getInstance();
   final localStore = await LocalStore.init();
 
-  final fileStorage = SupabaseFileStorageRepository();
-  UserSignUpService.setGlobalAuthService(
-    SupabaseAuthService(store: localStore, fileStorage: fileStorage),
-  );
+  // After best-effort init, decide which backend to bind. When Supabase is
+  // initialized (URL/key present and accepted), bind the Supabase repositories;
+  // otherwise fall back to the Mock / NoOp implementations so the app still
+  // boots offline and `flutter test` runs without a live backend. This is the
+  // single seam a future GCP re-platform swaps. See
+  // docs/architecture-decisions/backend-strategy.md.
+  final useSupabase = SupabaseService.isInitialized;
 
-  runApp(DawerApp(
-    prefs: prefs,
-    localStore: localStore,
-    fileStorage: fileStorage,
-  ));
+  runApp(DawerApp(prefs: prefs, localStore: localStore, useSupabase: useSupabase));
 }
 
 class DawerApp extends StatelessWidget {
   final SharedPreferences prefs;
   final LocalStore localStore;
-  final IFileStorageRepository fileStorage;
+  final bool useSupabase;
+
   const DawerApp({
     super.key,
     required this.prefs,
     required this.localStore,
-    required this.fileStorage,
+    required this.useSupabase,
   });
 
   @override
@@ -79,21 +83,49 @@ class DawerApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<LocalStore>.value(value: localStore),
-        Provider<IFileStorageRepository>.value(value: fileStorage),
+        Provider<IFileStorageRepository>(
+          create: (_) => useSupabase
+              ? SupabaseFileStorageRepository()
+              : const NoOpFileStorageRepository(),
+        ),
+        Provider<INotificationService>(
+          create: (_) => const NoopNotificationService(),
+        ),
         Provider<IOrderRepository>(
-          create: (_) => SupabaseOrderRepository(Supabase.instance.client),
+          create: (_) => useSupabase
+              ? SupabaseOrderRepository(SupabaseService.client)
+              : const NoOpOrderRepository(),
+        ),
+        Provider<IWalletRepository>(
+          create: (_) => useSupabase
+              ? SupabaseWalletRepository(SupabaseService.client)
+              : const NoOpWalletRepository(),
         ),
         ChangeNotifierProvider(
           create: (ctx) => AppOrderStore(
             store: localStore,
             remote: ctx.read<IOrderRepository>(),
-            seedDriverOrderId: 'ORD-S01',
+            wallet: ctx.read<IWalletRepository>(),
+            skipMockSeed: useSupabase,
           ),
         ),
         ChangeNotifierProvider(create: (_) => AppThemeNotifier(prefs)),
         ChangeNotifierProvider(create: (_) => AppLangNotifier(prefs)),
         Provider<IAuthRepository>(
-          create: (_) => MockAuthRepository(),
+          create: (_) => useSupabase
+              ? SupabaseAuthRepository(SupabaseService.client, localStore)
+              : MockAuthRepository(),
+        ),
+        Provider<UserSignUpService>(
+          create: (ctx) => UserSignUpService(
+            authRepository: ctx.read<IAuthRepository>(),
+            fileStorage: ctx.read<IFileStorageRepository>(),
+          ),
+        ),
+        Provider<IChatRepository>(
+          create: (_) => useSupabase
+              ? SupabaseChatRepository(SupabaseService.client)
+              : MockChatRepository(),
         ),
         ChangeNotifierProvider<LoginViewModel>(
           create: (ctx) => LoginViewModel(

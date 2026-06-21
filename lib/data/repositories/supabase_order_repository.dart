@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/result/result.dart';
 import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/i_order_repository.dart';
-import '../models/order.dart';
+import '../models/order/order.dart';
 import '../models/order_supabase_ext.dart';
 import '../models/reward_breakdown.dart';
 import '../models/user_role.dart';
@@ -123,6 +123,22 @@ final class SupabaseOrderRepository implements IOrderRepository {
   }
 
   @override
+  Future<AppResult<void>> markArrivedAtPickup(String orderId) {
+    return _run(() => _client.from('orders').update({
+          'status': 'arrivedAtPickup',
+          'arrived_at_pickup_at': DateTime.now().toUtc().toIso8601String(),
+        }).eq('id', orderId));
+  }
+
+  @override
+  Future<AppResult<void>> markArrivedAtDropoff(String orderId) {
+    return _run(() => _client.from('orders').update({
+          'status': 'arrivedAtDropoff',
+          'arrived_at_dropoff_at': DateTime.now().toUtc().toIso8601String(),
+        }).eq('id', orderId));
+  }
+
+  @override
   Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg}) {
     return _run(() => _client.from('orders').update({
           'status': 'completed',
@@ -151,6 +167,27 @@ final class SupabaseOrderRepository implements IOrderRepository {
           'p_vehicle_type': vehicleType,
           'p_needs_manual_review': breakdown.needsManualReview,
         }));
+  }
+
+  @override
+  Future<AppResult<bool>> verifyArrival(
+    String orderId,
+    double lat,
+    double lng,
+  ) async {
+    try {
+      final result = await _client.rpc('verify_driver_arrival', params: {
+        'p_order_id': orderId,
+        'p_lat': lat,
+        'p_lng': lng,
+      }) as bool? ?? false;
+      return Success(result);
+    } on PostgrestException catch (e) {
+      return Failure(UnknownFailure(message: e.message, code: e.code));
+    } catch (e) {
+      if (_isNetworkError(e)) return const Failure(NetworkFailure());
+      return Failure(UnknownFailure.fromException(e));
+    }
   }
 
   // ── Internal ───────────────────────────────────────────────────────────────
