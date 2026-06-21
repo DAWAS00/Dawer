@@ -1,326 +1,410 @@
-# Supabase Live Verification & Hardening — Handoff Plan
+# Supabase Live Verification & Hardening — Execution Plan
 
-> **For:** Claude (or any agent) with the Supabase MCP connected.
 > **Project:** `bbpleeddaquwwvexzmdc` (Dwaar, ap-southeast-1)
 > **Repo:** `C:\Users\dawas\dwaar`, branch `mohammad`
-> **Author:** prior session that restored the backend + fixed review findings.
-
-## Context (read this first)
-
-The Dwaar Flutter app's Supabase backend was restored and reconciled in prior
-sessions. The **code is done and verified** (`flutter analyze` clean,
-`flutter test` 306/306 pass). The **live DB has all tables and the key columns**
-(already confirmed via PostgREST probes with the anon key). What remains is the
-**live verification that needs authenticated/MCP access**, plus **3 security
-hardening fixes** flagged in code review.
-
-This plan is what a Claude session with the Supabase MCP should execute. Do the
-phases in order — stop on the first failure and fix before continuing.
+> **Status:** Code done (flutter analyze ✅, 304/304 tests ✅). Execute phases in order.
 
 ---
 
-## What's ALREADY verified (don't redo these)
+## Already verified — skip these
 
-- All 6 tables exist on the live DB and respond to anon-key REST probes:
-  `profiles, orders, chat_messages, driver_locations, driver_wallet, notifications`.
-- `orders` accepts the exact JSON shape `lib/data/models/order_supabase_ext.dart`
-  produces — an unauthenticated insert returns `42501 RLS policy violation`
-  (auth block), **not** a schema/type error.
-- The PostGIS fix columns are live: `orders.pickup_lat/pickup_lng/dropoff_lat/dropoff_lng`
-  and `profiles.location_lat/location_lng` all exist (HTTP 200 on column probe).
-- `.env.local` targets `bbpleeddaquwwvexzmdc` with a valid anon key.
-- Code compiles; 306 tests pass; no secrets in the diff.
-
-## What's NOT yet verified (the open work)
-
-1. Are all 10 migrations **actually applied** (not just the tables)? Run `list_migrations`.
-2. Do the **PostGIS triggers** exist (not just the columns)? A column existing doesn't mean `trg_sync_orders_geography` was created.
-3. Does the `verify_driver_arrival` **RPC** exist and work? (Defined in `20260522_driver_locations.sql`.)
-4. Does an **authenticated** full round-trip work (signup → order → accept → chat)?
-5. Are the 3 security issues still present? (They are, in the repo SQL — see Phase 3.)
+- All 6 tables exist and respond to anon-key REST probes.
+- `orders` RLS blocks unauthenticated inserts with `42501` (auth error, not schema error).
+- PostGIS columns live: `orders.pickup_lat/lng/dropoff_lat/lng`, `profiles.location_lat/lng`.
+- `.env.local` targets `bbpleeddaquwwvexzmdc` with valid anon key.
+- 304 Flutter tests pass; no secrets in diff.
 
 ---
 
-## Phase 1 — Verify schema state (read-only)
+## Phase 0 — Pre-flight (run FIRST)
 
-For each, run the MCP tool and compare against the repo's `supabase/migrations/`.
+These catch problems the advisor checks miss.
+
+### 0.1 Find unindexed FK columns
+
+```sql
+SELECT
+  conrelid::regclass AS table_name,
+  a.attname          AS fk_column
+FROM pg_constraint c
+JOIN pg_attribute a
+  ON a.attrelid = c.conrelid
+ AND a.attnum   = ANY(c.conkey)
+WHERE c.contype = 'f'
+  AND NOT EXISTS (
+    SELECT 1 FROM pg_index i
+    WHERE i.indrelid = c.conrelid
+      AND a.attnum = ANY(i.indkey)
+  )
+ORDER BY table_name, fk_column;
+```
+
+**Blocker:** any row where `table_name='orders'` and `fk_column IN ('supplier_id','driver_id','company_id')`.
+If any appear, apply them now via 0.2 — don't proceed to Phase 1 without fixing these.
+
+### 0.2 Add missing FK indexes (run only for rows returned above)
+
+```sql
+CREATE INDEX IF NOT EXISTS orders_supplier_id_idx         ON public.orders (supplier_id);
+CREATE INDEX IF NOT EXISTS orders_driver_id_idx           ON public.orders (driver_id);
+CREATE INDEX IF NOT EXISTS orders_company_id_idx          ON public.orders (company_id);
+CREATE INDEX IF NOT EXISTS driver_locations_order_id_idx  ON public.driver_locations (order_id);
+CREATE INDEX IF NOT EXISTS driver_locations_driver_id_idx ON public.driver_locations (driver_id);
+CREATE INDEX IF NOT EXISTS chat_messages_room_id_idx      ON public.chat_messages (room_id);
+CREATE INDEX IF NOT EXISTS chat_messages_sender_id_idx    ON public.chat_messages (sender_id);
+CREATE INDEX IF NOT EXISTS notifications_recipient_id_idx ON public.notifications (recipient_id);
+```
+
+### 0.3 Audit RLS policies for raw auth.uid() (100x performance bug)
+
+```sql
+SELECT schemaname, tablename, policyname, qual
+FROM pg_policies
+WHERE qual LIKE '%auth.uid()%'
+  AND qual NOT LIKE '%(select auth.uid())%';
+```
+
+Any row returned = a policy calls `auth.uid()` once per row instead of once per query.
+Record the affected policies — they get patched in `00005_security_hardening.sql` (Phase 3).
+
+### 0.4 Verify status transition trigger handles NULL (INSERT guard)
+
+```sql
+SELECT prosrc FROM pg_proc WHERE proname = 'enforce_order_status_transition';
+```
+
+Look for `TG_OP = 'INSERT'` or `COALESCE(OLD.status, '')` near the top of the function body.
+If the guard is missing, every new order INSERT will fire the transition check against `OLD=NULL` and error.
+Add the fix in `00005_security_hardening.sql`.
+
+### 0.5 Verify wallet RPCs use transaction-level advisory locks
+
+```sql
+SELECT prosrc FROM pg_proc
+WHERE proname IN ('driver_wallet_hold', 'driver_wallet_release');
+```
+
+Look for `pg_try_advisory_xact_lock` (correct — survives pgBouncer transaction mode).
+If you see `pg_try_advisory_lock` (session-level), add a fix in `00005_security_hardening.sql`.
+
+---
+
+## Phase 1 — Verify schema state
 
 ### 1.1 List applied migrations
+
 ```
 list_migrations(project_id="bbpleeddaquwwvexzmdc")
 ```
-**Expect:** all 10 in this order:
-```
-00001_initial_schema, 00002_add_user_categories, 00003_chat,
-00004_postgis_compat, 20260519_security_tables, 20260522_driver_locations,
-20260522_marketplace_limits, 20260522_transaction_commission,
-20260522_vehicle_type, 20260522_wallet_functions
-```
-If any are missing, apply them via `apply_migration` (read the file content from
-`supabase/migrations/<name>.sql` in the repo).
 
-### 1.2 Verify the PostGIS triggers exist
+Expect all 10:
+```
+00001_initial_schema
+00002_add_user_categories
+00003_chat
+00004_postgis_compat
+20260519_security_tables
+20260522_driver_locations
+20260522_marketplace_limits
+20260522_transaction_commission
+20260522_vehicle_type
+20260522_wallet_functions
+```
+
+Missing any → apply from `supabase/migrations/<name>.sql`.
+
+### 1.2 PostGIS triggers exist
+
 ```sql
--- via execute_sql
 SELECT tgname, tgrelid::regclass, tgenabled
 FROM pg_trigger
-WHERE tgname IN ('trg_sync_orders_geography', 'trg_sync_profiles_geography');
+WHERE tgname IN ('trg_sync_orders_geography','trg_sync_profiles_geography');
 ```
-**Expect:** 2 rows, both `tgenabled = 'O'` (origin). If missing, re-apply
-`00004_postgis_compat.sql` (it's idempotent — uses `DROP TRIGGER IF EXISTS`).
 
-### 1.3 Verify `verify_driver_arrival` RPC exists
+Expect 2 rows, `tgenabled='O'`. Missing → re-apply `00004_postgis_compat.sql`.
+
+### 1.3 verify_driver_arrival RPC exists
+
 ```sql
 SELECT proname, prosrc IS NOT NULL AS has_body
 FROM pg_proc WHERE proname = 'verify_driver_arrival';
 ```
-**Expect:** 1 row, `has_body = true`. If missing, apply the function from
-`20260522_driver_locations.sql` (the `CREATE OR REPLACE FUNCTION verify_driver_arrival` block).
 
-### 1.4 Verify realtime publication membership
+Expect 1 row, `has_body=true`.
+
+### 1.4 Realtime publication membership
+
 ```sql
 SELECT tablename FROM pg_publication_tables
 WHERE pubname = 'supabase_realtime'
 ORDER BY tablename;
 ```
-**Expect at minimum:** `orders`, `chat_messages`, `driver_locations`. If any
-missing, run `ALTER PUBLICATION supabase_realtime ADD TABLE public.<table>;`
-(note: this errors if already a member — wrap in a DO block or check first).
 
-### 1.5 Run advisor checks
+Expect at minimum: `chat_messages`, `driver_locations`, `orders`.
+
+### 1.5 Advisor checks
+
 ```
 get_advisors(project_id="bbpleeddaquwwvexzmdc", type="security")
 get_advisors(project_id="bbpleeddaquwwvexzmdc", type="performance")
 ```
-Triage the output. **Expected known warnings** (not blockers): the `auto_confirm_user`
-trigger (Phase 3 fixes it) and possibly missing indexes on FK columns. Report
-anything critical.
+
+Known-acceptable: `auto_confirm_user` warning (Phase 3 fixes it), FK index warnings (Phase 0 fixes them).
+Any new critical warning → assess before continuing.
 
 ---
 
 ## Phase 2 — Authenticated smoke tests
 
-These need a real user. **Create a test user first**, then run inserts as them.
+Use synthetic UUIDs — no real Auth users needed for SQL-level testing.
 
-### 2.1 Create a test supplier + driver pair
-Use the Supabase dashboard Auth (or `admin.createUser` via MCP if available) to
-create two test users with **phone OTP disabled** (or use a test phone like
-`+962790000001` if the mock-OTP pattern is active):
-
-- Supplier: phone `+962799900001`, role `supplier`
-- Driver: phone `+962799900002`, role `driver`
-
-After each signup, verify a `profiles` row was created:
-```sql
-SELECT auth_id, name, phone, role FROM public.profiles ORDER BY created_at DESC LIMIT 2;
+```
+SUPPLIER_ID = 00000000-0000-0000-0000-000000000001
+DRIVER_ID   = 00000000-0000-0000-0000-000000000002
 ```
 
-### 2.2 Test the PostGIS trigger (THE critical test)
-As the supplier (authenticated), insert an order and verify the geography column
-gets populated from the numeric lat/lng by the trigger:
+### 2.1 Insert test profiles
+
 ```sql
--- Insert with numeric lat/lng (what the Dart ext sends)
+INSERT INTO public.profiles (auth_id, name, phone, role)
+VALUES
+  ('00000000-0000-0000-0000-000000000001','Test Supplier','+962799900001','supplier'),
+  ('00000000-0000-0000-0000-000000000002','Test Driver',  '+962799900002','driver')
+ON CONFLICT (auth_id) DO NOTHING
+RETURNING auth_id, name, role;
+```
+
+### 2.2 PostGIS trigger test — critical
+
+```sql
 INSERT INTO public.orders (
   type, status, supplier_id, waste_types, pickup_target,
   pickup_lat, pickup_lng, is_marketplace_shared, requires_rider
 ) VALUES (
-  'pickup', 'pending',
-  (SELECT auth_id FROM profiles WHERE phone='+962799900001'),
-  ARRAY['plastic'], 'company',
+  'pickup','pending',
+  '00000000-0000-0000-0000-000000000001',
+  ARRAY['plastic'],'company',
   31.9539, 35.9106, false, false
 )
 RETURNING id, pickup_lat, pickup_lng,
   ST_AsText(pickup_location) AS pickup_geography;
 ```
-**Success:** returns a row where `pickup_geography` = `POINT(35.9106 31.9539)`
-(not null). This confirms the trigger works end-to-end. **If `pickup_location`
-is null, the trigger is broken** — re-check Phase 1.2.
 
-### 2.3 Test the full order lifecycle
+**Pass:** `pickup_geography = 'POINT(35.9106 31.9539)'`
+**Fail:** `pickup_geography = NULL` → stop, trigger is broken, re-check Phase 1.2.
+
+> Save the returned `id` — use it as `$ORDER_ID` in the remaining steps.
+
+### 2.3 Full order lifecycle
+
 ```sql
--- 1. Supplier creates order (done in 2.2 — capture the returned id)
--- 2. Driver accepts
-UPDATE public.orders SET status='accepted', driver_id='<driver_auth_id>',
-  accepted_at=now() WHERE id='<order_id_from_2.2>';
+-- Accept
+UPDATE public.orders
+SET status='accepted',
+    driver_id='00000000-0000-0000-0000-000000000002',
+    accepted_at=now()
+WHERE id='$ORDER_ID';
 
--- 3. Driver arrives at pickup (trigger should auto-stamp arrived_at_pickup_at)
-UPDATE public.orders SET status='arrivedAtPickup' WHERE id='<order_id>';
-SELECT status, arrived_at_pickup_at FROM public.orders WHERE id='<order_id>';
--- Expect: arrived_at_pickup_at is NOT null (trigger auto-stamps it)
+-- Arrive at pickup
+UPDATE public.orders SET status='arrivedAtPickup' WHERE id='$ORDER_ID';
+SELECT status, arrived_at_pickup_at FROM public.orders WHERE id='$ORDER_ID';
+-- Pass: arrived_at_pickup_at IS NOT NULL
 
--- 4. Invalid transition should be REJECTED by enforce_order_status_transition
-UPDATE public.orders SET status='completed' WHERE id='<order_id>';
--- Expect: ERROR — can't skip accepted→inTransit→arrivedAtDropoff
+-- In transit
+UPDATE public.orders SET status='inTransit', in_transit_at=now() WHERE id='$ORDER_ID';
+
+-- Arrive at dropoff
+UPDATE public.orders SET status='arrivedAtDropoff' WHERE id='$ORDER_ID';
+
+-- Complete
+UPDATE public.orders SET status='completed', completed_at=now() WHERE id='$ORDER_ID';
+
+-- Invalid transition must be rejected
+UPDATE public.orders SET status='pending' WHERE id='$ORDER_ID';
+-- Pass: ERROR from enforce_order_status_transition
 ```
 
-### 2.4 Test `verify_driver_arrival` RPC
-First seed a `driver_locations` row (the driver must have published GPS):
+### 2.4 verify_driver_arrival RPC
+
 ```sql
 INSERT INTO public.driver_locations (driver_id, order_id, lat, lng)
-VALUES ('<driver_auth_id>', '<order_id>', 31.9539, 35.9106);
--- Then call the RPC with a target near that point
-SELECT verify_driver_arrival('<order_id>', 31.9539, 35.9106);
--- Expect: true (within 200m)
+VALUES ('00000000-0000-0000-0000-000000000002','$ORDER_ID',31.9539,35.9106)
+ON CONFLICT (driver_id, order_id) DO UPDATE SET lat=EXCLUDED.lat, lng=EXCLUDED.lng;
 
--- And a far target
-SELECT verify_driver_arrival('<order_id>', 32.0000, 36.0000);
--- Expect: false + a row inserted into fraud_audit
-SELECT count(*) FROM public.fraud_audit WHERE order_id='<order_id>';
+SELECT verify_driver_arrival('$ORDER_ID', 31.9539, 35.9106);  -- expect: true
+SELECT verify_driver_arrival('$ORDER_ID', 32.0000, 36.0000);  -- expect: false
+SELECT count(*) FROM public.fraud_audit WHERE order_id='$ORDER_ID';  -- expect: 1
 ```
 
-### 2.5 Test chat round-trip
+### 2.5 Chat round-trip
+
 ```sql
 INSERT INTO public.chat_messages (room_id, sender_id, sender_name, sender_role, content)
-VALUES ('<order_id>', '<supplier_auth_id>', 'Test Supplier', 'supplier', 'مرحبا');
-SELECT id, content, is_read FROM public.chat_messages WHERE room_id='<order_id>';
--- Expect: 1 row
+VALUES ('$ORDER_ID','00000000-0000-0000-0000-000000000001','Test Supplier','supplier','مرحبا');
 
--- markRead equivalent (as the driver)
+SELECT id, content, is_read FROM public.chat_messages WHERE room_id='$ORDER_ID';
+-- Expect: 1 row, is_read=false
+
 UPDATE public.chat_messages SET is_read=true
-WHERE room_id='<order_id>' AND sender_id <> '<driver_auth_id>';
+WHERE room_id='$ORDER_ID'
+  AND sender_id <> '00000000-0000-0000-0000-000000000002';
 ```
 
-### 2.6 Cleanup test data
+### 2.6 Cleanup
+
 ```sql
-DELETE FROM public.chat_messages WHERE room_id LIKE '%<order_id>%';
-DELETE FROM public.driver_locations WHERE order_id='<order_id>';
-DELETE FROM public.fraud_audit WHERE order_id='<order_id>';
-DELETE FROM public.orders WHERE id='<order_id>';
--- Leave the test profiles for reuse, or delete them
+DELETE FROM public.chat_messages    WHERE room_id='$ORDER_ID';
+DELETE FROM public.driver_locations WHERE order_id='$ORDER_ID';
+DELETE FROM public.fraud_audit      WHERE order_id='$ORDER_ID';
+DELETE FROM public.orders           WHERE id='$ORDER_ID';
+DELETE FROM public.profiles
+  WHERE auth_id IN (
+    '00000000-0000-0000-0000-000000000001',
+    '00000000-0000-0000-0000-000000000002'
+  );
 ```
 
 ---
 
-## Phase 3 — Security hardening (3 fixes from code review)
+## Phase 3 — Security hardening
 
-These are **confirmed real issues** in the repo SQL. Apply each as a new
-migration (e.g., `00005_security_hardening.sql`) so the repo stays the source of
-truth, AND apply to the live DB via `apply_migration`.
+Write and apply `supabase/migrations/00005_security_hardening.sql`.
 
-### 3.1 Delete the dead `verify_arrival` Edge Function
-**Why:** It's dead code (the `verify_driver_arrival` RPC superseded it), AND it
-has an IDOR — it trusts a client-supplied `driverId` parameter while using the
-service-role key (bypasses RLS), so any authenticated user could verify arrival
-against any driver's GPS.
+### Fixes included
 
-**Action:** Delete `supabase/functions/verify_arrival/` from the repo, and run
-```
-# Via MCP or dashboard:
-supabase functions delete verify_arrival --project-ref bbpleeddaquwwvexzmdc
-```
-(If the function was never deployed, just delete the directory.)
+| # | Fix | Why |
+|---|-----|-----|
+| 3.1 | Delete `verify_arrival` Edge Function dir from repo | Dead code + IDOR (trusts client-supplied driverId, uses service-role key) |
+| 3.2 | Redefine `nearby_drivers()` without `fcm_token` | Any authed user can harvest all driver push tokens + names + locations |
+| 3.3 | Drop `auto_confirm_user` trigger | Force-confirms every email at creation — defeats email verification |
+| 3.4 | Patch RLS policies to `(select auth.uid())` pattern | Raw `auth.uid()` called per row = 100x perf cost at scale |
+| 3.5 | Add missing FK indexes | Prevent full table scans on every order query and realtime filter |
 
-### 3.2 Stop leaking `fcm_token` from `nearby_drivers()`
-**Why:** `nearby_drivers()` is `SECURITY DEFINER` (bypasses profiles RLS) and
-returns `fcm_token` — any authenticated user can harvest every driver's push
-token + name + location globally.
+### 00005_security_hardening.sql
 
-**Fix** (redefine the function without `fcm_token`):
 ```sql
-CREATE OR REPLACE FUNCTION nearby_drivers(
-  lat FLOAT, lng FLOAT, radius_km FLOAT DEFAULT 10
+-- ──────────────────────────────────────────────────────────────────────────────
+-- 00005_security_hardening.sql
+-- Applied: 2026-06-21
+-- ──────────────────────────────────────────────────────────────────────────────
+
+-- 3.3: Drop auto-confirm (do first; RLS changes below don't depend on it)
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+DROP FUNCTION IF EXISTS auto_confirm_user();
+
+-- 3.2: Redefine nearby_drivers() — strip fcm_token
+CREATE OR REPLACE FUNCTION public.nearby_drivers(
+  lat       FLOAT,
+  lng       FLOAT,
+  radius_km FLOAT DEFAULT 10
 ) RETURNS TABLE (id UUID, name TEXT, distance_m FLOAT)
-LANGUAGE sql STABLE SECURITY DEFINER AS $$
-  SELECT u.auth_id AS id,
-         u.name,
-         (ST_Distance(u.location, ST_MakePoint(lng, lat)::geography)) AS distance_m
-  FROM public.profiles u
-  WHERE u.role = 'driver'
-    AND u.is_available = true
-    AND u.location IS NOT NULL
-    AND ST_DWithin(u.location, ST_MakePoint(lng, lat)::geography, radius_km * 1000)
+LANGUAGE sql STABLE SECURITY DEFINER
+SET search_path = ''
+AS $$
+  SELECT
+    p.auth_id AS id,
+    p.name,
+    ST_Distance(p.location, ST_MakePoint(lng, lat)::geography) AS distance_m
+  FROM public.profiles p
+  WHERE p.role = 'driver'
+    AND p.is_available = true
+    AND p.location IS NOT NULL
+    AND ST_DWithin(p.location, ST_MakePoint(lng, lat)::geography, radius_km * 1000)
   ORDER BY distance_m ASC
   LIMIT 20;
 $$;
-```
-⚠️ **Verify the actual current function signature first** — read
-`00001_initial_schema.sql` lines ~196-205 for the exact current definition, and
-make sure the column names (`is_available`, `location`) match what's live before
-redefining. If `nearby_drivers` isn't used by the Dart code (grep
-`nearby_drivers` in `lib/`), this is lower priority but still worth fixing.
 
-### 3.3 Drop the `auto_confirm_user` trigger
-**Why:** It force-confirms every new account's email at creation — defeats email
-verification entirely (anyone can sign up with a victim's email and own a
-confirmed account).
+-- 3.4: RLS policy pattern fix
+-- (Fill in actual policy names after running Phase 0.3 query.
+--  Template — repeat this block for each affected policy:)
+-- DROP POLICY IF EXISTS <name> ON public.<table>;
+-- CREATE POLICY <name> ON public.<table>
+--   FOR <cmd> [TO authenticated] USING ((select auth.uid()) = <col>);
 
-**Fix:**
-```sql
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-DROP FUNCTION IF EXISTS auto_confirm_user();
+-- 3.5: FK indexes (idempotent)
+CREATE INDEX IF NOT EXISTS orders_supplier_id_idx         ON public.orders (supplier_id);
+CREATE INDEX IF NOT EXISTS orders_driver_id_idx           ON public.orders (driver_id);
+CREATE INDEX IF NOT EXISTS orders_company_id_idx          ON public.orders (company_id);
+CREATE INDEX IF NOT EXISTS driver_locations_order_id_idx  ON public.driver_locations (order_id);
+CREATE INDEX IF NOT EXISTS driver_locations_driver_id_idx ON public.driver_locations (driver_id);
+CREATE INDEX IF NOT EXISTS chat_messages_room_id_idx      ON public.chat_messages (room_id);
+CREATE INDEX IF NOT EXISTS chat_messages_sender_id_idx    ON public.chat_messages (sender_id);
+CREATE INDEX IF NOT EXISTS notifications_recipient_id_idx ON public.notifications (recipient_id);
 ```
-⚠️ **Caveat:** After dropping this, signup requires real email/OTP confirmation.
-If the app's signup flow doesn't handle the "unverified" state gracefully, this
-could block logins in dev. Check `lib/data/repositories/supabase_auth_repository.dart`
-— `verifyOtp` already checks `response.session == null` before trusting the OTP,
-so removing the trigger should be safe. But test signup after applying.
+
+**3.1 action (repo only, no SQL):**
+```
+Delete: supabase/functions/verify_arrival/ (if it exists)
+Commit with message: "chore: remove dead verify_arrival edge function (IDOR risk)"
+```
+
+**3.3 rollback:** if signup breaks (OTP succeeds but session is null), re-apply the
+`auto_confirm_user` function + trigger from `20260519_security_tables.sql`.
 
 ---
 
-## Phase 4 — Fix anything found broken
+## Phase 4 — Fix drift
 
-If Phase 1 or 2 reveals a missing migration/column/RPC/trigger:
-1. **First choice:** apply the existing repo migration file (read it from
-   `supabase/migrations/` and pass its content to `apply_migration`).
-2. **If the repo file is itself wrong:** fix the repo file first, commit it,
-   then apply.
-3. Keep migrations idempotent (`CREATE TABLE IF NOT EXISTS`, `DROP ... IF EXISTS`).
+Only needed if Phase 1 or 2 found failures.
 
----
+| Finding | Action |
+|---------|--------|
+| Missing migration | Apply from `supabase/migrations/<name>.sql` |
+| Trigger missing | Re-apply its migration file |
+| Transition trigger missing NULL guard | Patch in `00005_security_hardening.sql` |
+| Wallet RPCs use session locks | Rewrite to `pg_try_advisory_xact_lock` in `00005_security_hardening.sql` |
 
-## Phase 5 — Final verification + report
-
-After Phases 1-4, re-run:
-```
-get_advisors(type="security")
-get_advisors(type="performance")
-```
-and confirm no new critical warnings.
-
-Then report:
-- ✅/❌ for each phase
-- Any drift found between repo and live DB (and which side was fixed)
-- The test user IDs created (for cleanup)
-- Whether the app's signup→order→chat round-trip would now work end-to-end
+Never edit applied migration files. All fixes go into `00005_` or a new `00005b_` file.
 
 ---
 
-## Reference: the 10 repo migration files (apply order)
+## Phase 5 — Final verification
+
+```
+get_advisors(project_id="bbpleeddaquwwvexzmdc", type="security")
+get_advisors(project_id="bbpleeddaquwwvexzmdc", type="performance")
+```
+
+Re-run Phase 0.1 — expect zero rows on `orders`, `chat_messages`, `driver_locations`.
+Re-run Phase 0.3 — expect zero rows.
+
+**GO criteria (all must be true):**
+- [ ] All 10 migrations applied
+- [ ] Both PostGIS triggers exist and enabled
+- [ ] PostGIS smoke test passes (geography column populated from numeric lat/lng)
+- [ ] Invalid status transition is rejected
+- [ ] `auto_confirm_user` dropped
+- [ ] `nearby_drivers()` returns no `fcm_token` column
+- [ ] FK indexes exist on `orders.supplier_id/driver_id/company_id`
+- [ ] No RLS policy uses raw `auth.uid()`
+- [ ] `verify_driver_arrival` returns true/false correctly
+- [ ] Fraud audit row inserted on failed proximity check
+
+---
+
+## Reference: 10 migration files
 
 ```
 supabase/migrations/
-  00001_initial_schema.sql          # profiles, orders, notifications, transactions, RLS, triggers, storage
-  00002_add_user_categories.sql     # profiles.categories
-  00003_chat.sql                    # chat_messages + RLS + realtime
-  00004_postgis_compat.sql          # numeric lat/lng cols + geography triggers (THE PostGIS fix)
-  20260519_security_tables.sql      # fraud_audit, driver_wallet, wallet_transactions, arrival cols
-  20260522_driver_locations.sql     # driver_locations + RLS + verify_driver_arrival RPC + realtime
-  20260522_marketplace_limits.sql   # listing TTL + record_order_transaction RPC
-  20260522_transaction_commission.sql # commission breakdown cols
-  20260522_vehicle_type.sql         # vehicle_type enum + chemical permit + admin approval
-  20260522_wallet_functions.sql     # driver_wallet_hold/release RPCs + auto-credit trigger
+  00001_initial_schema.sql
+  00002_add_user_categories.sql
+  00003_chat.sql
+  00004_postgis_compat.sql
+  20260519_security_tables.sql
+  20260522_driver_locations.sql
+  20260522_marketplace_limits.sql
+  20260522_transaction_commission.sql
+  20260522_vehicle_type.sql
+  20260522_wallet_functions.sql
 ```
 
-## Reference: key Dart ↔ SQL contracts
+## Reference: Dart ↔ SQL contracts
 
-| Dart (file) | SQL object | Contract |
-|---|---|---|
-| `order_supabase_ext.dart:5` `toSupabaseMap` | `orders` table | Writes `type` (not `order_type`), `pickup_lat/lng` (not WKT), conditional columns |
-| `supabase_auth_repository.dart` | `profiles` table | Inserts `auth_id`, reads `.eq('auth_id', uid)` |
-| `supabase_order_repository.dart:163` `verifyArrival` | `verify_driver_arrival(text, float8, float8) → bool` | `rpc('verify_driver_arrival', {p_order_id, p_lat, p_lng})` |
-| `supabase_wallet_repository.dart` | `driver_wallet_hold`/`release` RPCs | `rpc('driver_wallet_hold', {p_order_id, p_amount})` |
-| `supabase_chat_repository.dart` | `chat_messages` table | `.stream().eq('room_id', orderId)`, insert with `room_id`/`sender_id` |
-| `location_publisher.dart:86` | `driver_locations` table | Upserts `{driver_id, order_id, lat, lng, updated_at}` |
-
----
-
-## Known follow-ups NOT in this plan (track separately)
-
-- **Order ID reconciliation:** when Supabase generates a UUID for a new order,
-  the Dart `AppOrderStore` may not capture it back (the ext only sends `id` if
-  it's 36 chars). This affects `verifyArrival` matching client-side IDs vs server
-  UUIDs. Bigger refactor; not a blocker for basic CRUD.
-- **`markArrivedAtPickup` remote status desync:** `AppOrderStore` pushes
-  `markInTransit` while local shows `arrivedAtPickup`. UI flicker risk.
-- **Migration idempotency polish:** bare `CREATE TYPE/POLICY/TRIGGER` aren't
-  re-runnable. Fine for first-apply; matters if iterating locally.
+| Dart | SQL | Contract |
+|------|-----|---------|
+| `order_supabase_ext.dart:toSupabaseMap` | `orders` | Writes `type`, `pickup_lat/lng`, conditional columns |
+| `supabase_auth_repository.dart` | `profiles` | Inserts `auth_id`, reads `.eq('auth_id', uid)` |
+| `supabase_order_repository.dart:verifyArrival` | `verify_driver_arrival(text, float8, float8)→bool` | `rpc('verify_driver_arrival', {p_order_id, p_lat, p_lng})` |
+| `supabase_wallet_repository.dart` | `driver_wallet_hold/release` RPCs | `rpc('driver_wallet_hold', {p_order_id, p_amount})` |
+| `supabase_chat_repository.dart` | `chat_messages` | `.stream().eq('room_id', orderId)` |
+| `location_publisher.dart:86` | `driver_locations` | Upserts `{driver_id, order_id, lat, lng, updated_at}` |
