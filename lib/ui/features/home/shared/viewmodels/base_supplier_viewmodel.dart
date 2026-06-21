@@ -116,38 +116,6 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
 
   // ── Order actions ─────────────────────────────────────────────────────────
 
-  Order createOrder({
-    required List<WasteType> wasteTypes,
-    required String pickupAddress,
-    List<String> images = const [],
-    String? notes,
-    double? estimatedWeightKg,
-    WasteForm? wasteForm,
-    WeightCategory? weightCategory,
-    PickupTarget? pickupTarget,
-    double? itemPrice,
-    DateTime? scheduledAt,
-    double? dropoffLat,
-    double? dropoffLng,
-  }) =>
-      _store.createPickupRequest(
-        wasteTypes: wasteTypes,
-        supplierName: _user.name,
-        pickupAddress: pickupAddress,
-        notes: notes,
-        images: images,
-        estimatedWeightKg: estimatedWeightKg,
-        wasteForm: wasteForm,
-        weightCategory: weightCategory,
-        pickupTarget: pickupTarget,
-        itemPrice: itemPrice,
-        scheduledAt: scheduledAt,
-        pickupLat: _pickupLat,
-        pickupLng: _pickupLng,
-        dropoffLat: dropoffLat,
-        dropoffLng: dropoffLng,
-      );
-
   /// Builds a marketplace listing Order and returns it.
   /// The caller is responsible for adding it to the marketplace via
   /// MarketplaceViewModel.addListing(order).
