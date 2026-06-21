@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../data/models/order/order.dart';
 import '../../../../data/services/app_order_store.dart';
 import '../../../features/auth/viewmodels/login_viewmodel.dart';
+import '../shared/viewmodels/base_supplier_viewmodel.dart';
 import 'viewmodels/restaurant_home_viewmodel.dart';
 import 'tabs/restaurant_home_tab.dart';
 import '../supplier/tabs/supplier_orders_tab.dart';
@@ -13,6 +15,7 @@ import '../shared/tabs/marketplace_tab.dart';
 import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../shared/views/collection_sale_detail_view.dart';
 import '../supplier/views/new_pickup_request_view.dart';
+import 'package:dwaar/ui/common/widgets/dev_testing_panel.dart';
 
 class RestaurantHomeView extends StatelessWidget {
   final String userName;
@@ -30,7 +33,7 @@ class RestaurantHomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
+        ChangeNotifierProvider<BaseSupplierViewModel>(
           create: (ctx) => RestaurantHomeViewModel(ctx.read<AppOrderStore>()),
         ),
         ChangeNotifierProvider(
@@ -54,7 +57,7 @@ class _RestaurantHomeBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<RestaurantHomeViewModel>();
+    final vm = context.watch<BaseSupplierViewModel>();
     final marketVm = context.watch<MarketplaceViewModel>();
 
     final tabs = [
@@ -95,9 +98,14 @@ class _RestaurantHomeBody extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: IndexedStack(
-        index: vm.currentTab,
-        children: tabs,
+      body: Stack(
+        children: [
+          IndexedStack(
+            index: vm.currentTab,
+            children: tabs,
+          ),
+          if (kDebugMode) const DevTestingPanel(),
+        ],
       ),
       floatingActionButton: vm.currentTab == 0
           ? FloatingActionButton.extended(

@@ -10,6 +10,15 @@ class CreatePickupRequest {
   final String pickupAddress;
   final String? notes;
   final List<File> photoFiles;
+  final List<String> images;
+  final double? estimatedWeightKg;
+  final PickupTarget? pickupTarget;
+  final double? itemPrice;
+  final DateTime? scheduledAt;
+  final double? pickupLat;
+  final double? pickupLng;
+  final double? dropoffLat;
+  final double? dropoffLng;
   final bool isUrgent;
 
   const CreatePickupRequest({
@@ -20,6 +29,15 @@ class CreatePickupRequest {
     required this.pickupAddress,
     this.notes,
     this.photoFiles = const [],
+    this.images = const [],
+    this.estimatedWeightKg,
+    this.pickupTarget,
+    this.itemPrice,
+    this.scheduledAt,
+    this.pickupLat,
+    this.pickupLng,
+    this.dropoffLat,
+    this.dropoffLng,
     this.isUrgent = false,
   });
 }

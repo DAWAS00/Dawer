@@ -17,6 +17,7 @@ import '../widgets/driver_listing_card.dart';
 import '../../shared/widgets/home/section_header.dart';
 import '../../shared/order_details_view.dart';
 import '../../../../core/components/dwaar_skeleton.dart';
+import '../views/order_preview_view.dart';
 
 class DriverHomeTab extends StatelessWidget {
   final String userName;
@@ -196,8 +197,10 @@ class DriverHomeTab extends StatelessWidget {
                                 onAccept: () => onAcceptOrder(displayAvailable[i]),
                                 onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (_) => OrderDetailsView(
-                                        order: displayAvailable[i], isDriverView: true),
+                                    builder: (_) => OrderPreviewView(
+                                      order: displayAvailable[i],
+                                      onAccept: onAcceptOrder,
+                                    ),
                                   ),
                                 ),
                               ),

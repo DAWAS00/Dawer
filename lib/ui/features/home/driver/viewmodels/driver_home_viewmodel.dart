@@ -83,6 +83,8 @@ class DriverHomeViewModel extends ChangeNotifier {
         hasChemicalPermit: _user.hasChemicalPermit,
       );
   Order? get active => _store.driverActiveOrder;
+  bool get hasActiveTrip => active != null;
+  OrderStatus? get activeTripStatus => active?.status;
   List<Order> get history => _store.driverHistory;
   List<Order> get collectionSaleOrders => _store.collectionSalesFor(_user.name);
 

@@ -6,7 +6,8 @@ import 'package:dwaar/data/models/user_role.dart';
 import 'package:dwaar/data/services/location_service.dart';
 import 'package:dwaar/ui/features/home/shared/controllers/post_market_controller.dart';
 import 'package:dwaar/ui/features/home/supplier/controllers/publish_form_controller.dart';
-import 'package:dwaar/ui/features/home/supplier/viewmodels/supplier_home_viewmodel.dart';
+import 'package:dwaar/ui/features/home/shared/viewmodels/base_supplier_viewmodel.dart';
+import 'package:dwaar/domain/requests/create_pickup_request.dart';
 import 'package:dwaar/core/utils/haptic_util.dart';
 
 import 'package:dwaar/ui/features/home/supplier/widgets/wizard/top_bar.dart';
@@ -99,7 +100,7 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
   }
 
   Future<void> _handleDefaultSubmit() async {
-    final vm = context.read<SupplierHomeViewModel>();
+    final vm = context.read<BaseSupplierViewModel>();
     final wasteTypes = _controller.selectedTypes.toList();
     final pickupAddress = _controller.pickedAddress ?? 'موقع محدد';
     final notes = _controller.notesCtrl.text.trim().isNotEmpty 
@@ -107,9 +108,8 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
         : null;
     final itemPrice = double.tryParse(_controller.priceCtrl.text.trim());
 
-    Order order;
     if (_controller.mode == OrderMode.marketplace) {
-      order = vm.createListing(
+      final order = vm.createListing(
         wasteTypes: wasteTypes,
         pickupAddress: pickupAddress,
         images: List.from(_controller.images),
@@ -120,31 +120,54 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
         pickupLat: _controller.pickedLat,
         pickupLng: _controller.pickedLng,
       );
+      vm.addOrder(order);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('تم النشر في السوق بنجاح! ✓'),
+            backgroundColor: Color(0xFF2E7D32),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        Navigator.pop(context);
+      }
     } else {
-      order = vm.createOrder(
-        wasteTypes: wasteTypes,
-        pickupAddress: pickupAddress,
-        images: List.from(_controller.images),
-        notes: notes,
-        wasteForm: _controller.wasteForm,
-        weightCategory: _controller.weightCategory,
-        itemPrice: itemPrice,
-      );
-    }
-
-    vm.addOrder(order);
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_controller.mode == OrderMode.marketplace 
-              ? 'تم النشر في السوق بنجاح! ✓' 
-              : 'تم إرسال طلب الاستلام بنجاح! ✓'),
-          backgroundColor: const Color(0xFF2E7D32),
-          behavior: SnackBarBehavior.floating,
+      final success = await vm.submitPickupRequest(
+        CreatePickupRequest(
+          supplierId: vm.user.id,
+          wasteTypes: wasteTypes,
+          wasteForm: _controller.wasteForm ?? WasteForm.solid,
+          weightCategory: _controller.weightCategory ?? WeightCategory.light,
+          pickupAddress: pickupAddress,
+          notes: notes,
+          images: List.from(_controller.images),
+          itemPrice: itemPrice,
+          pickupLat: _controller.pickedLat,
+          pickupLng: _controller.pickedLng,
         ),
       );
-      Navigator.pop(context);
+
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('تم إرسال طلب الاستلام بنجاح! ✓'),
+              backgroundColor: Color(0xFF2E7D32),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(vm.pickupSubmitError?.message ?? 'فشل في إرسال طلب الاستلام'),
+              backgroundColor: const Color(0xFFC62828),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
     }
   }
 

@@ -58,6 +58,7 @@ class AppOrderStore extends ChangeNotifier {
   /// All regular orders — pickup requests (from suppliers) and collection jobs
   /// (posted by recycling companies). This is the canonical list.
   late List<Order> _orders;
+  List<Order> get orders => List.unmodifiable(_orders);
 
 
   /// ID of the order currently active for our mock driver session.
@@ -550,8 +551,17 @@ class AppOrderStore extends ChangeNotifier {
         supplierName: supplierName,
         pickupAddress: request.pickupAddress,
         notes: request.notes,
+        images: request.images,
+        estimatedWeightKg: request.estimatedWeightKg,
         wasteForm: request.wasteForm,
         weightCategory: request.weightCategory,
+        pickupTarget: request.pickupTarget,
+        itemPrice: request.itemPrice,
+        scheduledAt: request.scheduledAt,
+        pickupLat: request.pickupLat,
+        pickupLng: request.pickupLng,
+        dropoffLat: request.dropoffLat,
+        dropoffLng: request.dropoffLng,
       );
       return Success(order);
     } catch (e) {

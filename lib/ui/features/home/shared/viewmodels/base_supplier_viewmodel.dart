@@ -5,6 +5,9 @@ import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/services/app_order_store.dart';
 
+import '../../../../../domain/failures/app_failure.dart';
+import '../../../../../domain/requests/create_pickup_request.dart';
+
 /// Abstract base for [SupplierHomeViewModel] and [IndividualSupplierViewModel].
 /// Contains all shared state, getters, and actions so concrete subclasses only
 /// need to provide [defaultUser] and [listingIdPrefix].
@@ -12,6 +15,14 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
   final AppOrderStore _store;
   late User _user;
   String? _authUserId;
+
+  bool _isSubmittingPickup = false;
+  AppFailure? _pickupSubmitError;
+  Order? _lastCreatedOrder;
+
+  bool get isSubmittingPickup => _isSubmittingPickup;
+  AppFailure? get pickupSubmitError => _pickupSubmitError;
+  Order? get lastCreatedOrder => _lastCreatedOrder;
 
   BaseSupplierViewModel(this._store) {
     _user = defaultUser;
@@ -116,6 +127,8 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
     PickupTarget? pickupTarget,
     double? itemPrice,
     DateTime? scheduledAt,
+    double? dropoffLat,
+    double? dropoffLng,
   }) =>
       _store.createPickupRequest(
         wasteTypes: wasteTypes,
@@ -131,8 +144,8 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
         scheduledAt: scheduledAt,
         pickupLat: _pickupLat,
         pickupLng: _pickupLng,
-        dropoffLat: 31.9992,
-        dropoffLng: 36.0025,
+        dropoffLat: dropoffLat,
+        dropoffLng: dropoffLng,
       );
 
   /// Builds a marketplace listing Order and returns it.
@@ -209,7 +222,35 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
   void assignDriver(String orderId, User driver) =>
       _store.assignDriver(orderId, driver);
 
+  Future<bool> submitPickupRequest(CreatePickupRequest request) async {
+    _isSubmittingPickup = true;
+    _pickupSubmitError = null;
+    notifyListeners();
+
+    final result = _store.submitPickupRequest(
+      request,
+      supplierName: user.name,
+    );
+
+    result.fold(
+      onSuccess: (order) {
+        _lastCreatedOrder = order;
+        _pickupSubmitError = null;
+      },
+      onFailure: (failure) {
+        _pickupSubmitError = failure;
+      },
+    );
+
+    _isSubmittingPickup = false;
+    notifyListeners();
+    return result.isSuccess;
+  }
+
   void addOrder(Order order) {
+    if (order.isMarketplaceShared) {
+      _store.addMarketListing(order);
+    }
     _currentTab = 2;
     notifyListeners();
   }

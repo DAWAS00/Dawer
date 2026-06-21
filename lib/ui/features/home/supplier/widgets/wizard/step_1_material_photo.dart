@@ -33,6 +33,8 @@ class Step1MaterialAndPhoto extends StatelessWidget {
           const SizedBox(height: 16),
           if (controller.aiController.isAnalyzing)
             _aiAnalyzingBanner()
+          else if (controller.aiError != null)
+            _aiErrorBanner(controller.aiError!)
           else if (controller.aiController.filledFieldLabels.isNotEmpty)
             _aiFilledBanner(controller.aiController.filledFieldLabels),
           const SizedBox(height: 24),
@@ -109,6 +111,35 @@ class Step1MaterialAndPhoto extends StatelessWidget {
       ),
       const SizedBox(width: 12),
       const Icon(Icons.verified_rounded, size: 22, color: Color(0xFF065F46)),
+    ]),
+  );
+
+  Widget _aiErrorBanner(String error) => Container(
+    margin: const EdgeInsets.only(bottom: 12),
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: const Color(0xFFC62828).withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: const Color(0xFFC62828).withValues(alpha: 0.2)),
+    ),
+    child: Row(children: [
+      IconButton(
+        icon: const Icon(Icons.close, size: 18, color: Color(0xFFC62828)),
+        onPressed: controller.clearAiError,
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(),
+      ),
+      const Spacer(),
+      Expanded(
+        child: Text(
+          'فشل في تحليل الصورة: $error',
+          style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold,
+              color: const Color(0xFFC62828)),
+          textAlign: TextAlign.right,
+        ),
+      ),
+      const SizedBox(width: 10),
+      const Icon(Icons.error_outline_rounded, size: 22, color: Color(0xFFC62828)),
     ]),
   );
 }

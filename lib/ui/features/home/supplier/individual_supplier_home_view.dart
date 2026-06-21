@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../data/models/order/order.dart';
@@ -12,9 +13,11 @@ import 'tabs/supplier_profile_tab.dart';
 import 'widgets/supplier_bottom_nav.dart';
 import '../shared/tabs/marketplace_tab.dart';
 import '../shared/views/collection_sale_detail_view.dart';
+import '../shared/viewmodels/base_supplier_viewmodel.dart';
 import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../shared/widgets/pickup_fab.dart';
 import 'views/new_pickup_request_view.dart';
+import 'package:dwaar/ui/common/widgets/dev_testing_panel.dart';
 
 class IndividualSupplierHomeView extends StatelessWidget {
   final String userName;
@@ -30,7 +33,7 @@ class IndividualSupplierHomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
+        ChangeNotifierProvider<BaseSupplierViewModel>(
           create: (ctx) {
             final vm = IndividualSupplierViewModel(ctx.read<AppOrderStore>());
             final session = ctx.read<IAuthRepository>().currentSession;
@@ -58,7 +61,7 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<IndividualSupplierViewModel>();
+    final vm = context.watch<BaseSupplierViewModel>();
 
     final tabs = [
       IndividualSupplierHomeTab(userName: userName),
@@ -100,9 +103,14 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: IndexedStack(
-        index: vm.currentTab,
-        children: tabs,
+      body: Stack(
+        children: [
+          IndexedStack(
+            index: vm.currentTab,
+            children: tabs,
+          ),
+          if (kDebugMode) const DevTestingPanel(),
+        ],
       ),
       floatingActionButton: vm.currentTab == 0
           ? PickupFab(onPressed: () {
@@ -129,7 +137,7 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
 
   void _showPostToMarketSheet(
     BuildContext context,
-    IndividualSupplierViewModel vm,
+    BaseSupplierViewModel vm,
     MarketplaceViewModel marketVm,
   ) {
     Navigator.push(

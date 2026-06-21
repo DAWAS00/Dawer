@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../data/models/order/order.dart';
@@ -12,6 +13,7 @@ import 'tabs/recycling_home_tab.dart';
 import 'tabs/recycling_orders_tab.dart';
 import 'tabs/recycling_profile_tab.dart';
 import 'viewmodels/recycling_home_viewmodel.dart';
+import 'package:dwaar/ui/common/widgets/dev_testing_panel.dart';
 
 class RecyclingHomeView extends StatelessWidget {
   final String userName;
@@ -68,9 +70,14 @@ class _RecyclingHomeBody extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: IndexedStack(
-        index: vm.currentTab,
-        children: tabs,
+      body: Stack(
+        children: [
+          IndexedStack(
+            index: vm.currentTab,
+            children: tabs,
+          ),
+          if (kDebugMode) const DevTestingPanel(),
+        ],
       ),
       floatingActionButton: vm.currentTab == 0
           ? FloatingActionButton.extended(

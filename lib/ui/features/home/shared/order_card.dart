@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/waste_type_icons.dart';
@@ -6,6 +6,7 @@ import '../../../../data/models/order/order.dart';
 import '../../../../data/models/order_labels.dart';
 import '../../../../l10n/l10n.dart';
 import 'order_details_view.dart';
+import 'package:dwaar/ui/common/order_progress_stepper.dart';
 
 enum OrderCardMode {
   driverAvailable,
@@ -116,6 +117,14 @@ class OrderCard extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
                 child: _buildWasteChips(context),
               ),
+              if (mode == OrderCardMode.driverActive &&
+                  order.status != OrderStatus.completed &&
+                  order.status != OrderStatus.cancelled) ...[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
+                  child: OrderProgressStepper(status: order.status),
+                ),
+              ],
               const Padding(
                 padding: EdgeInsets.fromLTRB(14, 12, 14, 0),
                 child: Divider(height: 1, thickness: 1, color: Color(0xFFF1F5F3)),

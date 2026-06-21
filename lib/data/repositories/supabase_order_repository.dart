@@ -62,7 +62,7 @@ final class SupabaseOrderRepository implements IOrderRepository {
   Future<AppResult<void>> insertOrder(Order order) async {
     final authUserId = _client.auth.currentUser?.id;
     final payload = order.toSupabaseMap(authUserId)..remove('id');
-    return _run(() => _client.from('orders').insert(payload));
+    return _runWithRetry(() => _client.from('orders').insert(payload));
   }
 
   @override
@@ -79,7 +79,7 @@ final class SupabaseOrderRepository implements IOrderRepository {
 
   @override
   Future<AppResult<void>> markAccepted(String orderId) {
-    return _run(() => _client.from('orders').update({
+    return _runWithRetry(() => _client.from('orders').update({
           'status': 'accepted',
           'driver_id': _client.auth.currentUser?.id,
           'accepted_at': DateTime.now().toUtc().toIso8601String(),
@@ -203,6 +203,33 @@ final class SupabaseOrderRepository implements IOrderRepository {
         return const Failure(NetworkFailure());
       }
       return Failure(UnknownFailure.fromException(e));
+    }
+  }
+
+  Future<AppResult<void>> _runWithRetry(
+    Future<void> Function() op, {
+    int retries = 1,
+    Duration delay = const Duration(seconds: 2),
+  }) async {
+    int attempts = 0;
+    while (true) {
+      try {
+        await op();
+        return const Success(null);
+      } on PostgrestException catch (e) {
+        if (attempts >= retries) {
+          return Failure(UnknownFailure(message: e.message, code: e.code));
+        }
+      } catch (e) {
+        if (attempts >= retries) {
+          if (_isNetworkError(e)) {
+            return const Failure(NetworkFailure());
+          }
+          return Failure(UnknownFailure.fromException(e));
+        }
+      }
+      attempts++;
+      await Future.delayed(delay);
     }
   }
 

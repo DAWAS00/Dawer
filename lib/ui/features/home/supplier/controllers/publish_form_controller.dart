@@ -93,11 +93,20 @@ class PublishFormController extends ChangeNotifier {
     }
   }
 
+  String? _aiError;
+  String? get aiError => _aiError;
+
+  void clearAiError() {
+    _aiError = null;
+    notifyListeners();
+  }
+
   void removeImage(int index) {
     images.removeAt(index);
     if (images.isEmpty) {
       aiController.clearAnalysis();
     }
+    _aiError = null;
     notifyListeners();
   }
 
@@ -108,12 +117,17 @@ class PublishFormController extends ChangeNotifier {
   }
 
   Future<void> runAiAnalysis(String imagePath) async {
+    _aiError = null;
+    notifyListeners();
     try {
       final result = await aiController.analyze(File(imagePath), const Locale('ar'));
       if (result != null) {
         _applyAiResult(result);
       }
-    } catch (_) {}
+    } catch (e) {
+      _aiError = e.toString();
+      notifyListeners();
+    }
   }
 
   void _applyAiResult(MarketAiResult result) {

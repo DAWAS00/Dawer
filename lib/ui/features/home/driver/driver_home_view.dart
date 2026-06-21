@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:dwaar/ui/common/widgets/dev_testing_panel.dart';
 
 import '../../../../../data/models/order/order.dart';
 import '../../../../../data/services/app_order_store.dart';
@@ -142,9 +144,14 @@ class _DriverHomeBody extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: IndexedStack(
-        index: vm.currentTab,
-        children: tabs,
+      body: Stack(
+        children: [
+          IndexedStack(
+            index: vm.currentTab,
+            children: tabs,
+          ),
+          if (kDebugMode) const DevTestingPanel(),
+        ],
       ),
       floatingActionButton: vm.currentTab == 0
           ? FloatingActionButton.extended(

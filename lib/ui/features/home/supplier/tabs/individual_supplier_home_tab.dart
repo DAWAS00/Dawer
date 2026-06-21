@@ -8,7 +8,7 @@ import '../../../../../data/models/order/order.dart';
 import '../../../../../data/services/app_order_store.dart';
 import '../../shared/order_card.dart';
 import '../../shared/order_details_view.dart';
-import '../viewmodels/individual_supplier_viewmodel.dart';
+import '../../shared/viewmodels/base_supplier_viewmodel.dart';
 import '../../../../core/components/dwaar_elevated_card.dart';
 
 class IndividualSupplierHomeTab extends StatelessWidget {
@@ -21,7 +21,7 @@ class IndividualSupplierHomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<IndividualSupplierViewModel>();
+    final vm = context.watch<BaseSupplierViewModel>();
     final tracked = vm.trackedOrder;
     final active = vm.activeOrders;
 
@@ -162,7 +162,7 @@ class IndividualSupplierHomeTab extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, IndividualSupplierViewModel vm) {
+  Widget _buildHeader(BuildContext context, BaseSupplierViewModel vm) {
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.primaryDark,

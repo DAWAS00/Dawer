@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/constants/app_colors.dart';
@@ -8,6 +8,7 @@ import '../../../../../data/models/order_labels.dart';
 import '../../../../../data/services/app_order_store.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../shared/order_details_view.dart';
+import 'package:dwaar/ui/common/order_progress_stepper.dart';
 
 class SupplierOrderCard extends StatelessWidget {
   final Order order;
@@ -299,6 +300,13 @@ class SupplierOrderCard extends StatelessWidget {
                     ],
                   ),
                 ),
+              ],
+
+              // ── Progress Stepper ──
+              if (order.status != OrderStatus.completed &&
+                  order.status != OrderStatus.cancelled) ...[
+                const SizedBox(height: 14),
+                OrderProgressStepper(status: order.status),
               ],
 
               // ── Cancel button ──
