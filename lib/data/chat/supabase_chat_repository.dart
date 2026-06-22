@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/result/result.dart';
@@ -67,6 +70,99 @@ class SupabaseChatRepository implements IChatRepository {
   }
 
   @override
+  Future<AppResult<void>> sendImage({
+    required String orderId,
+    required String senderId,
+    required String senderName,
+    required UserRole senderRole,
+    required File image,
+    String? caption,
+  }) async {
+    // 1. Upload the image to the private `chat-attachments` bucket.
+    final ext = _extFor(image.path);
+    final objectPath = '$orderId/${DateTime.now().millisecondsSinceEpoch}.$ext';
+    String attachmentPath;
+    try {
+      await _client.storage.from('chat-attachments').upload(
+        objectPath,
+        image,
+        fileOptions: FileOptions(contentType: _mimeFor(ext)),
+      );
+      // Private bucket: store the object path; the UI mints a signed URL on
+      // demand via SupabaseFileStorageRepository.signedIdentityUrl-style flow.
+      attachmentPath = objectPath;
+    } on StorageException catch (e) {
+      return Failure(UnknownFailure(message: 'فشل رفع الصورة: ${e.message}'));
+    } catch (e) {
+      return Failure(UnknownFailure.fromException(e));
+    }
+
+    // 2. Insert the message row with kind='image'.
+    final row = ChatMessage(
+      id: '',
+      roomId: orderId,
+      senderId: senderId,
+      senderName: senderName,
+      senderRole: senderRole,
+      content: caption?.trim() ?? '',
+      kind: ChatMessageKind.image,
+      attachmentUrl: attachmentPath,
+      sentAt: DateTime.now().toUtc(),
+    ).toSupabaseMap();
+    row.remove('sent_at');
+    row.remove('is_read');
+
+    return _run(() => _client.from('chat_messages').insert(row));
+  }
+
+  @override
+  Future<AppResult<void>> sendLocation({
+    required String orderId,
+    required String senderId,
+    required String senderName,
+    required UserRole senderRole,
+    required double lat,
+    required double lng,
+    String? label,
+  }) {
+    final row = ChatMessage(
+      id: '',
+      roomId: orderId,
+      senderId: senderId,
+      senderName: senderName,
+      senderRole: senderRole,
+      content: label?.trim() ?? '',
+      kind: ChatMessageKind.location,
+      lat: lat,
+      lng: lng,
+      sentAt: DateTime.now().toUtc(),
+    ).toSupabaseMap();
+    row.remove('sent_at');
+    row.remove('is_read');
+
+    return _run(() => _client.from('chat_messages').insert(row));
+  }
+
+  // ── Helpers for image upload ──────────────────────────────────────────────
+
+  static String _extFor(String path) {
+    final dot = path.lastIndexOf('.');
+    if (dot < 0 || dot == path.length - 1) return 'jpg';
+    return path.substring(dot + 1).toLowerCase();
+  }
+
+  static String _mimeFor(String ext) {
+    switch (ext) {
+      case 'png':
+        return 'image/png';
+      case 'webp':
+        return 'image/webp';
+      default:
+        return 'image/jpeg';
+    }
+  }
+
+  @override
   Future<AppResult<void>> markRead(String orderId, String userId) {
     // Mark every message NOT sent by [userId] as read. Uses Postgres `neq` so
     // a single round-trip updates the whole room.
@@ -98,6 +194,49 @@ class SupabaseChatRepository implements IChatRepository {
       // Best-effort: a failed count must not break the UI. Default to 0.
       return 0;
     }
+  }
+
+  // ── Typing indicator — Supabase Realtime Broadcast ───────────────────────────
+
+  // One channel per room; reused for both send + receive.
+  final Map<String, RealtimeChannel> _typingChannels = {};
+
+  @override
+  Future<void> broadcastTyping(String orderId, String senderId) async {
+    try {
+      final ch = _typingChannels[orderId];
+      if (ch == null) return;
+      await ch.sendBroadcastMessage(
+        event: 'typing',
+        payload: {'sender_id': senderId},
+      );
+    } catch (_) {}
+  }
+
+  @override
+  Stream<void> watchTyping(String orderId, String excludeUserId) {
+    final ctrl = StreamController<void>.broadcast();
+
+    final ch = _client.channel('chat-typing:$orderId')
+      ..onBroadcast(
+        event: 'typing',
+        callback: (payload) {
+          final sid = payload['sender_id'] as String?;
+          if (sid != null && sid != excludeUserId && !ctrl.isClosed) {
+            ctrl.add(null);
+          }
+        },
+      )
+      ..subscribe();
+
+    _typingChannels[orderId] = ch;
+
+    ctrl.onCancel = () {
+      ch.unsubscribe();
+      _typingChannels.remove(orderId);
+    };
+
+    return ctrl.stream;
   }
 
   // ── Internal ───────────────────────────────────────────────────────────────

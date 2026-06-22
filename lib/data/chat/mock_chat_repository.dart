@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+
 import '../../core/result/result.dart';
 import '../../data/models/user_role.dart';
 import '../../domain/chat/entities/chat_message.dart';
@@ -103,6 +105,59 @@ class MockChatRepository implements IChatRepository {
   }
 
   @override
+  Future<AppResult<void>> sendImage({
+    required String orderId,
+    required String senderId,
+    required String senderName,
+    required UserRole senderRole,
+    required File image,
+    String? caption,
+  }) async {
+    final msg = ChatMessage(
+      id: _nextId(),
+      roomId: orderId,
+      senderId: senderId,
+      senderName: senderName,
+      senderRole: senderRole,
+      content: caption?.trim() ?? '',
+      kind: ChatMessageKind.image,
+      // Mock: use the local file path so the UI can render it in dev.
+      attachmentUrl: image.path,
+      sentAt: DateTime.now(),
+    );
+    _rooms.putIfAbsent(orderId, () => []).add(msg);
+    _controllers[orderId]?.add(List.of(_rooms[orderId]!));
+    return const Success(null);
+  }
+
+  @override
+  Future<AppResult<void>> sendLocation({
+    required String orderId,
+    required String senderId,
+    required String senderName,
+    required UserRole senderRole,
+    required double lat,
+    required double lng,
+    String? label,
+  }) async {
+    final msg = ChatMessage(
+      id: _nextId(),
+      roomId: orderId,
+      senderId: senderId,
+      senderName: senderName,
+      senderRole: senderRole,
+      content: label?.trim() ?? '',
+      kind: ChatMessageKind.location,
+      lat: lat,
+      lng: lng,
+      sentAt: DateTime.now(),
+    );
+    _rooms.putIfAbsent(orderId, () => []).add(msg);
+    _controllers[orderId]?.add(List.of(_rooms[orderId]!));
+    return const Success(null);
+  }
+
+  @override
   Future<AppResult<void>> markRead(String orderId, String userId) async {
     final msgs = _rooms[orderId];
     if (msgs == null) return const Success(null);
@@ -120,6 +175,13 @@ class MockChatRepository implements IChatRepository {
         .where((m) => m.senderId != userId && !m.isRead)
         .length;
   }
+
+  @override
+  Future<void> broadcastTyping(String orderId, String senderId) async {}
+
+  @override
+  Stream<void> watchTyping(String orderId, String excludeUserId) =>
+      const Stream.empty();
 
   void dispose() {
     for (final ctrl in _controllers.values) {

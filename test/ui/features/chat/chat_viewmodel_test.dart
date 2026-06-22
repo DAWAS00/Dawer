@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dwaar/core/result/result.dart';
 import 'package:dwaar/core/state/view_state.dart';
@@ -55,7 +57,35 @@ class _FakeChatRepository implements IChatRepository {
   }
 
   @override
+  Future<AppResult<void>> sendImage({
+    required String orderId,
+    required String senderId,
+    required String senderName,
+    required UserRole senderRole,
+    required File image,
+    String? caption,
+  }) async => const Success(null);
+
+  @override
+  Future<AppResult<void>> sendLocation({
+    required String orderId,
+    required String senderId,
+    required String senderName,
+    required UserRole senderRole,
+    required double lat,
+    required double lng,
+    String? label,
+  }) async => const Success(null);
+
+  @override
   Future<int> unreadCount(String orderId, String userId) async => 0;
+
+  @override
+  Future<void> broadcastTyping(String orderId, String senderId) async {}
+
+  @override
+  Stream<void> watchTyping(String orderId, String excludeUserId) =>
+      const Stream.empty();
 
   void dispose() => _ctrl.close();
 }
