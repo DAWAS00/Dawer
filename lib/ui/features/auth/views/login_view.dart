@@ -11,7 +11,7 @@ import 'widgets/login_form.dart';
 import 'widgets/footer.dart';
 import '../../../../core/services/app_lang_notifier.dart';
 import '../../../common/lang_picker_sheet.dart';
-import 'signup_wizard_view.dart';
+import 'signup_phone_screen.dart';
 import '../../home/home_router.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
 
@@ -337,15 +337,11 @@ class _DynamicRegisterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    // Role selection now happens INSIDE the signup wizard (Step 1), not on the
-    // login page. Always navigate to the wizard; the user picks Rider /
-    // Supplier / Company there. See step1_identity.dart _buildRoleSelector.
+    // Phone-first signup: the user enters their phone, verifies via OTP, then
+    // picks their role + name on Screen 3. See docs/signup-redesign-plan.md.
     final label = l10n.loginSignUpNow;
     final icon = Icons.person_add_rounded;
-    final destination = SignUpWizardView(
-      initialRole: UserRole.supplier,
-      initialSupplierType: SupplierType.individual,
-    );
+    const destination = SignupPhoneScreen();
 
     return Center(
       child: TextButton.icon(

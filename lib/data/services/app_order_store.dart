@@ -179,7 +179,7 @@ class AppOrderStore extends ChangeNotifier {
   }) {
     return _orders.where((o) {
       final statusOk =
-          (o.status == OrderStatus.pending && !o.isMarketplaceShared) ||
+          o.status == OrderStatus.pending ||
           (o.status == OrderStatus.accepted &&
               o.requiresRider &&
               o.driverName == null);

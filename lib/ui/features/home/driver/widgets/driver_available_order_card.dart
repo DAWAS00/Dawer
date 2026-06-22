@@ -110,53 +110,65 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
               child: Row(
                 children: [
-                  // Status badge (trailing in RTL = left)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: badgeBg,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      badgeLabel,
-                      style: GoogleFonts.cairo(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: badgeFg,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Reward badge (prominent amber)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: AppColors.amberContainer,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                  // Badges group — Flexible so they never push the ID off screen.
+                  Flexible(
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(LucideIcons.coins, size: 12, color: AppColors.accentAmber),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${widget.order.reward.toStringAsFixed(1)} د.أ',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.accentAmber,
+                        // Status badge
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: badgeBg,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              badgeLabel,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.cairo(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: badgeFg,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        // Reward badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: AppColors.amberContainer,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(LucideIcons.coins, size: 12, color: AppColors.accentAmber),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${widget.order.reward.toStringAsFixed(1)} د.أ',
+                                style: GoogleFonts.dmSans(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.accentAmber,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const Spacer(),
-                  // Order ID + date (leading in RTL = right)
+                  const SizedBox(width: 8),
+                  // Order ID + date — truncate long UUIDs to last 8 chars.
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        '#${widget.order.id}',
+                        '#${widget.order.id.length > 8 ? widget.order.id.substring(widget.order.id.length - 8) : widget.order.id}',
                         style: GoogleFonts.dmSans(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,

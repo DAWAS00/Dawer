@@ -9,7 +9,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../common/green_button.dart';
 import '../../home/home_router.dart';
 import '../viewmodels/verification_viewmodel.dart';
-import 'signup_wizard_view.dart';
+import 'signup_identity_screen.dart';
 
 class VerificationView extends StatelessWidget {
   final String phoneNumber;
@@ -69,11 +69,7 @@ class _VerificationScreen extends StatelessWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (_) => SignUpWizardView(
-              initialRole: initialRole,
-              initialSupplierType: initialSupplierType ?? SupplierType.individual,
-              initialPhone: viewModel.phoneNumber,
-            ),
+            builder: (_) => SignupIdentityScreen(phone: viewModel.phoneNumber),
           ),
         );
       });

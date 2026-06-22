@@ -134,6 +134,10 @@ class SignUpRequest {
         'location_lng': addressLng,
       },
       if (categories.isNotEmpty) 'categories': categories,
+      // vehicle_type enum values match the Dart enum `.name` exactly
+      // (motorcycle/car/pickup/van/truck/heavyTruck) — see 20260522_vehicle_type.sql.
+      if (vehicleType != null) 'vehicle_type': vehicleType!.name,
+      'has_chemical_permit': hasChemicalPermit,
     };
   }
 

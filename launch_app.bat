@@ -6,6 +6,6 @@ echo.
 echo === Available Emulators ===
 flutter emulators
 echo.
-echo === Starting Flutter on Windows ===
-flutter run -d windows
+echo === Starting Flutter on Android Emulator ===
+flutter run -d emulator-5554
 pause

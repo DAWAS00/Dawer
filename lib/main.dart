@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -6,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'backend_integration_locally/local_store.dart';
+import 'core/result/result.dart';
+import 'data/models/signup_request.dart';
 import 'core/services/app_lang_notifier.dart';
 import 'core/services/app_theme_notifier.dart';
 import 'core/services/supabase_service.dart';
@@ -18,12 +22,14 @@ import 'data/repositories/supabase_order_repository.dart';
 import 'data/repositories/supabase_wallet_repository.dart';
 import 'data/services/app_order_store.dart';
 import 'data/services/noop_notification_service.dart';
+import 'data/services/signup_orchestrator.dart';
 import 'data/services/user_signup_service.dart';
 import 'domain/repositories/i_auth_repository.dart';
 import 'domain/repositories/i_file_storage_repository.dart';
 import 'domain/repositories/i_order_repository.dart';
 import 'domain/repositories/i_wallet_repository.dart';
 import 'domain/services/i_notification_service.dart';
+import 'domain/services/i_signup_orchestrator.dart';
 import 'domain/chat/repositories/i_chat_repository.dart';
 import 'data/chat/mock_chat_repository.dart';
 import 'data/chat/supabase_chat_repository.dart';
@@ -62,20 +68,24 @@ void main() async {
   // single seam a future GCP re-platform swaps. See
   // docs/architecture-decisions/backend-strategy.md.
   final useSupabase = SupabaseService.isInitialized;
+  // Set to true to use real Supabase phone OTP (requires phone provider configured).
+  const mockAuth = true;
 
-  runApp(DawerApp(prefs: prefs, localStore: localStore, useSupabase: useSupabase));
+  runApp(DawerApp(prefs: prefs, localStore: localStore, useSupabase: useSupabase, mockAuth: mockAuth));
 }
 
 class DawerApp extends StatelessWidget {
   final SharedPreferences prefs;
   final LocalStore localStore;
   final bool useSupabase;
+  final bool mockAuth;
 
   const DawerApp({
     super.key,
     required this.prefs,
     required this.localStore,
     required this.useSupabase,
+    required this.mockAuth,
   });
 
   @override
@@ -112,7 +122,7 @@ class DawerApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AppThemeNotifier(prefs)),
         ChangeNotifierProvider(create: (_) => AppLangNotifier(prefs)),
         Provider<IAuthRepository>(
-          create: (_) => useSupabase
+          create: (_) => (useSupabase && !mockAuth)
               ? SupabaseAuthRepository(SupabaseService.client, localStore)
               : MockAuthRepository(),
         ),
@@ -121,6 +131,18 @@ class DawerApp extends StatelessWidget {
             authRepository: ctx.read<IAuthRepository>(),
             fileStorage: ctx.read<IFileStorageRepository>(),
           ),
+        ),
+        Provider<ISignupOrchestrator>(
+          create: (ctx) => (useSupabase && !mockAuth)
+              ? SupabaseSignupOrchestrator(
+                  authRepository: ctx.read<IAuthRepository>(),
+                  fileStorage: ctx.read<IFileStorageRepository>(),
+                  client: SupabaseService.client,
+                )
+              : _MockSignupOrchestrator(
+                  authRepository: ctx.read<IAuthRepository>(),
+                  fileStorage: ctx.read<IFileStorageRepository>(),
+                ),
         ),
         Provider<IChatRepository>(
           create: (_) => useSupabase
@@ -156,6 +178,49 @@ class DawerApp extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+/// Mock-mode [ISignupOrchestrator] for offline/test runs. Delegates account
+/// creation to the (mock) auth repository and skips the Supabase write-back
+/// UPDATE — there's no live `profiles` row to update in mock mode.
+class _MockSignupOrchestrator implements ISignupOrchestrator {
+  _MockSignupOrchestrator({
+    required this.authRepository,
+    required this.fileStorage,
+  });
+
+  final IAuthRepository authRepository;
+  final IFileStorageRepository fileStorage;
+
+  @override
+  Future<AppResult<AuthSession>> signUp(
+    SignUpRequest request, {
+    File? profilePhoto,
+  }) async {
+    // Mock: upload is best-effort; the auth repo's mock signUp handles the row.
+    if (profilePhoto != null) {
+      // Exercise the file storage seam but ignore the result in mock mode.
+      await fileStorage.uploadProfilePhoto(
+        userId: request.phone, // mock id placeholder
+        file: profilePhoto,
+      );
+    }
+    return authRepository.signUp(request);
+  }
+
+  @override
+  Future<AppResult<void>> updateProfile(SignUpRequest request) async {
+    // No-op in mock mode — there's no live DB row to UPDATE.
+    return const Success(null);
+  }
+
+  @override
+  Future<AppResult<String>> uploadIdentityDocument(File document) async {
+    return fileStorage.uploadIdentityDocument(
+      userId: 'mock-user',
+      file: document,
     );
   }
 }

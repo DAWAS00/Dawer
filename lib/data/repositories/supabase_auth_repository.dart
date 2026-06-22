@@ -18,17 +18,11 @@ final class SupabaseAuthRepository implements IAuthRepository {
   @override
   Future<AppResult<AuthSession>> signUp(SignUpRequest request) async {
     try {
-      final email = request.email?.trim() ?? '';
-      final password = request.password ?? '';
-
-      final response = await _client.auth.signUp(
-        email: email,
-        password: password,
-      );
-
-      final user = response.user;
+      // Auth user already exists — created by signInWithOtp + verifyOTP earlier
+      // in the flow. Just insert the profile row with the current user's id.
+      final user = _client.auth.currentUser;
       if (user == null) {
-        return const Failure(AuthFailure(message: 'فشل إنشاء الحساب'));
+        return const Failure(AuthFailure(message: 'انتهت الجلسة. أعد التحقق من رقم هاتفك.'));
       }
 
       await _client.from('profiles').insert(
@@ -44,8 +38,6 @@ final class SupabaseAuthRepository implements IAuthRepository {
       );
       _cacheSession(session);
       return Success(session);
-    } on AuthException catch (e) {
-      return Failure(AuthFailure(message: e.message));
     } on PostgrestException catch (e) {
       return Failure(UnknownFailure(message: e.message, code: e.code));
     } catch (e) {
@@ -80,7 +72,11 @@ final class SupabaseAuthRepository implements IAuthRepository {
 
       final profile = await _fetchProfile();
       if (profile == null) {
-        return const Failure(AuthFailure(message: 'تعذر العثور على الملف الشخصي'));
+        // New user — OTP verified but no profile yet. Caller should redirect to signup wizard.
+        return const Failure(NotFoundFailure(
+          message: 'لم يتم العثور على حساب. سيتم توجيهك لإنشاء حساب.',
+          code: AuthErrorCodes.phoneNotRegistered,
+        ));
       }
 
       final authSession = _mapProfileToSession(profile);
