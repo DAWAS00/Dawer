@@ -20,7 +20,7 @@ class OrderDriverCard extends StatelessWidget {
   }
 
   void _openChat(BuildContext context) {
-    ChatView.push(context, orderId: order.id);
+    ChatView.push(context, orderId: order.id, order: order);
   }
 
   @override

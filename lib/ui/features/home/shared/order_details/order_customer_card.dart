@@ -21,7 +21,7 @@ class OrderCustomerCard extends StatelessWidget {
   }
 
   void _openChat(BuildContext context) {
-    ChatView.push(context, orderId: order.id);
+    ChatView.push(context, orderId: order.id, order: order);
   }
 
   Future<void> _navigate(BuildContext context) async {
@@ -77,14 +77,14 @@ class OrderCustomerCard extends StatelessWidget {
                     onTap: () => _call(context),
                   ),
                   const SizedBox(width: 8),
-                  _ContactChip(
-                    icon: LucideIcons.messageSquare,
-                    label: 'دردشة',
-                    color: const Color(0xFF06402B),
-                    onTap: () => _openChat(context),
-                  ),
-                  const SizedBox(width: 8),
                 ],
+                _ContactChip(
+                  icon: LucideIcons.messageSquare,
+                  label: 'دردشة',
+                  color: const Color(0xFF06402B),
+                  onTap: () => _openChat(context),
+                ),
+                const SizedBox(width: 8),
                 _ContactChip(
                   icon: LucideIcons.navigation,
                   label: 'ملاحة',

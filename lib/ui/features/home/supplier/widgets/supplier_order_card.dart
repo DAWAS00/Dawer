@@ -30,6 +30,47 @@ class SupplierOrderCard extends StatelessWidget {
         OrderStatus.cancelled => AppColors.statusCancelledText,
       };
 
+  /// Whether the order is currently being fulfilled (between acceptance and
+  /// delivery) — the window where live tracking matters most.
+  bool get _isInFlight =>
+      order.status == OrderStatus.accepted ||
+      order.status == OrderStatus.arrivedAtPickup ||
+      order.status == OrderStatus.inTransit ||
+      order.status == OrderStatus.arrivedAtDropoff;
+
+  /// Plain-language "what's happening right now" line + matching icon, shown
+  /// in the live tracking banner so the customer doesn't have to decode chips.
+  (IconData, String) get _statusLine => switch (order.status) {
+        OrderStatus.pending => (
+            Icons.hourglass_top_rounded,
+            'بانتظار قبول سائق للطلب',
+          ),
+        OrderStatus.accepted => (
+            Icons.directions_car_rounded,
+            'تم قبول طلبك، السائق في طريقه إليك',
+          ),
+        OrderStatus.arrivedAtPickup => (
+            Icons.pin_drop_rounded,
+            'السائق وصل لموقع الاستلام',
+          ),
+        OrderStatus.inTransit => (
+            Icons.local_shipping_rounded,
+            'طلبك في الطريق إلى وجهته',
+          ),
+        OrderStatus.arrivedAtDropoff => (
+            Icons.flag_rounded,
+            'السائق وصل لموقع التسليم',
+          ),
+        OrderStatus.completed => (
+            Icons.check_circle_rounded,
+            'تم تسليم الطلب بنجاح',
+          ),
+        OrderStatus.cancelled => (
+            Icons.cancel_rounded,
+            'تم إلغاء الطلب',
+          ),
+      };
+
   (Color bg, Color text) get _chip => switch (order.status) {
         OrderStatus.pending => (AppColors.statusPendingBg, AppColors.statusPendingText),
         OrderStatus.accepted ||
@@ -80,6 +121,22 @@ class SupplierOrderCard extends StatelessWidget {
     );
   }
 
+  void _openTracking(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => OrderDetailsView(
+        order: order,
+        onSupplierConfirmArrival: (available) {
+          final store = context.read<AppOrderStore>();
+          if (available) {
+            store.handleSupplierAvailable(order.id);
+          } else {
+            store.handleSupplierUnavailable(order.id);
+          }
+        },
+      ),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context);
@@ -87,19 +144,7 @@ class SupplierOrderCard extends StatelessWidget {
     final (chipBg, chipText) = _chip;
 
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => OrderDetailsView(
-          order: order,
-          onSupplierConfirmArrival: (available) {
-            final store = context.read<AppOrderStore>();
-            if (available) {
-              store.handleSupplierAvailable(order.id);
-            } else {
-              store.handleSupplierUnavailable(order.id);
-            }
-          },
-        ),
-      )),
+      onTap: () => _openTracking(context),
       child: Container(
         decoration: BoxDecoration(
           color: accent,
@@ -302,11 +347,48 @@ class SupplierOrderCard extends StatelessWidget {
                 ),
               ],
 
+              // ── Live status banner ──
+              if (order.status != OrderStatus.completed &&
+                  order.status != OrderStatus.cancelled) ...[
+                const SizedBox(height: 12),
+                _LiveStatusBanner(
+                  icon: _statusLine.$1,
+                  text: _statusLine.$2,
+                  eta: _isInFlight ? order.eta : null,
+                  accent: accent,
+                ),
+              ],
+
               // ── Progress Stepper ──
               if (order.status != OrderStatus.completed &&
                   order.status != OrderStatus.cancelled) ...[
                 const SizedBox(height: 14),
                 OrderProgressStepper(status: order.status),
+              ],
+
+              // ── Track button (in-flight orders) ──
+              if (_isInFlight) ...[
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 44,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _openTracking(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: accent,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    icon: const Icon(Icons.location_searching_rounded, size: 17),
+                    label: Text(
+                      'تتبع الطلب',
+                      style: GoogleFonts.cairo(
+                          fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                  ),
+                ),
               ],
 
               // ── Cancel button ──
@@ -337,6 +419,86 @@ class SupplierOrderCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Plain-language status line with an accent icon and an optional ETA pill.
+/// Gives the customer an immediate read on their order without decoding the
+/// status chip or the stepper.
+class _LiveStatusBanner extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final String? eta;
+  final Color accent;
+
+  const _LiveStatusBanner({
+    required this.icon,
+    required this.text,
+    required this.eta,
+    required this.accent,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: accent.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(9),
+            ),
+            child: Icon(icon, size: 16, color: accent),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              textAlign: TextAlign.right,
+              style: GoogleFonts.cairo(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textMain,
+              ),
+            ),
+          ),
+          if (eta != null && eta!.isNotEmpty) ...[
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: accent,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.schedule_rounded,
+                      size: 11, color: Colors.white),
+                  const SizedBox(width: 3),
+                  Text(
+                    eta!,
+                    style: GoogleFonts.cairo(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

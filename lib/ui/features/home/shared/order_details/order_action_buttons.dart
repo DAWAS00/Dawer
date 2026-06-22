@@ -19,7 +19,7 @@ class OrderActionButtons extends StatelessWidget {
         label: context.l10n.orderChatButton,
         icon: Icons.chat_bubble_outline_rounded,
         color: const Color(0xFF06402B),
-        onTap: () => ChatView.push(context, orderId: order.id),
+        onTap: () => ChatView.push(context, orderId: order.id, order: order),
       ),
     );
   }

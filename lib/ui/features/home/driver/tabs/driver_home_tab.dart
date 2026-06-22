@@ -60,7 +60,20 @@ class DriverHomeTab extends StatelessWidget {
           child: DriverHomeHeader(
             userName: userName,
             isOnline: isAvailable,
-            onStatusToggle: onToggleAvailability,
+            onStatusToggle: (val) {
+              // Handle toggle here — context is inside the Scaffold subtree so
+              // ScaffoldMessenger finds the right messenger for the snackbar.
+              final error = driverVm.toggleAvailability(val);
+              if (error != null && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(error, style: GoogleFonts.cairo()),
+                    backgroundColor: Colors.orange.shade700,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
             totalEarnings: driverVm.totalEarnings,
           ),
         ),
@@ -155,7 +168,7 @@ class DriverHomeTab extends StatelessWidget {
         ],
 
         // ── Offline / Available orders ──
-        if (!isAvailable && !loading)
+        if (!isAvailable)
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),

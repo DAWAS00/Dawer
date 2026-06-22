@@ -3,6 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:dwaar/core/constants/app_colors.dart';
 import 'package:dwaar/data/models/order/order.dart';
 
+/// Horizontal 5-step tracker for an order's lifecycle.
+///
+/// Three node states make "where is my order now" obvious at a glance:
+/// - **completed** — solid green node with a check
+/// - **current**   — green node wrapped in a soft halo ring ("you are here")
+/// - **upcoming**  — hollow grey node
+///
+/// Backward compatible: same `OrderProgressStepper(status:)` API used by the
+/// driver active card, shared order card and supplier/restaurant order card.
 class OrderProgressStepper extends StatelessWidget {
   final OrderStatus status;
 
@@ -19,6 +28,10 @@ class OrderProgressStepper extends StatelessWidget {
         OrderStatus.arrivedAtDropoff || OrderStatus.completed => 4,
         _ => 0,
       };
+
+  /// True once the order has fully finished — the last node renders as a
+  /// completed check rather than a "current" halo.
+  bool get _isDone => status == OrderStatus.completed;
 
   static const _steps = [
     'قيد الانتظار',
@@ -38,52 +51,105 @@ class OrderProgressStepper extends StatelessWidget {
 
     return Row(
       textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: List.generate(_steps.length * 2 - 1, (i) {
         if (i.isOdd) {
           final connectorStep = i ~/ 2;
           final done = connectorStep < _currentStep;
           return Expanded(
             child: Container(
-              height: 2,
+              height: 2.5,
+              margin: const EdgeInsets.only(top: 13),
               color: done ? AppColors.primaryGreen : AppColors.borderSubtle,
             ),
           );
         }
 
         final step = i ~/ 2;
-        final done = step <= _currentStep;
+        final isCompleted = step < _currentStep || (step == _currentStep && _isDone);
+        final isCurrent = step == _currentStep && !_isDone;
+
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                color: done ? AppColors.primaryGreen : AppColors.background,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: done ? AppColors.primaryGreen : AppColors.borderSubtle,
-                  width: 1.5,
+            _StepNode(isCompleted: isCompleted, isCurrent: isCurrent),
+            const SizedBox(height: 5),
+            SizedBox(
+              width: 52,
+              child: Text(
+                _steps[step],
+                textAlign: TextAlign.center,
+                style: GoogleFonts.cairo(
+                  fontSize: 9,
+                  fontWeight: (isCompleted || isCurrent)
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                  color: (isCompleted || isCurrent)
+                      ? AppColors.primaryGreen
+                      : AppColors.mutedText,
+                  height: 1.2,
                 ),
-              ),
-              child: done
-                  ? const Icon(Icons.check, size: 12, color: Colors.white)
-                  : null,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              _steps[step],
-              textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
-                fontSize: 8,
-                fontWeight: done ? FontWeight.bold : FontWeight.normal,
-                color: done ? AppColors.primaryGreen : AppColors.mutedText,
-                height: 1.2,
               ),
             ),
           ],
         );
       }),
+    );
+  }
+}
+
+class _StepNode extends StatelessWidget {
+  const _StepNode({required this.isCompleted, required this.isCurrent});
+
+  final bool isCompleted;
+  final bool isCurrent;
+
+  @override
+  Widget build(BuildContext context) {
+    // Current step: green dot inside a soft halo ring to read as "you are here".
+    if (isCurrent) {
+      return Container(
+        width: 28,
+        height: 28,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: AppColors.primaryGreen.withValues(alpha: 0.18),
+          shape: BoxShape.circle,
+        ),
+        child: Container(
+          width: 16,
+          height: 16,
+          decoration: const BoxDecoration(
+            color: AppColors.primaryGreen,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(Icons.circle, size: 7, color: Colors.white),
+        ),
+      );
+    }
+
+    // Completed step: solid green node with a check.
+    if (isCompleted) {
+      return Container(
+        width: 26,
+        height: 26,
+        decoration: const BoxDecoration(
+          color: AppColors.primaryGreen,
+          shape: BoxShape.circle,
+        ),
+        child: const Icon(Icons.check, size: 13, color: Colors.white),
+      );
+    }
+
+    // Upcoming step: hollow grey node.
+    return Container(
+      width: 26,
+      height: 26,
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.borderSubtle, width: 1.5),
+      ),
     );
   }
 }

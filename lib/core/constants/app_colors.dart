@@ -46,6 +46,10 @@ class AppColors {
   static const Color surfaceAlt = Color(0xFFEEF4EE);
   static const Color surfaceAltBorder = Color(0xFFC8DFCE);
 
+  // Payment — eFawateercom (منصة فواتيركم / Central Bank of Jordan brand teal)
+  static const Color efawateerTeal = Color(0xFF00796B);
+  static const Color efawateerTealBg = Color(0xFFE0F2F1);
+
   // Legacy Shamrock Palette (Kept for compatibility, try to migrate to semantic names)
   static const Color shamrock50 = Color(0xFFFFFFFF);
   static const Color shamrock100 = Color(0xFF8DFFDA);
