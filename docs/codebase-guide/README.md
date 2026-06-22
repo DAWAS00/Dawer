@@ -25,7 +25,9 @@ Read the sections in order if you are new. Jump to a specific section if you are
 | 7 | [`07-ai-services.md`](07-ai-services.md) | Gemini integrations for vehicle docs, waste classification, and license validation; on-device ML Kit |
 | 8 | [`08-supabase-backend.md`](08-supabase-backend.md) | Postgres schema, migrations, functions, triggers, RLS policies, and storage |
 | 9 | [`09-push-notifications.md`](09-push-notifications.md) | FCM, `send_push`, `match_driver`, status-change webhooks, and client binding |
-| 10 | [`10-production-readiness.md`](10-production-readiness.md) | Documented gaps, known inconsistencies, and recommended production roadmap |
+| 10 | [`10-chat-system.md`](10-chat-system.md) | Order-scoped 1:1 chat — IChatRepository, message kinds, Supabase Realtime, optimistic send, media |
+| 11 | [`11-profile-and-payments.md`](11-profile-and-payments.md) | Unified profile widgets, role-aware PaymentWalletCard, eFawateercom row, order tracking stepper |
+| 12 | [`12-production-readiness.md`](12-production-readiness.md) | Go-live checklist, what is done, what remains, migration apply order, mock credentials |
 
 ## Quick orientation
 
@@ -38,4 +40,4 @@ Read the sections in order if you are new. Jump to a specific section if you are
 
 ## Important caveat
 
-As of the latest codebase review, the runtime path is optimized for **development and demos**: mock authentication is wired by default, OTP validation is disabled, and several AI flows still fall back to mock services. The backend schema and edge functions are production-grade in design, but the Flutter wiring is incomplete. See [`10-production-readiness.md`](10-production-readiness.md) for the full list and prioritization.
+As of the latest codebase review, the runtime path is optimized for **development and demos**: mock authentication is wired by default, OTP validation is disabled, and several AI flows still fall back to mock services. The backend schema and edge functions are production-grade in design, but the Flutter wiring is incomplete. See [`12-production-readiness.md`](12-production-readiness.md) for the full list, prioritization, and mock login credentials.
