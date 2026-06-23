@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 export '../../../../data/models/user_role.dart' show UserRole, SupplierType;
 
 import '../../../../data/models/user_role.dart';
-import '../../../../domain/repositories/i_auth_repository.dart';
 import '../../../../data/repositories/mock_auth_repository.dart';
+import '../../../../domain/repositories/i_auth_repository.dart';
 
 class LoginViewModel extends ChangeNotifier {
   LoginViewModel({required IAuthRepository authRepository})
@@ -76,14 +76,6 @@ class LoginViewModel extends ChangeNotifier {
 
     // Normalize for backend/firebase
     final normalizedPhone = '+962${_phone.substring(1)}';
-
-    // If using mock repo, sync the UI selection so it knows what to generate
-    if (_authRepository case final MockAuthRepository repo) {
-      repo.updateTargetRole(
-        _selectedRole,
-        _supplierType,
-      );
-    }
 
     final result = await _authRepository.requestOtp(normalizedPhone);
     result.fold(

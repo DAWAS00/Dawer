@@ -13,6 +13,7 @@ _$OrderProofImpl _$$OrderProofImplFromJson(Map<String, dynamic> json) =>
       lat: (json['lat'] as num).toDouble(),
       lng: (json['lng'] as num).toDouble(),
       checksum: json['checksum'] as String,
+      weightKg: (json['weightKg'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$$OrderProofImplToJson(_$OrderProofImpl instance) =>
@@ -22,4 +23,5 @@ Map<String, dynamic> _$$OrderProofImplToJson(_$OrderProofImpl instance) =>
       'lat': instance.lat,
       'lng': instance.lng,
       'checksum': instance.checksum,
+      'weightKg': instance.weightKg,
     };

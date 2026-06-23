@@ -66,7 +66,7 @@ class _RecordingOrderRepository implements IOrderRepository {
   }
 
   @override
-  Future<AppResult<void>> markArrivedAtPickup(String orderId) async {
+  Future<AppResult<void>> markArrivedAtPickup(String orderId, {OrderProof? pickupProof}) async {
     calls.add('markArrivedAtPickup');
     return const Success(null);
   }

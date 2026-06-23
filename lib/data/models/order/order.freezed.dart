@@ -83,6 +83,7 @@ mixin _$Order {
   ArrivalConfirmationStatus? get arrivalConfirmationStatus =>
       throw _privateConstructorUsedError;
   OrderProof? get proof => throw _privateConstructorUsedError;
+  OrderProof? get pickupProof => throw _privateConstructorUsedError;
   double? get supplierHoldAmount => throw _privateConstructorUsedError;
   double? get driverCompensationAmount => throw _privateConstructorUsedError;
   int get fraudAttemptCount => throw _privateConstructorUsedError;
@@ -169,6 +170,7 @@ abstract class $OrderCopyWith<$Res> {
     DateTime? arrivedAtDropoffAt,
     ArrivalConfirmationStatus? arrivalConfirmationStatus,
     OrderProof? proof,
+    OrderProof? pickupProof,
     double? supplierHoldAmount,
     double? driverCompensationAmount,
     int fraudAttemptCount,
@@ -182,6 +184,7 @@ abstract class $OrderCopyWith<$Res> {
   });
 
   $OrderProofCopyWith<$Res>? get proof;
+  $OrderProofCopyWith<$Res>? get pickupProof;
 }
 
 /// @nodoc
@@ -258,6 +261,7 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
     Object? arrivedAtDropoffAt = freezed,
     Object? arrivalConfirmationStatus = freezed,
     Object? proof = freezed,
+    Object? pickupProof = freezed,
     Object? supplierHoldAmount = freezed,
     Object? driverCompensationAmount = freezed,
     Object? fraudAttemptCount = null,
@@ -507,6 +511,10 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
                 ? _value.proof
                 : proof // ignore: cast_nullable_to_non_nullable
                       as OrderProof?,
+            pickupProof: freezed == pickupProof
+                ? _value.pickupProof
+                : pickupProof // ignore: cast_nullable_to_non_nullable
+                      as OrderProof?,
             supplierHoldAmount: freezed == supplierHoldAmount
                 ? _value.supplierHoldAmount
                 : supplierHoldAmount // ignore: cast_nullable_to_non_nullable
@@ -563,6 +571,20 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
 
     return $OrderProofCopyWith<$Res>(_value.proof!, (value) {
       return _then(_value.copyWith(proof: value) as $Val);
+    });
+  }
+
+  /// Create a copy of Order
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $OrderProofCopyWith<$Res>? get pickupProof {
+    if (_value.pickupProof == null) {
+      return null;
+    }
+
+    return $OrderProofCopyWith<$Res>(_value.pickupProof!, (value) {
+      return _then(_value.copyWith(pickupProof: value) as $Val);
     });
   }
 }
@@ -635,6 +657,7 @@ abstract class _$$OrderImplCopyWith<$Res> implements $OrderCopyWith<$Res> {
     DateTime? arrivedAtDropoffAt,
     ArrivalConfirmationStatus? arrivalConfirmationStatus,
     OrderProof? proof,
+    OrderProof? pickupProof,
     double? supplierHoldAmount,
     double? driverCompensationAmount,
     int fraudAttemptCount,
@@ -649,6 +672,8 @@ abstract class _$$OrderImplCopyWith<$Res> implements $OrderCopyWith<$Res> {
 
   @override
   $OrderProofCopyWith<$Res>? get proof;
+  @override
+  $OrderProofCopyWith<$Res>? get pickupProof;
 }
 
 /// @nodoc
@@ -724,6 +749,7 @@ class __$$OrderImplCopyWithImpl<$Res>
     Object? arrivedAtDropoffAt = freezed,
     Object? arrivalConfirmationStatus = freezed,
     Object? proof = freezed,
+    Object? pickupProof = freezed,
     Object? supplierHoldAmount = freezed,
     Object? driverCompensationAmount = freezed,
     Object? fraudAttemptCount = null,
@@ -973,6 +999,10 @@ class __$$OrderImplCopyWithImpl<$Res>
             ? _value.proof
             : proof // ignore: cast_nullable_to_non_nullable
                   as OrderProof?,
+        pickupProof: freezed == pickupProof
+            ? _value.pickupProof
+            : pickupProof // ignore: cast_nullable_to_non_nullable
+                  as OrderProof?,
         supplierHoldAmount: freezed == supplierHoldAmount
             ? _value.supplierHoldAmount
             : supplierHoldAmount // ignore: cast_nullable_to_non_nullable
@@ -1081,6 +1111,7 @@ class _$OrderImpl implements _Order {
     this.arrivedAtDropoffAt,
     this.arrivalConfirmationStatus,
     this.proof,
+    this.pickupProof,
     this.supplierHoldAmount,
     this.driverCompensationAmount,
     this.fraudAttemptCount = 0,
@@ -1241,6 +1272,8 @@ class _$OrderImpl implements _Order {
   @override
   final OrderProof? proof;
   @override
+  final OrderProof? pickupProof;
+  @override
   final double? supplierHoldAmount;
   @override
   final double? driverCompensationAmount;
@@ -1268,7 +1301,7 @@ class _$OrderImpl implements _Order {
 
   @override
   String toString() {
-    return 'Order(id: $id, type: $type, wasteTypes: $wasteTypes, pickupAddress: $pickupAddress, dropoffAddress: $dropoffAddress, status: $status, reward: $reward, createdAt: $createdAt, acceptedAt: $acceptedAt, inTransitAt: $inTransitAt, completedAt: $completedAt, scheduledAt: $scheduledAt, driverName: $driverName, driverPhone: $driverPhone, driverRating: $driverRating, driverVehicle: $driverVehicle, driverVehicleModel: $driverVehicleModel, driverVehicleColor: $driverVehicleColor, driverLicensePlate: $driverLicensePlate, driverVehiclePhotoPath: $driverVehiclePhotoPath, supplierId: $supplierId, supplierName: $supplierName, supplierPhone: $supplierPhone, weightKg: $weightKg, eta: $eta, distanceKm: $distanceKm, proofImagePath: $proofImagePath, paidAmount: $paidAmount, supplierNotes: $supplierNotes, images: $images, estimatedWeightKg: $estimatedWeightKg, wasteForm: $wasteForm, weightCategory: $weightCategory, deliveryFee: $deliveryFee, pickupTarget: $pickupTarget, itemPrice: $itemPrice, jobDescription: $jobDescription, pricePerKg: $pricePerKg, paymentModel: $paymentModel, minQuantityKg: $minQuantityKg, isEdited: $isEdited, editedAt: $editedAt, editNote: $editNote, linkedJobId: $linkedJobId, collectionDeliveryMethod: $collectionDeliveryMethod, collectionTransactionType: $collectionTransactionType, pickupLat: $pickupLat, pickupLng: $pickupLng, dropoffLat: $dropoffLat, dropoffLng: $dropoffLng, etaMinutes: $etaMinutes, isMarketplaceShared: $isMarketplaceShared, requiresRider: $requiresRider, rewardBreakdown: $rewardBreakdown, invoices: $invoices, arrivedAtPickupAt: $arrivedAtPickupAt, arrivedAtDropoffAt: $arrivedAtDropoffAt, arrivalConfirmationStatus: $arrivalConfirmationStatus, proof: $proof, supplierHoldAmount: $supplierHoldAmount, driverCompensationAmount: $driverCompensationAmount, fraudAttemptCount: $fraudAttemptCount, weightVarianceFlag: $weightVarianceFlag, requiredVehicleType: $requiredVehicleType, requiresChemicalPermit: $requiresChemicalPermit, adminApprovalStatus: $adminApprovalStatus, expiresAt: $expiresAt, isVatApplicable: $isVatApplicable, vatAmountJd: $vatAmountJd)';
+    return 'Order(id: $id, type: $type, wasteTypes: $wasteTypes, pickupAddress: $pickupAddress, dropoffAddress: $dropoffAddress, status: $status, reward: $reward, createdAt: $createdAt, acceptedAt: $acceptedAt, inTransitAt: $inTransitAt, completedAt: $completedAt, scheduledAt: $scheduledAt, driverName: $driverName, driverPhone: $driverPhone, driverRating: $driverRating, driverVehicle: $driverVehicle, driverVehicleModel: $driverVehicleModel, driverVehicleColor: $driverVehicleColor, driverLicensePlate: $driverLicensePlate, driverVehiclePhotoPath: $driverVehiclePhotoPath, supplierId: $supplierId, supplierName: $supplierName, supplierPhone: $supplierPhone, weightKg: $weightKg, eta: $eta, distanceKm: $distanceKm, proofImagePath: $proofImagePath, paidAmount: $paidAmount, supplierNotes: $supplierNotes, images: $images, estimatedWeightKg: $estimatedWeightKg, wasteForm: $wasteForm, weightCategory: $weightCategory, deliveryFee: $deliveryFee, pickupTarget: $pickupTarget, itemPrice: $itemPrice, jobDescription: $jobDescription, pricePerKg: $pricePerKg, paymentModel: $paymentModel, minQuantityKg: $minQuantityKg, isEdited: $isEdited, editedAt: $editedAt, editNote: $editNote, linkedJobId: $linkedJobId, collectionDeliveryMethod: $collectionDeliveryMethod, collectionTransactionType: $collectionTransactionType, pickupLat: $pickupLat, pickupLng: $pickupLng, dropoffLat: $dropoffLat, dropoffLng: $dropoffLng, etaMinutes: $etaMinutes, isMarketplaceShared: $isMarketplaceShared, requiresRider: $requiresRider, rewardBreakdown: $rewardBreakdown, invoices: $invoices, arrivedAtPickupAt: $arrivedAtPickupAt, arrivedAtDropoffAt: $arrivedAtDropoffAt, arrivalConfirmationStatus: $arrivalConfirmationStatus, proof: $proof, pickupProof: $pickupProof, supplierHoldAmount: $supplierHoldAmount, driverCompensationAmount: $driverCompensationAmount, fraudAttemptCount: $fraudAttemptCount, weightVarianceFlag: $weightVarianceFlag, requiredVehicleType: $requiredVehicleType, requiresChemicalPermit: $requiresChemicalPermit, adminApprovalStatus: $adminApprovalStatus, expiresAt: $expiresAt, isVatApplicable: $isVatApplicable, vatAmountJd: $vatAmountJd)';
   }
 
   @override
@@ -1397,6 +1430,8 @@ class _$OrderImpl implements _Order {
                 ) ||
                 other.arrivalConfirmationStatus == arrivalConfirmationStatus) &&
             (identical(other.proof, proof) || other.proof == proof) &&
+            (identical(other.pickupProof, pickupProof) ||
+                other.pickupProof == pickupProof) &&
             (identical(other.supplierHoldAmount, supplierHoldAmount) ||
                 other.supplierHoldAmount == supplierHoldAmount) &&
             (identical(
@@ -1485,6 +1520,7 @@ class _$OrderImpl implements _Order {
     arrivedAtDropoffAt,
     arrivalConfirmationStatus,
     proof,
+    pickupProof,
     supplierHoldAmount,
     driverCompensationAmount,
     fraudAttemptCount,
@@ -1572,6 +1608,7 @@ abstract class _Order implements Order {
     final DateTime? arrivedAtDropoffAt,
     final ArrivalConfirmationStatus? arrivalConfirmationStatus,
     final OrderProof? proof,
+    final OrderProof? pickupProof,
     final double? supplierHoldAmount,
     final double? driverCompensationAmount,
     final int fraudAttemptCount,
@@ -1704,6 +1741,8 @@ abstract class _Order implements Order {
   ArrivalConfirmationStatus? get arrivalConfirmationStatus;
   @override
   OrderProof? get proof;
+  @override
+  OrderProof? get pickupProof;
   @override
   double? get supplierHoldAmount;
   @override

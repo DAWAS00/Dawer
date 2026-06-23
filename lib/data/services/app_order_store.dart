@@ -330,16 +330,17 @@ class AppOrderStore extends ChangeNotifier {
 
   /// Driver entered the 200m pickup geofence (server-verified). Sends customer
   /// notification and starts the 5-minute response window.
-  void markArrivedAtPickup(String orderId) {
+  void markArrivedAtPickup(String orderId, {OrderProof? pickupProof}) {
     final idx = _orders.indexWhere((o) => o.id == orderId);
     if (idx == -1) return;
     _orders[idx] = _orders[idx].copyWith(
       status: OrderStatus.arrivedAtPickup,
       arrivedAtPickupAt: DateTime.now(),
       arrivalConfirmationStatus: ArrivalConfirmationStatus.awaiting,
+      pickupProof: pickupProof,
     );
     notifyListeners();
-    unawaited(_pushRemote(_remote.markArrivedAtPickup(orderId)));
+    unawaited(_pushRemote(_remote.markArrivedAtPickup(orderId, pickupProof: pickupProof)));
   }
 
   /// Supplier confirmed they are available. Advance order to inTransit.

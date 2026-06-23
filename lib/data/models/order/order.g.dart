@@ -110,6 +110,9 @@ _$OrderImpl _$$OrderImplFromJson(Map<String, dynamic> json) => _$OrderImpl(
   proof: json['proof'] == null
       ? null
       : OrderProof.fromJson(json['proof'] as Map<String, dynamic>),
+  pickupProof: json['pickupProof'] == null
+      ? null
+      : OrderProof.fromJson(json['pickupProof'] as Map<String, dynamic>),
   supplierHoldAmount: (json['supplierHoldAmount'] as num?)?.toDouble(),
   driverCompensationAmount: (json['driverCompensationAmount'] as num?)
       ?.toDouble(),
@@ -198,6 +201,7 @@ Map<String, dynamic> _$$OrderImplToJson(
   'arrivalConfirmationStatus':
       _$ArrivalConfirmationStatusEnumMap[instance.arrivalConfirmationStatus],
   'proof': instance.proof,
+  'pickupProof': instance.pickupProof,
   'supplierHoldAmount': instance.supplierHoldAmount,
   'driverCompensationAmount': instance.driverCompensationAmount,
   'fraudAttemptCount': instance.fraudAttemptCount,

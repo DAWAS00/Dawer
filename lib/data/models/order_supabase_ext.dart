@@ -56,6 +56,15 @@ extension OrderSupabaseExt on Order {
         'proof_lat': proof!.lat,
         'proof_lng': proof!.lng,
         'proof_checksum': proof!.checksum,
+        if (proof!.weightKg != null) 'proof_weight_kg': proof!.weightKg,
+      },
+      if (pickupProof != null) ...{
+        'pickup_proof_photo_url': pickupProof!.imagePath,
+        'pickup_proof_captured_at': pickupProof!.capturedAt.toUtc().toIso8601String(),
+        'pickup_proof_lat': pickupProof!.lat,
+        'pickup_proof_lng': pickupProof!.lng,
+        'pickup_proof_checksum': pickupProof!.checksum,
+        if (pickupProof!.weightKg != null) 'pickup_proof_weight_kg': pickupProof!.weightKg,
       },
     };
   }
@@ -98,7 +107,9 @@ Order orderFromSupabaseJson(Map<String, dynamic> json) {
     reward: (json['reward_jd'] as num?)?.toDouble() ?? 0,
     createdAt: parseDt(json['created_at'] as String?) ?? DateTime.now(),
     acceptedAt: parseDt(json['accepted_at'] as String?),
+    arrivedAtPickupAt: parseDt(json['arrived_at_pickup_at'] as String?),
     inTransitAt: parseDt(json['in_transit_at'] as String?),
+    arrivedAtDropoffAt: parseDt(json['arrived_at_dropoff_at'] as String?),
     completedAt: parseDt(json['completed_at'] as String?),
     distanceKm: (json['distance_km'] as num?)?.toDouble(),
     supplierNotes: json['notes'] as String?,
@@ -131,5 +142,25 @@ Order orderFromSupabaseJson(Map<String, dynamic> json) {
     expiresAt: parseDt(json['expires_at'] as String?),
     isVatApplicable: json['is_vat_applicable'] as bool? ?? false,
     vatAmountJd: (json['vat_amount_jd'] as num?)?.toDouble(),
+    proof: json['proof_image_path'] == null
+        ? null
+        : OrderProof(
+            imagePath: json['proof_image_path'] as String,
+            capturedAt: parseDt(json['proof_captured_at'] as String?) ?? DateTime.now(),
+            lat: (json['proof_lat'] as num?)?.toDouble() ?? 0.0,
+            lng: (json['proof_lng'] as num?)?.toDouble() ?? 0.0,
+            checksum: json['proof_checksum'] as String? ?? '',
+            weightKg: (json['proof_weight_kg'] as num?)?.toDouble(),
+          ),
+    pickupProof: json['pickup_proof_photo_url'] == null
+        ? null
+        : OrderProof(
+            imagePath: json['pickup_proof_photo_url'] as String,
+            capturedAt: parseDt(json['pickup_proof_captured_at'] as String?) ?? DateTime.now(),
+            lat: (json['pickup_proof_lat'] as num?)?.toDouble() ?? 0.0,
+            lng: (json['pickup_proof_lng'] as num?)?.toDouble() ?? 0.0,
+            checksum: json['pickup_proof_checksum'] as String? ?? '',
+            weightKg: (json['pickup_proof_weight_kg'] as num?)?.toDouble(),
+          ),
   );
 }

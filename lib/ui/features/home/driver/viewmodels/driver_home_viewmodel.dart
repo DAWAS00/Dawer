@@ -129,15 +129,15 @@ class DriverHomeViewModel extends ChangeNotifier {
     return error;
   }
 
-  /// Called when driver taps "I'm Here" at the pickup location.
+  /// Called after PickupProofView collects weight + photo.
   /// Client GPS provides instant UX feedback; the Edge Function is the
   /// authoritative server-side gate (reads Supabase driver_locations).
-  Future<String?> markArrivedAtPickup(Order order) async {
+  Future<String?> markArrivedAtPickup(Order order, {OrderProof? pickupProof}) async {
     final pos = await _locationService.getCurrentLocation();
     if (pos == null) return 'تعذّر تحديد موقعك. تحقق من صلاحية الموقع.';
 
     if (order.pickupLat == null || order.pickupLng == null) {
-      _store.markArrivedAtPickup(order.id);
+      _store.markArrivedAtPickup(order.id, pickupProof: pickupProof);
       _cancelGhostTimer();
       _startArrivalResponseTimer(order.id);
       return null;
@@ -161,7 +161,7 @@ class DriverHomeViewModel extends ChangeNotifier {
     );
     if (serverResult != null) return serverResult;
 
-    _store.markArrivedAtPickup(order.id);
+    _store.markArrivedAtPickup(order.id, pickupProof: pickupProof);
     _cancelGhostTimer();
     _startArrivalResponseTimer(order.id);
     return null;

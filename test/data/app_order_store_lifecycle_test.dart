@@ -68,7 +68,7 @@ class _RecordingOrderRepository implements IOrderRepository {
       _record('markInTransit');
 
   @override
-  Future<AppResult<void>> markArrivedAtPickup(String orderId) async =>
+  Future<AppResult<void>> markArrivedAtPickup(String orderId, {OrderProof? pickupProof}) async =>
       _record('markArrivedAtPickup');
 
   @override

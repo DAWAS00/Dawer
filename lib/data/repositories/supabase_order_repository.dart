@@ -123,10 +123,18 @@ final class SupabaseOrderRepository implements IOrderRepository {
   }
 
   @override
-  Future<AppResult<void>> markArrivedAtPickup(String orderId) {
+  Future<AppResult<void>> markArrivedAtPickup(String orderId, {OrderProof? pickupProof}) {
     return _runWithRetry(() => _client.from('orders').update({
           'status': 'arrivedAtPickup',
           'arrived_at_pickup_at': DateTime.now().toUtc().toIso8601String(),
+          if (pickupProof != null) ...{
+            'pickup_proof_photo_url': pickupProof.imagePath,
+            'pickup_proof_weight_kg': pickupProof.weightKg,
+            'pickup_proof_captured_at': pickupProof.capturedAt.toUtc().toIso8601String(),
+            'pickup_proof_lat': pickupProof.lat,
+            'pickup_proof_lng': pickupProof.lng,
+            'pickup_proof_checksum': pickupProof.checksum,
+          },
         }).eq('id', orderId));
   }
 

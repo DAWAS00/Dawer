@@ -16,6 +16,7 @@ import '../shared/tabs/marketplace_tab.dart';
 import '../shared/views/collection_sale_detail_view.dart';
 import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../supplier/views/new_pickup_request_view.dart';
+import 'views/pickup_proof_view.dart';
 import '../../auth/viewmodels/login_viewmodel.dart';
 import '../../../../../l10n/l10n.dart';
 
@@ -111,7 +112,18 @@ class _DriverHomeBody extends StatelessWidget {
         active: vm.active,
         onAcceptOrder: (order) => _handleAcceptOrder(context, vm, order),
         onCompleteOrder: vm.completeOrder,
-        onMarkArrivedAtPickup: vm.markArrivedAtPickup,
+        onMarkArrivedAtPickup: (order) async {
+          await Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => PickupProofView(
+                order: order,
+                onConfirm: (proof) =>
+                    vm.markArrivedAtPickup(order, pickupProof: proof),
+              ),
+            ),
+          );
+          return null;
+        },
         onMarkArrivedAtDropoff: vm.markArrivedAtDropoff,
       ),
       MarketplaceTab(
@@ -134,7 +146,18 @@ class _DriverHomeBody extends StatelessWidget {
         onCancelSale: (id) => vm.cancelCollectionSale(id),
         onStartTransit: vm.startCollectionSaleTransit,
         onComplete: vm.completeCollectionSale,
-        onMarkArrivedAtPickup: vm.markArrivedAtPickup,
+        onMarkArrivedAtPickup: (order) async {
+          await Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => PickupProofView(
+                order: order,
+                onConfirm: (proof) =>
+                    vm.markArrivedAtPickup(order, pickupProof: proof),
+              ),
+            ),
+          );
+          return null;
+        },
         onMarkArrivedAtDropoff: vm.markArrivedAtDropoff,
       ),
       const DriverProfileTab(),

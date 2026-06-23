@@ -11,6 +11,7 @@ class OrderProof with _$OrderProof {
     required double lat,
     required double lng,
     required String checksum,
+    double? weightKg,
   }) = _OrderProof;
 
   factory OrderProof.fromJson(Map<String, dynamic> json) => _$OrderProofFromJson(json);

@@ -26,6 +26,7 @@ mixin _$OrderProof {
   double get lat => throw _privateConstructorUsedError;
   double get lng => throw _privateConstructorUsedError;
   String get checksum => throw _privateConstructorUsedError;
+  double? get weightKg => throw _privateConstructorUsedError;
 
   /// Serializes this OrderProof to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -50,6 +51,7 @@ abstract class $OrderProofCopyWith<$Res> {
     double lat,
     double lng,
     String checksum,
+    double? weightKg,
   });
 }
 
@@ -73,6 +75,7 @@ class _$OrderProofCopyWithImpl<$Res, $Val extends OrderProof>
     Object? lat = null,
     Object? lng = null,
     Object? checksum = null,
+    Object? weightKg = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -96,6 +99,10 @@ class _$OrderProofCopyWithImpl<$Res, $Val extends OrderProof>
                 ? _value.checksum
                 : checksum // ignore: cast_nullable_to_non_nullable
                       as String,
+            weightKg: freezed == weightKg
+                ? _value.weightKg
+                : weightKg // ignore: cast_nullable_to_non_nullable
+                      as double?,
           )
           as $Val,
     );
@@ -117,6 +124,7 @@ abstract class _$$OrderProofImplCopyWith<$Res>
     double lat,
     double lng,
     String checksum,
+    double? weightKg,
   });
 }
 
@@ -139,6 +147,7 @@ class __$$OrderProofImplCopyWithImpl<$Res>
     Object? lat = null,
     Object? lng = null,
     Object? checksum = null,
+    Object? weightKg = freezed,
   }) {
     return _then(
       _$OrderProofImpl(
@@ -162,6 +171,10 @@ class __$$OrderProofImplCopyWithImpl<$Res>
             ? _value.checksum
             : checksum // ignore: cast_nullable_to_non_nullable
                   as String,
+        weightKg: freezed == weightKg
+            ? _value.weightKg
+            : weightKg // ignore: cast_nullable_to_non_nullable
+                  as double?,
       ),
     );
   }
@@ -176,6 +189,7 @@ class _$OrderProofImpl implements _OrderProof {
     required this.lat,
     required this.lng,
     required this.checksum,
+    this.weightKg,
   });
 
   factory _$OrderProofImpl.fromJson(Map<String, dynamic> json) =>
@@ -191,10 +205,12 @@ class _$OrderProofImpl implements _OrderProof {
   final double lng;
   @override
   final String checksum;
+  @override
+  final double? weightKg;
 
   @override
   String toString() {
-    return 'OrderProof(imagePath: $imagePath, capturedAt: $capturedAt, lat: $lat, lng: $lng, checksum: $checksum)';
+    return 'OrderProof(imagePath: $imagePath, capturedAt: $capturedAt, lat: $lat, lng: $lng, checksum: $checksum, weightKg: $weightKg)';
   }
 
   @override
@@ -209,13 +225,22 @@ class _$OrderProofImpl implements _OrderProof {
             (identical(other.lat, lat) || other.lat == lat) &&
             (identical(other.lng, lng) || other.lng == lng) &&
             (identical(other.checksum, checksum) ||
-                other.checksum == checksum));
+                other.checksum == checksum) &&
+            (identical(other.weightKg, weightKg) ||
+                other.weightKg == weightKg));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, imagePath, capturedAt, lat, lng, checksum);
+  int get hashCode => Object.hash(
+    runtimeType,
+    imagePath,
+    capturedAt,
+    lat,
+    lng,
+    checksum,
+    weightKg,
+  );
 
   /// Create a copy of OrderProof
   /// with the given fields replaced by the non-null parameter values.
@@ -238,6 +263,7 @@ abstract class _OrderProof implements OrderProof {
     required final double lat,
     required final double lng,
     required final String checksum,
+    final double? weightKg,
   }) = _$OrderProofImpl;
 
   factory _OrderProof.fromJson(Map<String, dynamic> json) =
@@ -253,6 +279,8 @@ abstract class _OrderProof implements OrderProof {
   double get lng;
   @override
   String get checksum;
+  @override
+  double? get weightKg;
 
   /// Create a copy of OrderProof
   /// with the given fields replaced by the non-null parameter values.

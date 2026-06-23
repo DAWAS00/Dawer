@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -39,6 +40,7 @@ class RecyclingHomeTab extends StatefulWidget {
 
 class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
   int _viewMode = 0; // 0 = Incoming, 1 = Active Jobs
+  GoogleMapController? _mapController;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +68,8 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
             
           SliverToBoxAdapter(child: _buildStatsRow(context)),
           SliverToBoxAdapter(child: _buildActionCards(context)),
-          
+          SliverToBoxAdapter(child: _buildOpsSection(context, vm)),
+
           if (myListings.isNotEmpty) ..._buildMyListingsSection(context, myListings, marketVm),
           
           // Segmented Control for Lists
@@ -352,6 +355,199 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
           const SizedBox(width: 6),
           const Icon(LucideIcons.users, size: 16, color: AppColors.mutedText),
         ],
+      ),
+    );
+  }
+
+  // ── Ops Map (عمليات اليوم) ───────────────────────────────────────────────
+
+  Widget _buildOpsSection(BuildContext context, RecyclingHomeViewModel vm) {
+    final positions = vm.driverPositions;
+
+    final markers = positions.entries.map((e) {
+      return Marker(
+        markerId: MarkerId(e.key),
+        position: e.value,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        infoWindow: InfoWindow(title: 'سائق ${e.key.substring(0, 6)}'),
+      );
+    }).toSet();
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Row(
+            textDirection: TextDirection.rtl,
+            children: [
+              Text(
+                'عمليات اليوم',
+                style: GoogleFonts.cairo(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textMain,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.statusInTransitBg,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '${positions.length}',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.statusInTransitText,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (vm.driverStreamError) ...[
+            const SizedBox(height: 8),
+            _buildReconnectingBanner(),
+          ],
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: SizedBox(
+              height: 240,
+              child: positions.isEmpty
+                  ? _buildOpsEmptyState()
+                  : GoogleMap(
+                      initialCameraPosition: const CameraPosition(
+                        target: LatLng(31.9554, 35.9454), // Amman
+                        zoom: 11,
+                      ),
+                      markers: markers,
+                      onMapCreated: (c) => _mapController = c,
+                      zoomControlsEnabled: false,
+                      myLocationButtonEnabled: false,
+                    ),
+            ),
+          ),
+          if (positions.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            _buildDriverChips(positions),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOpsEmptyState() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.primaryGreen.withValues(alpha: 0.04),
+        border: Border.all(
+          color: AppColors.primaryGreen.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(LucideIcons.mapPin, size: 36, color: AppColors.mutedText),
+            const SizedBox(height: 10),
+            Text(
+              'لا يوجد سائقون نشطون الآن',
+              style: GoogleFonts.cairo(
+                fontSize: 14,
+                color: AppColors.mutedText,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReconnectingBanner() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.amberContainer,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(
+            width: 14,
+            height: 14,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.statusPendingText),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'إعادة الاتصال…',
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: AppColors.statusPendingText,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDriverChips(Map<String, LatLng> positions) {
+    final ids = positions.keys.toList();
+    return SizedBox(
+      height: 36,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        reverse: true,
+        itemCount: ids.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (_, i) {
+          final id = ids[i];
+          return GestureDetector(
+            onTap: () {
+              final pos = positions[id];
+              if (pos != null) {
+                _mapController?.animateCamera(
+                  CameraUpdate.newCameraPosition(
+                    CameraPosition(target: pos, zoom: 15),
+                  ),
+                );
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.statusInTransitBg,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(
+                  color: AppColors.statusInTransitText.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(LucideIcons.navigation,
+                      size: 13, color: AppColors.statusInTransitText),
+                  const SizedBox(width: 5),
+                  Text(
+                    'سائق ${id.length > 6 ? id.substring(0, 6) : id}',
+                    style: GoogleFonts.cairo(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.statusInTransitText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

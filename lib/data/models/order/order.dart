@@ -73,6 +73,7 @@ class Order with _$Order {
     DateTime? arrivedAtDropoffAt,
     ArrivalConfirmationStatus? arrivalConfirmationStatus,
     OrderProof? proof,
+    OrderProof? pickupProof,
     double? supplierHoldAmount,
     double? driverCompensationAmount,
     @Default(0) int fraudAttemptCount,

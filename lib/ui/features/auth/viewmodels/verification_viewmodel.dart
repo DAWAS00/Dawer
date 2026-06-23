@@ -32,12 +32,11 @@ class VerificationViewModel extends ChangeNotifier {
   }
 
   Future<void> verify() async {
-    // [DEV] Validation temporarily disabled
-    // if (_otp.length < 6) {
-    //   _error = 'otpErrorIncomplete';
-    //   notifyListeners();
-    //   return;
-    // }
+    if (_otp.length < 6) {
+      _error = 'أدخل رمز التحقق المكوّن من 6 أرقام';
+      notifyListeners();
+      return;
+    }
 
     _isLoading = true;
     _error = null;

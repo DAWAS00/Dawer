@@ -48,7 +48,8 @@ abstract interface class IOrderRepository {
   Future<AppResult<void>> markInTransit(String orderId);
 
   /// Driver entered the 200 m pickup geofence. Stamps `arrived_at_pickup_at`.
-  Future<AppResult<void>> markArrivedAtPickup(String orderId);
+  /// [pickupProof] is persisted alongside the status update when provided.
+  Future<AppResult<void>> markArrivedAtPickup(String orderId, {OrderProof? pickupProof});
 
   /// Driver entered the 200 m dropoff geofence. Stamps `arrived_at_dropoff_at`.
   Future<AppResult<void>> markArrivedAtDropoff(String orderId);
@@ -124,7 +125,7 @@ final class NoOpOrderRepository implements IOrderRepository {
       const Success(null);
 
   @override
-  Future<AppResult<void>> markArrivedAtPickup(String orderId) async =>
+  Future<AppResult<void>> markArrivedAtPickup(String orderId, {OrderProof? pickupProof}) async =>
       const Success(null);
 
   @override
