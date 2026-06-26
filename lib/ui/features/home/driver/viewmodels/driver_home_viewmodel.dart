@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import '../../../../../data/models/driver_wallet.dart';
+import '../../../../../data/models/hub.dart';
 import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/services/app_order_store.dart';
 import '../../../../../data/services/location_publisher.dart';
 import '../../../../../data/services/location_service.dart';
 import '../../../../../data/services/proximity_service.dart';
+import '../../../../../domain/repositories/i_hub_repository.dart';
 import '../../../../../domain/repositories/i_wallet_repository.dart';
 import '../../../../../domain/services/i_location_publisher.dart';
 
@@ -16,6 +18,7 @@ class DriverHomeViewModel extends ChangeNotifier {
   final ILocationPublisher _publisher;
   final IWalletRepository _walletRepo;
   final LocationService _locationService;
+  final IHubRepository _hubRepo;
 
   // Ghost timer: fires if driver doesn't reach pickup geofence within 15 min.
   Timer? _ghostTimer;
@@ -27,11 +30,14 @@ class DriverHomeViewModel extends ChangeNotifier {
     ILocationPublisher? publisher,
     LocationService? locationService,
     IWalletRepository? walletRepo,
+    IHubRepository? hubRepository,
   })  : _publisher = publisher ?? LocationPublisher.instance,
         _locationService = locationService ?? LocationService(),
-        _walletRepo = walletRepo ?? const NoOpWalletRepository() {
+        _walletRepo = walletRepo ?? const NoOpWalletRepository(),
+        _hubRepo = hubRepository ?? const NoOpHubRepository() {
     _store.addListener(_onStoreChanged);
     _refreshWallet();
+    _loadHubs();
   }
 
   @override
@@ -43,6 +49,26 @@ class DriverHomeViewModel extends ChangeNotifier {
   }
 
   void _onStoreChanged() => notifyListeners();
+
+  // ── Hub state ─────────────────────────────────────────────────────────────
+
+  List<Hub> _hubs = [];
+  List<Hub> get hubs => _hubs;
+
+  bool _hubsLoading = false;
+  bool get hubsLoading => _hubsLoading;
+
+  Future<void> _loadHubs() async {
+    _hubsLoading = true;
+    notifyListeners();
+    final result = await _hubRepo.fetchActiveHubs();
+    result.fold(
+      onSuccess: (hubs) => _hubs = hubs,
+      onFailure: (_) => _hubs = [],
+    );
+    _hubsLoading = false;
+    notifyListeners();
+  }
 
   // ── Local state ───────────────────────────────────────────────────────────
 

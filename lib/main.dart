@@ -24,8 +24,10 @@ import 'data/services/app_order_store.dart';
 import 'data/services/noop_notification_service.dart';
 import 'data/services/signup_orchestrator.dart';
 import 'data/services/user_signup_service.dart';
+import 'data/repositories/supabase_hub_repository.dart';
 import 'domain/repositories/i_auth_repository.dart';
 import 'domain/repositories/i_file_storage_repository.dart';
+import 'domain/repositories/i_hub_repository.dart';
 import 'domain/repositories/i_order_repository.dart';
 import 'domain/repositories/i_wallet_repository.dart';
 import 'domain/services/i_notification_service.dart';
@@ -110,6 +112,11 @@ class DawerApp extends StatelessWidget {
           create: (_) => useSupabase
               ? SupabaseWalletRepository(SupabaseService.client)
               : const NoOpWalletRepository(),
+        ),
+        Provider<IHubRepository>(
+          create: (_) => useSupabase
+              ? SupabaseHubRepository(SupabaseService.client)
+              : const NoOpHubRepository(),
         ),
         ChangeNotifierProvider(
           create: (ctx) => AppOrderStore(

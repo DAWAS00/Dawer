@@ -18,6 +18,7 @@ import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../supplier/views/new_pickup_request_view.dart';
 import 'views/pickup_proof_view.dart';
 import '../../auth/viewmodels/login_viewmodel.dart';
+import '../../../../../domain/repositories/i_hub_repository.dart';
 import '../../../../../l10n/l10n.dart';
 
 class DriverHomeView extends StatelessWidget {
@@ -33,9 +34,12 @@ class DriverHomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final store = context.read<AppOrderStore>();
+    final hubRepo = context.read<IHubRepository>();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => DriverHomeViewModel(store)),
+        ChangeNotifierProvider(
+          create: (_) => DriverHomeViewModel(store, hubRepository: hubRepo),
+        ),
         ChangeNotifierProvider(
           create: (_) => MarketplaceViewModel(
             store,
