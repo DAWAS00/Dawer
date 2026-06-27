@@ -4297,6 +4297,186 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'متجر / مطعم'**
   String get signupRoleStoreLabel;
+
+  /// No description provided for @recyclingIncomingShipmentsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشحنات الواردة ({count})'**
+  String recyclingIncomingShipmentsCount(int count);
+
+  /// No description provided for @recyclingActiveJobsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوظائف النشطة ({count})'**
+  String recyclingActiveJobsCount(int count);
+
+  /// No description provided for @recyclingTodayOperations.
+  ///
+  /// In ar, this message translates to:
+  /// **'عمليات اليوم'**
+  String get recyclingTodayOperations;
+
+  /// No description provided for @recyclingNoActiveDrivers.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد سائقون نشطون الآن'**
+  String get recyclingNoActiveDrivers;
+
+  /// No description provided for @recyclingReconnecting.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة الاتصال…'**
+  String get recyclingReconnecting;
+
+  /// No description provided for @recyclingFacility.
+  ///
+  /// In ar, this message translates to:
+  /// **'منشأة تدوير'**
+  String get recyclingFacility;
+
+  /// No description provided for @recyclingReadyForReceipt.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستعد للاستلام'**
+  String get recyclingReadyForReceipt;
+
+  /// No description provided for @recyclingTotalWeightKg.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الوزن (كغ)'**
+  String get recyclingTotalWeightKg;
+
+  /// No description provided for @recyclingDriversEnRoute.
+  ///
+  /// In ar, this message translates to:
+  /// **'سائقين بالطريق'**
+  String get recyclingDriversEnRoute;
+
+  /// No description provided for @recyclingResponses.
+  ///
+  /// In ar, this message translates to:
+  /// **'استجابات'**
+  String get recyclingResponses;
+
+  /// No description provided for @recyclingShowDetails.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض التفاصيل'**
+  String get recyclingShowDetails;
+
+  /// No description provided for @recyclingCommittedCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'الملتزمون ({count})'**
+  String recyclingCommittedCount(int count);
+
+  /// No description provided for @recyclingFilterHasAcceptors.
+  ///
+  /// In ar, this message translates to:
+  /// **'لديه ملتزمون'**
+  String get recyclingFilterHasAcceptors;
+
+  /// No description provided for @recyclingFilterNoAcceptors.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد ملتزمون'**
+  String get recyclingFilterNoAcceptors;
+
+  /// No description provided for @recyclingFilterFlatFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'مبلغ ثابت'**
+  String get recyclingFilterFlatFee;
+
+  /// No description provided for @recyclingFilterPerKg.
+  ///
+  /// In ar, this message translates to:
+  /// **'بالكيلو'**
+  String get recyclingFilterPerKg;
+
+  /// No description provided for @recyclingWithdrawAdTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سحب الإعلان'**
+  String get recyclingWithdrawAdTitle;
+
+  /// No description provided for @recyclingWithdrawAdBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل أنت متأكد من سحب هذا الإعلان من السوق؟'**
+  String get recyclingWithdrawAdBody;
+
+  /// No description provided for @recyclingWithdrawAdConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'نعم، اسحب الإعلان'**
+  String get recyclingWithdrawAdConfirm;
+
+  /// No description provided for @recyclingMaxListingsReached.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت للحد الأقصى ({count} إعلانات نشطة)'**
+  String recyclingMaxListingsReached(int count);
+
+  /// No description provided for @collectionJobPaymentModelLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نموذج الدفع *'**
+  String get collectionJobPaymentModelLabel;
+
+  /// No description provided for @collectionJobPriceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر * ({unit})'**
+  String collectionJobPriceLabel(String unit);
+
+  /// No description provided for @collectionJobPricePerKgHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: 2.5 د.أ لكل كغ'**
+  String get collectionJobPricePerKgHint;
+
+  /// No description provided for @collectionJobPriceFlatHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: 25 د.أ للرحلة'**
+  String get collectionJobPriceFlatHint;
+
+  /// No description provided for @collectionJobMinQtyLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحد الأدنى للكمية (كغ) — اختياري'**
+  String get collectionJobMinQtyLabel;
+
+  /// No description provided for @collectionJobMinQtyHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: 10'**
+  String get collectionJobMinQtyHint;
+
+  /// No description provided for @collectionJobAreaHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: الرابية، عمّان'**
+  String get collectionJobAreaHint;
+
+  /// No description provided for @collectionJobDescHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشرح ما تحتاجه، المواصفات المطلوبة، وسبب الطلب...'**
+  String get collectionJobDescHint;
+
+  /// No description provided for @collectionJobFlatFeeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أجر ثابت'**
+  String get collectionJobFlatFeeLabel;
+
+  /// No description provided for @collectionJobPerKgLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'لكل كيلوغرام'**
+  String get collectionJobPerKgLabel;
 }
 
 class _AppLocalizationsDelegate

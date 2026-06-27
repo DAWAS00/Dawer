@@ -17,6 +17,7 @@ import '../viewmodels/recycling_home_viewmodel.dart';
 import '../widgets/post_job_sheet.dart';
 import '../../../../core/components/dwaar_elevated_card.dart';
 import '../../../../core/components/dwaar_skeleton.dart';
+import '../../../../../l10n/l10n.dart';
 
 class RecyclingHomeTab extends StatefulWidget {
   final String userName;
@@ -44,6 +45,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final vm = context.watch<RecyclingHomeViewModel>();
     final marketVm = context.watch<MarketplaceViewModel>();
     final myListings = marketVm.myListings(vm.companyName);
@@ -81,7 +83,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
                 values: const [0, 1],
                 indicatorSize: const Size.fromWidth(200),
                 customIconBuilder: (context, local, global) {
-                  final text = local.value == 0 ? 'الشحنات الواردة (${widget.incoming.length})' : 'الوظائف النشطة (${widget.jobs.length})';
+                  final text = local.value == 0 ? l10n.recyclingIncomingShipmentsCount(widget.incoming.length) : l10n.recyclingActiveJobsCount(widget.jobs.length);
                   final color = Color.lerp(AppColors.mutedText, AppColors.surface, local.animationValue);
                   return Text(
                     text,
@@ -154,6 +156,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
     List<Order> listings,
     MarketplaceViewModel marketVm,
   ) {
+    final l10n = context.l10n;
     return [
       SliverToBoxAdapter(
         child: Padding(
@@ -162,7 +165,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
             textDirection: TextDirection.rtl,
             children: [
               Text(
-                'منشوراتي في السوق',
+                l10n.recyclingMyListings,
                 style: GoogleFonts.cairo(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
@@ -210,23 +213,24 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
   }
 
   void _confirmDelete(BuildContext context, String orderId, MarketplaceViewModel marketVm) {
+    final l10n = context.l10n;
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('سحب الإعلان', textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        content: Text('هل أنت متأكد من سحب هذا الإعلان من السوق؟', textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+        title: Text(l10n.recyclingWithdrawAdTitle, textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        content: Text(l10n.recyclingWithdrawAdBody, textAlign: TextAlign.right, style: GoogleFonts.cairo()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('لا', style: GoogleFonts.cairo(color: AppColors.mutedText)),
+            child: Text(l10n.no, style: GoogleFonts.cairo(color: AppColors.mutedText)),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               marketVm.removeListing(orderId);
             },
-            child: Text('نعم، اسحب الإعلان', style: GoogleFonts.cairo(color: AppColors.statusCancelledText, fontWeight: FontWeight.bold)),
+            child: Text(l10n.recyclingWithdrawAdConfirm, style: GoogleFonts.cairo(color: AppColors.statusCancelledText, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -262,6 +266,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
   }
 
   Widget _buildAcceptorRow(BuildContext context, List<Order> sales) {
+    final l10n = context.l10n;
     Color chipBg(OrderStatus s) => switch (s) {
           OrderStatus.pending => AppColors.statusPendingBg,
           OrderStatus.accepted || OrderStatus.arrivedAtPickup => AppColors.statusActiveBg,
@@ -317,7 +322,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      '+$overflow آخرون',
+                      l10n.recyclingAndOthers(overflow),
                       style: GoogleFonts.cairo(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -345,7 +350,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
           ),
           const SizedBox(width: 12),
           Text(
-            'استجابات',
+            l10n.recyclingResponses,
             style: GoogleFonts.cairo(
               fontSize: 12,
               fontWeight: FontWeight.bold,
@@ -362,6 +367,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
   // ── Ops Map (عمليات اليوم) ───────────────────────────────────────────────
 
   Widget _buildOpsSection(BuildContext context, RecyclingHomeViewModel vm) {
+    final l10n = context.l10n;
     final positions = vm.driverPositions;
 
     final markers = positions.entries.map((e) {
@@ -369,7 +375,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
         markerId: MarkerId(e.key),
         position: e.value,
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-        infoWindow: InfoWindow(title: 'سائق ${e.key.substring(0, 6)}'),
+        infoWindow: InfoWindow(title: '${l10n.orderDriverSection} ${e.key.substring(0, 6)}'),
       );
     }).toSet();
 
@@ -382,7 +388,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
             textDirection: TextDirection.rtl,
             children: [
               Text(
-                'عمليات اليوم',
+                l10n.recyclingTodayOperations,
                 style: GoogleFonts.cairo(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
@@ -409,7 +415,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
           ),
           if (vm.driverStreamError) ...[
             const SizedBox(height: 8),
-            _buildReconnectingBanner(),
+            _buildReconnectingBanner(context),
           ],
           const SizedBox(height: 12),
           ClipRRect(
@@ -417,7 +423,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
             child: SizedBox(
               height: 240,
               child: positions.isEmpty
-                  ? _buildOpsEmptyState()
+                  ? _buildOpsEmptyState(context)
                   : GoogleMap(
                       initialCameraPosition: const CameraPosition(
                         target: LatLng(31.9554, 35.9454), // Amman
@@ -432,14 +438,15 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
           ),
           if (positions.isNotEmpty) ...[
             const SizedBox(height: 10),
-            _buildDriverChips(positions),
+            _buildDriverChips(context, positions),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildOpsEmptyState() {
+  Widget _buildOpsEmptyState(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       decoration: BoxDecoration(
         color: AppColors.primaryGreen.withValues(alpha: 0.04),
@@ -454,7 +461,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
             Icon(LucideIcons.mapPin, size: 36, color: AppColors.mutedText),
             const SizedBox(height: 10),
             Text(
-              'لا يوجد سائقون نشطون الآن',
+              l10n.recyclingNoActiveDrivers,
               style: GoogleFonts.cairo(
                 fontSize: 14,
                 color: AppColors.mutedText,
@@ -466,7 +473,8 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
     );
   }
 
-  Widget _buildReconnectingBanner() {
+  Widget _buildReconnectingBanner(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
@@ -486,7 +494,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
           ),
           const SizedBox(width: 8),
           Text(
-            'إعادة الاتصال…',
+            l10n.recyclingReconnecting,
             style: GoogleFonts.cairo(
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -498,7 +506,8 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
     );
   }
 
-  Widget _buildDriverChips(Map<String, LatLng> positions) {
+  Widget _buildDriverChips(BuildContext context, Map<String, LatLng> positions) {
+    final l10n = context.l10n;
     final ids = positions.keys.toList();
     return SizedBox(
       height: 36,
@@ -536,7 +545,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
                       size: 13, color: AppColors.statusInTransitText),
                   const SizedBox(width: 5),
                   Text(
-                    'سائق ${id.length > 6 ? id.substring(0, 6) : id}',
+                    '${l10n.orderDriverSection} ${id.length > 6 ? id.substring(0, 6) : id}',
                     style: GoogleFonts.cairo(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -553,6 +562,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.primaryDark,
@@ -598,7 +608,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
                   ),
                 ),
                 Text(
-                  'منشأة تدوير',
+                  l10n.recyclingFacility,
                   style: GoogleFonts.cairo(
                     fontSize: 14,
                     color: AppColors.surface.withValues(alpha: 0.8),
@@ -629,7 +639,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    widget.isOpen ? 'مستعد للاستلام' : 'مغلق مؤقتاً',
+                    widget.isOpen ? l10n.recyclingReadyForReceipt : l10n.recyclingClosedTemp,
                     style: GoogleFonts.cairo(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -646,6 +656,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
   }
 
   Widget _buildStatsRow(BuildContext context) {
+    final l10n = context.l10n;
     final inTransitCount = widget.incoming.where((o) => o.status == OrderStatus.inTransit).length;
     final totalWeight = widget.incoming.fold<double>(0, (sum, o) => sum + (o.weightKg ?? 0));
 
@@ -654,19 +665,20 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
       child: Row(
         textDirection: TextDirection.rtl,
         children: [
-          Expanded(child: _StatCard(value: '${widget.incoming.length}', label: 'شحنات اليوم', icon: LucideIcons.truck, color: AppColors.statusInTransitText)),
-          const SizedBox(width: 12),
-          Expanded(child: _StatCard(value: totalWeight.toStringAsFixed(0), label: 'إجمالي الوزن (كغ)', icon: LucideIcons.scale, color: AppColors.accentAmber)),
-          const SizedBox(width: 12),
-          Expanded(child: _StatCard(value: '${widget.jobs.length}', label: 'وظائف نشطة', icon: LucideIcons.briefcase, color: AppColors.primaryGreen)),
-          const SizedBox(width: 12),
-          Expanded(child: _StatCard(value: '$inTransitCount', label: 'سائقين بالطريق', icon: LucideIcons.navigation, color: const Color(0xFF7C3AED))),
+          Expanded(child: _StatCard(value: '${widget.incoming.length}', label: l10n.recyclingTodayShipments, icon: LucideIcons.truck, color: AppColors.statusInTransitText)),
+          const SizedBox(width: 8),
+          Expanded(child: _StatCard(value: totalWeight.toStringAsFixed(0), label: l10n.recyclingTotalWeightKg, icon: LucideIcons.scale, color: AppColors.accentAmber)),
+          const SizedBox(width: 8),
+          Expanded(child: _StatCard(value: '${widget.jobs.length}', label: l10n.recyclingActiveJobsLabel, icon: LucideIcons.briefcase, color: AppColors.primaryGreen)),
+          const SizedBox(width: 8),
+          Expanded(child: _StatCard(value: '$inTransitCount', label: l10n.recyclingDriversEnRoute, icon: LucideIcons.navigation, color: const Color(0xFF7C3AED))),
         ],
       ).animate().slideY(begin: 0.1, end: 0, duration: 400.ms, curve: Curves.easeOutBack),
     );
   }
 
   Widget _buildActionCards(BuildContext context) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
       child: DwaarElevatedCard(
@@ -691,7 +703,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
                 textDirection: TextDirection.rtl,
                 children: [
                   Text(
-                    'نشر وظيفة تجميع',
+                    l10n.recyclingPostJob,
                     style: GoogleFonts.cairo(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
@@ -699,7 +711,7 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
                     ),
                   ),
                   Text(
-                    'اطلب من السائقين جلب مواد معينة',
+                    l10n.recyclingPostJobSubtitle,
                     style: GoogleFonts.cairo(
                       fontSize: 13,
                       color: AppColors.mutedText,

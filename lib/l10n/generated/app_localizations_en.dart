@@ -825,7 +825,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recyclingOpenForReceipt => 'Open for Receipt';
 
   @override
-  String get recyclingClosedTemp => 'Temporarily Closed';
+  String get recyclingClosedTemp => 'Temporarily closed';
 
   @override
   String get recyclingTodayShipments => 'Today\'s Shipments';
@@ -2231,4 +2231,106 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signupRoleStoreLabel => 'Store / Restaurant';
+
+  @override
+  String recyclingIncomingShipmentsCount(int count) {
+    return 'Incoming shipments ($count)';
+  }
+
+  @override
+  String recyclingActiveJobsCount(int count) {
+    return 'Active jobs ($count)';
+  }
+
+  @override
+  String get recyclingTodayOperations => 'Today\'s operations';
+
+  @override
+  String get recyclingNoActiveDrivers => 'No active drivers right now';
+
+  @override
+  String get recyclingReconnecting => 'Reconnecting…';
+
+  @override
+  String get recyclingFacility => 'Recycling facility';
+
+  @override
+  String get recyclingReadyForReceipt => 'Ready for receipt';
+
+  @override
+  String get recyclingTotalWeightKg => 'Total weight (kg)';
+
+  @override
+  String get recyclingDriversEnRoute => 'Drivers en route';
+
+  @override
+  String get recyclingResponses => 'responses';
+
+  @override
+  String get recyclingShowDetails => 'Show details';
+
+  @override
+  String recyclingCommittedCount(int count) {
+    return 'Committed ($count)';
+  }
+
+  @override
+  String get recyclingFilterHasAcceptors => 'Has acceptors';
+
+  @override
+  String get recyclingFilterNoAcceptors => 'No acceptors';
+
+  @override
+  String get recyclingFilterFlatFee => 'Flat fee';
+
+  @override
+  String get recyclingFilterPerKg => 'Per kg';
+
+  @override
+  String get recyclingWithdrawAdTitle => 'Withdraw listing';
+
+  @override
+  String get recyclingWithdrawAdBody =>
+      'Are you sure you want to withdraw this listing from the market?';
+
+  @override
+  String get recyclingWithdrawAdConfirm => 'Yes, withdraw listing';
+
+  @override
+  String recyclingMaxListingsReached(int count) {
+    return 'Maximum reached ($count active listings)';
+  }
+
+  @override
+  String get collectionJobPaymentModelLabel => 'Payment model *';
+
+  @override
+  String collectionJobPriceLabel(String unit) {
+    return 'Price * ($unit)';
+  }
+
+  @override
+  String get collectionJobPricePerKgHint => 'e.g., 2.5 JOD per kg';
+
+  @override
+  String get collectionJobPriceFlatHint => 'e.g., 25 JOD per trip';
+
+  @override
+  String get collectionJobMinQtyLabel => 'Minimum quantity (kg) — optional';
+
+  @override
+  String get collectionJobMinQtyHint => 'e.g., 10';
+
+  @override
+  String get collectionJobAreaHint => 'e.g., Al-Rabiah, Amman';
+
+  @override
+  String get collectionJobDescHint =>
+      'Explain what you need, required specs, and the reason for the request...';
+
+  @override
+  String get collectionJobFlatFeeLabel => 'Flat fee';
+
+  @override
+  String get collectionJobPerKgLabel => 'Per kilogram';
 }

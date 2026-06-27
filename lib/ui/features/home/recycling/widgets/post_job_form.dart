@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/waste_type_icons.dart';
 import '../../../../../data/models/order/order.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Pure form-body widget for the collection job sheet.
 /// Receives all mutable state and callbacks from [PostJobSheet].
@@ -30,10 +31,11 @@ class PostJobFormBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        _SectionLabel(text: 'أنواع المواد المطلوبة *'),
+        _SectionLabel(text: '${l10n.collectionJobRequiredMaterials} *'),
         const SizedBox(height: 10),
         _WasteTypeChips(
           allTypes: WasteTypeIcons.all,
@@ -41,7 +43,7 @@ class PostJobFormBody extends StatelessWidget {
           onToggle: onToggleType,
         ),
         const SizedBox(height: 20),
-        _SectionLabel(text: 'نموذج الدفع *'),
+        _SectionLabel(text: l10n.collectionJobPaymentModelLabel),
         const SizedBox(height: 10),
         _PaymentToggle(
           current: paymentModel,
@@ -49,14 +51,14 @@ class PostJobFormBody extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         _SectionLabel(
-          text: 'السعر * (${paymentModel.unitLabel})',
+          text: l10n.collectionJobPriceLabel(paymentModel.unitLabel),
         ),
         const SizedBox(height: 8),
         _FormField(
           controller: priceCtrl,
           hint: paymentModel == PaymentModel.perKg
-              ? 'مثال: 2.5 د.أ لكل كغ'
-              : 'مثال: 25 د.أ للرحلة',
+              ? l10n.collectionJobPricePerKgHint
+              : l10n.collectionJobPriceFlatHint,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
@@ -64,28 +66,28 @@ class PostJobFormBody extends StatelessWidget {
         ),
         if (paymentModel == PaymentModel.perKg) ...[
           const SizedBox(height: 16),
-          _SectionLabel(text: 'الحد الأدنى للكمية (كغ) — اختياري'),
+          _SectionLabel(text: l10n.collectionJobMinQtyLabel),
           const SizedBox(height: 8),
           _FormField(
             controller: minQtyCtrl,
-            hint: 'مثال: 10',
+            hint: l10n.collectionJobMinQtyHint,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
         ],
         const SizedBox(height: 20),
-        _SectionLabel(text: 'منطقة التجميع *'),
+        _SectionLabel(text: '${l10n.collectionJobCollectionArea} *'),
         const SizedBox(height: 8),
         _FormField(
           controller: areaCtrl,
-          hint: 'مثال: الرابية، عمّان',
+          hint: l10n.collectionJobAreaHint,
         ),
         const SizedBox(height: 20),
-        _SectionLabel(text: 'وصف الوظيفة *'),
+        _SectionLabel(text: '${l10n.collectionJobDescTitle} *'),
         const SizedBox(height: 8),
         _FormField(
           controller: descriptionCtrl,
-          hint: 'اشرح ما تحتاجه، المواصفات المطلوبة، وسبب الطلب...',
+          hint: l10n.collectionJobDescHint,
           maxLines: 4,
         ),
       ],
@@ -174,6 +176,7 @@ class _PaymentToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF2F4F2),
@@ -183,14 +186,14 @@ class _PaymentToggle extends StatelessWidget {
       child: Row(
         children: [
           _ToggleOption(
-            label: 'أجر ثابت',
+            label: l10n.collectionJobFlatFeeLabel,
             icon: Icons.payments_rounded,
             isSelected: current == PaymentModel.flatFee,
             onTap: () => onChange(PaymentModel.flatFee),
           ),
           const SizedBox(width: 4),
           _ToggleOption(
-            label: 'لكل كيلوغرام',
+            label: l10n.collectionJobPerKgLabel,
             icon: Icons.scale_rounded,
             isSelected: current == PaymentModel.perKg,
             onTap: () => onChange(PaymentModel.perKg),

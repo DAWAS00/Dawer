@@ -2,8 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/utils/date_formatter.dart';
 import '../../../../../data/models/order/order.dart';
+import '../../../../../l10n/l10n.dart';
 import '../../shared/order_card.dart';
 import '../../shared/views/collection_sale_detail_view.dart';
+
+/// Typed filter chips for the incoming-shipments status filter.
+enum IncomingStatusFilter { all, accepted, inTransit }
+
+/// Typed filter chips for the collection-jobs acceptor filter.
+enum JobsAcceptorFilter { all, hasAcceptors, noAcceptors }
+
+/// Typed filter chips for the collection-jobs payment-model filter.
+enum JobsPaymentFilter { all, flatFee, perKg }
 
 class RecyclingOrdersTab extends StatefulWidget {
   final List<Order> incoming;
@@ -22,27 +32,31 @@ class RecyclingOrdersTab extends StatefulWidget {
 }
 
 class _RecyclingOrdersTabState extends State<RecyclingOrdersTab> {
-  String _filterIncomingStatus    = 'الكل';
-  String _filterIncomingType      = 'الكل';
-  String _filterJobsHasAcceptors  = 'الكل';
-  String _filterJobsPayment       = 'الكل';
+  IncomingStatusFilter _filterIncomingStatus = IncomingStatusFilter.all;
+  String? _filterIncomingType; // null == "all"
+  JobsAcceptorFilter _filterJobsHasAcceptors = JobsAcceptorFilter.all;
+  JobsPaymentFilter _filterJobsPayment = JobsPaymentFilter.all;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     // ── Derived filtered lists ────────────────────────────────────────────
     final wasteLabels = <String>{};
     for (final o in widget.incoming) {
-      for (final t in o.wasteTypes) { wasteLabels.add(t.label); }
+      for (final t in o.wasteTypes) {
+        wasteLabels.add(t.label);
+      }
     }
-    final incomingWasteChips = ['الكل', ...wasteLabels.toList()..sort()];
+    final incomingWasteChips = wasteLabels.toList()..sort();
 
     final filteredIncoming = widget.incoming.where((o) {
       final statusOk = switch (_filterIncomingStatus) {
-        'تم القبول' => o.status == OrderStatus.accepted,
-        'في الطريق' => o.status == OrderStatus.inTransit,
-        _           => true,
+        IncomingStatusFilter.accepted => o.status == OrderStatus.accepted,
+        IncomingStatusFilter.inTransit => o.status == OrderStatus.inTransit,
+        IncomingStatusFilter.all => true,
       };
-      final typeOk = _filterIncomingType == 'الكل' ||
+      final typeOk = _filterIncomingType == null ||
           o.wasteTypes.any((t) => t.label == _filterIncomingType);
       return statusOk && typeOk;
     }).toList();
@@ -50,17 +64,33 @@ class _RecyclingOrdersTabState extends State<RecyclingOrdersTab> {
     final filteredJobs = widget.jobs.where((o) {
       final hasAcceptors = widget.salesForJob(o.id).isNotEmpty;
       final acceptorOk = switch (_filterJobsHasAcceptors) {
-        'لديه ملتزمون'    => hasAcceptors,
-        'لا يوجد ملتزمون' => !hasAcceptors,
-        _                  => true,
+        JobsAcceptorFilter.hasAcceptors => hasAcceptors,
+        JobsAcceptorFilter.noAcceptors => !hasAcceptors,
+        JobsAcceptorFilter.all => true,
       };
       final paymentOk = switch (_filterJobsPayment) {
-        'مبلغ ثابت' => o.paymentModel == PaymentModel.flatFee,
-        'بالكيلو'   => o.paymentModel == PaymentModel.perKg,
-        _           => true,
+        JobsPaymentFilter.flatFee => o.paymentModel == PaymentModel.flatFee,
+        JobsPaymentFilter.perKg => o.paymentModel == PaymentModel.perKg,
+        JobsPaymentFilter.all => true,
       };
       return acceptorOk && paymentOk;
     }).toList();
+
+    final incomingStatusChips = <(IncomingStatusFilter, String)>[
+      (IncomingStatusFilter.all, l10n.marketCategoryAll),
+      (IncomingStatusFilter.accepted, l10n.orderStatusAccepted),
+      (IncomingStatusFilter.inTransit, l10n.orderStatusInTransit),
+    ];
+    final jobsAcceptorChips = <(JobsAcceptorFilter, String)>[
+      (JobsAcceptorFilter.all, l10n.marketCategoryAll),
+      (JobsAcceptorFilter.hasAcceptors, l10n.recyclingFilterHasAcceptors),
+      (JobsAcceptorFilter.noAcceptors, l10n.recyclingFilterNoAcceptors),
+    ];
+    final jobsPaymentChips = <(JobsPaymentFilter, String)>[
+      (JobsPaymentFilter.all, l10n.marketCategoryAll),
+      (JobsPaymentFilter.flatFee, l10n.recyclingFilterFlatFee),
+      (JobsPaymentFilter.perKg, l10n.recyclingFilterPerKg),
+    ];
 
     return DefaultTabController(
       length: 2,
@@ -70,7 +100,7 @@ class _RecyclingOrdersTabState extends State<RecyclingOrdersTab> {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
             child: Text(
-              'الطلبات',
+              l10n.navOrders,
               textAlign: TextAlign.right,
               style: GoogleFonts.cairo(
                 fontSize: 20,
@@ -96,9 +126,9 @@ class _RecyclingOrdersTabState extends State<RecyclingOrdersTab> {
               unselectedLabelColor: const Color(0xFF717973),
               labelStyle: GoogleFonts.cairo(fontWeight: FontWeight.bold),
               unselectedLabelStyle: GoogleFonts.cairo(),
-              tabs: const [
-                Tab(text: 'الشحنات القادمة'),
-                Tab(text: 'وظائف التجميع'),
+              tabs: [
+                Tab(text: l10n.recyclingIncomingShipments),
+                Tab(text: l10n.marketSegmentJobs),
               ],
             ),
           ),
@@ -106,16 +136,17 @@ class _RecyclingOrdersTabState extends State<RecyclingOrdersTab> {
           Expanded(
             child: TabBarView(
               children: [
-                // ── Tab 1 — الشحنات القادمة ───────────────────────────────
+                // ── Tab 1 — Incoming shipments ──────────────────────────
                 Column(
                   children: [
-                    _filterRow(
-                      chips: ['الكل', 'تم القبول', 'في الطريق'],
+                    _enumFilterRow(
+                      chips: incomingStatusChips,
                       selected: _filterIncomingStatus,
                       onSelected: (v) =>
                           setState(() => _filterIncomingStatus = v),
                     ),
-                    _filterRow(
+                    _stringFilterRow(
+                      allLabel: l10n.marketCategoryAll,
                       chips: incomingWasteChips,
                       selected: _filterIncomingType,
                       onSelected: (v) =>
@@ -129,17 +160,17 @@ class _RecyclingOrdersTabState extends State<RecyclingOrdersTab> {
                     ),
                   ],
                 ),
-                // ── Tab 2 — وظائف التجميع ────────────────────────────────
+                // ── Tab 2 — Collection jobs ────────────────────────────
                 Column(
                   children: [
-                    _filterRow(
-                      chips: ['الكل', 'لديه ملتزمون', 'لا يوجد ملتزمون'],
+                    _enumFilterRow(
+                      chips: jobsAcceptorChips,
                       selected: _filterJobsHasAcceptors,
                       onSelected: (v) =>
                           setState(() => _filterJobsHasAcceptors = v),
                     ),
-                    _filterRow(
-                      chips: ['الكل', 'مبلغ ثابت', 'بالكيلو'],
+                    _enumFilterRow(
+                      chips: jobsPaymentChips,
                       selected: _filterJobsPayment,
                       onSelected: (v) =>
                           setState(() => _filterJobsPayment = v),
@@ -161,10 +192,11 @@ class _RecyclingOrdersTabState extends State<RecyclingOrdersTab> {
     );
   }
 
-  Widget _filterRow({
-    required List<String> chips,
-    required String selected,
-    required ValueChanged<String> onSelected,
+  /// Renders a filter row whose values are typed enums.
+  Widget _enumFilterRow<T>({
+    required List<(T, String)> chips,
+    required T selected,
+    required ValueChanged<T> onSelected,
   }) {
     return SizedBox(
       height: 48,
@@ -173,40 +205,80 @@ class _RecyclingOrdersTabState extends State<RecyclingOrdersTab> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
           children: chips.map((chip) {
-            final isSelected = chip == selected;
+            final (value, label) = chip;
+            final isSelected = value == selected;
             return Padding(
               padding: const EdgeInsets.only(left: 8),
               child: GestureDetector(
-                onTap: () => onSelected(chip),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? const Color(0xFF06402B)
-                        : const Color(0xFFF2F4F2),
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(
-                      color: isSelected
-                          ? const Color(0xFF06402B)
-                          : const Color(0xFFE6E9E7),
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    chip,
-                    style: GoogleFonts.cairo(
-                      fontSize: 12,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
-                      color:
-                          isSelected ? Colors.white : const Color(0xFF404943),
-                    ),
-                  ),
-                ),
+                onTap: () => onSelected(value),
+                child: _Chip(label: label, isSelected: isSelected),
               ),
             );
           }).toList(),
+        ),
+      ),
+    );
+  }
+
+  /// Renders a filter row whose values are plain strings, with a localized
+  /// "all" option represented by `null`.
+  Widget _stringFilterRow({
+    required String allLabel,
+    required List<String> chips,
+    required String? selected,
+    required ValueChanged<String?> onSelected,
+  }) {
+    final allChips = <(String?, String)>[
+      (null, allLabel),
+      ...chips.map((c) => (c, c)),
+    ];
+    return SizedBox(
+      height: 48,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          children: allChips.map((chip) {
+            final (value, label) = chip;
+            final isSelected = value == selected;
+            return Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: GestureDetector(
+                onTap: () => onSelected(value),
+                child: _Chip(label: label, isSelected: isSelected),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+}
+
+class _Chip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  const _Chip({required this.label, required this.isSelected});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      height: 32,
+      decoration: BoxDecoration(
+        color: isSelected ? const Color(0xFF06402B) : const Color(0xFFF2F4F2),
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(
+          color: isSelected ? const Color(0xFF06402B) : const Color(0xFFE6E9E7),
+        ),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        style: GoogleFonts.cairo(
+          fontSize: 12,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          color: isSelected ? Colors.white : const Color(0xFF404943),
         ),
       ),
     );
@@ -248,6 +320,7 @@ class _RecyclingOrderList extends StatelessWidget {
   }
 
   Widget _buildAcceptorSection(BuildContext context, List<Order> sales) {
+    final l10n = context.l10n;
     const maxShown = 3;
     final shown = sales.length <= maxShown ? sales : sales.sublist(0, maxShown);
     final overflow = sales.length - maxShown;
@@ -258,7 +331,7 @@ class _RecyclingOrderList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(
-            'الملتزمون (${sales.length})',
+            l10n.recyclingCommittedCount(sales.length),
             textAlign: TextAlign.right,
             style: GoogleFonts.cairo(
               fontSize: 13,
@@ -272,7 +345,7 @@ class _RecyclingOrderList extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 2),
               child: Text(
-                '+$overflow آخر',
+                l10n.recyclingAndOthers(overflow),
                 textAlign: TextAlign.right,
                 style: GoogleFonts.cairo(
                   fontSize: 12,
@@ -286,17 +359,22 @@ class _RecyclingOrderList extends StatelessWidget {
   }
 
   Widget _buildAcceptorRow(BuildContext context, Order sale) {
+    final l10n = context.l10n;
     Color chipBg(OrderStatus s) => switch (s) {
           OrderStatus.pending => const Color(0xFFFEF3C7),
-          OrderStatus.accepted || OrderStatus.arrivedAtPickup => const Color(0xFFD1FAE5),
-          OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => const Color(0xFFDBEAFE),
+          OrderStatus.accepted || OrderStatus.arrivedAtPickup =>
+            const Color(0xFFD1FAE5),
+          OrderStatus.inTransit || OrderStatus.arrivedAtDropoff =>
+            const Color(0xFFDBEAFE),
           OrderStatus.completed => const Color(0xFFDCFCE7),
           OrderStatus.cancelled => const Color(0xFFFEE2E2),
         };
     Color chipText(OrderStatus s) => switch (s) {
           OrderStatus.pending => const Color(0xFFC8860A),
-          OrderStatus.accepted || OrderStatus.arrivedAtPickup => const Color(0xFF1E5C35),
-          OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => const Color(0xFF1E40AF),
+          OrderStatus.accepted || OrderStatus.arrivedAtPickup =>
+            const Color(0xFF1E5C35),
+          OrderStatus.inTransit || OrderStatus.arrivedAtDropoff =>
+            const Color(0xFF1E40AF),
           OrderStatus.completed => const Color(0xFF166534),
           OrderStatus.cancelled => const Color(0xFF991B1B),
         };
@@ -326,7 +404,7 @@ class _RecyclingOrderList extends StatelessWidget {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: Text(
-              'عرض التفاصيل',
+              l10n.recyclingShowDetails,
               style: GoogleFonts.cairo(
                 fontSize: 12,
                 color: const Color(0xFF1E5C35),

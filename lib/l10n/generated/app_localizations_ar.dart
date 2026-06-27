@@ -2206,4 +2206,106 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get signupRoleStoreLabel => 'متجر / مطعم';
+
+  @override
+  String recyclingIncomingShipmentsCount(int count) {
+    return 'الشحنات الواردة ($count)';
+  }
+
+  @override
+  String recyclingActiveJobsCount(int count) {
+    return 'الوظائف النشطة ($count)';
+  }
+
+  @override
+  String get recyclingTodayOperations => 'عمليات اليوم';
+
+  @override
+  String get recyclingNoActiveDrivers => 'لا يوجد سائقون نشطون الآن';
+
+  @override
+  String get recyclingReconnecting => 'إعادة الاتصال…';
+
+  @override
+  String get recyclingFacility => 'منشأة تدوير';
+
+  @override
+  String get recyclingReadyForReceipt => 'مستعد للاستلام';
+
+  @override
+  String get recyclingTotalWeightKg => 'إجمالي الوزن (كغ)';
+
+  @override
+  String get recyclingDriversEnRoute => 'سائقين بالطريق';
+
+  @override
+  String get recyclingResponses => 'استجابات';
+
+  @override
+  String get recyclingShowDetails => 'عرض التفاصيل';
+
+  @override
+  String recyclingCommittedCount(int count) {
+    return 'الملتزمون ($count)';
+  }
+
+  @override
+  String get recyclingFilterHasAcceptors => 'لديه ملتزمون';
+
+  @override
+  String get recyclingFilterNoAcceptors => 'لا يوجد ملتزمون';
+
+  @override
+  String get recyclingFilterFlatFee => 'مبلغ ثابت';
+
+  @override
+  String get recyclingFilterPerKg => 'بالكيلو';
+
+  @override
+  String get recyclingWithdrawAdTitle => 'سحب الإعلان';
+
+  @override
+  String get recyclingWithdrawAdBody =>
+      'هل أنت متأكد من سحب هذا الإعلان من السوق؟';
+
+  @override
+  String get recyclingWithdrawAdConfirm => 'نعم، اسحب الإعلان';
+
+  @override
+  String recyclingMaxListingsReached(int count) {
+    return 'وصلت للحد الأقصى ($count إعلانات نشطة)';
+  }
+
+  @override
+  String get collectionJobPaymentModelLabel => 'نموذج الدفع *';
+
+  @override
+  String collectionJobPriceLabel(String unit) {
+    return 'السعر * ($unit)';
+  }
+
+  @override
+  String get collectionJobPricePerKgHint => 'مثال: 2.5 د.أ لكل كغ';
+
+  @override
+  String get collectionJobPriceFlatHint => 'مثال: 25 د.أ للرحلة';
+
+  @override
+  String get collectionJobMinQtyLabel => 'الحد الأدنى للكمية (كغ) — اختياري';
+
+  @override
+  String get collectionJobMinQtyHint => 'مثال: 10';
+
+  @override
+  String get collectionJobAreaHint => 'مثال: الرابية، عمّان';
+
+  @override
+  String get collectionJobDescHint =>
+      'اشرح ما تحتاجه، المواصفات المطلوبة، وسبب الطلب...';
+
+  @override
+  String get collectionJobFlatFeeLabel => 'أجر ثابت';
+
+  @override
+  String get collectionJobPerKgLabel => 'لكل كيلوغرام';
 }
