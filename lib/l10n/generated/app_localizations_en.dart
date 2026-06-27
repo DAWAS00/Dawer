@@ -2135,4 +2135,100 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get licenseScanSuggestedCategories =>
       'Suggested marketplace categories';
+
+  @override
+  String get signupLocationPermissionDenied =>
+      'Please allow location access from device settings';
+
+  @override
+  String signupLocationError(String error) {
+    return 'Could not determine location: $error';
+  }
+
+  @override
+  String get signupLocating => 'Locating you...';
+
+  @override
+  String get signupSkip => 'Skip';
+
+  @override
+  String get signupIdentityLabel => 'Your identity';
+
+  @override
+  String get signupRoleDetailsLabel => 'Role details';
+
+  @override
+  String get signupVehicleInfoTitle => 'Vehicle information';
+
+  @override
+  String get signupYourWasteTypes => 'Your waste types';
+
+  @override
+  String get signupAcceptedWasteTypes => 'Accepted waste types';
+
+  @override
+  String get signupSelectOneOrMore => 'Select one or more';
+
+  @override
+  String get signupSaveAndComplete => 'Save and complete';
+
+  @override
+  String get signupSkipCompleteLater => 'Skip now, I\'ll complete later';
+
+  @override
+  String get signupUpdateAnytime =>
+      'You can update this data anytime from your account settings.';
+
+  @override
+  String get signupRoleDriverHeading => 'Your vehicle information';
+
+  @override
+  String get signupRoleSupplierHeading => 'What would you like to recycle?';
+
+  @override
+  String get signupRoleRecyclingHeading => 'What does your facility accept?';
+
+  @override
+  String get signupRoleDriverBody =>
+      'Add your vehicle plate to start receiving orders. You can scan the registration automatically.';
+
+  @override
+  String get signupRoleSupplierBody =>
+      'Specify your waste types to receive relevant offers directly.';
+
+  @override
+  String get signupRoleRecyclingBody =>
+      'Specify the materials your facility accepts to help suppliers find you.';
+
+  @override
+  String get signupPlateNumberLabel => 'Vehicle plate number';
+
+  @override
+  String get signupPlateNumberHint => 'e.g., 12 A B C';
+
+  @override
+  String get signupWelcomeTo => 'Welcome to Dwaar!';
+
+  @override
+  String get signupCreateIdentityHeading =>
+      'Let\'s create your digital identity';
+
+  @override
+  String get signupProfilePhotoLabel => 'Profile photo';
+
+  @override
+  String get signupAccountTypePrompt => 'What\'s your account type?';
+
+  @override
+  String get signupPrivacyNotice =>
+      'Your data is used only to create your account and will not be shared with any third party.';
+
+  @override
+  String get signupSmsVerification => 'We\'ll verify your number via SMS';
+
+  @override
+  String get signupRoleIndividualLabel => 'Individual';
+
+  @override
+  String get signupRoleStoreLabel => 'Store / Restaurant';
 }

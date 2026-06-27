@@ -132,7 +132,7 @@ class _SignupIdentityBodyState extends State<_SignupIdentityBody> {
             children: [
               // Header.
               Text(
-                'أهلاً بك في دوّر!',
+                l10n.signupWelcomeTo,
                 style: GoogleFonts.cairo(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -142,7 +142,7 @@ class _SignupIdentityBodyState extends State<_SignupIdentityBody> {
               ).animate().fadeIn().slideY(begin: 0.05),
               const SizedBox(height: 8),
               Text(
-                'لنبدأ بإنشاء هويتك الرقمية',
+                l10n.signupCreateIdentityHeading,
                 style: GoogleFonts.cairo(
                   fontSize: 15,
                   color: const Color(0xFF404943),
@@ -155,7 +155,7 @@ class _SignupIdentityBodyState extends State<_SignupIdentityBody> {
               Center(
                 child: PhotoPickerCard(
                   image: _photo,
-                  label: 'الصورة الشخصية',
+                  label: l10n.signupProfilePhotoLabel,
                   isBusiness: isBusiness,
                   onPick: _pickPhoto,
                   onRemove: _clearPhoto,
@@ -175,7 +175,7 @@ class _SignupIdentityBodyState extends State<_SignupIdentityBody> {
 
               // Role selector.
               Text(
-                'ما نوع حسابك؟',
+                l10n.signupAccountTypePrompt,
                 style: GoogleFonts.cairo(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
@@ -233,7 +233,7 @@ class _SignupIdentityBodyState extends State<_SignupIdentityBody> {
 
               // "Why we need this" microcopy.
               Text(
-                'سيتم استخدام بياناتك لإنشاء حسابك فقط، ولن تُشارك مع أي طرف ثالث.',
+                l10n.signupPrivacyNotice,
                 style: GoogleFonts.cairo(
                   fontSize: 11,
                   color: const Color(0xFF717973),
@@ -256,28 +256,29 @@ class _RoleSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       children: [
         FriendlyRoleCard(
           icon: LucideIcons.truck,
-          title: 'سائق',
-          subtitle: 'توصيل النفايات واستلامها',
+          title: l10n.roleDriverTitle,
+          subtitle: l10n.roleDriverSubtitle,
           isSelected: controller.role == UserRole.driver,
           onTap: () => controller.updateRole(UserRole.driver),
         ),
         const SizedBox(height: 8),
         FriendlyRoleCard(
           icon: LucideIcons.package,
-          title: 'مورد',
-          subtitle: 'عرض النفايات القابلة للتدوير',
+          title: l10n.roleSupplierTitle,
+          subtitle: l10n.roleSupplierSubtitle,
           isSelected: controller.role == UserRole.supplier,
           onTap: () => controller.updateRole(UserRole.supplier),
         ),
         const SizedBox(height: 8),
         FriendlyRoleCard(
           icon: LucideIcons.factory,
-          title: 'شركة تدوير',
-          subtitle: 'شراء النفايات ومعالجتها',
+          title: l10n.roleRecyclingCoTitle,
+          subtitle: l10n.roleRecyclingCoSubtitle,
           isSelected: controller.role == UserRole.recyclingCo,
           onTap: () => controller.updateRole(UserRole.recyclingCo),
         ),
@@ -294,6 +295,7 @@ class _SupplierTypeToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -304,7 +306,7 @@ class _SupplierTypeToggle extends StatelessWidget {
         children: [
           Expanded(
             child: _ToggleOption(
-              label: 'فرد',
+              label: l10n.signupRoleIndividualLabel,
               icon: Icons.person_rounded,
               selected: controller.supplierType == SupplierType.individual,
               onTap: () => controller.setSupplierType(SupplierType.individual),
@@ -313,7 +315,7 @@ class _SupplierTypeToggle extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: _ToggleOption(
-              label: 'متجر / مطعم',
+              label: l10n.signupRoleStoreLabel,
               icon: Icons.storefront_rounded,
               selected:
                   controller.supplierType == SupplierType.storeBusiness,

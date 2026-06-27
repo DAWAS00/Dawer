@@ -147,7 +147,7 @@ class _SignupPhoneScreenState extends State<SignupPhoneScreen> {
               const SizedBox(height: 8),
               // Helper text.
               Text(
-                'سنتحقق من رقمك عبر رسالة نصية',
+                l10n.signupSmsVerification,
                 style: GoogleFonts.cairo(
                   fontSize: 12,
                   color: const Color(0xFF717973),

@@ -192,6 +192,7 @@ class StoreOnboardingViewModel extends ChangeNotifier {
       address: finalAddress,
       addressLat: _addressLat,
       addressLng: _addressLng,
+      categories: _selectedCategories.toList(),
     );
   }
 
@@ -202,7 +203,6 @@ class StoreOnboardingViewModel extends ChangeNotifier {
     submitError = null;
     notifyListeners();
 
-    // TODO: persist selectedCategories + tagline to 'store_profiles' table
     final result = await _service.signUp(
       _buildRequest(),
       profilePhoto: profilePhoto,

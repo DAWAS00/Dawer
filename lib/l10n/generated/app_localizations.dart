@@ -4123,6 +4123,180 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'فئات مقترحة في السوق'**
   String get licenseScanSuggestedCategories;
+
+  /// No description provided for @signupLocationPermissionDenied.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى السماح بالوصول للموقع من إعدادات الجهاز'**
+  String get signupLocationPermissionDenied;
+
+  /// No description provided for @signupLocationError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تحديد الموقع: {error}'**
+  String signupLocationError(String error);
+
+  /// No description provided for @signupLocating.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري تحديد موقعك...'**
+  String get signupLocating;
+
+  /// No description provided for @signupSkip.
+  ///
+  /// In ar, this message translates to:
+  /// **'تخطي'**
+  String get signupSkip;
+
+  /// No description provided for @signupIdentityLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'هويتك'**
+  String get signupIdentityLabel;
+
+  /// No description provided for @signupRoleDetailsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل الدور'**
+  String get signupRoleDetailsLabel;
+
+  /// No description provided for @signupVehicleInfoTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'معلومات المركبة'**
+  String get signupVehicleInfoTitle;
+
+  /// No description provided for @signupYourWasteTypes.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنواع النفايات لديك'**
+  String get signupYourWasteTypes;
+
+  /// No description provided for @signupAcceptedWasteTypes.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنواع النفايات المقبولة'**
+  String get signupAcceptedWasteTypes;
+
+  /// No description provided for @signupSelectOneOrMore.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر واحداً أو أكثر'**
+  String get signupSelectOneOrMore;
+
+  /// No description provided for @signupSaveAndComplete.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ وإكمال'**
+  String get signupSaveAndComplete;
+
+  /// No description provided for @signupSkipCompleteLater.
+  ///
+  /// In ar, this message translates to:
+  /// **'تخطي الآن، سأكمل لاحقاً'**
+  String get signupSkipCompleteLater;
+
+  /// No description provided for @signupUpdateAnytime.
+  ///
+  /// In ar, this message translates to:
+  /// **'يمكنك تحديث هذه البيانات في أي وقت من إعدادات حسابك.'**
+  String get signupUpdateAnytime;
+
+  /// No description provided for @signupRoleDriverHeading.
+  ///
+  /// In ar, this message translates to:
+  /// **'معلومات مركبتك'**
+  String get signupRoleDriverHeading;
+
+  /// No description provided for @signupRoleSupplierHeading.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما الذي تودّ تدويره؟'**
+  String get signupRoleSupplierHeading;
+
+  /// No description provided for @signupRoleRecyclingHeading.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما الذي تقبله منشأتك؟'**
+  String get signupRoleRecyclingHeading;
+
+  /// No description provided for @signupRoleDriverBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف لوحة مركبتك لبدء استلام الطلبات. يمكنك مسح الاستمارة تلقائياً.'**
+  String get signupRoleDriverBody;
+
+  /// No description provided for @signupRoleSupplierBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدد أنواع النفايات لديك لتلقي العروض المناسبة لك مباشرةً.'**
+  String get signupRoleSupplierBody;
+
+  /// No description provided for @signupRoleRecyclingBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدد ما تقبله منشأتك من مواد لمساعدة الموردين على إيجادك.'**
+  String get signupRoleRecyclingBody;
+
+  /// No description provided for @signupPlateNumberLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم لوحة المركبة'**
+  String get signupPlateNumberLabel;
+
+  /// No description provided for @signupPlateNumberHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: 12 أ ب ج'**
+  String get signupPlateNumberHint;
+
+  /// No description provided for @signupWelcomeTo.
+  ///
+  /// In ar, this message translates to:
+  /// **'أهلاً بك في دوّر!'**
+  String get signupWelcomeTo;
+
+  /// No description provided for @signupCreateIdentityHeading.
+  ///
+  /// In ar, this message translates to:
+  /// **'لنبدأ بإنشاء هويتك الرقمية'**
+  String get signupCreateIdentityHeading;
+
+  /// No description provided for @signupProfilePhotoLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصورة الشخصية'**
+  String get signupProfilePhotoLabel;
+
+  /// No description provided for @signupAccountTypePrompt.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما نوع حسابك؟'**
+  String get signupAccountTypePrompt;
+
+  /// No description provided for @signupPrivacyNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيتم استخدام بياناتك لإنشاء حسابك فقط، ولن تُشارك مع أي طرف ثالث.'**
+  String get signupPrivacyNotice;
+
+  /// No description provided for @signupSmsVerification.
+  ///
+  /// In ar, this message translates to:
+  /// **'سنتحقق من رقمك عبر رسالة نصية'**
+  String get signupSmsVerification;
+
+  /// No description provided for @signupRoleIndividualLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'فرد'**
+  String get signupRoleIndividualLabel;
+
+  /// No description provided for @signupRoleStoreLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'متجر / مطعم'**
+  String get signupRoleStoreLabel;
 }
 
 class _AppLocalizationsDelegate

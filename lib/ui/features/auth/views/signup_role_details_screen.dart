@@ -64,6 +64,8 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
   SignupController get _ctrl => context.read<SignupController>();
 
   Future<void> _detectLocation() async {
+    // Capture locale before any async gap (clean-code: no context use across awaits).
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     setState(() => _isLocating = true);
     try {
       var permission = await Geolocator.checkPermission();
@@ -74,7 +76,7 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
           permission == LocationPermission.denied) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('يرجى السماح بالوصول للموقع من إعدادات الجهاز',
+            content: Text(context.l10n.signupLocationPermissionDenied,
                 style: GoogleFonts.cairo()),
           ));
         }
@@ -99,7 +101,7 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
             p.subLocality,
             p.locality,
             p.administrativeArea,
-          ].where((s) => s != null && s.isNotEmpty).join('، ');
+          ].where((s) => s != null && s.isNotEmpty).join(isAr ? '، ' : ', ');
         }
       } catch (_) {
         // Reverse geocode failed — store coords only, address stays empty.
@@ -113,7 +115,7 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('تعذّر تحديد الموقع: ${e.toString()}',
+          content: Text(context.l10n.signupLocationError(e.toString()),
               style: GoogleFonts.cairo()),
         ));
       }
@@ -192,7 +194,7 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_forward_ios_rounded),
             onPressed: _navigateHome,
-            tooltip: 'الرئيسية',
+            tooltip: l10n.navHome,
           ),
           title: Text(l10n.signupTitle, style: GoogleFonts.cairo()),
           backgroundColor: Colors.transparent,
@@ -202,7 +204,7 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
             TextButton(
               onPressed: _navigateHome,
               child: Text(
-                'تخطي',
+                l10n.signupSkip,
                 style: GoogleFonts.cairo(
                   color: const Color(0xFF717973),
                   fontWeight: FontWeight.bold,
@@ -229,15 +231,15 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('هويتك', style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF06402B))),
-                    Text('تفاصيل الدور', style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF06402B))),
+                    Text(l10n.signupIdentityLabel, style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF06402B))),
+                    Text(l10n.signupRoleDetailsLabel, style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF06402B))),
                   ],
                 ),
                 const SizedBox(height: 24),
 
                 // Header.
                 Text(
-                  _headerTitle(controller.role),
+                  _headerTitle(l10n, controller.role),
                   style: GoogleFonts.cairo(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -246,7 +248,7 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  _headerSubtitle(controller.role),
+                  _headerSubtitle(l10n, controller.role),
                   style: GoogleFonts.cairo(
                     fontSize: 14,
                     color: const Color(0xFF717973),
@@ -258,7 +260,7 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
                 // ── Driver branch ──────────────────────────────────────────────
                 if (isDriver) ...[
                   OnboardingSectionCard(
-                    title: 'معلومات المركبة',
+                    title: l10n.signupVehicleInfoTitle,
                     icon: Icons.directions_car_rounded,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -305,10 +307,10 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
                 if (isSupplier || controller.role == UserRole.recyclingCo) ...[
                   OnboardingSectionCard(
                     title: isSupplier
-                        ? 'أنواع النفايات لديك'
-                        : 'أنواع النفايات المقبولة',
+                        ? l10n.signupYourWasteTypes
+                        : l10n.signupAcceptedWasteTypes,
                     icon: Icons.recycling_rounded,
-                    subtitle: 'اختر واحداً أو أكثر',
+                    subtitle: l10n.signupSelectOneOrMore,
                     child: _WasteTypeChips(
                       selected: _selectedTypes,
                       onToggle: (type) {
@@ -356,7 +358,7 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
                                       ),
                                     ),
                                     const SizedBox(width: 12),
-                                    Text('جاري تحديد موقعك...',
+                                    Text(l10n.signupLocating,
                                         style: GoogleFonts.cairo(
                                             fontSize: 13,
                                             color: const Color(0xFF404943))),
@@ -404,7 +406,7 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
                 const SizedBox(height: 32),
 
                 GreenButton(
-                  text: 'حفظ وإكمال',
+                  text: l10n.signupSaveAndComplete,
                   onPressed: _submit,
                   isLoading: controller.isSubmitting,
                 ),
@@ -412,7 +414,7 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
                 TextButton(
                   onPressed: controller.isSubmitting ? null : _navigateHome,
                   child: Text(
-                    'تخطي الآن، سأكمل لاحقاً',
+                    l10n.signupSkipCompleteLater,
                     style: GoogleFonts.cairo(
                       fontSize: 13,
                       color: const Color(0xFF717973),
@@ -423,7 +425,7 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
 
                 // Microcopy.
                 Text(
-                  'يمكنك تحديث هذه البيانات في أي وقت من إعدادات حسابك.',
+                  l10n.signupUpdateAnytime,
                   style: GoogleFonts.cairo(
                     fontSize: 11,
                     color: const Color(0xFF717973),
@@ -438,16 +440,16 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
     );
   }
 
-  String _headerTitle(UserRole role) => switch (role) {
-    UserRole.driver => 'معلومات مركبتك',
-    UserRole.supplier => 'ما الذي تودّ تدويره؟',
-    UserRole.recyclingCo => 'ما الذي تقبله منشأتك؟',
+  String _headerTitle(AppLocalizations l10n, UserRole role) => switch (role) {
+    UserRole.driver => l10n.signupRoleDriverHeading,
+    UserRole.supplier => l10n.signupRoleSupplierHeading,
+    UserRole.recyclingCo => l10n.signupRoleRecyclingHeading,
   };
 
-  String _headerSubtitle(UserRole role) => switch (role) {
-    UserRole.driver => 'أضف لوحة مركبتك لبدء استلام الطلبات. يمكنك مسح الاستمارة تلقائياً.',
-    UserRole.supplier => 'حدد أنواع النفايات لديك لتلقي العروض المناسبة لك مباشرةً.',
-    UserRole.recyclingCo => 'حدد ما تقبله منشأتك من مواد لمساعدة الموردين على إيجادك.',
+  String _headerSubtitle(AppLocalizations l10n, UserRole role) => switch (role) {
+    UserRole.driver => l10n.signupRoleDriverBody,
+    UserRole.supplier => l10n.signupRoleSupplierBody,
+    UserRole.recyclingCo => l10n.signupRoleRecyclingBody,
   };
 }
 
@@ -466,13 +468,14 @@ class _PlateField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             Text(
-              'رقم لوحة المركبة',
+              l10n.signupPlateNumberLabel,
               style: GoogleFonts.cairo(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
@@ -489,7 +492,7 @@ class _PlateField extends StatelessWidget {
                 border: Border.all(color: const Color(0xFFFDE047)),
               ),
               child: Text(
-                'مثال: 12 أ ب ج',
+                l10n.signupPlateNumberHint,
                 style: GoogleFonts.dmSans(fontSize: 10, color: const Color(0xFF713F12)),
               ),
             ),
@@ -543,6 +546,7 @@ class _AutoFilledChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -566,7 +570,7 @@ class _AutoFilledChips extends StatelessWidget {
         if (controller.hasChemicalPermit)
           _InfoChip(
             icon: Icons.verified_rounded,
-            label: 'تصريح كيميائي',
+            label: l10n.vehicleScanChemicalPermit,
             color: const Color(0xFF059669),
           ),
       ],

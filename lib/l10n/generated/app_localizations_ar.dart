@@ -2111,4 +2111,99 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get licenseScanSuggestedCategories => 'فئات مقترحة في السوق';
+
+  @override
+  String get signupLocationPermissionDenied =>
+      'يرجى السماح بالوصول للموقع من إعدادات الجهاز';
+
+  @override
+  String signupLocationError(String error) {
+    return 'تعذّر تحديد الموقع: $error';
+  }
+
+  @override
+  String get signupLocating => 'جاري تحديد موقعك...';
+
+  @override
+  String get signupSkip => 'تخطي';
+
+  @override
+  String get signupIdentityLabel => 'هويتك';
+
+  @override
+  String get signupRoleDetailsLabel => 'تفاصيل الدور';
+
+  @override
+  String get signupVehicleInfoTitle => 'معلومات المركبة';
+
+  @override
+  String get signupYourWasteTypes => 'أنواع النفايات لديك';
+
+  @override
+  String get signupAcceptedWasteTypes => 'أنواع النفايات المقبولة';
+
+  @override
+  String get signupSelectOneOrMore => 'اختر واحداً أو أكثر';
+
+  @override
+  String get signupSaveAndComplete => 'حفظ وإكمال';
+
+  @override
+  String get signupSkipCompleteLater => 'تخطي الآن، سأكمل لاحقاً';
+
+  @override
+  String get signupUpdateAnytime =>
+      'يمكنك تحديث هذه البيانات في أي وقت من إعدادات حسابك.';
+
+  @override
+  String get signupRoleDriverHeading => 'معلومات مركبتك';
+
+  @override
+  String get signupRoleSupplierHeading => 'ما الذي تودّ تدويره؟';
+
+  @override
+  String get signupRoleRecyclingHeading => 'ما الذي تقبله منشأتك؟';
+
+  @override
+  String get signupRoleDriverBody =>
+      'أضف لوحة مركبتك لبدء استلام الطلبات. يمكنك مسح الاستمارة تلقائياً.';
+
+  @override
+  String get signupRoleSupplierBody =>
+      'حدد أنواع النفايات لديك لتلقي العروض المناسبة لك مباشرةً.';
+
+  @override
+  String get signupRoleRecyclingBody =>
+      'حدد ما تقبله منشأتك من مواد لمساعدة الموردين على إيجادك.';
+
+  @override
+  String get signupPlateNumberLabel => 'رقم لوحة المركبة';
+
+  @override
+  String get signupPlateNumberHint => 'مثال: 12 أ ب ج';
+
+  @override
+  String get signupWelcomeTo => 'أهلاً بك في دوّر!';
+
+  @override
+  String get signupCreateIdentityHeading => 'لنبدأ بإنشاء هويتك الرقمية';
+
+  @override
+  String get signupProfilePhotoLabel => 'الصورة الشخصية';
+
+  @override
+  String get signupAccountTypePrompt => 'ما نوع حسابك؟';
+
+  @override
+  String get signupPrivacyNotice =>
+      'سيتم استخدام بياناتك لإنشاء حسابك فقط، ولن تُشارك مع أي طرف ثالث.';
+
+  @override
+  String get signupSmsVerification => 'سنتحقق من رقمك عبر رسالة نصية';
+
+  @override
+  String get signupRoleIndividualLabel => 'فرد';
+
+  @override
+  String get signupRoleStoreLabel => 'متجر / مطعم';
 }
