@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../data/services/mock_ai_simulation_service.dart';
+import '../../../../data/services/gemini_ai_simulation_service.dart';
 import '../viewmodels/restaurant_signup_viewmodel.dart';
 import 'widgets/restaurant_step_basic_profile.dart';
 import 'widgets/restaurant_step_ai_identity.dart';
@@ -15,7 +15,7 @@ class RestaurantSignupView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => RestaurantSignupViewModel(
-        aiService: MockAiSimulationService(),
+        aiService: GeminiAiSimulationService(),
       ),
       child: const _RestaurantSignupContent(),
     );

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../data/models/user_role.dart';
-import '../../../../data/services/mock_ai_marketplace_service.dart';
+import '../../../../data/services/gemini_ai_marketplace_service.dart';
 import '../../../../domain/services/i_ai_marketplace_service.dart';
 import '../../../../data/services/user_signup_service.dart';
 import '../../../../domain/failures/app_failure.dart';
@@ -104,7 +104,7 @@ class SignUpViewModel extends ChangeNotifier {
 
   // AI Suggestions
   final IAiMarketplaceService _aiMarketplaceService =
-      MockAiMarketplaceService();
+      GeminiAiMarketplaceService();
   AiMarketplaceSuggestion? _suggestion;
   AiMarketplaceSuggestion? get suggestion => _suggestion;
   bool _isLoadingSuggestion = false;

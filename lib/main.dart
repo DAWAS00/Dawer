@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'backend_integration_locally/local_store.dart';
+import 'data/services/gemini_service.dart';
 import 'core/services/app_lang_notifier.dart';
 import 'core/services/app_theme_notifier.dart';
 import 'core/services/supabase_service.dart';
@@ -47,6 +48,11 @@ import 'ui/features/splash/views/splash_view.dart';
     url: supabaseUrl.isNotEmpty ? supabaseUrl : 'https://bpzuwwbtqqrpohfqjcuo.supabase.co',
     anonKey: supabaseAnonKey.isNotEmpty ? supabaseAnonKey : 'sb_publishable__JiNp6XeCpIOC1rWi9PwpA_JA51eBU7',
   );
+
+  final geminiKey = dotenv.env['GEMINI_API_KEY']?.trim() ?? '';
+  if (geminiKey.isNotEmpty) {
+    GeminiService.instance.init(geminiKey);
+  }
 
   final prefs = await SharedPreferences.getInstance();
   final localStore = await LocalStore.init();

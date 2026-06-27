@@ -7,7 +7,7 @@ import '../../../../data/models/restaurant_registration_data.dart';
 import '../../../../data/models/user_role.dart';
 import '../../../../domain/services/i_ai_simulation_service.dart';
 import '../../../../domain/services/i_ai_marketplace_service.dart';
-import '../../../../data/services/mock_ai_marketplace_service.dart';
+import '../../../../data/services/gemini_ai_marketplace_service.dart';
 import 'license_validation_viewmodel.dart';
 
 class RestaurantSignupViewModel extends ChangeNotifier {
@@ -49,7 +49,7 @@ class RestaurantSignupViewModel extends ChangeNotifier {
   String _cuisineType = '';
   String get cuisineType => _cuisineType;
 
-  final IAiMarketplaceService _aiMarketplaceService = MockAiMarketplaceService();
+  final IAiMarketplaceService _aiMarketplaceService = GeminiAiMarketplaceService();
   AiMarketplaceSuggestion? _suggestion;
   AiMarketplaceSuggestion? get suggestion => _suggestion;
   bool _isLoadingSuggestion = false;
