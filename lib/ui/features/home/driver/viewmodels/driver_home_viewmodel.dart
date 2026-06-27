@@ -58,13 +58,20 @@ class DriverHomeViewModel extends ChangeNotifier {
   bool _hubsLoading = false;
   bool get hubsLoading => _hubsLoading;
 
+  String? _hubsError;
+  String? get hubsError => _hubsError;
+
   Future<void> _loadHubs() async {
     _hubsLoading = true;
+    _hubsError = null;
     notifyListeners();
     final result = await _hubRepo.fetchActiveHubs();
     result.fold(
       onSuccess: (hubs) => _hubs = hubs,
-      onFailure: (_) => _hubs = [],
+      onFailure: (f) {
+        _hubs = [];
+        _hubsError = f.toString();
+      },
     );
     _hubsLoading = false;
     notifyListeners();

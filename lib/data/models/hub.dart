@@ -40,7 +40,7 @@ class Hub {
       lng:              (json['lng'] as num).toDouble(),
       active:           json['active'] as bool,
       capacityKg:       (json['capacity_kg'] as num).toDouble(),
-      currentLoad:      Map<String, dynamic>.from(json['current_load'] as Map),
+      currentLoad:      Map<String, dynamic>.from((json['current_load'] as Map?) ?? {}),
       schedule:         json['schedule'] as String,
       nextShipmentDate: json['next_shipment_date'] as String?,
       lastShipmentDate: json['last_shipment_date'] as String?,

@@ -300,5 +300,5 @@ Read `devPlans/production_gaps_analysis.md`, `docs/codebase-guide/`, and [`docs/
 - `docs/codebase-guide/*.md` — detailed guides for architecture, auth, order lifecycle, tracking, wallet/pricing, AI, Supabase backend, and push notifications.
 - `docs/supabase/auth-configuration.md` — live Supabase auth checklist and rate limits.
 - `docs/supabase/edge-functions.md` — Edge Function catalogue.
-- `devPlans/*.md` — implementation reports and production gap analysis.
+- `devPlans/*.md` — implementation reports, production gap analysis, and integration plans. Key files: `2026-06-26-supabase-integration-plan.md` (App ↔ Dashboard Supabase wiring, Phases 1-3).
 - `plan/*.md` — feature implementation plans.

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/mock/order_mock_data.dart';
+import '../../../../../data/models/hub.dart';
 import '../../../../../data/models/order/order.dart';
 import '../../../../../l10n/l10n.dart';
 import '../viewmodels/driver_home_viewmodel.dart';
@@ -91,6 +92,37 @@ class DriverHomeTab extends StatelessWidget {
           ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+        // ── Hubs ──
+        if (driverVm.hubsError != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: _HubsErrorBanner(message: driverVm.hubsError!),
+            ),
+          )
+        else if (driverVm.hubs.isNotEmpty) ...[
+          SliverToBoxAdapter(
+            child: HomeSectionHeader(
+              title: 'مراكز التسليم المتاحة',
+              count: driverVm.hubs.length,
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 8)),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 80,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: driverVm.hubs.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 10),
+                itemBuilder: (_, i) => _HubChip(hub: driverVm.hubs[i]),
+              ),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 12)),
+        ],
 
         // ── Active Orders ──
         SliverToBoxAdapter(
@@ -257,6 +289,132 @@ class DriverHomeTab extends StatelessWidget {
             child: Text(context.l10n.yesWithdraw,
                 style: GoogleFonts.cairo(
                     color: Colors.red, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Hub widgets ──
+
+class _HubsErrorBanner extends StatelessWidget {
+  const _HubsErrorBanner({required this.message});
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.statusCancelledBg,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.statusCancelledText.withAlpha(60)),
+      ),
+      child: Row(
+        children: [
+          const Icon(LucideIcons.triangleAlert,
+              size: 16, color: AppColors.statusCancelledText),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'مراكز التسليم غير متاحة — تحقق من الاتصال',
+              style: GoogleFonts.cairo(
+                fontSize: 12,
+                color: AppColors.statusCancelledText,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HubChip extends StatelessWidget {
+  const _HubChip({required this.hub});
+  final Hub hub;
+
+  @override
+  Widget build(BuildContext context) {
+    final statusColor = switch (hub.status) {
+      'ready' => AppColors.statusActiveText,
+      'collecting' => AppColors.statusInTransitText,
+      _ => AppColors.mutedText,
+    };
+    final statusBg = switch (hub.status) {
+      'ready' => AppColors.statusActiveBg,
+      'collecting' => AppColors.statusInTransitBg,
+      _ => AppColors.borderSubtle,
+    };
+
+    return Container(
+      width: 160,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.borderSubtle),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x08000000),
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              const Icon(LucideIcons.warehouse,
+                  size: 13, color: AppColors.primaryGreen),
+              const SizedBox(width: 5),
+              Expanded(
+                child: Text(
+                  hub.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.cairo(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textMain,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Text(
+            hub.address,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.cairo(
+              fontSize: 10,
+              color: AppColors.mutedText,
+            ),
+          ),
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+            decoration: BoxDecoration(
+              color: statusBg,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              hub.status == 'ready'
+                  ? 'جاهز'
+                  : hub.status == 'collecting'
+                      ? 'يجمع'
+                      : hub.status,
+              style: GoogleFonts.cairo(
+                fontSize: 9,
+                fontWeight: FontWeight.w700,
+                color: statusColor,
+              ),
+            ),
           ),
         ],
       ),
