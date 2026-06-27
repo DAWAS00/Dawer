@@ -17,14 +17,16 @@ class RecyclingProfileTab extends StatelessWidget {
   final String userName;
   const RecyclingProfileTab({super.key, required this.userName});
 
-  static const List<String> _arMonths = [
-    'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-    'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
-  ];
+  List<String> _months(AppLocalizations l10n) => [
+        l10n.monthJanuary, l10n.monthFebruary, l10n.monthMarch,
+        l10n.monthApril, l10n.monthMay, l10n.monthJune,
+        l10n.monthJuly, l10n.monthAugust, l10n.monthSeptember,
+        l10n.monthOctober, l10n.monthNovember, l10n.monthDecember,
+      ];
 
-  String _currentPeriodLabel() {
+  String _currentPeriodLabel(AppLocalizations l10n) {
     final now = DateTime.now();
-    return '${_arMonths[now.month - 1]} ${now.year}';
+    return '${_months(l10n)[now.month - 1]} ${now.year}';
   }
 
   void _showEditProfileSheet(BuildContext context) {
@@ -66,7 +68,7 @@ class RecyclingProfileTab extends StatelessWidget {
 
                 // ── Billing / Payment ──
                 PaymentWalletCard.company(
-                  periodLabel: _currentPeriodLabel(),
+                  periodLabel: _currentPeriodLabel(context.l10n),
                   shipments: vm.totalShipments,
                   weightLabel: _formatNumber(vm.totalWeightProcessed),
                   onViewInvoice: () {},

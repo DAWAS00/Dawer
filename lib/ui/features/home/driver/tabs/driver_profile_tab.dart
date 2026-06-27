@@ -24,8 +24,9 @@ import '../viewmodels/driver_home_viewmodel.dart';
 class DriverProfileTab extends StatelessWidget {
   const DriverProfileTab({super.key});
 
-  Future<void> _launchHelpCenter() async {
-    final Uri url = Uri.parse('mailto:support@dwaar.com?subject=مساعدة%20سائق');
+  Future<void> _launchHelpCenter(BuildContext context) async {
+    final subject = Uri.encodeComponent(context.l10n.profileEmailSupportSubject);
+    final Uri url = Uri.parse('mailto:support@dwaar.com?subject=$subject');
     if (!await launchUrl(url)) {
       debugPrint('Could not launch $url');
     }
@@ -58,7 +59,7 @@ class DriverProfileTab extends StatelessWidget {
               ProfileHeader(
                 name: user.name,
                 badgeLabel: user.role,
-                avatarInitial: user.name.isNotEmpty ? user.name[0] : 'س',
+                avatarInitial: user.name.isNotEmpty ? user.name[0] : context.l10n.profileAvatarFallback,
                 isVerified: user.isVerified,
                 rating: user.rating,
               ),
@@ -69,7 +70,7 @@ class DriverProfileTab extends StatelessWidget {
                     label: context.l10n.profileTotalTrips,
                   ),
                   ProfileStat(
-                    value: '${vm.totalEarnings.toStringAsFixed(1)} د.أ',
+                    value: '${vm.totalEarnings.toStringAsFixed(1)} ${context.l10n.currencyJodShort}',
                     label: context.l10n.profileTotalEarnings,
                   ),
                 ],
@@ -142,7 +143,7 @@ class DriverProfileTab extends StatelessWidget {
                 icon: Icons.help_center_rounded,
                 label: context.l10n.profileContactSupport,
                 showArrow: true,
-                onTap: _launchHelpCenter,
+                onTap: () => _launchHelpCenter(context),
               ),
 
               const SizedBox(height: 32),
@@ -271,7 +272,7 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
                   children: [
                     const Icon(Icons.local_shipping_rounded, size: 16, color: Color(0xFF166534)),
                     const SizedBox(width: 8),
-                    Text('نوع المركبة: ${_vehicleType!.label}',
+                    Text(context.l10n.profileVehicleTypeLabel(_vehicleType!.label),
                       style: GoogleFonts.cairo(fontSize: 13, fontWeight: FontWeight.bold, color: const Color(0xFF166534))),
                   ],
                 ),
@@ -282,7 +283,7 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
               const Expanded(child: Divider()),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text('أو أدخل يدوياً',
+                child: Text(context.l10n.profileEnterManually,
                   style: GoogleFonts.cairo(fontSize: 12, color: const Color(0xFF9099A2))),
               ),
               const Expanded(child: Divider()),
@@ -293,7 +294,7 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
             _buildTextField(label: context.l10n.profileVehicleColor, controller: _colorController, hint: context.l10n.profileVehicleColorHint),
             const SizedBox(height: 16),
             _buildTextField(
-              label: 'رقم اللوحة',
+              label: context.l10n.profilePlateLabel,
               controller: _plateController,
               hint: '11 - 12345',
               textDirection: TextDirection.ltr,

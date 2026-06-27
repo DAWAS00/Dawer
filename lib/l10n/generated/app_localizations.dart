@@ -4477,6 +4477,288 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لكل كيلوغرام'**
   String get collectionJobPerKgLabel;
+
+  /// No description provided for @supplierMyOrdersCurrent.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلباتي الحالية'**
+  String get supplierMyOrdersCurrent;
+
+  /// No description provided for @supplierNoActiveOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد طلبات نشطة'**
+  String get supplierNoActiveOrders;
+
+  /// No description provided for @supplierStartRecyclingCta.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابدأ بإضافة أول طلب إعادة تدوير الآن!'**
+  String get supplierStartRecyclingCta;
+
+  /// No description provided for @supplierStartMarketCta.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف أول عرض للسوق الآن!'**
+  String get supplierStartMarketCta;
+
+  /// No description provided for @supplierWelcome.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرحباً، {name}'**
+  String supplierWelcome(String name);
+
+  /// No description provided for @supplierAccountIndividual.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساب أفراد'**
+  String get supplierAccountIndividual;
+
+  /// No description provided for @supplierAccountBusiness.
+  ///
+  /// In ar, this message translates to:
+  /// **'مورد تجاري'**
+  String get supplierAccountBusiness;
+
+  /// No description provided for @supplierMyPoints.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقاطي'**
+  String get supplierMyPoints;
+
+  /// No description provided for @supplierTotalWeight.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الوزن'**
+  String get supplierTotalWeight;
+
+  /// No description provided for @supplierWeightZero.
+  ///
+  /// In ar, this message translates to:
+  /// **'0 كغ'**
+  String get supplierWeightZero;
+
+  /// No description provided for @supplierTreesSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'أشجار أُنقذت'**
+  String get supplierTreesSaved;
+
+  /// No description provided for @supplierOrderPendingDriver.
+  ///
+  /// In ar, this message translates to:
+  /// **'بانتظار قبول سائق للطلب'**
+  String get supplierOrderPendingDriver;
+
+  /// No description provided for @supplierOrderAcceptedOnWay.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم قبول طلبك، السائق في طريقه إليك'**
+  String get supplierOrderAcceptedOnWay;
+
+  /// No description provided for @supplierOrderDriverArrivedPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'السائق وصل لموقع الاستلام'**
+  String get supplierOrderDriverArrivedPickup;
+
+  /// No description provided for @supplierOrderInTransitToDest.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبك في الطريق إلى وجهته'**
+  String get supplierOrderInTransitToDest;
+
+  /// No description provided for @supplierOrderDriverArrivedDropoff.
+  ///
+  /// In ar, this message translates to:
+  /// **'السائق وصل لموقع التسليم'**
+  String get supplierOrderDriverArrivedDropoff;
+
+  /// No description provided for @supplierOrderDeliveredSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تسليم الطلب بنجاح'**
+  String get supplierOrderDeliveredSuccess;
+
+  /// No description provided for @supplierOrderCancelledDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إلغاء الطلب'**
+  String get supplierOrderCancelledDone;
+
+  /// No description provided for @driverDeliveryHubs.
+  ///
+  /// In ar, this message translates to:
+  /// **'مراكز التسليم المتاحة'**
+  String get driverDeliveryHubs;
+
+  /// No description provided for @driverActiveOrderTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطلب النشط الحالي'**
+  String get driverActiveOrderTitle;
+
+  /// No description provided for @driverHubsUnavailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'مراكز التسليم غير متاحة — تحقق من الاتصال'**
+  String get driverHubsUnavailable;
+
+  /// No description provided for @driverStatusReady.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاهز'**
+  String get driverStatusReady;
+
+  /// No description provided for @driverStatusCollecting.
+  ///
+  /// In ar, this message translates to:
+  /// **'يجمع'**
+  String get driverStatusCollecting;
+
+  /// No description provided for @driverUnavailableBottomTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير متاح للعمل'**
+  String get driverUnavailableBottomTitle;
+
+  /// No description provided for @driverUnavailableBottomSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'فعّل وضع التوفر لاستقبال الطلبات الجديدة'**
+  String get driverUnavailableBottomSubtitle;
+
+  /// No description provided for @driverEnableNow.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفعيل الآن'**
+  String get driverEnableNow;
+
+  /// No description provided for @driverNoOrdersAvailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد طلبات متاحة حالياً'**
+  String get driverNoOrdersAvailable;
+
+  /// No description provided for @driverNewOrderNotifications.
+  ///
+  /// In ar, this message translates to:
+  /// **'ستصلك إشعارات عند توفر طلبات جديدة'**
+  String get driverNewOrderNotifications;
+
+  /// No description provided for @profileAvatarFallback.
+  ///
+  /// In ar, this message translates to:
+  /// **'س'**
+  String get profileAvatarFallback;
+
+  /// No description provided for @profileEmailSupportSubject.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساعدة سائق'**
+  String get profileEmailSupportSubject;
+
+  /// No description provided for @profileEnterManually.
+  ///
+  /// In ar, this message translates to:
+  /// **'أو أدخل يدوياً'**
+  String get profileEnterManually;
+
+  /// No description provided for @profilePlateLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم اللوحة'**
+  String get profilePlateLabel;
+
+  /// No description provided for @profileVehicleTypeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع المركبة: {type}'**
+  String profileVehicleTypeLabel(String type);
+
+  /// No description provided for @driverOrderCardVehicleFallback.
+  ///
+  /// In ar, this message translates to:
+  /// **'مركبة'**
+  String get driverOrderCardVehicleFallback;
+
+  /// No description provided for @currencyJodShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'د.أ'**
+  String get currencyJodShort;
+
+  /// No description provided for @monthJanuary.
+  ///
+  /// In ar, this message translates to:
+  /// **'يناير'**
+  String get monthJanuary;
+
+  /// No description provided for @monthFebruary.
+  ///
+  /// In ar, this message translates to:
+  /// **'فبراير'**
+  String get monthFebruary;
+
+  /// No description provided for @monthMarch.
+  ///
+  /// In ar, this message translates to:
+  /// **'مارس'**
+  String get monthMarch;
+
+  /// No description provided for @monthApril.
+  ///
+  /// In ar, this message translates to:
+  /// **'أبريل'**
+  String get monthApril;
+
+  /// No description provided for @monthMay.
+  ///
+  /// In ar, this message translates to:
+  /// **'مايو'**
+  String get monthMay;
+
+  /// No description provided for @monthJune.
+  ///
+  /// In ar, this message translates to:
+  /// **'يونيو'**
+  String get monthJune;
+
+  /// No description provided for @monthJuly.
+  ///
+  /// In ar, this message translates to:
+  /// **'يوليو'**
+  String get monthJuly;
+
+  /// No description provided for @monthAugust.
+  ///
+  /// In ar, this message translates to:
+  /// **'أغسطس'**
+  String get monthAugust;
+
+  /// No description provided for @monthSeptember.
+  ///
+  /// In ar, this message translates to:
+  /// **'سبتمبر'**
+  String get monthSeptember;
+
+  /// No description provided for @monthOctober.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكتوبر'**
+  String get monthOctober;
+
+  /// No description provided for @monthNovember.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوفمبر'**
+  String get monthNovember;
+
+  /// No description provided for @monthDecember.
+  ///
+  /// In ar, this message translates to:
+  /// **'ديسمبر'**
+  String get monthDecember;
 }
 
 class _AppLocalizationsDelegate

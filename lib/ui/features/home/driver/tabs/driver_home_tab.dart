@@ -48,6 +48,7 @@ class DriverHomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final driverVm = context.watch<DriverHomeViewModel>();
     final marketVm = context.watch<MarketplaceViewModel>();
     final myListings = marketVm.myListings(driverVm.user.name);
@@ -104,7 +105,7 @@ class DriverHomeTab extends StatelessWidget {
         else if (driverVm.hubs.isNotEmpty) ...[
           SliverToBoxAdapter(
             child: HomeSectionHeader(
-              title: 'مراكز التسليم المتاحة',
+              title: l10n.driverDeliveryHubs,
               count: driverVm.hubs.length,
             ),
           ),
@@ -135,7 +136,7 @@ class DriverHomeTab extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: HomeSectionHeader(
-                          title: 'الطلب النشط الحالي',
+                          title: l10n.driverActiveOrderTitle,
                           count: 1,
                         ),
                       ),
@@ -176,7 +177,7 @@ class DriverHomeTab extends StatelessWidget {
         if (myListings.isNotEmpty) ...[
           SliverToBoxAdapter(
             child: HomeSectionHeader(
-              title: 'منشوراتي في السوق',
+              title: l10n.driverMyListings,
               count: myListings.length,
             ),
           ),
@@ -318,7 +319,7 @@ class _HubsErrorBanner extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'مراكز التسليم غير متاحة — تحقق من الاتصال',
+              context.l10n.driverHubsUnavailable,
               style: GoogleFonts.cairo(
                 fontSize: 12,
                 color: AppColors.statusCancelledText,
@@ -338,6 +339,7 @@ class _HubChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final statusColor = switch (hub.status) {
       'ready' => AppColors.statusActiveText,
       'collecting' => AppColors.statusInTransitText,
@@ -405,9 +407,9 @@ class _HubChip extends StatelessWidget {
             ),
             child: Text(
               hub.status == 'ready'
-                  ? 'جاهز'
+                  ? l10n.driverStatusReady
                   : hub.status == 'collecting'
-                      ? 'يجمع'
+                      ? l10n.driverStatusCollecting
                       : hub.status,
               style: GoogleFonts.cairo(
                 fontSize: 9,
@@ -430,6 +432,7 @@ class _OfflineStateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
@@ -465,7 +468,7 @@ class _OfflineStateCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'غير متاح للعمل',
+            l10n.driverUnavailableBottomTitle,
             style: GoogleFonts.cairo(
               fontSize: 17,
               fontWeight: FontWeight.bold,
@@ -474,7 +477,7 @@ class _OfflineStateCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'فعّل وضع التوفر لاستقبال الطلبات الجديدة',
+            l10n.driverUnavailableBottomSubtitle,
             textAlign: TextAlign.center,
             style: GoogleFonts.cairo(
               fontSize: 13,
@@ -496,7 +499,7 @@ class _OfflineStateCard extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'تفعيل الآن',
+                l10n.driverEnableNow,
                 style: GoogleFonts.cairo(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -515,6 +518,7 @@ class _EmptyOrdersCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
@@ -539,7 +543,7 @@ class _EmptyOrdersCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Text(
-            'لا توجد طلبات متاحة حالياً',
+            l10n.driverNoOrdersAvailable,
             style: GoogleFonts.cairo(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -548,7 +552,7 @@ class _EmptyOrdersCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'ستصلك إشعارات عند توفر طلبات جديدة',
+            l10n.driverNewOrderNotifications,
             textAlign: TextAlign.center,
             style: GoogleFonts.cairo(
               fontSize: 12,

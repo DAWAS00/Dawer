@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order/order.dart';
 import '../../../../../data/services/app_order_store.dart';
+import '../../../../../l10n/l10n.dart';
 import '../../shared/order_card.dart';
 import '../../shared/order_details_view.dart';
 import '../../shared/viewmodels/base_supplier_viewmodel.dart';
@@ -21,6 +22,7 @@ class RestaurantHomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final vm = context.watch<BaseSupplierViewModel>();
     final tracked = vm.trackedOrder;
     final active = vm.activeOrders;
@@ -49,7 +51,7 @@ class RestaurantHomeTab extends StatelessWidget {
                   textDirection: TextDirection.rtl,
                   children: [
                     Text(
-                      'طلباتي الحالية',
+                      l10n.supplierMyOrdersCurrent,
                       style: GoogleFonts.cairo(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
@@ -123,7 +125,7 @@ class RestaurantHomeTab extends StatelessWidget {
                     ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack),
                     const SizedBox(height: 24),
                     Text(
-                      'لا توجد طلبات نشطة',
+                      l10n.supplierNoActiveOrders,
                       style: GoogleFonts.cairo(
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
@@ -132,7 +134,7 @@ class RestaurantHomeTab extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'أضف أول عرض للسوق الآن!',
+                      l10n.supplierStartMarketCta,
                       style: GoogleFonts.cairo(
                         fontSize: 14,
                         color: AppColors.mutedText,
@@ -149,6 +151,7 @@ class RestaurantHomeTab extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context, BaseSupplierViewModel vm) {
+    final l10n = context.l10n;
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.primaryDark,
@@ -187,14 +190,14 @@ class RestaurantHomeTab extends StatelessWidget {
                 textDirection: TextDirection.rtl,
                 children: [
                   Text(
-                    'مرحباً، ${userName.split(' ').first}',
+                    l10n.supplierWelcome(userName.split(' ').first),
                     style: GoogleFonts.cairo(
                       fontSize: 14,
                       color: AppColors.surface.withValues(alpha: 0.8),
                     ),
                   ),
                   Text(
-                    'مورد تجاري',
+                    l10n.supplierAccountBusiness,
                     style: GoogleFonts.cairo(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
@@ -214,21 +217,21 @@ class RestaurantHomeTab extends StatelessWidget {
               children: [
                 _buildImpactMetric(
                   icon: LucideIcons.medal,
-                  label: 'نقاطي',
+                  label: l10n.supplierMyPoints,
                   value: vm.totalPoints.toString(),
                   color: AppColors.accentAmber,
                 ),
                 Container(width: 1, height: 40, color: AppColors.borderSubtle),
                 _buildImpactMetric(
                   icon: LucideIcons.scale,
-                  label: 'إجمالي الوزن',
-                  value: '0 كغ',
+                  label: l10n.supplierTotalWeight,
+                  value: l10n.supplierWeightZero,
                   color: AppColors.primaryGreen,
                 ),
                 Container(width: 1, height: 40, color: AppColors.borderSubtle),
                 _buildImpactMetric(
                   icon: LucideIcons.trees,
-                  label: 'أشجار أُنقذت',
+                  label: l10n.supplierTreesSaved,
                   value: '0',
                   color: const Color(0xFF059669),
                 ),
@@ -271,6 +274,7 @@ class RestaurantHomeTab extends StatelessWidget {
   }
 
   Widget _buildTrackingTimeline(BuildContext context, Order order) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: DwaarElevatedCard(
@@ -312,7 +316,7 @@ class RestaurantHomeTab extends StatelessWidget {
                     textDirection: TextDirection.rtl,
                     children: [
                       Text(
-                        'السائق في الطريق إليك',
+                        l10n.orderDriverOnWay,
                         style: GoogleFonts.cairo(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
@@ -340,7 +344,7 @@ class RestaurantHomeTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${order.driverName} • ${order.driverVehicleModel ?? "مركبة"}',
+                    '${order.driverName} • ${order.driverVehicleModel ?? l10n.driverOrderCardVehicleFallback}',
                     style: GoogleFonts.cairo(
                       fontSize: 13,
                       color: AppColors.mutedText,

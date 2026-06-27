@@ -2333,4 +2333,157 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get collectionJobPerKgLabel => 'Per kilogram';
+
+  @override
+  String get supplierMyOrdersCurrent => 'My current orders';
+
+  @override
+  String get supplierNoActiveOrders => 'No active orders';
+
+  @override
+  String get supplierStartRecyclingCta =>
+      'Start by adding your first recycling request!';
+
+  @override
+  String get supplierStartMarketCta => 'Add your first market listing!';
+
+  @override
+  String supplierWelcome(String name) {
+    return 'Welcome, $name';
+  }
+
+  @override
+  String get supplierAccountIndividual => 'Individual account';
+
+  @override
+  String get supplierAccountBusiness => 'Business supplier';
+
+  @override
+  String get supplierMyPoints => 'My points';
+
+  @override
+  String get supplierTotalWeight => 'Total weight';
+
+  @override
+  String get supplierWeightZero => '0 kg';
+
+  @override
+  String get supplierTreesSaved => 'Trees saved';
+
+  @override
+  String get supplierOrderPendingDriver => 'Waiting for a driver to accept';
+
+  @override
+  String get supplierOrderAcceptedOnWay =>
+      'Your order was accepted, the driver is on the way';
+
+  @override
+  String get supplierOrderDriverArrivedPickup =>
+      'The driver arrived at the pickup location';
+
+  @override
+  String get supplierOrderInTransitToDest =>
+      'Your order is on its way to its destination';
+
+  @override
+  String get supplierOrderDriverArrivedDropoff =>
+      'The driver arrived at the drop-off location';
+
+  @override
+  String get supplierOrderDeliveredSuccess => 'Order delivered successfully';
+
+  @override
+  String get supplierOrderCancelledDone => 'Order cancelled';
+
+  @override
+  String get driverDeliveryHubs => 'Available delivery hubs';
+
+  @override
+  String get driverActiveOrderTitle => 'Current active order';
+
+  @override
+  String get driverHubsUnavailable =>
+      'Delivery hubs unavailable — check your connection';
+
+  @override
+  String get driverStatusReady => 'Ready';
+
+  @override
+  String get driverStatusCollecting => 'Collecting';
+
+  @override
+  String get driverUnavailableBottomTitle => 'Unavailable for work';
+
+  @override
+  String get driverUnavailableBottomSubtitle =>
+      'Enable availability mode to receive new orders';
+
+  @override
+  String get driverEnableNow => 'Enable now';
+
+  @override
+  String get driverNoOrdersAvailable => 'No orders available right now';
+
+  @override
+  String get driverNewOrderNotifications =>
+      'You\'ll be notified when new orders arrive';
+
+  @override
+  String get profileAvatarFallback => 'U';
+
+  @override
+  String get profileEmailSupportSubject => 'Driver help';
+
+  @override
+  String get profileEnterManually => 'Or enter manually';
+
+  @override
+  String get profilePlateLabel => 'Plate number';
+
+  @override
+  String profileVehicleTypeLabel(String type) {
+    return 'Vehicle type: $type';
+  }
+
+  @override
+  String get driverOrderCardVehicleFallback => 'Vehicle';
+
+  @override
+  String get currencyJodShort => 'JOD';
+
+  @override
+  String get monthJanuary => 'January';
+
+  @override
+  String get monthFebruary => 'February';
+
+  @override
+  String get monthMarch => 'March';
+
+  @override
+  String get monthApril => 'April';
+
+  @override
+  String get monthMay => 'May';
+
+  @override
+  String get monthJune => 'June';
+
+  @override
+  String get monthJuly => 'July';
+
+  @override
+  String get monthAugust => 'August';
+
+  @override
+  String get monthSeptember => 'September';
+
+  @override
+  String get monthOctober => 'October';
+
+  @override
+  String get monthNovember => 'November';
+
+  @override
+  String get monthDecember => 'December';
 }

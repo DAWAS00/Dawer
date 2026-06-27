@@ -2308,4 +2308,153 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get collectionJobPerKgLabel => 'لكل كيلوغرام';
+
+  @override
+  String get supplierMyOrdersCurrent => 'طلباتي الحالية';
+
+  @override
+  String get supplierNoActiveOrders => 'لا توجد طلبات نشطة';
+
+  @override
+  String get supplierStartRecyclingCta =>
+      'ابدأ بإضافة أول طلب إعادة تدوير الآن!';
+
+  @override
+  String get supplierStartMarketCta => 'أضف أول عرض للسوق الآن!';
+
+  @override
+  String supplierWelcome(String name) {
+    return 'مرحباً، $name';
+  }
+
+  @override
+  String get supplierAccountIndividual => 'حساب أفراد';
+
+  @override
+  String get supplierAccountBusiness => 'مورد تجاري';
+
+  @override
+  String get supplierMyPoints => 'نقاطي';
+
+  @override
+  String get supplierTotalWeight => 'إجمالي الوزن';
+
+  @override
+  String get supplierWeightZero => '0 كغ';
+
+  @override
+  String get supplierTreesSaved => 'أشجار أُنقذت';
+
+  @override
+  String get supplierOrderPendingDriver => 'بانتظار قبول سائق للطلب';
+
+  @override
+  String get supplierOrderAcceptedOnWay => 'تم قبول طلبك، السائق في طريقه إليك';
+
+  @override
+  String get supplierOrderDriverArrivedPickup => 'السائق وصل لموقع الاستلام';
+
+  @override
+  String get supplierOrderInTransitToDest => 'طلبك في الطريق إلى وجهته';
+
+  @override
+  String get supplierOrderDriverArrivedDropoff => 'السائق وصل لموقع التسليم';
+
+  @override
+  String get supplierOrderDeliveredSuccess => 'تم تسليم الطلب بنجاح';
+
+  @override
+  String get supplierOrderCancelledDone => 'تم إلغاء الطلب';
+
+  @override
+  String get driverDeliveryHubs => 'مراكز التسليم المتاحة';
+
+  @override
+  String get driverActiveOrderTitle => 'الطلب النشط الحالي';
+
+  @override
+  String get driverHubsUnavailable =>
+      'مراكز التسليم غير متاحة — تحقق من الاتصال';
+
+  @override
+  String get driverStatusReady => 'جاهز';
+
+  @override
+  String get driverStatusCollecting => 'يجمع';
+
+  @override
+  String get driverUnavailableBottomTitle => 'غير متاح للعمل';
+
+  @override
+  String get driverUnavailableBottomSubtitle =>
+      'فعّل وضع التوفر لاستقبال الطلبات الجديدة';
+
+  @override
+  String get driverEnableNow => 'تفعيل الآن';
+
+  @override
+  String get driverNoOrdersAvailable => 'لا توجد طلبات متاحة حالياً';
+
+  @override
+  String get driverNewOrderNotifications =>
+      'ستصلك إشعارات عند توفر طلبات جديدة';
+
+  @override
+  String get profileAvatarFallback => 'س';
+
+  @override
+  String get profileEmailSupportSubject => 'مساعدة سائق';
+
+  @override
+  String get profileEnterManually => 'أو أدخل يدوياً';
+
+  @override
+  String get profilePlateLabel => 'رقم اللوحة';
+
+  @override
+  String profileVehicleTypeLabel(String type) {
+    return 'نوع المركبة: $type';
+  }
+
+  @override
+  String get driverOrderCardVehicleFallback => 'مركبة';
+
+  @override
+  String get currencyJodShort => 'د.أ';
+
+  @override
+  String get monthJanuary => 'يناير';
+
+  @override
+  String get monthFebruary => 'فبراير';
+
+  @override
+  String get monthMarch => 'مارس';
+
+  @override
+  String get monthApril => 'أبريل';
+
+  @override
+  String get monthMay => 'مايو';
+
+  @override
+  String get monthJune => 'يونيو';
+
+  @override
+  String get monthJuly => 'يوليو';
+
+  @override
+  String get monthAugust => 'أغسطس';
+
+  @override
+  String get monthSeptember => 'سبتمبر';
+
+  @override
+  String get monthOctober => 'أكتوبر';
+
+  @override
+  String get monthNovember => 'نوفمبر';
+
+  @override
+  String get monthDecember => 'ديسمبر';
 }

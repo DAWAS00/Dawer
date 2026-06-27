@@ -40,34 +40,34 @@ class SupplierOrderCard extends StatelessWidget {
 
   /// Plain-language "what's happening right now" line + matching icon, shown
   /// in the live tracking banner so the customer doesn't have to decode chips.
-  (IconData, String) get _statusLine => switch (order.status) {
+  (IconData, String) statusLine(AppLocalizations l10n) => switch (order.status) {
         OrderStatus.pending => (
             Icons.hourglass_top_rounded,
-            'بانتظار قبول سائق للطلب',
+            l10n.supplierOrderPendingDriver,
           ),
         OrderStatus.accepted => (
             Icons.directions_car_rounded,
-            'تم قبول طلبك، السائق في طريقه إليك',
+            l10n.supplierOrderAcceptedOnWay,
           ),
         OrderStatus.arrivedAtPickup => (
             Icons.pin_drop_rounded,
-            'السائق وصل لموقع الاستلام',
+            l10n.supplierOrderDriverArrivedPickup,
           ),
         OrderStatus.inTransit => (
             Icons.local_shipping_rounded,
-            'طلبك في الطريق إلى وجهته',
+            l10n.supplierOrderInTransitToDest,
           ),
         OrderStatus.arrivedAtDropoff => (
             Icons.flag_rounded,
-            'السائق وصل لموقع التسليم',
+            l10n.supplierOrderDriverArrivedDropoff,
           ),
         OrderStatus.completed => (
             Icons.check_circle_rounded,
-            'تم تسليم الطلب بنجاح',
+            l10n.supplierOrderDeliveredSuccess,
           ),
         OrderStatus.cancelled => (
             Icons.cancel_rounded,
-            'تم إلغاء الطلب',
+            l10n.supplierOrderCancelledDone,
           ),
       };
 
@@ -352,8 +352,8 @@ class SupplierOrderCard extends StatelessWidget {
                   order.status != OrderStatus.cancelled) ...[
                 const SizedBox(height: 12),
                 _LiveStatusBanner(
-                  icon: _statusLine.$1,
-                  text: _statusLine.$2,
+                  icon: statusLine(context.l10n).$1,
+                  text: statusLine(context.l10n).$2,
                   eta: _isInFlight ? order.eta : null,
                   accent: accent,
                 ),
@@ -383,7 +383,7 @@ class SupplierOrderCard extends StatelessWidget {
                     ),
                     icon: const Icon(Icons.location_searching_rounded, size: 17),
                     label: Text(
-                      'تتبع الطلب',
+                      context.l10n.orderTrackButton,
                       style: GoogleFonts.cairo(
                           fontWeight: FontWeight.bold, fontSize: 14),
                     ),
