@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -42,6 +43,8 @@ class DawaChatViewModel extends ChangeNotifier {
 
   bool get isBusy => _isScanning || _isThinking;
 
+  bool _disposed = false;
+
   WasteType? _lastScannedType;
   double? _lastScannedWeightKg;
   WasteType? get lastScannedType => _lastScannedType;
@@ -56,23 +59,42 @@ class DawaChatViewModel extends ChangeNotifier {
   //  User-typed message
   // ──────────────────────────────────────────────
 
+  // Standard follow-up chips offered after every Gemini reply so the
+  // guided-navigation UX is preserved even for open-ended AI answers.
+  static List<DawaEntry> _geminiFollowUps() => [
+        DawaChatbotService.entryById('how_to_post_request'),
+        DawaChatbotService.entryById('waste_types'),
+        DawaChatbotService.entryById('support'),
+      ];
+
   Future<void> handleUserMessage(String text) async {
     final trimmed = text.trim();
     if (trimmed.isEmpty || isBusy) return;
 
     _messages.add(DawaMessage(text: trimmed, isUser: true));
     _isThinking = true;
-    notifyListeners();
+    _safeNotify();
 
     try {
       final reply = await GeminiChatService.instance.sendMessage(trimmed);
-      _messages.add(DawaMessage(text: reply, isUser: false));
-    } catch (_) {
-      _addBotMessage(DawaChatbotService.match(trimmed));
+      if (!_disposed) {
+        _messages.add(DawaMessage(
+          text: reply,
+          isUser: false,
+          followUps: _geminiFollowUps(),
+        ));
+      }
+    } catch (e, st) {
+      debugPrint('[DawaChatVM] Gemini error: $e\n$st');
+      if (!_disposed) _addBotMessage(DawaChatbotService.match(trimmed));
     } finally {
       _isThinking = false;
-      notifyListeners();
+      _safeNotify();
     }
+  }
+
+  void _safeNotify() {
+    if (!_disposed) notifyListeners();
   }
 
   // ──────────────────────────────────────────────
@@ -302,7 +324,11 @@ class DawaChatViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    GeminiChatService.instance.resetSession();
+    _disposed = true;
+    // Session is intentionally NOT reset here — the conversation history
+    // should survive widget disposal (e.g. bottom-sheet swipe-down).
+    // Call GeminiChatService.instance.resetSession() only when the user
+    // explicitly wants to start a fresh conversation.
     super.dispose();
   }
 }

@@ -1,9 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../../../data/services/gemini_service.dart';
 
 /// Wraps a Gemini ChatSession for the Dawa support chatbot.
-/// The session (and therefore conversation history) is kept alive for the
-/// lifetime of the DawaChatViewModel and reset when it is disposed.
+/// The session accumulates conversation history for the process lifetime
+/// and can be explicitly reset via [resetSession].
 class GeminiChatService {
   GeminiChatService._();
   static final GeminiChatService instance = GeminiChatService._();
@@ -25,19 +26,28 @@ class GeminiChatService {
       '- إذا لم يكن السؤال متعلقاً بدوّر أو التدوير، وجّه المستخدم بلطف.\n'
       '- لا تخترع أسعاراً أو معلومات تقنية غير مذكورة أعلاه.';
 
+  // Cached once — the system instruction never changes between sessions.
+  static final _systemContent = Content.system(_systemPrompt);
+
+  GenerativeModel? _model;
   ChatSession? _session;
 
   Future<String> sendMessage(String text) async {
-    _session ??= GeminiService.instance
-        .model(systemInstruction: Content.system(_systemPrompt))
-        .startChat();
+    if (!GeminiService.instance.isInitialized) {
+      throw StateError('Gemini AI not available');
+    }
+    _model ??= GeminiService.instance.model(systemInstruction: _systemContent);
+    _session ??= _model!.startChat();
 
     final response = await _session!.sendMessage(Content.text(text));
     return response.text?.trim() ??
         'عذراً، لم أتمكن من معالجة طلبك. حاول مرة أخرى.';
   }
 
+  /// Clears accumulated conversation history. Call only when the user
+  /// explicitly starts a new conversation.
   void resetSession() {
     _session = null;
+    debugPrint('[GeminiChatService] Session reset.');
   }
 }

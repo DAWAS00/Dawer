@@ -20,7 +20,12 @@ class GeminiService {
     String modelName = 'gemini-1.5-flash',
     Content? systemInstruction,
   }) {
-    assert(_initialized, 'GeminiService.init() must be called before use');
+    if (!_initialized || _apiKey.isEmpty) {
+      throw StateError(
+        'GeminiService.init() must be called before use. '
+        'Ensure GEMINI_API_KEY is set in .env.local.',
+      );
+    }
     return GenerativeModel(
       model: modelName,
       apiKey: _apiKey,
