@@ -2042,4 +2042,97 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orderSearchingDriverRetry => 'Search for a driver again';
+
+  @override
+  String get vehicleScanTitle => 'Scan vehicle registration';
+
+  @override
+  String get vehicleScanOptional => 'Optional';
+
+  @override
+  String get vehicleScanPrompt => 'Scan the registration to auto-fill data';
+
+  @override
+  String get vehicleScanTypeHint =>
+      'Vehicle type is detected from the document';
+
+  @override
+  String get vehicleScanStepType => 'Checking vehicle type...';
+
+  @override
+  String get vehicleScanStepPlate => 'Reading plate number...';
+
+  @override
+  String get vehicleScanStepModel => 'Analyzing car model...';
+
+  @override
+  String get vehicleScanStepExpiry => 'Verifying expiry date...';
+
+  @override
+  String get vehicleScanPulseType => 'Vehicle type ✓';
+
+  @override
+  String get vehicleScanPulsePlate => 'Plate number...';
+
+  @override
+  String get vehicleScanPulseModel => 'Model ✓';
+
+  @override
+  String get vehicleScanPulseExpiry => 'Expiry date...';
+
+  @override
+  String get vehicleScanPulseColor => 'Color ✓';
+
+  @override
+  String get vehicleScanPulseValid => 'Registration valid';
+
+  @override
+  String get vehicleScanReadSuccess => 'Document read successfully';
+
+  @override
+  String get vehicleScanReviewPrompt => 'Review the data and confirm';
+
+  @override
+  String get vehicleScanRescanTooltip => 'Rescan';
+
+  @override
+  String get vehicleScanConfirmAutoFill => 'Confirm and auto-fill data';
+
+  @override
+  String get vehicleScanExtractedData => 'Extracted data';
+
+  @override
+  String get vehicleScanRowModel => 'Model';
+
+  @override
+  String get vehicleScanRowColor => 'Color';
+
+  @override
+  String get vehicleScanRowPlate => 'Plate number';
+
+  @override
+  String get vehicleScanRowExpiry => 'Registration expiry date';
+
+  @override
+  String get vehicleScanChemicalPermit => 'Chemical materials transport permit';
+
+  @override
+  String get vehicleScanChemicalPermitHint =>
+      'Orders will be filtered automatically based on your vehicle type';
+
+  @override
+  String get vehicleScanAccuracy => 'Accuracy';
+
+  @override
+  String get vehicleScanReadFailed => 'Could not read the document';
+
+  @override
+  String get licenseScanUploadPrompt => 'Tap to upload the document';
+
+  @override
+  String get licenseScanSourcesHint => 'Camera or photo gallery';
+
+  @override
+  String get licenseScanSuggestedCategories =>
+      'Suggested marketplace categories';
 }

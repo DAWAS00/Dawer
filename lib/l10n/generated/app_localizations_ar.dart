@@ -2020,4 +2020,95 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get orderSearchingDriverRetry => 'إعادة البحث عن سائق';
+
+  @override
+  String get vehicleScanTitle => 'مسح استمارة المركبة';
+
+  @override
+  String get vehicleScanOptional => 'اختياري';
+
+  @override
+  String get vehicleScanPrompt => 'امسح الاستمارة لملء البيانات تلقائياً';
+
+  @override
+  String get vehicleScanTypeHint => 'يُحدَّد نوع المركبة من الوثيقة';
+
+  @override
+  String get vehicleScanStepType => 'فحص نوع المركبة...';
+
+  @override
+  String get vehicleScanStepPlate => 'قراءة رقم اللوحة...';
+
+  @override
+  String get vehicleScanStepModel => 'تحليل موديل السيارة...';
+
+  @override
+  String get vehicleScanStepExpiry => 'التحقق من تاريخ الانتهاء...';
+
+  @override
+  String get vehicleScanPulseType => 'نوع المركبة ✓';
+
+  @override
+  String get vehicleScanPulsePlate => 'رقم اللوحة...';
+
+  @override
+  String get vehicleScanPulseModel => 'الموديل ✓';
+
+  @override
+  String get vehicleScanPulseExpiry => 'تاريخ الانتهاء...';
+
+  @override
+  String get vehicleScanPulseColor => 'اللون ✓';
+
+  @override
+  String get vehicleScanPulseValid => 'الاستمارة سارية';
+
+  @override
+  String get vehicleScanReadSuccess => 'تم قراءة الوثيقة بنجاح';
+
+  @override
+  String get vehicleScanReviewPrompt => 'راجع البيانات وأكّد';
+
+  @override
+  String get vehicleScanRescanTooltip => 'إعادة المسح';
+
+  @override
+  String get vehicleScanConfirmAutoFill => 'تأكيد وملء البيانات تلقائياً';
+
+  @override
+  String get vehicleScanExtractedData => 'البيانات المستخرجة';
+
+  @override
+  String get vehicleScanRowModel => 'الموديل';
+
+  @override
+  String get vehicleScanRowColor => 'اللون';
+
+  @override
+  String get vehicleScanRowPlate => 'رقم اللوحة';
+
+  @override
+  String get vehicleScanRowExpiry => 'تاريخ انتهاء الاستمارة';
+
+  @override
+  String get vehicleScanChemicalPermit => 'تصريح نقل مواد كيميائية';
+
+  @override
+  String get vehicleScanChemicalPermitHint =>
+      'سيتم تصفية الطلبات تلقائياً بناءً على نوع مركبتك';
+
+  @override
+  String get vehicleScanAccuracy => 'دقة';
+
+  @override
+  String get vehicleScanReadFailed => 'تعذّر قراءة الوثيقة';
+
+  @override
+  String get licenseScanUploadPrompt => 'انقر لرفع الوثيقة';
+
+  @override
+  String get licenseScanSourcesHint => 'كاميرا أو معرض الصور';
+
+  @override
+  String get licenseScanSuggestedCategories => 'فئات مقترحة في السوق';
 }

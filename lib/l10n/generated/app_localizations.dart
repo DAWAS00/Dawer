@@ -3943,6 +3943,186 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إعادة البحث عن سائق'**
   String get orderSearchingDriverRetry;
+
+  /// No description provided for @vehicleScanTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح استمارة المركبة'**
+  String get vehicleScanTitle;
+
+  /// No description provided for @vehicleScanOptional.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختياري'**
+  String get vehicleScanOptional;
+
+  /// No description provided for @vehicleScanPrompt.
+  ///
+  /// In ar, this message translates to:
+  /// **'امسح الاستمارة لملء البيانات تلقائياً'**
+  String get vehicleScanPrompt;
+
+  /// No description provided for @vehicleScanTypeHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'يُحدَّد نوع المركبة من الوثيقة'**
+  String get vehicleScanTypeHint;
+
+  /// No description provided for @vehicleScanStepType.
+  ///
+  /// In ar, this message translates to:
+  /// **'فحص نوع المركبة...'**
+  String get vehicleScanStepType;
+
+  /// No description provided for @vehicleScanStepPlate.
+  ///
+  /// In ar, this message translates to:
+  /// **'قراءة رقم اللوحة...'**
+  String get vehicleScanStepPlate;
+
+  /// No description provided for @vehicleScanStepModel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحليل موديل السيارة...'**
+  String get vehicleScanStepModel;
+
+  /// No description provided for @vehicleScanStepExpiry.
+  ///
+  /// In ar, this message translates to:
+  /// **'التحقق من تاريخ الانتهاء...'**
+  String get vehicleScanStepExpiry;
+
+  /// No description provided for @vehicleScanPulseType.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع المركبة ✓'**
+  String get vehicleScanPulseType;
+
+  /// No description provided for @vehicleScanPulsePlate.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم اللوحة...'**
+  String get vehicleScanPulsePlate;
+
+  /// No description provided for @vehicleScanPulseModel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموديل ✓'**
+  String get vehicleScanPulseModel;
+
+  /// No description provided for @vehicleScanPulseExpiry.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الانتهاء...'**
+  String get vehicleScanPulseExpiry;
+
+  /// No description provided for @vehicleScanPulseColor.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللون ✓'**
+  String get vehicleScanPulseColor;
+
+  /// No description provided for @vehicleScanPulseValid.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاستمارة سارية'**
+  String get vehicleScanPulseValid;
+
+  /// No description provided for @vehicleScanReadSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم قراءة الوثيقة بنجاح'**
+  String get vehicleScanReadSuccess;
+
+  /// No description provided for @vehicleScanReviewPrompt.
+  ///
+  /// In ar, this message translates to:
+  /// **'راجع البيانات وأكّد'**
+  String get vehicleScanReviewPrompt;
+
+  /// No description provided for @vehicleScanRescanTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة المسح'**
+  String get vehicleScanRescanTooltip;
+
+  /// No description provided for @vehicleScanConfirmAutoFill.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد وملء البيانات تلقائياً'**
+  String get vehicleScanConfirmAutoFill;
+
+  /// No description provided for @vehicleScanExtractedData.
+  ///
+  /// In ar, this message translates to:
+  /// **'البيانات المستخرجة'**
+  String get vehicleScanExtractedData;
+
+  /// No description provided for @vehicleScanRowModel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموديل'**
+  String get vehicleScanRowModel;
+
+  /// No description provided for @vehicleScanRowColor.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللون'**
+  String get vehicleScanRowColor;
+
+  /// No description provided for @vehicleScanRowPlate.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم اللوحة'**
+  String get vehicleScanRowPlate;
+
+  /// No description provided for @vehicleScanRowExpiry.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ انتهاء الاستمارة'**
+  String get vehicleScanRowExpiry;
+
+  /// No description provided for @vehicleScanChemicalPermit.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصريح نقل مواد كيميائية'**
+  String get vehicleScanChemicalPermit;
+
+  /// No description provided for @vehicleScanChemicalPermitHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيتم تصفية الطلبات تلقائياً بناءً على نوع مركبتك'**
+  String get vehicleScanChemicalPermitHint;
+
+  /// No description provided for @vehicleScanAccuracy.
+  ///
+  /// In ar, this message translates to:
+  /// **'دقة'**
+  String get vehicleScanAccuracy;
+
+  /// No description provided for @vehicleScanReadFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر قراءة الوثيقة'**
+  String get vehicleScanReadFailed;
+
+  /// No description provided for @licenseScanUploadPrompt.
+  ///
+  /// In ar, this message translates to:
+  /// **'انقر لرفع الوثيقة'**
+  String get licenseScanUploadPrompt;
+
+  /// No description provided for @licenseScanSourcesHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'كاميرا أو معرض الصور'**
+  String get licenseScanSourcesHint;
+
+  /// No description provided for @licenseScanSuggestedCategories.
+  ///
+  /// In ar, this message translates to:
+  /// **'فئات مقترحة في السوق'**
+  String get licenseScanSuggestedCategories;
 }
 
 class _AppLocalizationsDelegate
