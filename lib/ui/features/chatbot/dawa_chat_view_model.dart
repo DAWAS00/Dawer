@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../../data/models/order/order.dart';
 import 'dawa_chatbot_service.dart';
 import 'dawa_image_scan_service.dart';
+import 'gemini_chat_service.dart';
 
 /// Represents a single chat bubble in the Dawa support conversation.
 class DawaMessage {
@@ -27,19 +28,19 @@ class DawaMessage {
   });
 }
 
-/// Manages the static keyword-based support chat for the Dawer platform.
-///
-/// Architecture mirrors Faz3a's [SupportChatViewModel]:
-///   - On creation: shows the greeting entry with follow-up chips.
-///   - [handleUserMessage]: scores text input → adds user bubble → adds bot reply.
-///   - [handleFollowUpTap]: quick-select a topic chip → adds both bubbles.
-///   - [handleMlResult]: Google ML Kit image label → drives chatbot response.
+/// Manages the AI-powered support chat for the Dawer platform.
+/// Typed messages are handled by Gemini; chip taps use the local knowledge base.
 class DawaChatViewModel extends ChangeNotifier {
   final List<DawaMessage> _messages = [];
   List<DawaMessage> get messages => List.unmodifiable(_messages);
 
   bool _isScanning = false;
   bool get isScanning => _isScanning;
+
+  bool _isThinking = false;
+  bool get isThinking => _isThinking;
+
+  bool get isBusy => _isScanning || _isThinking;
 
   WasteType? _lastScannedType;
   double? _lastScannedWeightKg;
@@ -55,16 +56,23 @@ class DawaChatViewModel extends ChangeNotifier {
   //  User-typed message
   // ──────────────────────────────────────────────
 
-  /// Called when the user types and submits a text message.
-  void handleUserMessage(String text) {
+  Future<void> handleUserMessage(String text) async {
     final trimmed = text.trim();
-    if (trimmed.isEmpty) return;
+    if (trimmed.isEmpty || isBusy) return;
 
     _messages.add(DawaMessage(text: trimmed, isUser: true));
+    _isThinking = true;
     notifyListeners();
 
-    final entry = DawaChatbotService.match(trimmed);
-    _addBotMessage(entry);
+    try {
+      final reply = await GeminiChatService.instance.sendMessage(trimmed);
+      _messages.add(DawaMessage(text: reply, isUser: false));
+    } catch (_) {
+      _addBotMessage(DawaChatbotService.match(trimmed));
+    } finally {
+      _isThinking = false;
+      notifyListeners();
+    }
   }
 
   // ──────────────────────────────────────────────
@@ -290,5 +298,11 @@ class DawaChatViewModel extends ChangeNotifier {
       mlSource: mlSource,
     ));
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    GeminiChatService.instance.resetSession();
+    super.dispose();
   }
 }

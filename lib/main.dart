@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'backend_integration_locally/local_store.dart';
 import 'core/result/result.dart';
 import 'data/models/signup_request.dart';
+import 'data/services/gemini_service.dart';
 import 'core/services/app_lang_notifier.dart';
 import 'core/services/app_theme_notifier.dart';
 import 'core/services/supabase_service.dart';
@@ -59,6 +60,11 @@ void main() async {
     url: dotenv.env['SUPABASE_URL'] ?? '',
     anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
   );
+
+  final geminiKey = dotenv.env['GEMINI_API_KEY']?.trim() ?? '';
+  if (geminiKey.isNotEmpty) {
+    GeminiService.instance.init(geminiKey);
+  }
 
   final prefs = await SharedPreferences.getInstance();
   final localStore = await LocalStore.init();
