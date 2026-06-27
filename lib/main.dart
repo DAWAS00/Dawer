@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'backend_integration_locally/local_store.dart';
+import 'core/routing/app_router.dart';
 import 'data/services/gemini_service.dart';
 import 'core/services/app_lang_notifier.dart';
 import 'core/services/app_theme_notifier.dart';
@@ -23,7 +24,6 @@ import 'domain/repositories/i_file_storage_repository.dart';
 import 'domain/repositories/i_order_repository.dart';
 import 'l10n/l10n.dart';
 import 'ui/features/auth/viewmodels/login_viewmodel.dart';
-import 'ui/features/splash/views/splash_view.dart';
      void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -108,7 +108,7 @@ class DawerApp extends StatelessWidget {
       ],
       child: Consumer2<AppThemeNotifier, AppLangNotifier>(
         builder: (context, themeNotifier, langNotifier, child) {
-          return MaterialApp(
+          return MaterialApp.router(
             title: 'دوّر',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
@@ -125,7 +125,7 @@ class DawerApp extends StatelessWidget {
               Locale('ar'),
               Locale('en'),
             ],
-            home: const SplashView(),
+            routerConfig: appRouter,
           );
         },
       ),
