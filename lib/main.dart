@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'backend_integration_locally/local_store.dart';
+import 'core/config/maps_config.dart';
 import 'core/routing/app_router.dart';
 import 'data/services/gemini_service.dart';
 import 'core/services/app_lang_notifier.dart';
@@ -52,6 +53,11 @@ import 'ui/features/auth/viewmodels/login_viewmodel.dart';
   final geminiKey = dotenv.env['GEMINI_API_KEY']?.trim() ?? '';
   if (geminiKey.isNotEmpty) {
     GeminiService.instance.init(geminiKey);
+  }
+
+  final mapsKey = dotenv.env['MAPS_API_KEY']?.trim() ?? '';
+  if (mapsKey.isNotEmpty) {
+    MapsConfig.init(mapsKey);
   }
 
   final prefs = await SharedPreferences.getInstance();
