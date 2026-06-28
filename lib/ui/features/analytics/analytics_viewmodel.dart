@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../data/models/order/order.dart';
-import '../../../data/models/order/order_enums.dart';
 import 'models/analytics_period.dart';
 
 /// One bucket of the trend series.

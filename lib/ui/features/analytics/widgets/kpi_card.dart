@@ -30,9 +30,6 @@ class KpiCard extends StatelessWidget {
   /// Width/height ratio. Lower = taller. 1.35 fits 2-up comfortably.
   final double aspectRatio;
 
-  static const Color _deltaUp = Color(0xFF16A34A);
-  static const Color _deltaDown = Color(0xFFDC2626);
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
