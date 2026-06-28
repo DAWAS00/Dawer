@@ -80,9 +80,9 @@ void main() {
   testWidgets('KpiCard does not overflow in a 2-up row at phone width',
       (tester) async {
     // Realistic phone: 360dp wide. Two cards side by side is the grid case.
-    tester.binding.window.physicalSizeTestValue = const Size(720, 1280);
-    tester.binding.window.devicePixelRatioTestValue = 2.0;
-    addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+    tester.view.physicalSize = const Size(720, 1280);
+    tester.view.devicePixelRatio = 2.0;
+    addTearDown(tester.view.resetPhysicalSize);
 
     await tester.pumpWidget(
       MaterialApp(

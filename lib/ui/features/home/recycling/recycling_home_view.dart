@@ -71,6 +71,13 @@ class _RecyclingHomeBody extends StatelessWidget {
         userId: vm.companyName,
         allOrders: [...vm.incoming, ...vm.jobs],
         reportRepository: context.read<IReportRequestRepository>(),
+        heroMetric: HeroMetric.weight,
+        roleKpi: RoleKpi(
+          value: '${vm.jobs.length}',
+          label: 'وظائف نشطة',
+          icon: Icons.work_rounded,
+          color: const Color(0xFF1E40AF),
+        ),
         showMilestones: false,
         showReportCenter: true,
       ),

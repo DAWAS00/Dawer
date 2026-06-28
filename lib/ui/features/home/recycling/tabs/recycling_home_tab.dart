@@ -17,6 +17,7 @@ import '../viewmodels/recycling_home_viewmodel.dart';
 import '../widgets/post_job_sheet.dart';
 import '../../../../core/components/dwaar_elevated_card.dart';
 import '../../../../core/components/dwaar_skeleton.dart';
+import '../../../analytics/widgets/kpi_strip.dart';
 import '../../../../../l10n/l10n.dart';
 
 class RecyclingHomeTab extends StatefulWidget {
@@ -661,20 +662,34 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
     final totalWeight = widget.incoming.fold<double>(0, (sum, o) => sum + (o.weightKg ?? 0));
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
-      child: Row(
-        textDirection: TextDirection.rtl,
-        children: [
-          Expanded(child: _StatCard(value: '${widget.incoming.length}', label: l10n.recyclingTodayShipments, icon: LucideIcons.truck, color: AppColors.statusInTransitText)),
-          const SizedBox(width: 8),
-          Expanded(child: _StatCard(value: totalWeight.toStringAsFixed(0), label: l10n.recyclingTotalWeightKg, icon: LucideIcons.scale, color: AppColors.accentAmber)),
-          const SizedBox(width: 8),
-          Expanded(child: _StatCard(value: '${widget.jobs.length}', label: l10n.recyclingActiveJobsLabel, icon: LucideIcons.briefcase, color: AppColors.primaryGreen)),
-          const SizedBox(width: 8),
-          Expanded(child: _StatCard(value: '$inTransitCount', label: l10n.recyclingDriversEnRoute, icon: LucideIcons.navigation, color: const Color(0xFF7C3AED))),
-        ],
-      ).animate().slideY(begin: 0.1, end: 0, duration: 400.ms, curve: Curves.easeOutBack),
-    );
+      padding: const EdgeInsets.only(top: 32),
+      child: KpiStrip(items: [
+        KpiItem(
+          value: '${widget.incoming.length}',
+          label: l10n.recyclingTodayShipments,
+          icon: LucideIcons.truck,
+          color: AppColors.statusInTransitText,
+        ),
+        KpiItem(
+          value: totalWeight.toStringAsFixed(0),
+          label: l10n.recyclingTotalWeightKg,
+          icon: LucideIcons.scale,
+          color: AppColors.accentAmber,
+        ),
+        KpiItem(
+          value: '${widget.jobs.length}',
+          label: l10n.recyclingActiveJobsLabel,
+          icon: LucideIcons.briefcase,
+          color: AppColors.primaryGreen,
+        ),
+        KpiItem(
+          value: '$inTransitCount',
+          label: l10n.recyclingDriversEnRoute,
+          icon: LucideIcons.navigation,
+          color: const Color(0xFF7C3AED),
+        ),
+      ]),
+    ).animate().slideY(begin: 0.1, end: 0, duration: 400.ms, curve: Curves.easeOutBack);
   }
 
   Widget _buildActionCards(BuildContext context) {
@@ -723,50 +738,6 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
           ],
         ),
       ).animate().slideY(begin: 0.1, end: 0, delay: 100.ms, duration: 400.ms, curve: Curves.easeOutBack),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final String value;
-  final String label;
-  final IconData icon;
-  final Color color;
-
-  const _StatCard({
-    required this.value,
-    required this.label,
-    required this.icon,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return DwaarElevatedCard(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-      child: Column(
-        children: [
-          Icon(icon, size: 24, color: color),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: GoogleFonts.dmSans(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: AppColors.textMain,
-            ),
-          ),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              color: AppColors.mutedText,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
