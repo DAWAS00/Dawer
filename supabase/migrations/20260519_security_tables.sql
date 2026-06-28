@@ -61,13 +61,9 @@ CREATE TABLE IF NOT EXISTS wallet_transactions (
 CREATE INDEX IF NOT EXISTS wallet_tx_driver_idx ON wallet_transactions (driver_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS wallet_tx_order_idx  ON wallet_transactions (order_id);
 
--- ── verify_arrival Edge Function hint ────────────────────────────────────────
--- Deploy supabase/functions/verify_arrival/index.ts which:
---   1. Reads the latest driver_locations row for the given order_id
---   2. Calculates haversine distance to target coords
---   3. Returns { allowed: bool, distanceMeters: number }
---   4. Inserts into fraud_audit if not allowed
--- This function is the server-side truth for proximity — the client GPS is UX only.
+-- NOTE: verify_driver_arrival() lives in 20260522_driver_locations.sql because
+-- it queries that table. Defining it there keeps each migration internally
+-- consistent (no forward references to tables created later).
 
 -- ── RLS policies ─────────────────────────────────────────────────────────────
 ALTER TABLE fraud_audit         ENABLE ROW LEVEL SECURITY;

@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/constants/waste_type_icons.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/order_labels.dart';
 import '../../../../../data/models/user_role.dart';
 import '../viewmodels/marketplace_viewmodel.dart';

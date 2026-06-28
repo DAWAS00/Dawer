@@ -1,4 +1,4 @@
-import 'order.dart' show VehicleType;
+import 'order/order.dart' show VehicleType;
 
 class User {
   final String id;

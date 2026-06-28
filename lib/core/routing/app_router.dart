@@ -1,7 +1,6 @@
 import 'package:go_router/go_router.dart';
 
 import '../../data/models/user_role.dart';
-import '../../ui/features/auth/views/forgot_password_otp_view.dart';
 import '../../ui/features/auth/views/login_view.dart';
 import '../../ui/features/auth/views/verification_view.dart';
 import '../../ui/features/error/backend_error_screen.dart';
@@ -30,15 +29,14 @@ final appRouter = GoRouter(
       routes: [
         GoRoute(
           path: 'verify',
-          builder: (context, state) => VerificationView(
-            phoneNumber: state.extra as String? ?? '',
-          ),
-        ),
-        GoRoute(
-          path: 'forgot',
-          builder: (context, state) => ForgotPasswordOtpView(
-            email: state.extra as String? ?? '',
-          ),
+          builder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>? ?? {};
+            return VerificationView(
+              phoneNumber: extra['phone'] as String? ?? '',
+              initialRole: extra['role'] as UserRole? ?? UserRole.supplier,
+              initialSupplierType: extra['supplierType'] as SupplierType?,
+            );
+          },
         ),
       ],
     ),

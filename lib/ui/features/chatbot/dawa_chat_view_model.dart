@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/waste_analysis_result.dart';
 import '../../../../../data/services/gemini_waste_analysis_service.dart';
 import 'dawa_chatbot_service.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dwaar/data/models/eco_badge.dart';
-import 'package:dwaar/data/models/order.dart' show WasteType;
+import 'package:dwaar/data/models/order/order_enums.dart' show WasteType;
 import 'package:dwaar/data/services/eco_points_engine.dart';
 
 void main() {

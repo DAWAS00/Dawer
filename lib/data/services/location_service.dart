@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:geocoding/geocoding.dart';
 
 class LocationService {
   Future<({double lat, double lng})?> getCurrentLocation() async {
@@ -30,5 +31,27 @@ class LocationService {
     }
 
     return null;
+  }
+
+  Future<String?> reverseGeocode(double lat, double lng) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(lat, lng);
+      if (placemarks.isNotEmpty) {
+        final pm = placemarks.first;
+        // Build a readable address string
+        final parts = [
+          if (pm.subLocality != null && pm.subLocality!.isNotEmpty) pm.subLocality,
+          if (pm.locality != null && pm.locality!.isNotEmpty) pm.locality,
+          if (pm.street != null && pm.street!.isNotEmpty && pm.street != pm.locality) pm.street,
+        ];
+        if (parts.isEmpty) return 'موقع محدد ($lat, $lng)';
+        return parts.join('، ');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Reverse geocoding error: $e');
+      }
+    }
+    return 'عمّان، الأردن ($lat, $lng)';
   }
 }

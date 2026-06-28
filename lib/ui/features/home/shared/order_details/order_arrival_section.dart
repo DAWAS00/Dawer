@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 
 /// Shown in order details for:
 ///   - Driver in `accepted` state   → "I'm Here — Pickup" button
@@ -126,21 +126,8 @@ class _ArrivalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: borderColor.withValues(alpha: 0.25)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -150,14 +137,14 @@ class _ArrivalCard extends StatelessWidget {
               Text(
                 title,
                 style: GoogleFonts.cairo(
-                  fontSize: 15,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF002819),
                 ),
               ),
               const SizedBox(width: 10),
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
                 child: Icon(icon, color: iconColor, size: 20),
               ),
@@ -167,9 +154,9 @@ class _ArrivalCard extends StatelessWidget {
           Text(
             subtitle,
             textAlign: TextAlign.right,
-            style: GoogleFonts.cairo(fontSize: 12, color: const Color(0xFF717973)),
+            style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF717973)),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -177,23 +164,24 @@ class _ArrivalCard extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: buttonColor,
                 disabledBackgroundColor: buttonColor.withValues(alpha: 0.5),
-                padding: const EdgeInsets.symmetric(vertical: 13),
+                padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 elevation: 0,
+                minimumSize: const Size(double.infinity, 56),
               ),
               child: loading
                   ? const SizedBox(
-                      height: 18,
-                      width: 18,
+                      height: 20,
+                      width: 20,
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: Colors.white),
                     )
                   : Text(
                       buttonLabel,
                       style: GoogleFonts.cairo(
-                        fontSize: 15,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -211,57 +199,59 @@ class _ArrivalCard extends StatelessWidget {
 class _AwaitingBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFEF3C7),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFEF3C7),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+          ),
         ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'في انتظار تأكيد المورد',
-                  style: GoogleFonts.cairo(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF92400E),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'في انتظار تأكيد المورد',
+                    style: GoogleFonts.cairo(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF92400E),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'المورد لديه 5 دقائق للرد — سيُعوَّض السائق تلقائياً عند انتهاء المهلة',
-                  textAlign: TextAlign.right,
-                  style: GoogleFonts.cairo(
-                    fontSize: 11,
-                    color: const Color(0xFF92400E),
+                  const SizedBox(height: 2),
+                  Text(
+                    'المورد لديه 5 دقائق للرد — سيُعوَّض السائق تلقائياً عند انتهاء المهلة',
+                    textAlign: TextAlign.right,
+                    style: GoogleFonts.cairo(
+                      fontSize: 11,
+                      color: const Color(0xFF92400E),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
-              shape: BoxShape.circle,
+            const SizedBox(width: 12),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.hourglass_top_rounded,
+                color: Color(0xFF92400E),
+                size: 22,
+              ),
             ),
-            child: const Icon(
-              Icons.hourglass_top_rounded,
-              color: Color(0xFF92400E),
-              size: 22,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -275,23 +265,8 @@ class _SupplierConfirmCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF06402B).withValues(alpha: 0.3),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -326,7 +301,7 @@ class _SupplierConfirmCard extends StatelessWidget {
             'السائق في موقعك الآن. هل أنت متاح لتسليم المواد؟',
             textAlign: TextAlign.right,
             style: GoogleFonts.cairo(
-              fontSize: 13,
+              fontSize: 14,
               color: const Color(0xFF404943),
             ),
           ),
@@ -340,13 +315,14 @@ class _SupplierConfirmCard extends StatelessWidget {
                     foregroundColor: const Color(0xFF991B1B),
                     side: const BorderSide(color: Color(0xFF991B1B)),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    minimumSize: const Size(0, 56),
                   ),
                   child: Text(
                     'غير متاح',
-                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                 ),
               ),
@@ -356,16 +332,18 @@ class _SupplierConfirmCard extends StatelessWidget {
                   onPressed: () => onConfirm(true),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF06402B),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
                     ),
+                    minimumSize: const Size(0, 56),
                   ),
                   child: Text(
                     'أنا متاح',
                     style: GoogleFonts.cairo(
                       fontWeight: FontWeight.bold,
+                      fontSize: 15,
                       color: Colors.white,
                     ),
                   ),

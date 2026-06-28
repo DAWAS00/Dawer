@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' show Random;
 
 import 'package:flutter/foundation.dart';
 import '../../backend_integration_locally/local_store.dart';
@@ -8,8 +9,7 @@ import '../../domain/repositories/i_order_repository.dart';
 import '../../domain/repositories/i_wallet_repository.dart';
 import '../../domain/requests/create_pickup_request.dart';
 import '../mock/order_mock_data.dart';
-import '../models/order.dart';
-import '../models/order_json.dart';
+import '../models/order/order.dart';
 import '../models/user.dart';
 import '../models/user_role.dart';
 import 'reward_service.dart';
@@ -26,10 +26,12 @@ class AppOrderStore extends ChangeNotifier {
     IOrderRepository? remote,
     IWalletRepository? wallet,
     RewardService? rewardService,
+    bool skipMockSeed = false,
   })  : _store = store,
         _remote = remote ?? const NoOpOrderRepository(),
         _wallet = wallet ?? const NoOpWalletRepository(),
-        _rewardService = rewardService ?? RewardService() {
+        _rewardService = rewardService ?? RewardService(),
+        _skipMockSeed = skipMockSeed {
     _bootstrap();
   }
 
@@ -37,6 +39,7 @@ class AppOrderStore extends ChangeNotifier {
   final IOrderRepository _remote;
   final IWalletRepository _wallet;
   final RewardService _rewardService;
+  final bool _skipMockSeed;
   StreamSubscription<List<Order>>? _remoteSub;
 
   // ── Error state ───────────────────────────────────────────────────────────
@@ -55,6 +58,7 @@ class AppOrderStore extends ChangeNotifier {
   /// All regular orders — pickup requests (from suppliers) and collection jobs
   /// (posted by recycling companies). This is the canonical list.
   late List<Order> _orders;
+  List<Order> get orders => List.unmodifiable(_orders);
 
 
   /// ID of the order currently active for our mock driver session.
@@ -62,6 +66,10 @@ class AppOrderStore extends ChangeNotifier {
 
   /// IDs of orders completed by our mock driver (their personal history).
   final List<String> _driverCompletedIds = ['ORD-H01', 'ORD-H02'];
+
+  /// True until the first bootstrap completes. Used by home tabs to show skeleton UI.
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
 
   /// Last error captured by [_safeSupabaseInsert].
   AppFailure? _lastError;
@@ -72,23 +80,29 @@ class AppOrderStore extends ChangeNotifier {
 
   void _bootstrap() {
     final store = _store;
-    if (store == null) {
+
+    if (_skipMockSeed) {
+      // Live Supabase: start empty; realtime subscription fills _orders.
+      _orders = [];
+    } else if (store == null || store.isFirstLaunch) {
       _orders = [...OrderMockData.seedOrders(), ...OrderMockData.seedMarketItems()];
+      store?.writeOrders(_orders.map((o) => o.toJson()).toList());
+      store?.markFirstLaunchDone();
     } else {
-      if (store.isFirstLaunch) {
-        _orders = [...OrderMockData.seedOrders(), ...OrderMockData.seedMarketItems()];
-        store.writeOrders(_orders.map((o) => o.toJson()).toList());
-        store.markFirstLaunchDone();
-      } else {
-        _orders = store.readOrders().map(orderFromJson).toList();
-        final oldMarket = store.readMarket().map(orderFromJson).toList();
-        for (final m in oldMarket) {
-          if (!_orders.any((o) => o.id == m.id)) {
-            _orders.add(m.copyWith(isMarketplaceShared: true));
-          }
+      _orders = store.readOrders().map((e) => Order.fromJson(e)).toList();
+      final oldMarket = store.readMarket().map((e) => Order.fromJson(e)).toList();
+      for (final m in oldMarket) {
+        if (!_orders.any((o) => o.id == m.id)) {
+          _orders.add(m.copyWith(isMarketplaceShared: true));
         }
       }
     }
+
+    // Flip loading flag after one microtask so the UI renders one skeleton frame.
+    Future.microtask(() {
+      _isLoading = false;
+      notifyListeners();
+    });
 
     // Subscribe to remote order updates. The default NoOpOrderRepository
     // emits nothing, so seed-only / test paths are unaffected.
@@ -165,7 +179,7 @@ class AppOrderStore extends ChangeNotifier {
   }) {
     return _orders.where((o) {
       final statusOk =
-          (o.status == OrderStatus.pending && !o.isMarketplaceShared) ||
+          o.status == OrderStatus.pending ||
           (o.status == OrderStatus.accepted &&
               o.requiresRider &&
               o.driverName == null);
@@ -198,11 +212,24 @@ class AppOrderStore extends ChangeNotifier {
   // Supplier views
   // ─────────────────────────────────────────────────────────────────────────
 
-  /// All orders submitted by a specific supplier (by name, mock-only).
+  /// All orders submitted by a specific supplier (by name, mock/offline only).
   List<Order> supplierOrdersFor(String supplierName) => _orders
       .where((o) =>
           o.supplierName == supplierName && o.type == OrderType.pickup)
       .toList();
+
+  /// All orders submitted by a supplier identified by their auth ID (live mode).
+  List<Order> supplierOrdersForId(String userId) => _orders
+      .where((o) => o.type == OrderType.pickup && o.supplierId == userId)
+      .toList();
+
+  /// Completed pickup orders submitted by this supplier (by name, mock mode).
+  /// Used by the Analytics tab to compute earnings and history.
+  List<Order> supplierCompletedOrdersFor(String supplierName) =>
+      _orders.where((o) =>
+          o.type == OrderType.pickup &&
+          o.supplierName == supplierName &&
+          o.status == OrderStatus.completed).toList();
 
   // ─────────────────────────────────────────────────────────────────────────
   // Recycling Company views
@@ -311,16 +338,17 @@ class AppOrderStore extends ChangeNotifier {
 
   /// Driver entered the 200m pickup geofence (server-verified). Sends customer
   /// notification and starts the 5-minute response window.
-  void markArrivedAtPickup(String orderId) {
+  void markArrivedAtPickup(String orderId, {OrderProof? pickupProof}) {
     final idx = _orders.indexWhere((o) => o.id == orderId);
     if (idx == -1) return;
     _orders[idx] = _orders[idx].copyWith(
       status: OrderStatus.arrivedAtPickup,
       arrivedAtPickupAt: DateTime.now(),
       arrivalConfirmationStatus: ArrivalConfirmationStatus.awaiting,
+      pickupProof: pickupProof,
     );
     notifyListeners();
-    unawaited(_pushRemote(_remote.markInTransit(orderId)));
+    unawaited(_pushRemote(_remote.markArrivedAtPickup(orderId, pickupProof: pickupProof)));
   }
 
   /// Supplier confirmed they are available. Advance order to inTransit.
@@ -380,7 +408,7 @@ class AppOrderStore extends ChangeNotifier {
       arrivedAtDropoffAt: DateTime.now(),
     );
     notifyListeners();
-    unawaited(_pushRemote(_remote.markInTransit(orderId)));
+    unawaited(_pushRemote(_remote.markArrivedAtDropoff(orderId)));
   }
 
   /// Record a blocked fraud attempt (driver tried to mark arrived while >200m away).
@@ -401,6 +429,11 @@ class AppOrderStore extends ChangeNotifier {
     if (_activeOrderId == orderId) _activeOrderId = null;
     notifyListeners();
     unawaited(_pushRemote(_remote.markCancelled(orderId)));
+  }
+
+  /// Verify driver arrival at destination.
+  Future<AppResult<bool>> verifyArrival(String orderId, double lat, double lng) async {
+    return _remote.verifyArrival(orderId, lat, lng);
   }
 
   /// Complete the active order (driver marks delivered).
@@ -477,8 +510,7 @@ class AppOrderStore extends ChangeNotifier {
     double? dropoffLat,
     double? dropoffLng,
   }) {
-    final orderId =
-        'ORD-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final orderId = _uuid();
     final fee = _calculateFee(weightCategory);
     final hasChemicals = wasteTypes.contains(WasteType.chemicals);
     final order = Order(
@@ -528,8 +560,17 @@ class AppOrderStore extends ChangeNotifier {
         supplierName: supplierName,
         pickupAddress: request.pickupAddress,
         notes: request.notes,
+        images: request.images,
+        estimatedWeightKg: request.estimatedWeightKg,
         wasteForm: request.wasteForm,
         weightCategory: request.weightCategory,
+        pickupTarget: request.pickupTarget,
+        itemPrice: request.itemPrice,
+        scheduledAt: request.scheduledAt,
+        pickupLat: request.pickupLat,
+        pickupLng: request.pickupLng,
+        dropoffLat: request.dropoffLat,
+        dropoffLng: request.dropoffLng,
       );
       return Success(order);
     } catch (e) {
@@ -576,8 +617,7 @@ class AppOrderStore extends ChangeNotifier {
     double? pickupLng,
     DateTime? expiresAt,
   }) {
-    final orderId =
-        'JOB-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final orderId = _uuid();
     final order = Order(
       id: orderId,
       type: OrderType.collection,
@@ -729,8 +769,7 @@ class AppOrderStore extends ChangeNotifier {
     if (hasAcceptedJob(jobId, acceptorName)) {
       return 'لقد قبلت هذه الوظيفة مسبقاً';
     }
-    final saleId =
-        'SALE-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final saleId = _uuid();
     final sale = Order(
       id: saleId,
       type: OrderType.collectionSale,
@@ -946,6 +985,15 @@ class AppOrderStore extends ChangeNotifier {
   // ─────────────────────────────────────────────────────────────────────────
   // Helpers
   // ─────────────────────────────────────────────────────────────────────────
+
+  static String _uuid() {
+    final r = Random.secure();
+    final b = List<int>.generate(16, (_) => r.nextInt(256));
+    b[6] = (b[6] & 0x0f) | 0x40;
+    b[8] = (b[8] & 0x3f) | 0x80;
+    final h = b.map((x) => x.toRadixString(16).padLeft(2, '0')).join();
+    return '${h.substring(0, 8)}-${h.substring(8, 12)}-${h.substring(12, 16)}-${h.substring(16, 20)}-${h.substring(20)}';
+  }
 
   static double _calculateFee(WeightCategory? cat) {
     const base = 2.0;

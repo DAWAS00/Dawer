@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import 'package:dwaar/ui/common/map/route_map_placeholder.dart';
 
 /// Full-screen detail view for a [OrderType.collectionSale] commitment.

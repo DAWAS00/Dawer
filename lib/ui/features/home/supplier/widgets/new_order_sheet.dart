@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../../core/config/maps_config.dart';
 import '../../../../../core/theme/app_tokens.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order_enums.dart';
 import '../../../../../data/services/directions_service.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../common/map/location_picker_screen.dart';

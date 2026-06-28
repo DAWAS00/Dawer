@@ -58,9 +58,8 @@ GRANT EXECUTE ON FUNCTION driver_wallet_release TO authenticated;
 -- driver_compensation_amount. Runs as the function owner (SECURITY DEFINER)
 -- so it can write to driver_wallet regardless of the caller's role.
 --
--- orders.driver_id → public.users.id  (not auth_id!)
--- driver_wallet.driver_id → auth.users.id (= public.users.auth_id)
--- We join through public.users to bridge the two key spaces.
+-- orders.driver_id IS the auth.users.id (= profiles.auth_id), the same key space
+-- as driver_wallet.driver_id, so no cross-table mapping is needed.
 CREATE OR REPLACE FUNCTION auto_credit_driver_compensation()
 RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
 DECLARE
@@ -79,15 +78,8 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  -- Map public.users.id → auth.users.id
-  SELECT auth_id INTO v_auth_id
-  FROM public.users
-  WHERE id = NEW.driver_id;
-
-  IF v_auth_id IS NULL THEN
-    RETURN NEW;
-  END IF;
-
+  -- driver_id is already the auth id.
+  v_auth_id := NEW.driver_id;
   v_amount := NEW.driver_compensation_amount;
 
   -- Ensure wallet row exists for this driver

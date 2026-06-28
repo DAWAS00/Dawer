@@ -4,7 +4,7 @@ Steps that must be done **in the Supabase dashboard** because they can't be
 applied via migrations or MCP tooling. Cross-referenced from
 `docs/auth/login-signup-design.md` and `plan/feature-supabase-auth-integration-1.md`.
 
-**Project:** `qexwkjwqnbowsrrthxva` (Dawer) · `ap-northeast-2`
+**Project:** `bbpleeddaquwwvexzmdc` (Dawer) · `ap-southeast-1`
 
 ---
 
@@ -24,7 +24,7 @@ Re-verify any time with:
 ```powershell
 $key = (Get-Content .env.local | Select-String 'SUPABASE_ANON_KEY=(.+)').Matches.Groups[1].Value
 Invoke-RestMethod `
-  -Uri 'https://qexwkjwqnbowsrrthxva.supabase.co/auth/v1/settings' `
+  -Uri 'https://bbpleeddaquwwvexzmdc.supabase.co/auth/v1/settings' `
   -Headers @{apikey=$key} | ConvertTo-Json -Depth 4
 ```
 
@@ -46,7 +46,7 @@ Run from the repo root — replace `you@example.com` with an inbox you control:
 $key = (Get-Content .env.local | Select-String 'SUPABASE_ANON_KEY=(.+)').Matches.Groups[1].Value
 Invoke-RestMethod `
   -Method Post `
-  -Uri 'https://qexwkjwqnbowsrrthxva.supabase.co/auth/v1/otp' `
+  -Uri 'https://bbpleeddaquwwvexzmdc.supabase.co/auth/v1/otp' `
   -Headers @{apikey=$key; 'Content-Type'='application/json'} `
   -Body '{"email":"you@example.com","create_user":false}'
 ```
@@ -85,7 +85,7 @@ To flip this on:
    ```powershell
    Invoke-RestMethod `
      -Method Post `
-     -Uri 'https://qexwkjwqnbowsrrthxva.supabase.co/auth/v1/otp' `
+     -Uri 'https://bbpleeddaquwwvexzmdc.supabase.co/auth/v1/otp' `
      -Headers @{apikey=$key; 'Content-Type'='application/json'} `
      -Body '{"phone":"+962791234567","create_user":true}'
    ```

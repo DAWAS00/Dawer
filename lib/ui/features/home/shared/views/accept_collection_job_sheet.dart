@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 
 /// Bottom sheet shown when a supplier (individual or restaurant) taps
 /// "قبول" on a collection job. The supplier makes two choices:

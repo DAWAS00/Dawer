@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../chat/views/chat_view.dart';
 
 class OrderActionButtons extends StatelessWidget {
   final Order order;
@@ -14,72 +14,14 @@ class OrderActionButtons extends StatelessWidget {
     if (order.driverName == null) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-      child: Row(
-        children: [
-          Expanded(
-            child: _ActionBtn(
-              label: context.l10n.orderChatButton,
-              icon: Icons.chat_bubble_outline_rounded,
-              color: const Color(0xFF06402B),
-              onTap: () => _openChat(context),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _ActionBtn(
-              label: context.l10n.orderWhatsAppButton,
-              icon: Icons.phone_rounded,
-              color: const Color(0xFF25D366),
-              onTap: () => _openWhatsApp(context),
-            ),
-          ),
-        ],
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      child: _ActionBtn(
+        label: context.l10n.orderChatButton,
+        icon: Icons.chat_bubble_outline_rounded,
+        color: const Color(0xFF06402B),
+        onTap: () => ChatView.push(context, orderId: order.id, order: order),
       ),
     );
-  }
-
-  void _openChat(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          context.l10n.orderChatComingSoon,
-          textAlign: TextAlign.right,
-          style: GoogleFonts.cairo(color: Colors.white),
-        ),
-        backgroundColor: const Color(0xFF06402B),
-        behavior: SnackBarBehavior.floating,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
-  }
-
-  Future<void> _openWhatsApp(BuildContext context) async {
-    final phone = order.driverPhone;
-    if (phone == null) return;
-    final cleaned = phone.replaceAll(RegExp(r'[^0-9]'), '');
-    final intl =
-        cleaned.startsWith('0') ? '962${cleaned.substring(1)}' : cleaned;
-    final uri = Uri.parse(
-        'https://wa.me/$intl?text=${Uri.encodeComponent('مرحباً، أنا في انتظار استلامي.')}');
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            context.l10n.orderWhatsAppFailed,
-            textAlign: TextAlign.right,
-            style: GoogleFonts.cairo(color: Colors.white),
-          ),
-          backgroundColor: Colors.red.shade700,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
-        ),
-      );
-    }
   }
 }
 
@@ -103,7 +45,7 @@ class _ActionBtn extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 50,
+        height: 56,
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(14),

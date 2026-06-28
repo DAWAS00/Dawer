@@ -6,12 +6,13 @@ import '../../../../data/models/user_role.dart';
 import '../../../../data/services/gemini_brand_profile_ai_service.dart';
 import '../../../../data/services/mock_ai_service.dart';
 import '../../../../data/services/user_signup_service.dart';
+import 'package:dwaar/data/models/signup_request.dart';
 import '../../../../domain/failures/app_failure.dart';
 import 'license_validation_viewmodel.dart';
 
 class StoreOnboardingViewModel extends ChangeNotifier {
-  StoreOnboardingViewModel({UserSignUpService? service})
-      : _service = service ?? UserSignUpService();
+  StoreOnboardingViewModel({required UserSignUpService service})
+      : _service = service;
 
   final UserSignUpService _service;
   final ImagePicker _picker = ImagePicker();
@@ -191,6 +192,7 @@ class StoreOnboardingViewModel extends ChangeNotifier {
       address: finalAddress,
       addressLat: _addressLat,
       addressLng: _addressLng,
+      categories: _selectedCategories.toList(),
     );
   }
 
@@ -201,7 +203,6 @@ class StoreOnboardingViewModel extends ChangeNotifier {
     submitError = null;
     notifyListeners();
 
-    // TODO: persist selectedCategories + tagline to 'store_profiles' table
     final result = await _service.signUp(
       _buildRequest(),
       profilePhoto: profilePhoto,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/services/app_order_store.dart';
 
@@ -31,6 +31,8 @@ class MarketplaceViewModel extends ChangeNotifier {
 
   void _onStoreChanged() => notifyListeners();
 
+  bool get isLoading => _store.isLoading;
+
   // ── User categories (persisted from signup/login) ─────────────────────────
 
   List<String> _userCategories = const [];
@@ -41,18 +43,22 @@ class MarketplaceViewModel extends ChangeNotifier {
 
   // Keep legacy getters for any widgets that still reference them.
   List<String> get aiSuggestedCategories => _userCategories;
-  bool get showSuggestionBanner => false;
+  bool get showSuggestionBanner => _userCategories.isNotEmpty;
 
   void setAiSuggestions(List<String> categories) {
     _userCategories = categories;
     notifyListeners();
   }
 
-  void dismissSuggestions() {}
+  void dismissSuggestions() {
+    _userCategories = [];
+    notifyListeners();
+  }
 
   void showAllOrders() {
     _searchQuery = '';
     _selectedCategory = null;
+    _userCategories = [];
     notifyListeners();
   }
 

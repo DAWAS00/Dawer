@@ -1,5 +1,5 @@
 import '../models/eco_badge.dart';
-import '../models/order.dart' show WasteType;
+import '../models/order/order_enums.dart' show WasteType;
 
 /// Configurable points-per-kg rates by waste type.
 const Map<WasteType, double> _pointRates = {

@@ -8,12 +8,15 @@
 
 ---
 
-## What Is This App?
+## Summary Scorecard
 
-A three-sided mobile platform connecting:
-- **Suppliers** — individuals/businesses that generate recyclable waste and request pickups
-- **Drivers** — accept orders and transport waste to recycling companies
-- **Recycling Companies** — post collection jobs and purchase waste materials
+| Severity | Total | Fixed | Remaining |
+|---|---|---|---|
+| CRITICAL | 2 | 2 | 0 |
+| HIGH | 5 | 4 | 1 |
+| MEDIUM | 4 | 3 | 1 |
+| LOW | 3 | 2 | 1 |
+| **Total** | **14** | **11** | **3** |
 
 ---
 
@@ -81,9 +84,17 @@ The Supabase `nearby_drivers()` SQL function exists in migrations but is **never
 
 ---
 
-## HIGH — Features That Appear to Work But Don't
+### 4. All 5 AI Services Mocked ✅ Fixed
+**Original**: Every AI feature returned hardcoded responses.
+**Fix**: LAITH branch merge (2026-06-27) replaced all 5 mock services with real Gemini implementations:
 
-### 4. All 5 AI Services Are Mocked
+| New Service | Replaces |
+|---|---|
+| `gemini_ai_license_validation_service.dart` | `mock_ai_license_validation_service.dart` |
+| `gemini_ai_marketplace_service.dart` | `mock_ai_marketplace_service.dart` |
+| `gemini_ai_simulation_service.dart` | `mock_ai_simulation_service.dart` |
+| `gemini_ai_validation_service.dart` | `mock_ai_validation_service.dart` |
+| `gemini_brand_profile_ai_service.dart` | mock brand profile |
 
 Every AI feature returns hardcoded responses with no real analysis.
 
@@ -178,7 +189,7 @@ Uses `Navigator.push` instead of GoRouter's `context.push`. Bypasses routing lay
 Three files use hardcoded Arabic instead of `AppLocalizations`:
 - `lib/ui/features/auth/views/widgets/license_scan_section.dart` — 10+ strings
 - `lib/ui/features/home/shared/widgets/marketplace_suggestion_banner.dart:71,124`
-- `lib/ui/features/auth/views/widgets/restaurant_step_verification.dart:49`
+**Priority**: LOW — Arabic is the primary locale; English is secondary. Not blocking any user flow.
 
 **Requires**: Pure Dart — no backend
 

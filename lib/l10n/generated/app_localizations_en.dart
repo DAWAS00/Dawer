@@ -137,6 +137,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSignUpNow => 'Register Now';
 
   @override
+  String get registerAsDriver => 'Register as Driver';
+
+  @override
+  String get registerAsIndividual => 'Register as Individual Supplier';
+
+  @override
+  String get registerAsStore => 'Register as Restaurant / Company';
+
+  @override
+  String get registerAsRecyclingCo => 'Register as Recycling Company';
+
+  @override
   String get loginCountrySearch => 'Search';
 
   @override
@@ -295,6 +307,69 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginPasswordHint => 'Enter your password';
+
+  @override
+  String get roleDriverTitle => 'Driver';
+
+  @override
+  String get roleDriverSubtitle => 'Collect and transport waste to earn money';
+
+  @override
+  String get roleSupplierTitle => 'Supplier';
+
+  @override
+  String get roleSupplierSubtitle => 'Sell your waste and help the environment';
+
+  @override
+  String get roleRecyclingCoTitle => 'Recycling Company';
+
+  @override
+  String get roleRecyclingCoSubtitle =>
+      'Receive materials directly at your facility';
+
+  @override
+  String get loginPhoneHelp =>
+      'We will send a short code to this number to verify it\'s you';
+
+  @override
+  String get loginPhoneHint => '7X XXX XXXX';
+
+  @override
+  String get loginContinueButton => 'Continue';
+
+  @override
+  String get loginPhoneEmptyError => 'Please enter your phone number';
+
+  @override
+  String get loginNewNumberHint =>
+      'New number? Your account will be created after verification';
+
+  @override
+  String get otpTitle => 'Verification Code';
+
+  @override
+  String otpSubtitle(String phone) {
+    return 'Enter the 6-digit code sent to $phone';
+  }
+
+  @override
+  String get otpVerifyButton => 'Verify';
+
+  @override
+  String get otpResendButton => 'Resend Code';
+
+  @override
+  String get otpResentMessage => 'Code sent again';
+
+  @override
+  String get otpErrorIncomplete => 'Please enter the full code';
+
+  @override
+  String get otpErrorInvalid => 'Invalid code, please try again';
+
+  @override
+  String get otpSimulatedHint =>
+      'A verification code will be sent to your number via SMS';
 
   @override
   String get signupRoleDriver => 'Driver Registration';
@@ -477,6 +552,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get driverCollectionCommitments => 'Collection Commitments';
+
+  @override
+  String get driverToggleOnline => 'Available';
+
+  @override
+  String get driverToggleOffline => 'Unavailable';
+
+  @override
+  String get driverStatusOnline => 'Online Now';
+
+  @override
+  String get driverStatusOffline => 'Offline';
+
+  @override
+  String get driverActiveMission => 'Active Mission';
+
+  @override
+  String get driverHeadingToPickup => 'Heading to Pickup';
+
+  @override
+  String get driverHeadingToDelivery => 'Heading to Delivery';
+
+  @override
+  String get driverOrderAccepted => 'Order Accepted';
+
+  @override
+  String get driverNewOrderBadge => 'New Order';
+
+  @override
+  String get driverActivateNow => 'Activate Now';
+
+  @override
+  String get driverNoOrdersNotifySubtitle =>
+      'You\'ll be notified when new orders are available';
+
+  @override
+  String get driverOrdersTabAll => 'All';
+
+  @override
+  String get driverOrdersTabActive => 'Active';
+
+  @override
+  String get driverOrdersTabCompleted => 'Completed';
+
+  @override
+  String get driverPickupLabel => 'Pickup';
+
+  @override
+  String get driverDeliveryLabel => 'Delivery';
+
+  @override
+  String get driverViewPickupDetails => 'View Pickup Details';
+
+  @override
+  String get driverViewDeliveryDetails => 'View Delivery Details';
+
+  @override
+  String get driverRewardLabel => 'Reward';
+
+  @override
+  String get driverDistanceLabel => 'Distance';
+
+  @override
+  String get driverTimeLabel => 'Time';
+
+  @override
+  String get driverWasteTypeLabel => 'Waste Type';
 
   @override
   String get withdrawListing => 'Withdraw Listing';
@@ -684,7 +826,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recyclingOpenForReceipt => 'Open for Receipt';
 
   @override
-  String get recyclingClosedTemp => 'Temporarily Closed';
+  String get recyclingClosedTemp => 'Temporarily closed';
 
   @override
   String get recyclingTodayShipments => 'Today\'s Shipments';
@@ -1089,6 +1231,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get marketNoJobs => 'No collection jobs currently';
 
   @override
+  String get marketCategoryAll => 'All';
+
+  @override
+  String get marketNoOffersBody => 'Posted materials will appear here';
+
+  @override
+  String get marketNoJobsBody => 'Available collection jobs will appear here';
+
+  @override
+  String get marketSuggestedByLicense => 'Suggestions Based on Your License';
+
+  @override
+  String get marketShowAllOrders => 'Show All Orders';
+
+  @override
   String get collectionJobBadge => 'Collection Job';
 
   @override
@@ -1437,6 +1594,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get newOrderSubmitButton => 'Submit Request';
+
+  @override
+  String get chatTitle => 'Chat';
+
+  @override
+  String get chatDevBanner => 'Dev Mode: Messages are local only';
+
+  @override
+  String get chatEmpty => 'No messages yet';
+
+  @override
+  String get chatInputHint => 'Type a message...';
 
   @override
   String get openInGoogleMaps => 'Open in Google Maps';
@@ -1858,4 +2027,989 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signupVehicleColorHint => 'e.g., White';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsEmpty => 'No notifications yet';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all as read';
+
+  @override
+  String get orderSearchingDriver =>
+      'Searching for the nearest available driver...';
+
+  @override
+  String get orderSearchingDriverRetry => 'Search for a driver again';
+
+  @override
+  String get vehicleScanTitle => 'Scan vehicle registration';
+
+  @override
+  String get vehicleScanOptional => 'Optional';
+
+  @override
+  String get vehicleScanPrompt => 'Scan the registration to auto-fill data';
+
+  @override
+  String get vehicleScanTypeHint =>
+      'Vehicle type is detected from the document';
+
+  @override
+  String get vehicleScanStepType => 'Checking vehicle type...';
+
+  @override
+  String get vehicleScanStepPlate => 'Reading plate number...';
+
+  @override
+  String get vehicleScanStepModel => 'Analyzing car model...';
+
+  @override
+  String get vehicleScanStepExpiry => 'Verifying expiry date...';
+
+  @override
+  String get vehicleScanPulseType => 'Vehicle type ✓';
+
+  @override
+  String get vehicleScanPulsePlate => 'Plate number...';
+
+  @override
+  String get vehicleScanPulseModel => 'Model ✓';
+
+  @override
+  String get vehicleScanPulseExpiry => 'Expiry date...';
+
+  @override
+  String get vehicleScanPulseColor => 'Color ✓';
+
+  @override
+  String get vehicleScanPulseValid => 'Registration valid';
+
+  @override
+  String get vehicleScanReadSuccess => 'Document read successfully';
+
+  @override
+  String get vehicleScanReviewPrompt => 'Review the data and confirm';
+
+  @override
+  String get vehicleScanRescanTooltip => 'Rescan';
+
+  @override
+  String get vehicleScanConfirmAutoFill => 'Confirm and auto-fill data';
+
+  @override
+  String get vehicleScanExtractedData => 'Extracted data';
+
+  @override
+  String get vehicleScanRowModel => 'Model';
+
+  @override
+  String get vehicleScanRowColor => 'Color';
+
+  @override
+  String get vehicleScanRowPlate => 'Plate number';
+
+  @override
+  String get vehicleScanRowExpiry => 'Registration expiry date';
+
+  @override
+  String get vehicleScanChemicalPermit => 'Chemical materials transport permit';
+
+  @override
+  String get vehicleScanChemicalPermitHint =>
+      'Orders will be filtered automatically based on your vehicle type';
+
+  @override
+  String get vehicleScanAccuracy => 'Accuracy';
+
+  @override
+  String get vehicleScanReadFailed => 'Could not read the document';
+
+  @override
+  String get licenseScanUploadPrompt => 'Tap to upload the document';
+
+  @override
+  String get licenseScanSourcesHint => 'Camera or photo gallery';
+
+  @override
+  String get licenseScanSuggestedCategories =>
+      'Suggested marketplace categories';
+
+  @override
+  String get signupLocationPermissionDenied =>
+      'Please allow location access from device settings';
+
+  @override
+  String signupLocationError(String error) {
+    return 'Could not determine location: $error';
+  }
+
+  @override
+  String get signupLocating => 'Locating you...';
+
+  @override
+  String get signupSkip => 'Skip';
+
+  @override
+  String get signupIdentityLabel => 'Your identity';
+
+  @override
+  String get signupRoleDetailsLabel => 'Role details';
+
+  @override
+  String get signupVehicleInfoTitle => 'Vehicle information';
+
+  @override
+  String get signupYourWasteTypes => 'Your waste types';
+
+  @override
+  String get signupAcceptedWasteTypes => 'Accepted waste types';
+
+  @override
+  String get signupSelectOneOrMore => 'Select one or more';
+
+  @override
+  String get signupSaveAndComplete => 'Save and complete';
+
+  @override
+  String get signupSkipCompleteLater => 'Skip now, I\'ll complete later';
+
+  @override
+  String get signupUpdateAnytime =>
+      'You can update this data anytime from your account settings.';
+
+  @override
+  String get signupRoleDriverHeading => 'Your vehicle information';
+
+  @override
+  String get signupRoleSupplierHeading => 'What would you like to recycle?';
+
+  @override
+  String get signupRoleRecyclingHeading => 'What does your facility accept?';
+
+  @override
+  String get signupRoleDriverBody =>
+      'Add your vehicle plate to start receiving orders. You can scan the registration automatically.';
+
+  @override
+  String get signupRoleSupplierBody =>
+      'Specify your waste types to receive relevant offers directly.';
+
+  @override
+  String get signupRoleRecyclingBody =>
+      'Specify the materials your facility accepts to help suppliers find you.';
+
+  @override
+  String get signupPlateNumberLabel => 'Vehicle plate number';
+
+  @override
+  String get signupPlateNumberHint => 'e.g., 12 A B C';
+
+  @override
+  String get signupWelcomeTo => 'Welcome to Dwaar!';
+
+  @override
+  String get signupCreateIdentityHeading =>
+      'Let\'s create your digital identity';
+
+  @override
+  String get signupProfilePhotoLabel => 'Profile photo';
+
+  @override
+  String get signupAccountTypePrompt => 'What\'s your account type?';
+
+  @override
+  String get signupPrivacyNotice =>
+      'Your data is used only to create your account and will not be shared with any third party.';
+
+  @override
+  String get signupSmsVerification => 'We\'ll verify your number via SMS';
+
+  @override
+  String get signupRoleIndividualLabel => 'Individual';
+
+  @override
+  String get signupRoleStoreLabel => 'Store / Restaurant';
+
+  @override
+  String recyclingIncomingShipmentsCount(int count) {
+    return 'Incoming shipments ($count)';
+  }
+
+  @override
+  String recyclingActiveJobsCount(int count) {
+    return 'Active jobs ($count)';
+  }
+
+  @override
+  String get recyclingTodayOperations => 'Today\'s operations';
+
+  @override
+  String get recyclingNoActiveDrivers => 'No active drivers right now';
+
+  @override
+  String get recyclingReconnecting => 'Reconnecting…';
+
+  @override
+  String get recyclingFacility => 'Recycling facility';
+
+  @override
+  String get recyclingReadyForReceipt => 'Ready for receipt';
+
+  @override
+  String get recyclingTotalWeightKg => 'Total weight (kg)';
+
+  @override
+  String get recyclingDriversEnRoute => 'Drivers en route';
+
+  @override
+  String get recyclingResponses => 'responses';
+
+  @override
+  String get recyclingShowDetails => 'Show details';
+
+  @override
+  String recyclingCommittedCount(int count) {
+    return 'Committed ($count)';
+  }
+
+  @override
+  String get recyclingFilterHasAcceptors => 'Has acceptors';
+
+  @override
+  String get recyclingFilterNoAcceptors => 'No acceptors';
+
+  @override
+  String get recyclingFilterFlatFee => 'Flat fee';
+
+  @override
+  String get recyclingFilterPerKg => 'Per kg';
+
+  @override
+  String get recyclingWithdrawAdTitle => 'Withdraw listing';
+
+  @override
+  String get recyclingWithdrawAdBody =>
+      'Are you sure you want to withdraw this listing from the market?';
+
+  @override
+  String get recyclingWithdrawAdConfirm => 'Yes, withdraw listing';
+
+  @override
+  String recyclingMaxListingsReached(int count) {
+    return 'Maximum reached ($count active listings)';
+  }
+
+  @override
+  String get collectionJobPaymentModelLabel => 'Payment model *';
+
+  @override
+  String collectionJobPriceLabel(String unit) {
+    return 'Price * ($unit)';
+  }
+
+  @override
+  String get collectionJobPricePerKgHint => 'e.g., 2.5 JOD per kg';
+
+  @override
+  String get collectionJobPriceFlatHint => 'e.g., 25 JOD per trip';
+
+  @override
+  String get collectionJobMinQtyLabel => 'Minimum quantity (kg) — optional';
+
+  @override
+  String get collectionJobMinQtyHint => 'e.g., 10';
+
+  @override
+  String get collectionJobAreaHint => 'e.g., Al-Rabiah, Amman';
+
+  @override
+  String get collectionJobDescHint =>
+      'Explain what you need, required specs, and the reason for the request...';
+
+  @override
+  String get collectionJobFlatFeeLabel => 'Flat fee';
+
+  @override
+  String get collectionJobPerKgLabel => 'Per kilogram';
+
+  @override
+  String get supplierMyOrdersCurrent => 'My current orders';
+
+  @override
+  String get supplierNoActiveOrders => 'No active orders';
+
+  @override
+  String get supplierStartRecyclingCta =>
+      'Start by adding your first recycling request!';
+
+  @override
+  String get supplierStartMarketCta => 'Add your first market listing!';
+
+  @override
+  String supplierWelcome(String name) {
+    return 'Welcome, $name';
+  }
+
+  @override
+  String get supplierAccountIndividual => 'Individual account';
+
+  @override
+  String get supplierAccountBusiness => 'Business supplier';
+
+  @override
+  String get supplierMyPoints => 'My points';
+
+  @override
+  String get supplierTotalWeight => 'Total weight';
+
+  @override
+  String get supplierWeightZero => '0 kg';
+
+  @override
+  String get supplierTreesSaved => 'Trees saved';
+
+  @override
+  String get supplierOrderPendingDriver => 'Waiting for a driver to accept';
+
+  @override
+  String get supplierOrderAcceptedOnWay =>
+      'Your order was accepted, the driver is on the way';
+
+  @override
+  String get supplierOrderDriverArrivedPickup =>
+      'The driver arrived at the pickup location';
+
+  @override
+  String get supplierOrderInTransitToDest =>
+      'Your order is on its way to its destination';
+
+  @override
+  String get supplierOrderDriverArrivedDropoff =>
+      'The driver arrived at the drop-off location';
+
+  @override
+  String get supplierOrderDeliveredSuccess => 'Order delivered successfully';
+
+  @override
+  String get supplierOrderCancelledDone => 'Order cancelled';
+
+  @override
+  String get driverDeliveryHubs => 'Available delivery hubs';
+
+  @override
+  String get driverActiveOrderTitle => 'Current active order';
+
+  @override
+  String get driverHubsUnavailable =>
+      'Delivery hubs unavailable — check your connection';
+
+  @override
+  String get driverStatusReady => 'Ready';
+
+  @override
+  String get driverStatusCollecting => 'Collecting';
+
+  @override
+  String get driverUnavailableBottomTitle => 'Unavailable for work';
+
+  @override
+  String get driverUnavailableBottomSubtitle =>
+      'Enable availability mode to receive new orders';
+
+  @override
+  String get driverEnableNow => 'Enable now';
+
+  @override
+  String get driverNoOrdersAvailable => 'No orders available right now';
+
+  @override
+  String get driverNewOrderNotifications =>
+      'You\'ll be notified when new orders arrive';
+
+  @override
+  String get profileAvatarFallback => 'U';
+
+  @override
+  String get profileEmailSupportSubject => 'Driver help';
+
+  @override
+  String get profileEnterManually => 'Or enter manually';
+
+  @override
+  String get profilePlateLabel => 'Plate number';
+
+  @override
+  String profileVehicleTypeLabel(String type) {
+    return 'Vehicle type: $type';
+  }
+
+  @override
+  String get driverOrderCardVehicleFallback => 'Vehicle';
+
+  @override
+  String get currencyJodShort => 'JOD';
+
+  @override
+  String get monthJanuary => 'January';
+
+  @override
+  String get monthFebruary => 'February';
+
+  @override
+  String get monthMarch => 'March';
+
+  @override
+  String get monthApril => 'April';
+
+  @override
+  String get monthMay => 'May';
+
+  @override
+  String get monthJune => 'June';
+
+  @override
+  String get monthJuly => 'July';
+
+  @override
+  String get monthAugust => 'August';
+
+  @override
+  String get monthSeptember => 'September';
+
+  @override
+  String get monthOctober => 'October';
+
+  @override
+  String get monthNovember => 'November';
+
+  @override
+  String get monthDecember => 'December';
+
+  @override
+  String get wizardStep1Title => 'What would you like to sell?';
+
+  @override
+  String get wizardStep1Subtitle =>
+      'Add details of the materials you want to sell';
+
+  @override
+  String get wizardMaterialPhotosOptional => 'Material photos — optional';
+
+  @override
+  String get wizardMaterialTypeRequired => 'Material type *';
+
+  @override
+  String get wizardAiAnalyzing => 'The smart team is analyzing your request...';
+
+  @override
+  String wizardAiAnalysisFailed(String error) {
+    return 'Failed to analyze image: $error';
+  }
+
+  @override
+  String get wizardStep2Title => 'Material details';
+
+  @override
+  String get wizardStep2Subtitle =>
+      'Specify quantity, condition, and requested price';
+
+  @override
+  String get wizardMaterialCondition => 'Material condition *';
+
+  @override
+  String get wizardQuantitySize => 'Quantity size *';
+
+  @override
+  String get wizardRequestedPrice => 'Requested price (JOD) — optional';
+
+  @override
+  String get wizardStep3Title => 'Last step!';
+
+  @override
+  String get wizardStep3Subtitle =>
+      'Set the pickup location and review the listing before publishing';
+
+  @override
+  String get wizardPickupAddress => 'Pickup address *';
+
+  @override
+  String get wizardTapToSetLocation => 'Tap to set the location on the map';
+
+  @override
+  String get wizardNotesOptional => 'Notes — optional';
+
+  @override
+  String get wizardNotesHint => 'e.g., materials are behind the warehouse...';
+
+  @override
+  String get wizardListingSummary => 'Listing summary & environmental impact';
+
+  @override
+  String get wizardChangeLocation => 'Change location';
+
+  @override
+  String get wizardUseCurrentLocation => 'Use my current location';
+
+  @override
+  String get wizardSummaryMaterialType => 'Material type';
+
+  @override
+  String get wizardSummaryCondition => 'Condition';
+
+  @override
+  String get wizardSummaryQuantity => 'Quantity';
+
+  @override
+  String get wizardSummaryPrice => 'Price';
+
+  @override
+  String get wizardPriceUndefined => 'Undefined';
+
+  @override
+  String get wizardCo2Savings => 'CO2 savings';
+
+  @override
+  String get wizardWaterSavings => 'Water savings';
+
+  @override
+  String wizardWaterLiters(String liters) {
+    return '$liters liters';
+  }
+
+  @override
+  String get wizardLocationDefined => 'Location defined';
+
+  @override
+  String get wizardPublishedToMarket => 'Published to market successfully! ✓';
+
+  @override
+  String get wizardPickupRequestSent => 'Pickup request sent successfully! ✓';
+
+  @override
+  String get wizardPickupRequestFailed => 'Failed to send pickup request';
+
+  @override
+  String get wizardNewPickupTitle => 'New pickup request';
+
+  @override
+  String get wizardPublishToMarket => 'Publish to market';
+
+  @override
+  String get driverActiveOrderViewPickupDetails => 'View pickup details';
+
+  @override
+  String get driverActiveOrderViewDeliveryDetails => 'View delivery details';
+
+  @override
+  String get driverActiveOrderStepAccepted => 'Accepted';
+
+  @override
+  String get driverActiveOrderStepArrivedPickup => 'Arrived\nat pickup';
+
+  @override
+  String get driverActiveOrderStepInTransit => 'In\ntransit';
+
+  @override
+  String get driverActiveOrderStepDelivered => 'Delivered';
+
+  @override
+  String driverActiveOrderEtaMinutes(String minutes) {
+    return '$minutes m';
+  }
+
+  @override
+  String get proofCancelTitle => 'Cancel pickup proof?';
+
+  @override
+  String get proofCancelBody => 'The photo and entered weight will be lost.';
+
+  @override
+  String get proofBack => 'Back';
+
+  @override
+  String get proofTitle => 'Pickup proof';
+
+  @override
+  String get proofShipmentWeight => 'Shipment weight (kg)';
+
+  @override
+  String get proofChangePhoto => 'Change photo';
+
+  @override
+  String get proofPhotoCaptured => 'Photo captured ✓';
+
+  @override
+  String get proofCapturePhoto => 'Take a photo of the shipment';
+
+  @override
+  String get proofRetry => 'Retry';
+
+  @override
+  String get proofConfirmPickup => 'Confirm pickup';
+
+  @override
+  String get proofSuccessTitle => 'Pickup verified';
+
+  @override
+  String get proofSuccessBody => 'The supplier will be notified now';
+
+  @override
+  String get driverErrorToggleOfflineWithActive =>
+      'You can\'t switch to unavailable while you have an active order.';
+
+  @override
+  String get driverErrorAcceptWhileOffline =>
+      'You\'re currently unavailable. You can\'t accept the order.';
+
+  @override
+  String get driverErrorLocationUnavailable =>
+      'Couldn\'t determine your location. Check location permission.';
+
+  @override
+  String driverErrorTooFarPickup(int meters) {
+    return 'You\'re too far from the pickup location ($meters m). You must be within 200 m.';
+  }
+
+  @override
+  String driverErrorTooFarDelivery(int meters) {
+    return 'You\'re too far from the delivery location ($meters m). You must be within 200 m.';
+  }
+
+  @override
+  String get driverErrorServerGeofence =>
+      'Server-side location verification failed. You must be within 200 m.';
+
+  @override
+  String get earningsFilterMonth => 'Month';
+
+  @override
+  String get earningsFilterWeek => 'Week';
+
+  @override
+  String get earningsFilterDay => 'Day';
+
+  @override
+  String get earningsTitle => 'Earnings';
+
+  @override
+  String get earningsNetTotal => 'Net total earnings';
+
+  @override
+  String get earningsIncreaseVsPrev => 'increase vs previous period';
+
+  @override
+  String get earningsFinancialDetails => 'Financial returns details';
+
+  @override
+  String get earningsDistanceFees => 'Distance fees';
+
+  @override
+  String get earningsNetTotalLabel => 'Net total';
+
+  @override
+  String get earningsBestDay => 'Your best day';
+
+  @override
+  String get weekdayMonday => 'Monday';
+
+  @override
+  String get weekdayTuesday => 'Tuesday';
+
+  @override
+  String get weekdayWednesday => 'Wednesday';
+
+  @override
+  String get weekdayThursday => 'Thursday';
+
+  @override
+  String get weekdayFriday => 'Friday';
+
+  @override
+  String get weekdaySaturday => 'Saturday';
+
+  @override
+  String get weekdaySunday => 'Sunday';
+
+  @override
+  String get earningsMyEarnings => 'My earnings';
+
+  @override
+  String get earningsRefresh => 'Refresh data';
+
+  @override
+  String get earningsTrend => 'Earnings trend';
+
+  @override
+  String get earningsRecentActivity => 'Recent activity';
+
+  @override
+  String get earningsDownloadReport => 'Download performance report';
+
+  @override
+  String get earningsTotalEarnings => 'Total earnings';
+
+  @override
+  String get earningsTripsCount => 'Trips count';
+
+  @override
+  String get earningsAverage => 'Average earnings';
+
+  @override
+  String get chatDateToday => 'Today';
+
+  @override
+  String get chatDateYesterday => 'Yesterday';
+
+  @override
+  String get chatTyping => 'typing';
+
+  @override
+  String get unitKg => 'kg';
+
+  @override
+  String get unitKm => 'km';
+
+  @override
+  String get orderArrivalAtPickup => 'Arrived at pickup location?';
+
+  @override
+  String get orderArrivalGeoNote =>
+      'Your location will be verified (within 200 m)';
+
+  @override
+  String get orderArrivalHerePickup => 'I\'m Here — Pickup';
+
+  @override
+  String get orderArrivalAtDropoff => 'Arrived at dropoff location?';
+
+  @override
+  String get orderArrivalHereDropoff => 'I\'m Here — Dropoff';
+
+  @override
+  String get orderArrivalAwaitingSupplier => 'Awaiting supplier confirmation';
+
+  @override
+  String get orderArrivalAwaitingSubtitle =>
+      'Supplier has 5 minutes to respond — driver will be automatically compensated when time runs out';
+
+  @override
+  String get orderArrivalDriverArrived => 'Driver arrived!';
+
+  @override
+  String get orderArrivalDriverAtLocation =>
+      'The driver is at your location. Are you available to hand over the materials?';
+
+  @override
+  String get orderArrivalIAmAvailable => 'I\'m Available';
+
+  @override
+  String get acceptJobTitle => 'How would you like to proceed?';
+
+  @override
+  String get acceptJobSubtitle =>
+      'Choose delivery method and transaction type to accept the job';
+
+  @override
+  String get acceptJobDeliveryFeeCompany => 'Delivery fee covered by company';
+
+  @override
+  String get acceptJobDeliveryFeeYou => 'Delivery fee is on you';
+
+  @override
+  String get acceptJobConfirmButton => 'Confirm Acceptance';
+
+  @override
+  String get marketDeliveryConfirmTitle => 'Confirm Purchase & Delivery';
+
+  @override
+  String get marketDeliveryFeeNote =>
+      'Delivery fee calculated by distance and weight';
+
+  @override
+  String get marketDeliverySellerLocation => 'Seller Location';
+
+  @override
+  String get marketDeliveryAddressLabel => 'Delivery Address';
+
+  @override
+  String marketDeliveryDistanceFeeRow(String distance) {
+    return 'Distance fee ($distance km × 0.2)';
+  }
+
+  @override
+  String marketDeliveryWeightFeeRow(String weight) {
+    return 'Weight fee ($weight)';
+  }
+
+  @override
+  String get marketDeliveryBaseFee => 'Base delivery fee';
+
+  @override
+  String get marketDeliveryTotal => 'Total';
+
+  @override
+  String marketDeliveryConfirmButton(String total) {
+    return 'Confirm Purchase — $total';
+  }
+
+  @override
+  String get marketPurchaseChoiceTitle => 'Choose Pickup Method';
+
+  @override
+  String get marketPurchaseChoiceSubtitle =>
+      'You can self-pickup or assign a driver for delivery';
+
+  @override
+  String get marketPurchaseSelfPickup => 'Pick up from market';
+
+  @override
+  String get marketPurchaseNoFee => 'No delivery fee';
+
+  @override
+  String get marketPurchaseAssignRider => 'Assign a driver for delivery';
+
+  @override
+  String get marketPurchaseRiderFeeNote =>
+      'Delivery fee calculated by distance and weight';
+
+  @override
+  String get walletTitle => 'My Wallet';
+
+  @override
+  String get walletPointsAndRewards => 'My Points & Rewards';
+
+  @override
+  String get walletBillingPayments => 'Billing & Payments';
+
+  @override
+  String get walletAvailableBalance => 'Available Balance';
+
+  @override
+  String get walletHeldAmount => 'On Hold';
+
+  @override
+  String get walletWithdrawButton => 'Request Withdrawal';
+
+  @override
+  String get walletPointUnit => 'pts';
+
+  @override
+  String walletPointsToNextReward(String n) {
+    return '$n pts to next reward';
+  }
+
+  @override
+  String get walletViewRewards => 'View Rewards';
+
+  @override
+  String get walletCurrentPeriod => 'Current period:';
+
+  @override
+  String get walletShipments => 'Shipments';
+
+  @override
+  String get walletWeightKg => 'Weight (kg)';
+
+  @override
+  String get walletViewInvoice => 'View Invoice';
+
+  @override
+  String get walletEfawateerTitle => 'Pay via eFawateercom';
+
+  @override
+  String get walletEfawateerSubtitle => 'Government e-payment platform';
+
+  @override
+  String analyticsStreakChip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '🔥 # day streak',
+      one: '🔥 day streak',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get analyticsStreakSectionTitle => 'Activity streak';
+
+  @override
+  String analyticsStreakBest(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '# days',
+      one: '# day',
+    );
+    return 'Longest streak: $_temp0';
+  }
+
+  @override
+  String get analyticsStreakEmpty =>
+      'No activity yet — complete your first order today!';
+
+  @override
+  String get analyticsCycleSectionTitle => 'Order cycle time';
+
+  @override
+  String analyticsCycleAvgCaption(int minutes) {
+    return 'Average full order time: $minutes min';
+  }
+
+  @override
+  String get analyticsCycleStageAccept => 'Wait until accepted';
+
+  @override
+  String get analyticsCycleStagePickup => 'Reaching pickup';
+
+  @override
+  String get analyticsCycleStageTransit => 'Transit';
+
+  @override
+  String get analyticsCycleStageDropoff => 'Drop-off';
+
+  @override
+  String analyticsCycleMinutes(String minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get analyticsCycleEmpty => 'Not enough data to analyze order timing';
+
+  @override
+  String get analyticsProfitabilitySectionTitle => 'Most profitable materials';
+
+  @override
+  String analyticsProfitabilityPerKg(String value) {
+    return '$value JOD/kg';
+  }
+
+  @override
+  String get analyticsProfitabilityTopBadge => '🏆 Top earner';
+
+  @override
+  String get analyticsProfitabilityEmpty =>
+      'Not enough data to analyze material profitability';
+
+  @override
+  String get analyticsEfficiencySectionTitle => 'Earnings efficiency';
+
+  @override
+  String get analyticsEfficiencyRatioCaption =>
+      'Average you earn per kilometer';
+
+  @override
+  String analyticsEfficiencyRatioValue(String value) {
+    return '$value JOD/km';
+  }
+
+  @override
+  String get analyticsEfficiencyTopJobs => 'Best trips';
+
+  @override
+  String get analyticsEfficiencyEmpty =>
+      'No distance data to compute efficiency';
 }

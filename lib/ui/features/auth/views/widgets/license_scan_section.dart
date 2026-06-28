@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +9,7 @@ import '../../../../common/ai_shimmer_loader.dart';
 import '../../../../common/animated_status_text.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../domain/services/i_ai_license_validation_service.dart';
+import 'photo_source_picker.dart';
 
 /// Drop-in replacement for [IdentityUploadCard] that runs AI validation
 /// on the picked document and surfaces suggested marketplace categories.
@@ -28,49 +29,14 @@ class LicenseScanSection extends StatelessWidget {
     required this.label,
   });
 
-  void _showSourceSheet(BuildContext context) {
-    showModalBottomSheet<void>(
+  Future<void> _showSourceSheet(BuildContext context) async {
+    final l10n = context.l10n;
+    final source = await showPhotoSourceSheet(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD1D5DB),
-                  borderRadius: BorderRadius.circular(9999),
-                ),
-              ),
-              const SizedBox(height: 16),
-              _SheetTile(
-                icon: Icons.camera_alt_rounded,
-                label: 'الكاميرا', // TODO: localize
-                onTap: () {
-                  Navigator.pop(context);
-                  onPick(ImageSource.camera);
-                },
-              ),
-              _SheetTile(
-                icon: Icons.photo_library_rounded,
-                label: 'معرض الصور', // TODO: localize
-                onTap: () {
-                  Navigator.pop(context);
-                  onPick(ImageSource.gallery);
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
+      cameraLabel: l10n.imagePickerCamera,
+      galleryLabel: l10n.imagePickerGallery,
     );
+    if (source != null) await onPick(source);
   }
 
   @override
@@ -126,6 +92,7 @@ class _IdleZone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -156,7 +123,7 @@ class _IdleZone extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'انقر لرفع الوثيقة', // TODO: localize
+              l10n.licenseScanUploadPrompt,
               style: GoogleFonts.cairo(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -164,7 +131,7 @@ class _IdleZone extends StatelessWidget {
               ),
             ),
             Text(
-              'كاميرا أو معرض الصور', // TODO: localize
+              l10n.licenseScanSourcesHint,
               style: GoogleFonts.cairo(
                 fontSize: 11,
                 color: const Color(0xFF717973),
@@ -642,6 +609,7 @@ class _InvalidZone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -661,7 +629,7 @@ class _InvalidZone extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'فشل التحقق', // TODO: localize
+                      l10n.aiValidationErrorTitle,
                       style: GoogleFonts.cairo(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -687,7 +655,7 @@ class _InvalidZone extends StatelessWidget {
           onPressed: onRetry,
           icon: const Icon(Icons.upload_file_rounded),
           label: Text(
-            'حاول مرة أخرى', // TODO: localize
+            l10n.aiValidationRetryButton,
             style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
           ),
           style: OutlinedButton.styleFrom(
@@ -709,6 +677,7 @@ class _CategoryPreviewChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -724,7 +693,7 @@ class _CategoryPreviewChips extends StatelessWidget {
               const _AiSparkleIcon(),
               const SizedBox(width: 6),
               Text(
-                'فئات مقترحة في السوق', // TODO: localize
+                l10n.licenseScanSuggestedCategories,
                 style: GoogleFonts.cairo(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -796,31 +765,4 @@ class _AiSparkleIcon extends StatelessWidget {
 }
 
 // ── Sheet tile ────────────────────────────────────────────────────────────────
-
-class _SheetTile extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _SheetTile({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon, color: const Color(0xFF191C1B)),
-      title: Text(
-        label,
-        style: GoogleFonts.cairo(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-          color: const Color(0xFF191C1B),
-        ),
-      ),
-      onTap: onTap,
-    );
-  }
-}
+// (Removed: the shared source sheet now lives in photo_source_picker.dart.)

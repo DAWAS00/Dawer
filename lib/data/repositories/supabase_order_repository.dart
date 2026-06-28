@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/result/result.dart';
 import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/i_order_repository.dart';
-import '../models/order.dart';
+import '../models/order/order.dart';
 import '../models/order_supabase_ext.dart';
 import '../models/reward_breakdown.dart';
 import '../models/user_role.dart';
@@ -62,24 +62,24 @@ final class SupabaseOrderRepository implements IOrderRepository {
   Future<AppResult<void>> insertOrder(Order order) async {
     final authUserId = _client.auth.currentUser?.id;
     final payload = order.toSupabaseMap(authUserId)..remove('id');
-    return _run(() => _client.from('orders').insert(payload));
+    return _runWithRetry(() => _client.from('orders').insert(payload));
   }
 
   @override
   Future<AppResult<void>> updateOrder(Order order) async {
     final authUserId = _client.auth.currentUser?.id;
     final payload = order.toSupabaseMap(authUserId);
-    return _run(() => _client.from('orders').update(payload).eq('id', order.id));
+    return _runWithRetry(() => _client.from('orders').update(payload).eq('id', order.id));
   }
 
   @override
   Future<AppResult<void>> deleteOrder(String orderId) {
-    return _run(() => _client.from('orders').delete().eq('id', orderId));
+    return _runWithRetry(() => _client.from('orders').delete().eq('id', orderId));
   }
 
   @override
   Future<AppResult<void>> markAccepted(String orderId) {
-    return _run(() => _client.from('orders').update({
+    return _runWithRetry(() => _client.from('orders').update({
           'status': 'accepted',
           'driver_id': _client.auth.currentUser?.id,
           'accepted_at': DateTime.now().toUtc().toIso8601String(),
@@ -88,7 +88,7 @@ final class SupabaseOrderRepository implements IOrderRepository {
 
   @override
   Future<AppResult<void>> assignDriver(String orderId, String driverId) {
-    return _run(() => _client.from('orders').update({
+    return _runWithRetry(() => _client.from('orders').update({
           'status': 'accepted',
           'driver_id': driverId,
           'accepted_at': DateTime.now().toUtc().toIso8601String(),
@@ -97,7 +97,7 @@ final class SupabaseOrderRepository implements IOrderRepository {
 
   @override
   Future<AppResult<void>> markCancelled(String orderId) {
-    return _run(() => _client.from('orders').update({
+    return _runWithRetry(() => _client.from('orders').update({
           'status': 'cancelled',
         }).eq('id', orderId));
   }
@@ -107,7 +107,7 @@ final class SupabaseOrderRepository implements IOrderRepository {
     String orderId, {
     required bool requiresRider,
   }) {
-    return _run(() => _client.from('orders').update({
+    return _runWithRetry(() => _client.from('orders').update({
           'status': 'accepted',
           'accepted_at': DateTime.now().toUtc().toIso8601String(),
           'requires_rider': requiresRider,
@@ -116,15 +116,39 @@ final class SupabaseOrderRepository implements IOrderRepository {
 
   @override
   Future<AppResult<void>> markInTransit(String orderId) {
-    return _run(() => _client.from('orders').update({
+    return _runWithRetry(() => _client.from('orders').update({
           'status': 'inTransit',
           'in_transit_at': DateTime.now().toUtc().toIso8601String(),
         }).eq('id', orderId));
   }
 
   @override
+  Future<AppResult<void>> markArrivedAtPickup(String orderId, {OrderProof? pickupProof}) {
+    return _runWithRetry(() => _client.from('orders').update({
+          'status': 'arrivedAtPickup',
+          'arrived_at_pickup_at': DateTime.now().toUtc().toIso8601String(),
+          if (pickupProof != null) ...{
+            'pickup_proof_photo_url': pickupProof.imagePath,
+            'pickup_proof_weight_kg': pickupProof.weightKg,
+            'pickup_proof_captured_at': pickupProof.capturedAt.toUtc().toIso8601String(),
+            'pickup_proof_lat': pickupProof.lat,
+            'pickup_proof_lng': pickupProof.lng,
+            'pickup_proof_checksum': pickupProof.checksum,
+          },
+        }).eq('id', orderId));
+  }
+
+  @override
+  Future<AppResult<void>> markArrivedAtDropoff(String orderId) {
+    return _runWithRetry(() => _client.from('orders').update({
+          'status': 'arrivedAtDropoff',
+          'arrived_at_dropoff_at': DateTime.now().toUtc().toIso8601String(),
+        }).eq('id', orderId));
+  }
+
+  @override
   Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg}) {
-    return _run(() => _client.from('orders').update({
+    return _runWithRetry(() => _client.from('orders').update({
           'status': 'completed',
           'completed_at': DateTime.now().toUtc().toIso8601String(),
           if (actualWeightKg != null) 'actual_weight_kg': actualWeightKg,
@@ -138,7 +162,7 @@ final class SupabaseOrderRepository implements IOrderRepository {
     String? vehicleType,
   }) {
     if (_client.auth.currentUser == null) return Future.value(const Success(null));
-    return _run(() => _client.rpc('record_order_transaction', params: {
+    return _runWithRetry(() => _client.rpc('record_order_transaction', params: {
           'p_order_id': orderId,
           'p_base_fee': breakdown.baseFee,
           'p_distance_fee': breakdown.distanceFee,
@@ -153,19 +177,53 @@ final class SupabaseOrderRepository implements IOrderRepository {
         }));
   }
 
-  // ── Internal ───────────────────────────────────────────────────────────────
-
-  Future<AppResult<void>> _run(Future<void> Function() op) async {
+  @override
+  Future<AppResult<bool>> verifyArrival(
+    String orderId,
+    double lat,
+    double lng,
+  ) async {
     try {
-      await op();
-      return const Success(null);
+      final result = await _client.rpc('verify_driver_arrival', params: {
+        'p_order_id': orderId,
+        'p_lat': lat,
+        'p_lng': lng,
+      }) as bool? ?? false;
+      return Success(result);
     } on PostgrestException catch (e) {
       return Failure(UnknownFailure(message: e.message, code: e.code));
     } catch (e) {
-      if (_isNetworkError(e)) {
-        return const Failure(NetworkFailure());
-      }
+      if (_isNetworkError(e)) return const Failure(NetworkFailure());
       return Failure(UnknownFailure.fromException(e));
+    }
+  }
+
+  // ── Internal ───────────────────────────────────────────────────────────────
+
+  Future<AppResult<void>> _runWithRetry(
+    Future<void> Function() op, {
+    int retries = 1,
+    Duration delay = const Duration(seconds: 2),
+  }) async {
+    int attempts = 0;
+    while (true) {
+      try {
+        await op();
+        return const Success(null);
+      } on PostgrestException catch (e) {
+        if (attempts >= retries) {
+          return Failure(UnknownFailure(message: e.message, code: e.code));
+        }
+      } catch (e) {
+        if (attempts >= retries) {
+          if (_isNetworkError(e)) {
+            return const Failure(NetworkFailure());
+          }
+          return Failure(UnknownFailure.fromException(e));
+        }
+      }
+      attempts++;
+      await Future.delayed(delay);
     }
   }
 

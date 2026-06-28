@@ -2,7 +2,10 @@
 -- Set at listing creation: 14 days for individuals, 30 days for businesses.
 -- NULL = no expiry (regular pickup orders, collection jobs).
 ALTER TABLE public.orders
-  ADD COLUMN IF NOT EXISTS expires_at timestamptz;
+  ADD COLUMN IF NOT EXISTS expires_at        timestamptz,
+  -- VAT fields written by Order.toSupabaseMap (collection-sale / business listings).
+  ADD COLUMN IF NOT EXISTS is_vat_applicable boolean NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS vat_amount_jd     numeric;
 
 CREATE INDEX IF NOT EXISTS orders_expires_at_idx
   ON public.orders (expires_at)

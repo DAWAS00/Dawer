@@ -1,14 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' hide User;
+import 'package:dwaar/l10n/generated/app_localizations.dart';
 import '../../../../../data/models/driver_wallet.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/hub.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/services/app_order_store.dart';
 import '../../../../../data/services/location_publisher.dart';
 import '../../../../../data/services/location_service.dart';
 import '../../../../../data/services/proximity_service.dart';
+import '../../../../../domain/repositories/i_hub_repository.dart';
 import '../../../../../domain/repositories/i_wallet_repository.dart';
 import '../../../../../domain/services/i_location_publisher.dart';
 
@@ -17,6 +19,7 @@ class DriverHomeViewModel extends ChangeNotifier {
   final ILocationPublisher _publisher;
   final IWalletRepository _walletRepo;
   final LocationService _locationService;
+  final IHubRepository _hubRepo;
 
   // Ghost timer: fires if driver doesn't reach pickup geofence within 15 min.
   Timer? _ghostTimer;
@@ -28,11 +31,14 @@ class DriverHomeViewModel extends ChangeNotifier {
     ILocationPublisher? publisher,
     LocationService? locationService,
     IWalletRepository? walletRepo,
+    IHubRepository? hubRepository,
   })  : _publisher = publisher ?? LocationPublisher.instance,
         _locationService = locationService ?? LocationService(),
-        _walletRepo = walletRepo ?? const NoOpWalletRepository() {
+        _walletRepo = walletRepo ?? const NoOpWalletRepository(),
+        _hubRepo = hubRepository ?? const NoOpHubRepository() {
     _store.addListener(_onStoreChanged);
     _refreshWallet();
+    _loadHubs();
   }
 
   @override
@@ -44,6 +50,33 @@ class DriverHomeViewModel extends ChangeNotifier {
   }
 
   void _onStoreChanged() => notifyListeners();
+
+  // ── Hub state ─────────────────────────────────────────────────────────────
+
+  List<Hub> _hubs = [];
+  List<Hub> get hubs => _hubs;
+
+  bool _hubsLoading = false;
+  bool get hubsLoading => _hubsLoading;
+
+  String? _hubsError;
+  String? get hubsError => _hubsError;
+
+  Future<void> _loadHubs() async {
+    _hubsLoading = true;
+    _hubsError = null;
+    notifyListeners();
+    final result = await _hubRepo.fetchActiveHubs();
+    result.fold(
+      onSuccess: (hubs) => _hubs = hubs,
+      onFailure: (f) {
+        _hubs = [];
+        _hubsError = f.toString();
+      },
+    );
+    _hubsLoading = false;
+    notifyListeners();
+  }
 
   // ── Local state ───────────────────────────────────────────────────────────
 
@@ -76,6 +109,7 @@ class DriverHomeViewModel extends ChangeNotifier {
 
   int get currentTab => _currentTab;
   bool get isAvailable => _isAvailable;
+  bool get isLoading => _store.isLoading;
   User get user => _user;
 
   List<Order> get available => _store.driverFeedFor(
@@ -83,6 +117,8 @@ class DriverHomeViewModel extends ChangeNotifier {
         hasChemicalPermit: _user.hasChemicalPermit,
       );
   Order? get active => _store.driverActiveOrder;
+  bool get hasActiveTrip => active != null;
+  OrderStatus? get activeTripStatus => active?.status;
   List<Order> get history => _store.driverHistory;
   List<Order> get collectionSaleOrders => _store.collectionSalesFor(_user.name);
 
@@ -102,9 +138,9 @@ class DriverHomeViewModel extends ChangeNotifier {
 
   // ── Availability ──────────────────────────────────────────────────────────
 
-  String? toggleAvailability(bool value) {
+  String? toggleAvailability(bool value, AppLocalizations l10n) {
     if (!value && _store.driverHasActiveOrder) {
-      return 'لا يمكنك تغيير حالتك إلى غير متاح أثناء وجود طلب نشط.';
+      return l10n.driverErrorToggleOfflineWithActive;
     }
     _isAvailable = value;
     notifyListeners();
@@ -113,9 +149,9 @@ class DriverHomeViewModel extends ChangeNotifier {
 
   // ── Order actions ─────────────────────────────────────────────────────────
 
-  Future<String?> acceptOrder(Order order) async {
+  Future<String?> acceptOrder(Order order, AppLocalizations l10n) async {
     if (!_isAvailable) {
-      return 'أنت غير متاح حالياً. لا يمكنك قبول الطلب.';
+      return l10n.driverErrorAcceptWhileOffline;
     }
     final error = _store.acceptOrder(order.id, _user);
     if (error == null) {
@@ -127,15 +163,15 @@ class DriverHomeViewModel extends ChangeNotifier {
     return error;
   }
 
-  /// Called when driver taps "I'm Here" at the pickup location.
+  /// Called after PickupProofView collects weight + photo.
   /// Client GPS provides instant UX feedback; the Edge Function is the
   /// authoritative server-side gate (reads Supabase driver_locations).
-  Future<String?> markArrivedAtPickup(Order order) async {
+  Future<String?> markArrivedAtPickup(Order order, AppLocalizations l10n, {OrderProof? pickupProof}) async {
     final pos = await _locationService.getCurrentLocation();
-    if (pos == null) return 'تعذّر تحديد موقعك. تحقق من صلاحية الموقع.';
+    if (pos == null) return l10n.driverErrorLocationUnavailable;
 
     if (order.pickupLat == null || order.pickupLng == null) {
-      _store.markArrivedAtPickup(order.id);
+      _store.markArrivedAtPickup(order.id, pickupProof: pickupProof);
       _cancelGhostTimer();
       _startArrivalResponseTimer(order.id);
       return null;
@@ -148,7 +184,7 @@ class DriverHomeViewModel extends ChangeNotifier {
     );
     if (clientDist > ProximityService.pickupRadiusMeters * 3) {
       _store.recordFraudAttempt(order.id);
-      return 'أنت بعيد جداً عن الموقع (${clientDist.round()} م). يجب أن تكون ضمن 200 م.';
+      return l10n.driverErrorTooFarPickup(clientDist.round());
     }
 
     // Server-side gate: reads the GPS row that LocationPublisher streamed.
@@ -156,10 +192,11 @@ class DriverHomeViewModel extends ChangeNotifier {
       orderId: order.id,
       targetLat: order.pickupLat!,
       targetLng: order.pickupLng!,
+      l10n: l10n,
     );
     if (serverResult != null) return serverResult;
 
-    _store.markArrivedAtPickup(order.id);
+    _store.markArrivedAtPickup(order.id, pickupProof: pickupProof);
     _cancelGhostTimer();
     _startArrivalResponseTimer(order.id);
     return null;
@@ -181,9 +218,9 @@ class DriverHomeViewModel extends ChangeNotifier {
   }
 
   /// Called when driver taps "I'm Here" at the dropoff location.
-  Future<String?> markArrivedAtDropoff(Order order) async {
+  Future<String?> markArrivedAtDropoff(Order order, AppLocalizations l10n) async {
     final pos = await _locationService.getCurrentLocation();
-    if (pos == null) return 'تعذّر تحديد موقعك. تحقق من صلاحية الموقع.';
+    if (pos == null) return l10n.driverErrorLocationUnavailable;
 
     if (order.dropoffLat == null || order.dropoffLng == null) {
       _store.markArrivedAtDropoff(order.id);
@@ -195,13 +232,14 @@ class DriverHomeViewModel extends ChangeNotifier {
     );
     if (clientDist > ProximityService.dropoffRadiusMeters * 3) {
       _store.recordFraudAttempt(order.id);
-      return 'أنت بعيد جداً عن موقع التسليم (${clientDist.round()} م). يجب أن تكون ضمن 200 م.';
+      return l10n.driverErrorTooFarDelivery(clientDist.round());
     }
 
     final serverResult = await _verifyArrivalServerSide(
       orderId: order.id,
       targetLat: order.dropoffLat!,
       targetLng: order.dropoffLng!,
+      l10n: l10n,
     );
     if (serverResult != null) return serverResult;
 
@@ -211,47 +249,29 @@ class DriverHomeViewModel extends ChangeNotifier {
 
   // ── Edge Function call ────────────────────────────────────────────────────
 
-  /// Calls the `verify_arrival` Edge Function. Returns an error string if the
+  /// Calls the verifyArrival method on store. Returns an error string if the
   /// server rejects the attempt, null if allowed. On network failure, returns
   /// null (graceful degradation — client-side preflight already passed).
   Future<String?> _verifyArrivalServerSide({
     required String orderId,
     required double targetLat,
     required double targetLng,
+    required AppLocalizations l10n,
   }) async {
-    final uid = Supabase.instance.client.auth.currentUser?.id;
-    if (uid == null) return null; // not authenticated — dev/mock mode
-
-    try {
-      final res = await Supabase.instance.client.functions.invoke(
-        'verify_arrival',
-        body: {
-          'orderId': orderId,
-          'driverId': uid,
-          'targetLat': targetLat,
-          'targetLng': targetLng,
-        },
-      );
-      final data = res.data as Map<String, dynamic>?;
-      if (data == null) return null;
-      final allowed = data['allowed'] as bool? ?? true;
-      if (!allowed) {
-        final dist = data['distanceMeters'] as int?;
-        final reason = data['reason'] as String?;
-        if (reason == 'no_server_gps') {
-          // Server hasn't received GPS yet — allow and rely on client check.
-          return null;
+    final res = await _store.verifyArrival(orderId, targetLat, targetLng);
+    return res.fold(
+      onSuccess: (allowed) {
+        if (!allowed) {
+          _store.recordFraudAttempt(orderId);
+          return l10n.driverErrorServerGeofence;
         }
-        _store.recordFraudAttempt(orderId);
-        return dist != null
-            ? 'التحقق من الموقع فشل على الخادم ($dist م). يجب أن تكون ضمن 200 م.'
-            : 'التحقق من الموقع فشل على الخادم. يجب أن تكون ضمن 200 م.';
-      }
-      return null;
-    } catch (e) {
-      debugPrint('[verify_arrival] Edge Function error: $e — falling back to client check');
-      return null;
-    }
+        return null;
+      },
+      onFailure: (failure) {
+        debugPrint('[verify_arrival] error: ${failure.message} — falling back to client check');
+        return null;
+      },
+    );
   }
 
   Future<void> completeOrder(Order order) async {

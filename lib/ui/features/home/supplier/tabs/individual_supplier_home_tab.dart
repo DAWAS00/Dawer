@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/services/app_order_store.dart';
+import '../../../../../l10n/l10n.dart';
 import '../../shared/order_card.dart';
 import '../../shared/order_details_view.dart';
-import '../../../../../l10n/l10n.dart';
-import '../viewmodels/individual_supplier_viewmodel.dart';
+import '../../shared/viewmodels/base_supplier_viewmodel.dart';
+import '../../../../core/components/dwaar_elevated_card.dart';
 
 class IndividualSupplierHomeTab extends StatelessWidget {
   final String userName;
@@ -19,279 +22,343 @@ class IndividualSupplierHomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<IndividualSupplierViewModel>();
+    final l10n = context.l10n;
+    final vm = context.watch<BaseSupplierViewModel>();
     final tracked = vm.trackedOrder;
     final active = vm.activeOrders;
 
-    return CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(child: _buildHeader(context, vm)),
-        if (tracked != null)
-          SliverToBoxAdapter(child: _buildTrackingCard(context, tracked)),
-        if (active.isNotEmpty) ...[
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: CustomScrollView(
+        slivers: [
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.ctaGradientStart.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      '${active.length}',
-                      style: GoogleFonts.dmSans(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.ctaGradientStart,
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    context.l10n.supplierActiveOrders,
-                    textAlign: TextAlign.right,
-                    style: GoogleFonts.cairo(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF002819),
-                    ),
-                  ),
-                ],
+            child: _buildHeader(context, vm),
+          ),
+          
+          if (tracked != null)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 24, bottom: 12),
+                child: _buildTrackingTimeline(context, tracked),
               ),
             ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, i) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: OrderCard(
-                    order: active[i],
-                    mode: OrderCardMode.supplierActive,
-                    onAction: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => OrderDetailsView(
-                          order: active[i],
-                          onSupplierConfirmArrival: (available) {
-                            final store = context.read<AppOrderStore>();
-                            if (available) {
-                              store.handleSupplierAvailable(active[i].id);
-                            } else {
-                              store.handleSupplierUnavailable(active[i].id);
-                            }
-                          },
+            
+          if (active.isNotEmpty) ...[
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
+                child: Row(
+                  textDirection: TextDirection.rtl,
+                  children: [
+                    Text(
+                      l10n.supplierMyOrdersCurrent,
+                      style: GoogleFonts.cairo(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textMain,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryGreen.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '${active.length}',
+                        style: GoogleFonts.dmSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryGreen,
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-                childCount: active.length,
               ),
             ),
-          ),
-        ] else
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 60),
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryGreen.withValues(alpha: 0.05),
-                      shape: BoxShape.circle,
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 100),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, i) => Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: OrderCard(
+                      order: active[i],
+                      mode: OrderCardMode.supplierActive,
+                      onAction: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => OrderDetailsView(
+                            order: active[i],
+                            onSupplierConfirmArrival: (available) {
+                              final store = context.read<AppOrderStore>();
+                              if (available) {
+                                store.handleSupplierAvailable(active[i].id);
+                              } else {
+                                store.handleSupplierUnavailable(active[i].id);
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ).animate().fadeIn(delay: (i * 100).ms).slideY(begin: 0.1, end: 0),
+                  ),
+                  childCount: active.length,
+                ),
+              ),
+            ),
+          ] else
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryGreen.withValues(alpha: 0.05),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(LucideIcons.leaf, size: 48, color: AppColors.primaryGreen),
+                    ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack),
+                    const SizedBox(height: 24),
+                    Text(
+                      l10n.supplierNoActiveOrders,
+                      style: GoogleFonts.cairo(
+                        fontSize: 20, 
+                        fontWeight: FontWeight.w800, 
+                        color: AppColors.textMain,
+                      ),
                     ),
-                    child: const Icon(Icons.receipt_long_rounded, size: 48, color: AppColors.primaryGreen),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    context.l10n.supplierNoOrdersYet,
-                    style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    context.l10n.supplierCreateFromHome,
-                    style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF717973)),
-                  ),
-                ],
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, IndividualSupplierViewModel vm) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppColors.primaryGreen, AppColors.headerGradientEnd],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-        ),
-      ),
-      padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top + 20, 20, 28),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundColor: Colors.white.withValues(alpha: 0.15),
-            child: const Icon(
-              Icons.person_rounded,
-              color: Colors.white,
-              size: 22,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                context.l10n.supplierGreeting(userName.split(' ').first),
-                style: GoogleFonts.cairo(fontSize: 14, color: Colors.white.withValues(alpha: 0.8)),
-              ),
-              Text(
-                context.l10n.supplierIndividualType,
-                style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-              ),
-            ],
-          ),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.amberContainer.withValues(alpha: 0.9),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                Text(
-                  vm.totalPoints.toString(),
-                  style: GoogleFonts.dmSans(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.accentAmber),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.supplierStartRecyclingCta,
+                      style: GoogleFonts.cairo(
+                        fontSize: 14, 
+                        color: AppColors.mutedText,
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                  ],
                 ),
-                Text(
-                  context.l10n.supplierPoints,
-                  style: GoogleFonts.cairo(fontSize: 10, color: AppColors.accentAmber),
-                ),
-              ],
+              ),
             ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildTrackingCard(BuildContext context, Order order) {
-    return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => OrderDetailsView(
-            order: order,
-            onSupplierConfirmArrival: (available) {
-              final store = context.read<AppOrderStore>();
-              if (available) {
-                store.handleSupplierAvailable(order.id);
-              } else {
-                store.handleSupplierUnavailable(order.id);
-              }
-            },
-          ),
+  Widget _buildHeader(BuildContext context, BaseSupplierViewModel vm) {
+    final l10n = context.l10n;
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.primaryDark,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
         ),
       ),
-      child: Container(
-        margin: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Text(
-              context.l10n.orderTrackButton,
-              style: GoogleFonts.cairo(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.statusInTransitText),
-            ),
-            const Icon(Icons.chevron_left_rounded, color: AppColors.statusInTransitText, size: 20),
-            const Spacer(),
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Row(
-                    children: [
-                      if (order.eta != null) ...[
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: AppColors.statusInTransitBg,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            order.eta!,
-                            style: GoogleFonts.cairo(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.statusInTransitText),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                      Flexible(
-                        child: Text(
-                          context.l10n.supplierDriverOnWay,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: const Color(0xFF002819)),
-                        ),
-                      ),
-                    ],
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 24,
+        left: 24,
+        right: 24,
+        bottom: 32,
+      ),
+      child: Column(
+        children: [
+          Row(
+            textDirection: TextDirection.rtl,
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppColors.surface.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.surface.withValues(alpha: 0.2),
+                    width: 1,
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          order.driverName ?? '',
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.cairo(fontSize: 13, color: AppColors.mutedText),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      if (order.driverRating != null) ...[
-                        Text(
-                          order.driverRating.toString(),
-                          style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.mutedText),
-                        ),
-                        const SizedBox(width: 2),
-                        const Icon(Icons.star_rounded, color: Color(0xFFFFC107), size: 14),
-                      ],
-                    ],
+                ),
+                child: const Icon(LucideIcons.user, color: AppColors.surface, size: 24),
+              ),
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                textDirection: TextDirection.rtl,
+                children: [
+                  Text(
+                    l10n.supplierWelcome(userName.split(' ').first),
+                    style: GoogleFonts.cairo(
+                      fontSize: 14,
+                      color: AppColors.surface.withValues(alpha: 0.8),
+                    ),
+                  ),
+                  Text(
+                    l10n.supplierAccountIndividual,
+                    style: GoogleFonts.cairo(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.surface,
+                    ),
                   ),
                 ],
               ),
+            ],
+          ).animate().fadeIn(duration: 400.ms),
+          const SizedBox(height: 32),
+          
+          // Impact Card
+          DwaarElevatedCard(
+            padding: const EdgeInsets.all(24),
+            child: Row(
+              textDirection: TextDirection.rtl,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildImpactMetric(
+                  icon: LucideIcons.medal,
+                  label: l10n.supplierMyPoints,
+                  value: vm.totalPoints.toString(),
+                  color: AppColors.accentAmber,
+                ),
+                Container(width: 1, height: 40, color: AppColors.borderSubtle),
+                _buildImpactMetric(
+                  icon: LucideIcons.scale,
+                  label: l10n.supplierTotalWeight,
+                  value: l10n.supplierWeightZero, // To be driven by VM later
+                  color: AppColors.primaryGreen,
+                ),
+                Container(width: 1, height: 40, color: AppColors.borderSubtle),
+                _buildImpactMetric(
+                  icon: LucideIcons.trees,
+                  label: l10n.supplierTreesSaved,
+                  value: '0', // To be driven by VM later
+                  color: const Color(0xFF059669),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: AppColors.statusInTransitBg,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.local_shipping_rounded, color: AppColors.statusInTransitText, size: 24),
-            ),
-          ],
-        ),
+          ).animate().slideY(begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOutBack),
+        ],
       ),
     );
   }
 
+  Widget _buildImpactMetric({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 24),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          style: GoogleFonts.dmSans(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: AppColors.textMain,
+          ),
+        ),
+        Text(
+          label,
+          style: GoogleFonts.cairo(
+            fontSize: 12,
+            color: AppColors.mutedText,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTrackingTimeline(BuildContext context, Order order) {
+    final l10n = context.l10n;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: DwaarElevatedCard(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => OrderDetailsView(
+              order: order,
+              onSupplierConfirmArrival: (available) {
+                final store = context.read<AppOrderStore>();
+                if (available) {
+                  store.handleSupplierAvailable(order.id);
+                } else {
+                  store.handleSupplierUnavailable(order.id);
+                }
+              },
+            ),
+          ),
+        ),
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          textDirection: TextDirection.rtl,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppColors.statusInTransitBg,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(LucideIcons.truck, color: AppColors.statusInTransitText),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                textDirection: TextDirection.rtl,
+                children: [
+                  Row(
+                    textDirection: TextDirection.rtl,
+                    children: [
+                      Text(
+                        l10n.orderDriverOnWay,
+                        style: GoogleFonts.cairo(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.textMain,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      if (order.eta != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.statusInTransitBg,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            order.eta!,
+                            style: GoogleFonts.dmSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.statusInTransitText,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${order.driverName} • ${order.driverVehicleModel ?? l10n.driverOrderCardVehicleFallback}',
+                    style: GoogleFonts.cairo(
+                      fontSize: 13,
+                      color: AppColors.mutedText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios_rounded, color: AppColors.borderSubtle, size: 16),
+          ],
+        ),
+      ),
+    ).animate().slideX(begin: 0.1, end: 0, curve: Curves.easeOutQuart);
+  }
 }
