@@ -5,18 +5,24 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../data/models/order/order.dart';
 import '../../../domain/repositories/i_report_request_repository.dart';
+import '../../../l10n/l10n.dart';
 import 'analytics_viewmodel.dart';
-export 'analytics_viewmodel.dart' show HeroMetric, TrendPoint, WasteShare;
+export 'analytics_viewmodel.dart'
+    show HeroMetric, TrendPoint, WasteShare, CycleTimeBreakdown, WasteProfitability, EfficientJob;
 import 'models/analytics_period.dart';
 import 'widgets/activity_statement_list.dart';
 import 'widgets/analytics_hero_card.dart';
+import 'widgets/cycle_time_breakdown.dart';
+import 'widgets/earnings_efficiency_card.dart';
 import 'widgets/kpi_card.dart';
 import 'widgets/kpi_grid.dart';
 import 'widgets/material_timeline_chart.dart';
 import 'widgets/milestone_strip.dart';
 import 'widgets/period_selector.dart';
 import 'widgets/report_center_section.dart';
+import 'widgets/streak_heatmap.dart';
 import 'widgets/trend_chart.dart';
+import 'widgets/waste_profitability_chart.dart';
 import 'widgets/waste_type_breakdown.dart';
 
 /// Which metric the hero card leads with.
@@ -54,6 +60,9 @@ class AnalyticsTab extends StatelessWidget {
     this.roleKpi,
     this.showMilestones = true,
     this.showReportCenter = false,
+    this.showCycleTime = false,
+    this.showProfitability = false,
+    this.showEarningsEfficiency = false,
   });
 
   final String userId;
@@ -69,6 +78,9 @@ class AnalyticsTab extends StatelessWidget {
 
   final bool showMilestones;
   final bool showReportCenter;
+  final bool showCycleTime;
+  final bool showProfitability;
+  final bool showEarningsEfficiency;
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +93,9 @@ class AnalyticsTab extends StatelessWidget {
         roleKpi: roleKpi,
         showMilestones: showMilestones,
         showReportCenter: showReportCenter,
+        showCycleTime: showCycleTime,
+        showProfitability: showProfitability,
+        showEarningsEfficiency: showEarningsEfficiency,
       ),
     );
   }
@@ -94,6 +109,9 @@ class _AnalyticsTabBody extends StatelessWidget {
     required this.roleKpi,
     required this.showMilestones,
     required this.showReportCenter,
+    required this.showCycleTime,
+    required this.showProfitability,
+    required this.showEarningsEfficiency,
   });
 
   final String userId;
@@ -102,6 +120,9 @@ class _AnalyticsTabBody extends StatelessWidget {
   final RoleKpi? roleKpi;
   final bool showMilestones;
   final bool showReportCenter;
+  final bool showCycleTime;
+  final bool showProfitability;
+  final bool showEarningsEfficiency;
 
   @override
   Widget build(BuildContext context) {
@@ -213,8 +234,21 @@ class _AnalyticsTabBody extends StatelessWidget {
                   sparkPoints: sparkPoints,
                   deltaPct: heroDelta,
                   accentColor: heroColor,
+                  currentStreak: vm.currentStreak,
                 ),
               ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.05, end: 0),
+
+              const SizedBox(height: 24),
+
+              // ── Streak heatmap (all roles) ────────────────────────────
+              _SectionHeader(title: context.l10n.analyticsStreakSectionTitle),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: StreakHeatmap(
+                  counts: vm.activityByDay(35),
+                  today: DateTime.now(),
+                ),
+              ),
 
               const SizedBox(height: 24),
 
@@ -246,6 +280,39 @@ class _AnalyticsTabBody extends StatelessWidget {
               ),
 
               const SizedBox(height: 28),
+
+              // ── Profitability (supplier/recycling) ─────────────────────
+              if (showProfitability && vm.wasteProfitability.isNotEmpty) ...[
+                _SectionHeader(title: context.l10n.analyticsProfitabilitySectionTitle),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: WasteProfitabilityChart(data: vm.wasteProfitability),
+                ),
+                const SizedBox(height: 28),
+              ],
+
+              // ── Cycle time (driver) ────────────────────────────────────
+              if (showCycleTime && !vm.cycleTime.isEmpty) ...[
+                _SectionHeader(title: context.l10n.analyticsCycleSectionTitle),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: CycleTimeBreakdownChart(data: vm.cycleTime),
+                ),
+                const SizedBox(height: 28),
+              ],
+
+              // ── Earnings efficiency (driver) ───────────────────────────
+              if (showEarningsEfficiency && vm.earningsPerKm != null) ...[
+                _SectionHeader(title: context.l10n.analyticsEfficiencySectionTitle),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: EarningsEfficiencyCard(
+                    earningsPerKm: vm.earningsPerKm,
+                    bestJobs: vm.bestJobsByEfficiency,
+                  ),
+                ),
+                const SizedBox(height: 28),
+              ],
 
               // ── Gantt timeline (secondary) ─────────────────────────────
               _SectionHeader(title: 'الجدول الزمني'),

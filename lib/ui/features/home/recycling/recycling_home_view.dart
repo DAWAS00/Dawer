@@ -81,6 +81,7 @@ class _RecyclingHomeBody extends StatelessWidget {
         ),
         showMilestones: false,
         showReportCenter: true,
+        showProfitability: true,
       ),
       RecyclingProfileTab(userName: userName),
     ];

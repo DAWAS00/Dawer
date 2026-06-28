@@ -98,6 +98,7 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
         reportRepository: context.read<IReportRequestRepository>(),
         showMilestones: true,
         showReportCenter: true,
+        showProfitability: true,
       ),
       SupplierProfileTab(
         user: vm.user,

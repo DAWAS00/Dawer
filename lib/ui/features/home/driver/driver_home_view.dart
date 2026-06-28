@@ -175,6 +175,8 @@ class _DriverHomeBody extends StatelessWidget {
         reportRepository: context.read<IReportRequestRepository>(),
         showMilestones: true,
         showReportCenter: false,
+        showCycleTime: true,
+        showEarningsEfficiency: true,
       ),
       const DriverProfileTab(),
     ];
