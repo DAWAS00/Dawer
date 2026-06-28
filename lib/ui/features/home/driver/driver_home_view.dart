@@ -18,6 +18,7 @@ import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../supplier/views/new_pickup_request_view.dart';
 import 'views/pickup_proof_view.dart';
 import '../../auth/viewmodels/login_viewmodel.dart';
+import '../../../../../domain/repositories/i_auth_repository.dart';
 import '../../../../../domain/repositories/i_hub_repository.dart';
 import '../../../../../domain/repositories/i_report_request_repository.dart';
 import '../../../../../l10n/l10n.dart';
@@ -169,7 +170,7 @@ class _DriverHomeBody extends StatelessWidget {
         onMarkArrivedAtDropoff: (order) => vm.markArrivedAtDropoff(order, context.l10n),
       ),
       AnalyticsTab(
-        userId: vm.user.id,
+        userId: context.read<IAuthRepository>().currentSession?.userId ?? '',
         allOrders: vm.history,
         reportRepository: context.read<IReportRequestRepository>(),
         showMilestones: true,

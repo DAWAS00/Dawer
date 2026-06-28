@@ -12,8 +12,6 @@ import 'widgets/footer.dart';
 import '../../../../core/services/app_lang_notifier.dart';
 import '../../../common/lang_picker_sheet.dart';
 import 'signup_phone_screen.dart';
-import '../../home/home_router.dart';
-import '../../../../domain/repositories/i_auth_repository.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -46,23 +44,6 @@ class _LoginScreen extends StatelessWidget {
               initialSupplierType: initialSupplierType,
             ),
           ),
-        );
-      });
-    }
-
-    if (viewModel.quickSession != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final s = viewModel.quickSession!;
-        viewModel.resetQuickSession();
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (_) => HomeRouter(
-              role: s.role,
-              supplierType: s.supplierType ?? SupplierType.individual,
-              userName: s.userName,
-            ),
-          ),
-          (route) => false,
         );
       });
     }
@@ -146,13 +127,9 @@ class _LoginScreen extends StatelessWidget {
                   // Main Interaction Sections
                   const LoginForm(),
                   const SizedBox(height: 32),
-                  
+
                   // Secondary actions
                   const _DynamicRegisterButton(),
-                  const SizedBox(height: 24),
-
-                  // Dev quick-login panel
-                  const _DevQuickLoginPanel(),
 
                   const SizedBox(height: 40),
                   const LoginFooter(),
@@ -164,168 +141,6 @@ class _LoginScreen extends StatelessWidget {
           const _LangToggleButton(),
         ],
       ),
-    );
-  }
-}
-
-class _DevQuickLoginPanel extends StatefulWidget {
-  const _DevQuickLoginPanel();
-
-  @override
-  State<_DevQuickLoginPanel> createState() => _DevQuickLoginPanelState();
-}
-
-class _DevQuickLoginPanelState extends State<_DevQuickLoginPanel> {
-  bool _expanded = false;
-
-  static const _users = [
-    (
-      label: 'Driver — محمد عمر خليل',
-      sublabel: '0791234567  •  OTP: 123456',
-      icon: Icons.local_shipping_rounded,
-      session: AuthSession(
-        userId: '11111111-1111-1111-1111-111111111111',
-        userName: 'محمد عمر خليل',
-        role: UserRole.driver,
-      ),
-    ),
-    (
-      label: 'Supplier (Individual) — ليلى ناصر',
-      sublabel: '0792345678  •  OTP: 123456',
-      icon: Icons.person_rounded,
-      session: AuthSession(
-        userId: '22222222-2222-2222-2222-222222222222',
-        userName: 'ليلى ناصر أبو حمد',
-        role: UserRole.supplier,
-        supplierType: SupplierType.individual,
-      ),
-    ),
-    (
-      label: 'Store — مطعم الزيتونة',
-      sublabel: '0793456789  •  OTP: 123456',
-      icon: Icons.restaurant_rounded,
-      session: AuthSession(
-        userId: '33333333-3333-3333-3333-333333333333',
-        userName: 'مطعم الزيتونة',
-        role: UserRole.supplier,
-        supplierType: SupplierType.storeBusiness,
-      ),
-    ),
-    (
-      label: 'Recycling Co — الخضراء للتدوير',
-      sublabel: '0794567890  •  OTP: 123456',
-      icon: Icons.recycling_rounded,
-      session: AuthSession(
-        userId: '44444444-4444-4444-4444-444444444444',
-        userName: 'شركة الخضراء للتدوير',
-        role: UserRole.recyclingCo,
-      ),
-    ),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final vm = context.read<LoginViewModel>();
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: () => setState(() => _expanded = !_expanded),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE8F5E9),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFF06402B).withValues(alpha: 0.2)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.developer_mode_rounded, size: 16, color: Color(0xFF06402B)),
-                const SizedBox(width: 6),
-                Text(
-                  'DEV — Quick Login',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF06402B),
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  _expanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                  size: 16,
-                  color: const Color(0xFF06402B),
-                ),
-              ],
-            ),
-          ),
-        ),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeInOut,
-          child: _expanded
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Column(
-                    children: _users.map((u) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: InkWell(
-                          onTap: () => vm.quickLogin(u.session),
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: const Color(0xFFDDE3DD)),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFC3EAC4),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(u.icon, size: 18, color: const Color(0xFF06402B)),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        u.label,
-                                        style: GoogleFonts.dmSans(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFF191C1B),
-                                        ),
-                                      ),
-                                      Text(
-                                        u.sublabel,
-                                        style: GoogleFonts.cairo(
-                                          fontSize: 11,
-                                          color: const Color(0xFF717973),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Color(0xFF9099A2)),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                )
-              : const SizedBox.shrink(),
-        ),
-      ],
     );
   }
 }

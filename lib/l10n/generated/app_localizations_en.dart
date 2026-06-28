@@ -368,7 +368,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get otpErrorInvalid => 'Invalid code, please try again';
 
   @override
-  String get otpSimulatedHint => 'For testing, use code 123456';
+  String get otpSimulatedHint =>
+      'A verification code will be sent to your number via SMS';
 
   @override
   String get signupRoleDriver => 'Driver Registration';
@@ -2767,4 +2768,157 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unitKg => 'kg';
+
+  @override
+  String get unitKm => 'km';
+
+  @override
+  String get orderArrivalAtPickup => 'Arrived at pickup location?';
+
+  @override
+  String get orderArrivalGeoNote =>
+      'Your location will be verified (within 200 m)';
+
+  @override
+  String get orderArrivalHerePickup => 'I\'m Here — Pickup';
+
+  @override
+  String get orderArrivalAtDropoff => 'Arrived at dropoff location?';
+
+  @override
+  String get orderArrivalHereDropoff => 'I\'m Here — Dropoff';
+
+  @override
+  String get orderArrivalAwaitingSupplier => 'Awaiting supplier confirmation';
+
+  @override
+  String get orderArrivalAwaitingSubtitle =>
+      'Supplier has 5 minutes to respond — driver will be automatically compensated when time runs out';
+
+  @override
+  String get orderArrivalDriverArrived => 'Driver arrived!';
+
+  @override
+  String get orderArrivalDriverAtLocation =>
+      'The driver is at your location. Are you available to hand over the materials?';
+
+  @override
+  String get orderArrivalIAmAvailable => 'I\'m Available';
+
+  @override
+  String get acceptJobTitle => 'How would you like to proceed?';
+
+  @override
+  String get acceptJobSubtitle =>
+      'Choose delivery method and transaction type to accept the job';
+
+  @override
+  String get acceptJobDeliveryFeeCompany => 'Delivery fee covered by company';
+
+  @override
+  String get acceptJobDeliveryFeeYou => 'Delivery fee is on you';
+
+  @override
+  String get acceptJobConfirmButton => 'Confirm Acceptance';
+
+  @override
+  String get marketDeliveryConfirmTitle => 'Confirm Purchase & Delivery';
+
+  @override
+  String get marketDeliveryFeeNote =>
+      'Delivery fee calculated by distance and weight';
+
+  @override
+  String get marketDeliverySellerLocation => 'Seller Location';
+
+  @override
+  String get marketDeliveryAddressLabel => 'Delivery Address';
+
+  @override
+  String marketDeliveryDistanceFeeRow(String distance) {
+    return 'Distance fee ($distance km × 0.2)';
+  }
+
+  @override
+  String marketDeliveryWeightFeeRow(String weight) {
+    return 'Weight fee ($weight)';
+  }
+
+  @override
+  String get marketDeliveryBaseFee => 'Base delivery fee';
+
+  @override
+  String get marketDeliveryTotal => 'Total';
+
+  @override
+  String marketDeliveryConfirmButton(String total) {
+    return 'Confirm Purchase — $total';
+  }
+
+  @override
+  String get marketPurchaseChoiceTitle => 'Choose Pickup Method';
+
+  @override
+  String get marketPurchaseChoiceSubtitle =>
+      'You can self-pickup or assign a driver for delivery';
+
+  @override
+  String get marketPurchaseSelfPickup => 'Pick up from market';
+
+  @override
+  String get marketPurchaseNoFee => 'No delivery fee';
+
+  @override
+  String get marketPurchaseAssignRider => 'Assign a driver for delivery';
+
+  @override
+  String get marketPurchaseRiderFeeNote =>
+      'Delivery fee calculated by distance and weight';
+
+  @override
+  String get walletTitle => 'My Wallet';
+
+  @override
+  String get walletPointsAndRewards => 'My Points & Rewards';
+
+  @override
+  String get walletBillingPayments => 'Billing & Payments';
+
+  @override
+  String get walletAvailableBalance => 'Available Balance';
+
+  @override
+  String get walletHeldAmount => 'On Hold';
+
+  @override
+  String get walletWithdrawButton => 'Request Withdrawal';
+
+  @override
+  String get walletPointUnit => 'pts';
+
+  @override
+  String walletPointsToNextReward(String n) {
+    return '$n pts to next reward';
+  }
+
+  @override
+  String get walletViewRewards => 'View Rewards';
+
+  @override
+  String get walletCurrentPeriod => 'Current period:';
+
+  @override
+  String get walletShipments => 'Shipments';
+
+  @override
+  String get walletWeightKg => 'Weight (kg)';
+
+  @override
+  String get walletViewInvoice => 'View Invoice';
+
+  @override
+  String get walletEfawateerTitle => 'Pay via eFawateercom';
+
+  @override
+  String get walletEfawateerSubtitle => 'Government e-payment platform';
 }

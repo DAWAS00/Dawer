@@ -366,7 +366,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get otpErrorInvalid => 'الرمز غير صحيح، حاول مرة أخرى';
 
   @override
-  String get otpSimulatedHint => 'للتجربة استخدم الرمز 123456';
+  String get otpSimulatedHint => 'سيتم إرسال رمز التحقق إلى رقمك عبر SMS';
 
   @override
   String get signupRoleDriver => 'تسجيل سائق';
@@ -2735,4 +2735,155 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get unitKg => 'كغ';
+
+  @override
+  String get unitKm => 'كم';
+
+  @override
+  String get orderArrivalAtPickup => 'وصلت إلى موقع الاستلام؟';
+
+  @override
+  String get orderArrivalGeoNote => 'سيتم التحقق من موقعك (ضمن 200 م)';
+
+  @override
+  String get orderArrivalHerePickup => 'أنا هنا — الاستلام';
+
+  @override
+  String get orderArrivalAtDropoff => 'وصلت إلى موقع التسليم؟';
+
+  @override
+  String get orderArrivalHereDropoff => 'أنا هنا — التسليم';
+
+  @override
+  String get orderArrivalAwaitingSupplier => 'في انتظار تأكيد المورد';
+
+  @override
+  String get orderArrivalAwaitingSubtitle =>
+      'المورد لديه 5 دقائق للرد — سيُعوَّض السائق تلقائياً عند انتهاء المهلة';
+
+  @override
+  String get orderArrivalDriverArrived => 'السائق وصل!';
+
+  @override
+  String get orderArrivalDriverAtLocation =>
+      'السائق في موقعك الآن. هل أنت متاح لتسليم المواد؟';
+
+  @override
+  String get orderArrivalIAmAvailable => 'أنا متاح';
+
+  @override
+  String get acceptJobTitle => 'كيف تريد المتابعة؟';
+
+  @override
+  String get acceptJobSubtitle =>
+      'اختر طريقة التوصيل ونوع المعاملة لقبول الوظيفة';
+
+  @override
+  String get acceptJobDeliveryFeeCompany => 'رسوم التوصيل على الشركة';
+
+  @override
+  String get acceptJobDeliveryFeeYou => 'رسوم التوصيل عليك';
+
+  @override
+  String get acceptJobConfirmButton => 'تأكيد القبول';
+
+  @override
+  String get marketDeliveryConfirmTitle => 'تأكيد الشراء والتوصيل';
+
+  @override
+  String get marketDeliveryFeeNote => 'رسوم التوصيل محسوبة حسب المسافة والوزن';
+
+  @override
+  String get marketDeliverySellerLocation => 'موقع البائع';
+
+  @override
+  String get marketDeliveryAddressLabel => 'عنوان التوصيل';
+
+  @override
+  String marketDeliveryDistanceFeeRow(String distance) {
+    return 'رسوم المسافة ($distance كم × 0.2)';
+  }
+
+  @override
+  String marketDeliveryWeightFeeRow(String weight) {
+    return 'رسوم الوزن ($weight)';
+  }
+
+  @override
+  String get marketDeliveryBaseFee => 'رسوم التوصيل الأساسية';
+
+  @override
+  String get marketDeliveryTotal => 'الإجمالي';
+
+  @override
+  String marketDeliveryConfirmButton(String total) {
+    return 'تأكيد الشراء — $total';
+  }
+
+  @override
+  String get marketPurchaseChoiceTitle => 'اختر طريقة الاستلام';
+
+  @override
+  String get marketPurchaseChoiceSubtitle =>
+      'يمكنك الاستلام بنفسك أو تعيين سائق للتوصيل';
+
+  @override
+  String get marketPurchaseSelfPickup => 'استلام من السوق';
+
+  @override
+  String get marketPurchaseNoFee => 'بدون رسوم توصيل';
+
+  @override
+  String get marketPurchaseAssignRider => 'تعيين سائق للتوصيل';
+
+  @override
+  String get marketPurchaseRiderFeeNote =>
+      'حساب رسوم التوصيل حسب المسافة والوزن';
+
+  @override
+  String get walletTitle => 'محفظتي';
+
+  @override
+  String get walletPointsAndRewards => 'نقاطي ومكافآتي';
+
+  @override
+  String get walletBillingPayments => 'الفوترة والمدفوعات';
+
+  @override
+  String get walletAvailableBalance => 'الرصيد المتاح';
+
+  @override
+  String get walletHeldAmount => 'المحجوز';
+
+  @override
+  String get walletWithdrawButton => 'طلب صرف رصيد';
+
+  @override
+  String get walletPointUnit => 'نقطة';
+
+  @override
+  String walletPointsToNextReward(String n) {
+    return 'تبقّى $n نقطة للمكافأة القادمة';
+  }
+
+  @override
+  String get walletViewRewards => 'عرض المكافآت';
+
+  @override
+  String get walletCurrentPeriod => 'الفترة الحالية:';
+
+  @override
+  String get walletShipments => 'الشحنات';
+
+  @override
+  String get walletWeightKg => 'الوزن (كغ)';
+
+  @override
+  String get walletViewInvoice => 'عرض الفاتورة';
+
+  @override
+  String get walletEfawateerTitle => 'الدفع عبر فواتيركم';
+
+  @override
+  String get walletEfawateerSubtitle => 'منصة الدفع الإلكتروني الحكومية';
 }

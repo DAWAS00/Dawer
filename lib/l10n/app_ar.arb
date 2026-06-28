@@ -139,7 +139,7 @@
   "otpResentMessage": "تم إرسال الرمز مرة أخرى",
   "otpErrorIncomplete": "الرجاء إدخال الرمز كاملاً",
   "otpErrorInvalid": "الرمز غير صحيح، حاول مرة أخرى",
-  "otpSimulatedHint": "للتجربة استخدم الرمز 123456",
+  "otpSimulatedHint": "سيتم إرسال رمز التحقق إلى رقمك عبر SMS",
 
   "signupRoleDriver": "تسجيل سائق",
   "signupRoleStoreBusiness": "تسجيل متجر / مطعم",
@@ -1057,5 +1057,77 @@
   "chatDateYesterday": "أمس",
   "chatTyping": "يكتب الآن",
   "unitKg": "كغ",
-  "@unitKg": { "description": "Kilogram unit abbreviation" }
+  "@unitKg": { "description": "Kilogram unit abbreviation" },
+
+  "unitKm": "كم",
+
+  "orderArrivalAtPickup": "وصلت إلى موقع الاستلام؟",
+  "orderArrivalGeoNote": "سيتم التحقق من موقعك (ضمن 200 م)",
+  "orderArrivalHerePickup": "أنا هنا — الاستلام",
+  "orderArrivalAtDropoff": "وصلت إلى موقع التسليم؟",
+  "orderArrivalHereDropoff": "أنا هنا — التسليم",
+  "orderArrivalAwaitingSupplier": "في انتظار تأكيد المورد",
+  "orderArrivalAwaitingSubtitle": "المورد لديه 5 دقائق للرد — سيُعوَّض السائق تلقائياً عند انتهاء المهلة",
+  "orderArrivalDriverArrived": "السائق وصل!",
+  "orderArrivalDriverAtLocation": "السائق في موقعك الآن. هل أنت متاح لتسليم المواد؟",
+  "orderArrivalIAmAvailable": "أنا متاح",
+
+  "acceptJobTitle": "كيف تريد المتابعة؟",
+  "acceptJobSubtitle": "اختر طريقة التوصيل ونوع المعاملة لقبول الوظيفة",
+  "acceptJobDeliveryFeeCompany": "رسوم التوصيل على الشركة",
+  "acceptJobDeliveryFeeYou": "رسوم التوصيل عليك",
+  "acceptJobConfirmButton": "تأكيد القبول",
+
+  "marketDeliveryConfirmTitle": "تأكيد الشراء والتوصيل",
+  "marketDeliveryFeeNote": "رسوم التوصيل محسوبة حسب المسافة والوزن",
+  "marketDeliverySellerLocation": "موقع البائع",
+  "marketDeliveryAddressLabel": "عنوان التوصيل",
+  "marketDeliveryDistanceFeeRow": "رسوم المسافة ({distance} كم × 0.2)",
+  "@marketDeliveryDistanceFeeRow": {
+    "placeholders": {
+      "distance": { "type": "String" }
+    }
+  },
+  "marketDeliveryWeightFeeRow": "رسوم الوزن ({weight})",
+  "@marketDeliveryWeightFeeRow": {
+    "placeholders": {
+      "weight": { "type": "String" }
+    }
+  },
+  "marketDeliveryBaseFee": "رسوم التوصيل الأساسية",
+  "marketDeliveryTotal": "الإجمالي",
+  "marketDeliveryConfirmButton": "تأكيد الشراء — {total}",
+  "@marketDeliveryConfirmButton": {
+    "placeholders": {
+      "total": { "type": "String" }
+    }
+  },
+
+  "marketPurchaseChoiceTitle": "اختر طريقة الاستلام",
+  "marketPurchaseChoiceSubtitle": "يمكنك الاستلام بنفسك أو تعيين سائق للتوصيل",
+  "marketPurchaseSelfPickup": "استلام من السوق",
+  "marketPurchaseNoFee": "بدون رسوم توصيل",
+  "marketPurchaseAssignRider": "تعيين سائق للتوصيل",
+  "marketPurchaseRiderFeeNote": "حساب رسوم التوصيل حسب المسافة والوزن",
+
+  "walletTitle": "محفظتي",
+  "walletPointsAndRewards": "نقاطي ومكافآتي",
+  "walletBillingPayments": "الفوترة والمدفوعات",
+  "walletAvailableBalance": "الرصيد المتاح",
+  "walletHeldAmount": "المحجوز",
+  "walletWithdrawButton": "طلب صرف رصيد",
+  "walletPointUnit": "نقطة",
+  "walletPointsToNextReward": "تبقّى {n} نقطة للمكافأة القادمة",
+  "@walletPointsToNextReward": {
+    "placeholders": {
+      "n": { "type": "String" }
+    }
+  },
+  "walletViewRewards": "عرض المكافآت",
+  "walletCurrentPeriod": "الفترة الحالية:",
+  "walletShipments": "الشحنات",
+  "walletWeightKg": "الوزن (كغ)",
+  "walletViewInvoice": "عرض الفاتورة",
+  "walletEfawateerTitle": "الدفع عبر فواتيركم",
+  "walletEfawateerSubtitle": "منصة الدفع الإلكتروني الحكومية"
 }

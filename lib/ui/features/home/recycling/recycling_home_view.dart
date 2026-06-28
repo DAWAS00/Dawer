@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../data/models/order/order.dart';
 import '../../../../data/services/app_order_store.dart';
+import '../../../../domain/repositories/i_auth_repository.dart';
 import '../../../../domain/repositories/i_report_request_repository.dart';
 import '../../analytics/analytics_tab.dart';
 import '../../auth/viewmodels/login_viewmodel.dart';
@@ -68,7 +69,7 @@ class _RecyclingHomeBody extends StatelessWidget {
       MarketplaceTab(role: UserRole.recyclingCo, currentUserName: userName),
       RecyclingOrdersTab(incoming: vm.incoming, jobs: vm.jobs, salesForJob: vm.salesForJob),
       AnalyticsTab(
-        userId: vm.companyName,
+        userId: context.read<IAuthRepository>().currentSession?.userId ?? '',
         allOrders: [...vm.incoming, ...vm.jobs],
         reportRepository: context.read<IReportRequestRepository>(),
         heroMetric: HeroMetric.weight,

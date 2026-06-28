@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 export '../../../../data/models/user_role.dart' show UserRole, SupplierType;
 
 import '../../../../data/models/user_role.dart';
-import '../../../../data/repositories/mock_auth_repository.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
 
 class LoginViewModel extends ChangeNotifier {
@@ -21,7 +20,6 @@ class LoginViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool _otpSent = false;
   AuthSession? _session;
-  AuthSession? _quickSession;
 
   // --- Getters ---
   UserRole get selectedRole => _selectedRole;
@@ -31,7 +29,6 @@ class LoginViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get otpSent => _otpSent;
   AuthSession? get session => _session;
-  AuthSession? get quickSession => _quickSession;
 
   // --- Mutators ---
   void selectRole(UserRole role) {
@@ -91,17 +88,5 @@ class LoginViewModel extends ChangeNotifier {
 
   void resetOtpSent() {
     _otpSent = false;
-  }
-
-  void quickLogin(AuthSession session) {
-    if (_authRepository case final MockAuthRepository repo) {
-      repo.setActiveSession(session);
-    }
-    _quickSession = session;
-    notifyListeners();
-  }
-
-  void resetQuickSession() {
-    _quickSession = null;
   }
 }

@@ -139,7 +139,7 @@
   "otpResentMessage": "Code sent again",
   "otpErrorIncomplete": "Please enter the full code",
   "otpErrorInvalid": "Invalid code, please try again",
-  "otpSimulatedHint": "For testing, use code 123456",
+  "otpSimulatedHint": "A verification code will be sent to your number via SMS",
 
   "signupRoleDriver": "Driver Registration",
   "signupRoleStoreBusiness": "Store / Restaurant Registration",
@@ -1044,5 +1044,77 @@
   "chatDateToday": "Today",
   "chatDateYesterday": "Yesterday",
   "chatTyping": "typing",
-  "unitKg": "kg"
+  "unitKg": "kg",
+
+  "unitKm": "km",
+
+  "orderArrivalAtPickup": "Arrived at pickup location?",
+  "orderArrivalGeoNote": "Your location will be verified (within 200 m)",
+  "orderArrivalHerePickup": "I'm Here — Pickup",
+  "orderArrivalAtDropoff": "Arrived at dropoff location?",
+  "orderArrivalHereDropoff": "I'm Here — Dropoff",
+  "orderArrivalAwaitingSupplier": "Awaiting supplier confirmation",
+  "orderArrivalAwaitingSubtitle": "Supplier has 5 minutes to respond — driver will be automatically compensated when time runs out",
+  "orderArrivalDriverArrived": "Driver arrived!",
+  "orderArrivalDriverAtLocation": "The driver is at your location. Are you available to hand over the materials?",
+  "orderArrivalIAmAvailable": "I'm Available",
+
+  "acceptJobTitle": "How would you like to proceed?",
+  "acceptJobSubtitle": "Choose delivery method and transaction type to accept the job",
+  "acceptJobDeliveryFeeCompany": "Delivery fee covered by company",
+  "acceptJobDeliveryFeeYou": "Delivery fee is on you",
+  "acceptJobConfirmButton": "Confirm Acceptance",
+
+  "marketDeliveryConfirmTitle": "Confirm Purchase & Delivery",
+  "marketDeliveryFeeNote": "Delivery fee calculated by distance and weight",
+  "marketDeliverySellerLocation": "Seller Location",
+  "marketDeliveryAddressLabel": "Delivery Address",
+  "marketDeliveryDistanceFeeRow": "Distance fee ({distance} km × 0.2)",
+  "@marketDeliveryDistanceFeeRow": {
+    "placeholders": {
+      "distance": { "type": "String" }
+    }
+  },
+  "marketDeliveryWeightFeeRow": "Weight fee ({weight})",
+  "@marketDeliveryWeightFeeRow": {
+    "placeholders": {
+      "weight": { "type": "String" }
+    }
+  },
+  "marketDeliveryBaseFee": "Base delivery fee",
+  "marketDeliveryTotal": "Total",
+  "marketDeliveryConfirmButton": "Confirm Purchase — {total}",
+  "@marketDeliveryConfirmButton": {
+    "placeholders": {
+      "total": { "type": "String" }
+    }
+  },
+
+  "marketPurchaseChoiceTitle": "Choose Pickup Method",
+  "marketPurchaseChoiceSubtitle": "You can self-pickup or assign a driver for delivery",
+  "marketPurchaseSelfPickup": "Pick up from market",
+  "marketPurchaseNoFee": "No delivery fee",
+  "marketPurchaseAssignRider": "Assign a driver for delivery",
+  "marketPurchaseRiderFeeNote": "Delivery fee calculated by distance and weight",
+
+  "walletTitle": "My Wallet",
+  "walletPointsAndRewards": "My Points & Rewards",
+  "walletBillingPayments": "Billing & Payments",
+  "walletAvailableBalance": "Available Balance",
+  "walletHeldAmount": "On Hold",
+  "walletWithdrawButton": "Request Withdrawal",
+  "walletPointUnit": "pts",
+  "walletPointsToNextReward": "{n} pts to next reward",
+  "@walletPointsToNextReward": {
+    "placeholders": {
+      "n": { "type": "String" }
+    }
+  },
+  "walletViewRewards": "View Rewards",
+  "walletCurrentPeriod": "Current period:",
+  "walletShipments": "Shipments",
+  "walletWeightKg": "Weight (kg)",
+  "walletViewInvoice": "View Invoice",
+  "walletEfawateerTitle": "Pay via eFawateercom",
+  "walletEfawateerSubtitle": "Government e-payment platform"
 }

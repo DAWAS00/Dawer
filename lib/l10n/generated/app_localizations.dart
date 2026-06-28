@@ -803,7 +803,7 @@ abstract class AppLocalizations {
   /// No description provided for @otpSimulatedHint.
   ///
   /// In ar, this message translates to:
-  /// **'للتجربة استخدم الرمز 123456'**
+  /// **'سيتم إرسال رمز التحقق إلى رقمك عبر SMS'**
   String get otpSimulatedHint;
 
   /// No description provided for @signupRoleDriver.
@@ -5287,6 +5287,282 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'كغ'**
   String get unitKg;
+
+  /// No description provided for @unitKm.
+  ///
+  /// In ar, this message translates to:
+  /// **'كم'**
+  String get unitKm;
+
+  /// No description provided for @orderArrivalAtPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت إلى موقع الاستلام؟'**
+  String get orderArrivalAtPickup;
+
+  /// No description provided for @orderArrivalGeoNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيتم التحقق من موقعك (ضمن 200 م)'**
+  String get orderArrivalGeoNote;
+
+  /// No description provided for @orderArrivalHerePickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنا هنا — الاستلام'**
+  String get orderArrivalHerePickup;
+
+  /// No description provided for @orderArrivalAtDropoff.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت إلى موقع التسليم؟'**
+  String get orderArrivalAtDropoff;
+
+  /// No description provided for @orderArrivalHereDropoff.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنا هنا — التسليم'**
+  String get orderArrivalHereDropoff;
+
+  /// No description provided for @orderArrivalAwaitingSupplier.
+  ///
+  /// In ar, this message translates to:
+  /// **'في انتظار تأكيد المورد'**
+  String get orderArrivalAwaitingSupplier;
+
+  /// No description provided for @orderArrivalAwaitingSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المورد لديه 5 دقائق للرد — سيُعوَّض السائق تلقائياً عند انتهاء المهلة'**
+  String get orderArrivalAwaitingSubtitle;
+
+  /// No description provided for @orderArrivalDriverArrived.
+  ///
+  /// In ar, this message translates to:
+  /// **'السائق وصل!'**
+  String get orderArrivalDriverArrived;
+
+  /// No description provided for @orderArrivalDriverAtLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'السائق في موقعك الآن. هل أنت متاح لتسليم المواد؟'**
+  String get orderArrivalDriverAtLocation;
+
+  /// No description provided for @orderArrivalIAmAvailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنا متاح'**
+  String get orderArrivalIAmAvailable;
+
+  /// No description provided for @acceptJobTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'كيف تريد المتابعة؟'**
+  String get acceptJobTitle;
+
+  /// No description provided for @acceptJobSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر طريقة التوصيل ونوع المعاملة لقبول الوظيفة'**
+  String get acceptJobSubtitle;
+
+  /// No description provided for @acceptJobDeliveryFeeCompany.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم التوصيل على الشركة'**
+  String get acceptJobDeliveryFeeCompany;
+
+  /// No description provided for @acceptJobDeliveryFeeYou.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم التوصيل عليك'**
+  String get acceptJobDeliveryFeeYou;
+
+  /// No description provided for @acceptJobConfirmButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد القبول'**
+  String get acceptJobConfirmButton;
+
+  /// No description provided for @marketDeliveryConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد الشراء والتوصيل'**
+  String get marketDeliveryConfirmTitle;
+
+  /// No description provided for @marketDeliveryFeeNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم التوصيل محسوبة حسب المسافة والوزن'**
+  String get marketDeliveryFeeNote;
+
+  /// No description provided for @marketDeliverySellerLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'موقع البائع'**
+  String get marketDeliverySellerLocation;
+
+  /// No description provided for @marketDeliveryAddressLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنوان التوصيل'**
+  String get marketDeliveryAddressLabel;
+
+  /// No description provided for @marketDeliveryDistanceFeeRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم المسافة ({distance} كم × 0.2)'**
+  String marketDeliveryDistanceFeeRow(String distance);
+
+  /// No description provided for @marketDeliveryWeightFeeRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم الوزن ({weight})'**
+  String marketDeliveryWeightFeeRow(String weight);
+
+  /// No description provided for @marketDeliveryBaseFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم التوصيل الأساسية'**
+  String get marketDeliveryBaseFee;
+
+  /// No description provided for @marketDeliveryTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإجمالي'**
+  String get marketDeliveryTotal;
+
+  /// No description provided for @marketDeliveryConfirmButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد الشراء — {total}'**
+  String marketDeliveryConfirmButton(String total);
+
+  /// No description provided for @marketPurchaseChoiceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر طريقة الاستلام'**
+  String get marketPurchaseChoiceTitle;
+
+  /// No description provided for @marketPurchaseChoiceSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'يمكنك الاستلام بنفسك أو تعيين سائق للتوصيل'**
+  String get marketPurchaseChoiceSubtitle;
+
+  /// No description provided for @marketPurchaseSelfPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'استلام من السوق'**
+  String get marketPurchaseSelfPickup;
+
+  /// No description provided for @marketPurchaseNoFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدون رسوم توصيل'**
+  String get marketPurchaseNoFee;
+
+  /// No description provided for @marketPurchaseAssignRider.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعيين سائق للتوصيل'**
+  String get marketPurchaseAssignRider;
+
+  /// No description provided for @marketPurchaseRiderFeeNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساب رسوم التوصيل حسب المسافة والوزن'**
+  String get marketPurchaseRiderFeeNote;
+
+  /// No description provided for @walletTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'محفظتي'**
+  String get walletTitle;
+
+  /// No description provided for @walletPointsAndRewards.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقاطي ومكافآتي'**
+  String get walletPointsAndRewards;
+
+  /// No description provided for @walletBillingPayments.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفوترة والمدفوعات'**
+  String get walletBillingPayments;
+
+  /// No description provided for @walletAvailableBalance.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرصيد المتاح'**
+  String get walletAvailableBalance;
+
+  /// No description provided for @walletHeldAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحجوز'**
+  String get walletHeldAmount;
+
+  /// No description provided for @walletWithdrawButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب صرف رصيد'**
+  String get walletWithdrawButton;
+
+  /// No description provided for @walletPointUnit.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقطة'**
+  String get walletPointUnit;
+
+  /// No description provided for @walletPointsToNextReward.
+  ///
+  /// In ar, this message translates to:
+  /// **'تبقّى {n} نقطة للمكافأة القادمة'**
+  String walletPointsToNextReward(String n);
+
+  /// No description provided for @walletViewRewards.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض المكافآت'**
+  String get walletViewRewards;
+
+  /// No description provided for @walletCurrentPeriod.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفترة الحالية:'**
+  String get walletCurrentPeriod;
+
+  /// No description provided for @walletShipments.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشحنات'**
+  String get walletShipments;
+
+  /// No description provided for @walletWeightKg.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوزن (كغ)'**
+  String get walletWeightKg;
+
+  /// No description provided for @walletViewInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض الفاتورة'**
+  String get walletViewInvoice;
+
+  /// No description provided for @walletEfawateerTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفع عبر فواتيركم'**
+  String get walletEfawateerTitle;
+
+  /// No description provided for @walletEfawateerSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'منصة الدفع الإلكتروني الحكومية'**
+  String get walletEfawateerSubtitle;
 }
 
 class _AppLocalizationsDelegate

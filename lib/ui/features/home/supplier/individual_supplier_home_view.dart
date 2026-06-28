@@ -93,7 +93,7 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
         onComplete: vm.completeCollectionSale,
       ),
       AnalyticsTab(
-        userId: vm.user.id,
+        userId: context.read<IAuthRepository>().currentSession?.userId ?? '',
         allOrders: context.read<AppOrderStore>().supplierCompletedOrdersFor(vm.user.name),
         reportRepository: context.read<IReportRequestRepository>(),
         showMilestones: true,
