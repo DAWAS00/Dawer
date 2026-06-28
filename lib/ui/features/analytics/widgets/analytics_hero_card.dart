@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../l10n/l10n.dart';
 
 /// The top-of-tab hero summary: a deep-green gradient card showing one big
 /// number (role-chosen), a delta chip vs the previous period, a label, and a
@@ -18,6 +19,7 @@ class AnalyticsHeroCard extends StatefulWidget {
     required this.sparkPoints,
     this.deltaPct,
     this.accentColor = Colors.white,
+    this.currentStreak = 0,
   });
 
   /// Raw numeric value to display (e.g. 342.5).
@@ -37,6 +39,9 @@ class AnalyticsHeroCard extends StatefulWidget {
 
   /// Sparkline + delta chip color. Defaults white on the green gradient.
   final Color accentColor;
+
+  /// Current day-streak. Chip shown only when >= 2.
+  final int currentStreak;
 
   @override
   State<AnalyticsHeroCard> createState() => _AnalyticsHeroCardState();
@@ -108,10 +113,14 @@ class _AnalyticsHeroCardState extends State<AnalyticsHeroCard>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Delta chip (top-right aligned via Row + Spacer)
+          // Delta chip + streak chip (top, right-aligned via Spacer)
           Row(
             children: [
               if (delta != null) _DeltaChip(pct: delta),
+              if (widget.currentStreak >= 2) ...[
+                if (delta != null) const SizedBox(width: 8),
+                _StreakChip(streak: widget.currentStreak),
+              ],
               const Spacer(),
               Icon(Icons.insights_rounded,
                   color: Colors.white.withValues(alpha: 0.7), size: 18),
@@ -290,4 +299,29 @@ class _SparklinePainter extends CustomPainter {
   @override
   bool shouldRepaint(_SparklinePainter old) =>
       old.points != points || old.color != color;
+}
+
+/// Flame streak chip shown on the hero when currentStreak >= 2.
+class _StreakChip extends StatelessWidget {
+  const _StreakChip({required this.streak});
+  final int streak;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF59E0B).withValues(alpha: 0.22),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        context.l10n.analyticsStreakChip(streak),
+        style: GoogleFonts.cairo(
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          color: const Color(0xFFFCD34D),
+        ),
+      ),
+    );
+  }
 }

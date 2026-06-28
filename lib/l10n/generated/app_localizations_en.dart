@@ -2921,4 +2921,95 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get walletEfawateerSubtitle => 'Government e-payment platform';
+
+  @override
+  String analyticsStreakChip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '🔥 # day streak',
+      one: '🔥 day streak',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get analyticsStreakSectionTitle => 'Activity streak';
+
+  @override
+  String analyticsStreakBest(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '# days',
+      one: '# day',
+    );
+    return 'Longest streak: $_temp0';
+  }
+
+  @override
+  String get analyticsStreakEmpty =>
+      'No activity yet — complete your first order today!';
+
+  @override
+  String get analyticsCycleSectionTitle => 'Order cycle time';
+
+  @override
+  String analyticsCycleAvgCaption(int minutes) {
+    return 'Average full order time: $minutes min';
+  }
+
+  @override
+  String get analyticsCycleStageAccept => 'Wait until accepted';
+
+  @override
+  String get analyticsCycleStagePickup => 'Reaching pickup';
+
+  @override
+  String get analyticsCycleStageTransit => 'Transit';
+
+  @override
+  String get analyticsCycleStageDropoff => 'Drop-off';
+
+  @override
+  String analyticsCycleMinutes(String minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get analyticsCycleEmpty => 'Not enough data to analyze order timing';
+
+  @override
+  String get analyticsProfitabilitySectionTitle => 'Most profitable materials';
+
+  @override
+  String analyticsProfitabilityPerKg(String value) {
+    return '$value JOD/kg';
+  }
+
+  @override
+  String get analyticsProfitabilityTopBadge => '🏆 Top earner';
+
+  @override
+  String get analyticsProfitabilityEmpty =>
+      'Not enough data to analyze material profitability';
+
+  @override
+  String get analyticsEfficiencySectionTitle => 'Earnings efficiency';
+
+  @override
+  String get analyticsEfficiencyRatioCaption =>
+      'Average you earn per kilometer';
+
+  @override
+  String analyticsEfficiencyRatioValue(String value) {
+    return '$value JOD/km';
+  }
+
+  @override
+  String get analyticsEfficiencyTopJobs => 'Best trips';
+
+  @override
+  String get analyticsEfficiencyEmpty =>
+      'No distance data to compute efficiency';
 }

@@ -5563,6 +5563,132 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'منصة الدفع الإلكتروني الحكومية'**
   String get walletEfawateerSubtitle;
+
+  /// No description provided for @analyticsStreakChip.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{🔥 يوم متتالٍ} =2{🔥 يومان متتاليان} few{🔥 # أيام متتالية} many{🔥 # يوماً متتالياً} other{🔥 # يوم متتالٍ}}'**
+  String analyticsStreakChip(int count);
+
+  /// No description provided for @analyticsStreakSectionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سلسلة النشاط'**
+  String get analyticsStreakSectionTitle;
+
+  /// No description provided for @analyticsStreakBest.
+  ///
+  /// In ar, this message translates to:
+  /// **'أطول سلسلة: {count, plural, =1{يوم} =2{يومان} few{# أيام} many{# يوماً} other{# يوم}}'**
+  String analyticsStreakBest(int count);
+
+  /// No description provided for @analyticsStreakEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد نشاط بعد — ابدأ أول طلب اليوم!'**
+  String get analyticsStreakEmpty;
+
+  /// No description provided for @analyticsCycleSectionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'زمن دورة الطلب'**
+  String get analyticsCycleSectionTitle;
+
+  /// No description provided for @analyticsCycleAvgCaption.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوسط زمن الطلب الكامل: {minutes} دقيقة'**
+  String analyticsCycleAvgCaption(int minutes);
+
+  /// No description provided for @analyticsCycleStageAccept.
+  ///
+  /// In ar, this message translates to:
+  /// **'الانتظار حتى القبول'**
+  String get analyticsCycleStageAccept;
+
+  /// No description provided for @analyticsCycleStagePickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوصول للالتقاط'**
+  String get analyticsCycleStagePickup;
+
+  /// No description provided for @analyticsCycleStageTransit.
+  ///
+  /// In ar, this message translates to:
+  /// **'النقل'**
+  String get analyticsCycleStageTransit;
+
+  /// No description provided for @analyticsCycleStageDropoff.
+  ///
+  /// In ar, this message translates to:
+  /// **'التسليم'**
+  String get analyticsCycleStageDropoff;
+
+  /// No description provided for @analyticsCycleMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'{minutes} دقيقة'**
+  String analyticsCycleMinutes(String minutes);
+
+  /// No description provided for @analyticsCycleEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد بيانات كافية لتحليل زمن الطلب'**
+  String get analyticsCycleEmpty;
+
+  /// No description provided for @analyticsProfitabilitySectionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أربح المواد'**
+  String get analyticsProfitabilitySectionTitle;
+
+  /// No description provided for @analyticsProfitabilityPerKg.
+  ///
+  /// In ar, this message translates to:
+  /// **'{value} د.أ/كغ'**
+  String analyticsProfitabilityPerKg(String value);
+
+  /// No description provided for @analyticsProfitabilityTopBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'🏆 الأعلى ربحًا'**
+  String get analyticsProfitabilityTopBadge;
+
+  /// No description provided for @analyticsProfitabilityEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد بيانات كافية لتحليل ربحية المواد'**
+  String get analyticsProfitabilityEmpty;
+
+  /// No description provided for @analyticsEfficiencySectionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'كفاءة الأرباح'**
+  String get analyticsEfficiencySectionTitle;
+
+  /// No description provided for @analyticsEfficiencyRatioCaption.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوسط ما تربحه لكل كيلومتر'**
+  String get analyticsEfficiencyRatioCaption;
+
+  /// No description provided for @analyticsEfficiencyRatioValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'{value} د.أ/كم'**
+  String analyticsEfficiencyRatioValue(String value);
+
+  /// No description provided for @analyticsEfficiencyTopJobs.
+  ///
+  /// In ar, this message translates to:
+  /// **'أفضل الرحلات'**
+  String get analyticsEfficiencyTopJobs;
+
+  /// No description provided for @analyticsEfficiencyEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد بيانات مسافة لحساب الكفاءة'**
+  String get analyticsEfficiencyEmpty;
 }
 
 class _AppLocalizationsDelegate

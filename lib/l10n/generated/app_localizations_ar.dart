@@ -2886,4 +2886,98 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get walletEfawateerSubtitle => 'منصة الدفع الإلكتروني الحكومية';
+
+  @override
+  String analyticsStreakChip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '🔥 # يوم متتالٍ',
+      many: '🔥 # يوماً متتالياً',
+      few: '🔥 # أيام متتالية',
+      two: '🔥 يومان متتاليان',
+      one: '🔥 يوم متتالٍ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get analyticsStreakSectionTitle => 'سلسلة النشاط';
+
+  @override
+  String analyticsStreakBest(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '# يوم',
+      many: '# يوماً',
+      few: '# أيام',
+      two: 'يومان',
+      one: 'يوم',
+    );
+    return 'أطول سلسلة: $_temp0';
+  }
+
+  @override
+  String get analyticsStreakEmpty => 'لا يوجد نشاط بعد — ابدأ أول طلب اليوم!';
+
+  @override
+  String get analyticsCycleSectionTitle => 'زمن دورة الطلب';
+
+  @override
+  String analyticsCycleAvgCaption(int minutes) {
+    return 'متوسط زمن الطلب الكامل: $minutes دقيقة';
+  }
+
+  @override
+  String get analyticsCycleStageAccept => 'الانتظار حتى القبول';
+
+  @override
+  String get analyticsCycleStagePickup => 'الوصول للالتقاط';
+
+  @override
+  String get analyticsCycleStageTransit => 'النقل';
+
+  @override
+  String get analyticsCycleStageDropoff => 'التسليم';
+
+  @override
+  String analyticsCycleMinutes(String minutes) {
+    return '$minutes دقيقة';
+  }
+
+  @override
+  String get analyticsCycleEmpty => 'لا توجد بيانات كافية لتحليل زمن الطلب';
+
+  @override
+  String get analyticsProfitabilitySectionTitle => 'أربح المواد';
+
+  @override
+  String analyticsProfitabilityPerKg(String value) {
+    return '$value د.أ/كغ';
+  }
+
+  @override
+  String get analyticsProfitabilityTopBadge => '🏆 الأعلى ربحًا';
+
+  @override
+  String get analyticsProfitabilityEmpty =>
+      'لا توجد بيانات كافية لتحليل ربحية المواد';
+
+  @override
+  String get analyticsEfficiencySectionTitle => 'كفاءة الأرباح';
+
+  @override
+  String get analyticsEfficiencyRatioCaption => 'متوسط ما تربحه لكل كيلومتر';
+
+  @override
+  String analyticsEfficiencyRatioValue(String value) {
+    return '$value د.أ/كم';
+  }
+
+  @override
+  String get analyticsEfficiencyTopJobs => 'أفضل الرحلات';
+
+  @override
+  String get analyticsEfficiencyEmpty => 'لا توجد بيانات مسافة لحساب الكفاءة';
 }
