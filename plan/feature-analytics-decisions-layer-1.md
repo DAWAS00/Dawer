@@ -4,13 +4,13 @@ version: 1.0
 date_created: 2026-06-28
 last_updated: 2026-06-28
 owner: mohammad
-status: 'Planned'
+status: 'Completed'
 tags: [feature, analytics, ui, gamification, driver, supplier, recycling]
 ---
 
 # Introduction
 
-![Status: Planned](https://img.shields.io/badge/status-Planned-blue)
+![Status: Completed](https://img.shields.io/badge/status-Completed-brightgreen)
 
 The analytics tab (redesigned 2026-06-28, see `docs/superpowers/specs/2026-06-28-analytics-tab-redesign-design.md`) currently shows *what happened* — totals, deltas, a trend chart, and a waste-type breakdown. It does not yet answer the questions each role actually asks themselves:
 
@@ -44,11 +44,11 @@ The features are layered into the existing analytics tab layout; they do not rep
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-001 | Add `currentStreak` (int) + `longestStreak` (int) to `AnalyticsViewModel`. Algorithm: collect the set of distinct dates (day-granularity) from `completedAt` across **all** orders (not period-filtered — streaks span history); starting from today (or the most recent active day if today is silent), count consecutive days backward that appear in the set. Return 0 if no completed orders. | | |
-| TASK-002 | Add `CycleTimeBreakdown` value class: `avgAcceptMinutes`, `avgPickupMinutes`, `avgTransitMinutes`, `avgDropoffMinutes`, `avgTotalMinutes`, all `double?`. Add `cycleTime` getter to `AnalyticsViewModel` that computes per-stage averages from `createdAt`→`acceptedAt`→`arrivedAtPickupAt`→`inTransitAt`→`arrivedAtDropoffAt`→`completedAt` over `filteredOrders`, skipping any order missing a needed timestamp. Any stage with zero valid samples → null. | | |
-| TASK-003 | Add `WasteProfitability` value class: `type` (WasteType), `rewardPerKg` (double), `totalKg`, `totalReward`, `sampleCount`. Add `wasteProfitability` getter to `AnalyticsViewModel` that, over `filteredOrders`, attributes each order's `reward` across its `wasteTypes` (split evenly when an order has >1 type), divides by the order's `weightKg`, and accumulates per type; returns list sorted by `rewardPerKg` desc. Empty list when no weighted orders. | | |
-| TASK-004 | Add `earningsPerKm` (double?) + `bestJobsByEfficiency` (List<({Order order, double jodPerKm})>, max 3) to `AnalyticsViewModel`. Compute `reward / distanceKm` per order over `filteredOrders` where both fields are present and `distanceKm > 0`; `earningsPerKm` = mean of all such ratios; `bestJobsByEfficiency` = top 3 sorted desc. Null/empty when no qualifying orders. | | |
-| TASK-005 | Extend `test/ui/features/analytics/analytics_viewmodel_test.dart` with unit tests for all four getters: streak (0 / 3-day / gap-breaks-streak), cycle-time (null when timestamps missing, correct averages when present), profitability (sorted desc, split on multi-type orders, empty when unweighted), earnings/km (null when no distance, mean correct, top-3 sorted). | | |
+| TASK-001 | Add `currentStreak` (int) + `longestStreak` (int) to `AnalyticsViewModel`. Algorithm: collect the set of distinct dates (day-granularity) from `completedAt` across **all** orders (not period-filtered — streaks span history); starting from today (or the most recent active day if today is silent), count consecutive days backward that appear in the set. Return 0 if no completed orders. | ✅ | 2026-06-28 |
+| TASK-002 | Add `CycleTimeBreakdown` value class: `avgAcceptMinutes`, `avgPickupMinutes`, `avgTransitMinutes`, `avgDropoffMinutes`, `avgTotalMinutes`, all `double?`. Add `cycleTime` getter to `AnalyticsViewModel` that computes per-stage averages from `createdAt`→`acceptedAt`→`arrivedAtPickupAt`→`inTransitAt`→`arrivedAtDropoffAt`→`completedAt` over `filteredOrders`, skipping any order missing a needed timestamp. Any stage with zero valid samples → null. | ✅ | 2026-06-28 |
+| TASK-003 | Add `WasteProfitability` value class: `type` (WasteType), `rewardPerKg` (double), `totalKg`, `totalReward`, `sampleCount`. Add `wasteProfitability` getter to `AnalyticsViewModel` that, over `filteredOrders`, attributes each order's `reward` across its `wasteTypes` (split evenly when an order has >1 type), divides by the order's `weightKg`, and accumulates per type; returns list sorted by `rewardPerKg` desc. Empty list when no weighted orders. | ✅ | 2026-06-28 |
+| TASK-004 | Add `earningsPerKm` (double?) + `bestJobsByEfficiency` (List<({Order order, double jodPerKm})>, max 3) to `AnalyticsViewModel`. Compute `reward / distanceKm` per order over `filteredOrders` where both fields are present and `distanceKm > 0`; `earningsPerKm` = mean of all such ratios; `bestJobsByEfficiency` = top 3 sorted desc. Null/empty when no qualifying orders. | ✅ | 2026-06-28 |
+| TASK-005 | Extend `test/ui/features/analytics/analytics_viewmodel_test.dart` with unit tests for all four getters: streak (0 / 3-day / gap-breaks-streak), cycle-time (null when timestamps missing, correct averages when present), profitability (sorted desc, split on multi-type orders, empty when unweighted), earnings/km (null when no distance, mean correct, top-3 sorted). | ✅ | 2026-06-28 |
 
 ### Implementation Phase 2 — Streak widget (all roles)
 
@@ -56,9 +56,9 @@ The features are layered into the existing analytics tab layout; they do not rep
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-006 | Create `lib/ui/features/analytics/widgets/streak_heatmap.dart`: a `StatelessWidget` rendering a 5-week (35-cell) GitHub-style calendar heatmap. Each cell = one day; color intensity scales with number of completed orders that day (0 = neutral `AppColors.surfaceAlt`, 1–2 = light green, 3+ = `AppColors.primaryGreen`). Cells for future days render as outlined-empty. Tooltip via `Semantics(label:)`. RTL: week columns flow right-to-left. | | |
-| TASK-007 | Add a streak chip to `AnalyticsHeroCard`: when `currentStreak >= 2`, render "🔥 {n} أيام متتالية" as a small badge next to the delta chip (top-left). Pass `currentStreak` through a new optional ctor param. Hide entirely when streak < 2. | | |
-| TASK-008 | Insert a "سلسلة النشاط" section (header + `StreakHeatmap`) into `analytics_tab.dart` between the hero and the KPI grid, shown for **all roles**. Read `vm.currentStreak` + the per-day counts (expose a `Map<DateTime,int> activityByDay` getter on the viewmodel for the last 35 days). Animate fade-in. | | |
+| TASK-006 | Create `lib/ui/features/analytics/widgets/streak_heatmap.dart`: a `StatelessWidget` rendering a 5-week (35-cell) GitHub-style calendar heatmap. Each cell = one day; color intensity scales with number of completed orders that day (0 = neutral `AppColors.surfaceAlt`, 1–2 = light green, 3+ = `AppColors.primaryGreen`). Cells for future days render as outlined-empty. Tooltip via `Semantics(label:)`. RTL: week columns flow right-to-left. | ✅ | 2026-06-28 |
+| TASK-007 | Add a streak chip to `AnalyticsHeroCard`: when `currentStreak >= 2`, render "🔥 {n} أيام متتالية" as a small badge next to the delta chip (top-left). Pass `currentStreak` through a new optional ctor param. Hide entirely when streak < 2. | ✅ | 2026-06-28 |
+| TASK-008 | Insert a "سلسلة النشاط" section (header + `StreakHeatmap`) into `analytics_tab.dart` between the hero and the KPI grid, shown for **all roles**. Read `vm.currentStreak` + the per-day counts (expose a `Map<DateTime,int> activityByDay` getter on the viewmodel for the last 35 days). Animate fade-in. | ✅ | 2026-06-28 |
 
 ### Implementation Phase 3 — Cycle-time widget (Driver)
 
@@ -66,8 +66,8 @@ The features are layered into the existing analytics tab layout; they do not rep
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-009 | Create `lib/ui/features/analytics/widgets/cycle_time_breakdown.dart`: horizontal proportional stacked bar showing the 4 stages' share of avg total time, each segment colored differently (`accept`=blue, `pickup`=amber, `transit`=green, `dropoff`=purple). Below: a legend with each stage's avg minutes. Caption above: "متوسط زمن الطلب: {N} دقيقة". Empty state when all stages null. | | |
-| TASK-010 | Add a `showCycleTime` bool param to `AnalyticsTab` (default false). Insert the "زمن دورة الطلب" section after the Waste-Type Breakdown, rendered only when `showCycleTime && vm.cycleTime.avgTotalMinutes != null`. Driver home passes `showCycleTime: true`. | | |
+| TASK-009 | Create `lib/ui/features/analytics/widgets/cycle_time_breakdown.dart`: horizontal proportional stacked bar showing the 4 stages' share of avg total time, each segment colored differently (`accept`=blue, `pickup`=amber, `transit`=green, `dropoff`=purple). Below: a legend with each stage's avg minutes. Caption above: "متوسط زمن الطلب: {N} دقيقة". Empty state when all stages null. | ✅ | 2026-06-28 |
+| TASK-010 | Add a `showCycleTime` bool param to `AnalyticsTab` (default false). Insert the "زمن دورة الطلب" section after the Waste-Type Breakdown, rendered only when `showCycleTime && vm.cycleTime.avgTotalMinutes != null`. Driver home passes `showCycleTime: true`. | ✅ | 2026-06-28 |
 
 ### Implementation Phase 4 — Profitability widget (Supplier + Recycling Co)
 
@@ -75,8 +75,8 @@ The features are layered into the existing analytics tab layout; they do not rep
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-011 | Create `lib/ui/features/analytics/widgets/waste_profitability_chart.dart`: horizontal bar chart (one row per waste type, sorted desc by `rewardPerKg`). Each row: colored leading chip + type label + a horizontal bar (width ∝ `rewardPerKg` / max) + the value "{x.x} د.أ/كغ" on the trailing edge. Top row gets a "🏆 الأعلى ربحًا" badge. Empty state when list empty. | | |
-| TASK-012 | Add a `showProfitability` bool param to `AnalyticsTab` (default false). Insert the "أربح المواد" section after the Waste-Type Breakdown (or after Cycle-Time when both show), rendered only when `showProfitability && vm.wasteProfitability.isNotEmpty`. Supplier + Recycling homes pass `showProfitability: true`. | | |
+| TASK-011 | Create `lib/ui/features/analytics/widgets/waste_profitability_chart.dart`: horizontal bar chart (one row per waste type, sorted desc by `rewardPerKg`). Each row: colored leading chip + type label + a horizontal bar (width ∝ `rewardPerKg` / max) + the value "{x.x} د.أ/كغ" on the trailing edge. Top row gets a "🏆 الأعلى ربحًا" badge. Empty state when list empty. | ✅ | 2026-06-28 |
+| TASK-012 | Add a `showProfitability` bool param to `AnalyticsTab` (default false). Insert the "أربح المواد" section after the Waste-Type Breakdown (or after Cycle-Time when both show), rendered only when `showProfitability && vm.wasteProfitability.isNotEmpty`. Supplier + Recycling homes pass `showProfitability: true`. | ✅ | 2026-06-28 |
 
 ### Implementation Phase 5 — Earnings-per-km widget (Driver)
 
@@ -84,8 +84,8 @@ The features are layered into the existing analytics tab layout; they do not rep
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-013 | Create `lib/ui/features/analytics/widgets/earnings_efficiency_card.dart`: a compact card showing the big ratio "{x.xx} د.أ/كم" + a one-line caption "متوسط ما تربحه لكل كيلومتر". Below the ratio: a mini list of the top-3 most efficient jobs (date + the ratio + waste-type chip). Empty state when `earningsPerKm == null`. | | |
-| TASK-014 | Add a `showEarningsEfficiency` bool param to `AnalyticsTab` (default false). Insert the "كفاءة الأرباح" section after the Cycle-Time section (driver-only block), rendered only when `showEarningsEfficiency && vm.earningsPerKm != null`. Driver home passes `showEarningsEfficiency: true`. | | |
+| TASK-013 | Create `lib/ui/features/analytics/widgets/earnings_efficiency_card.dart`: a compact card showing the big ratio "{x.xx} د.أ/كم" + a one-line caption "متوسط ما تربحه لكل كيلومتر". Below the ratio: a mini list of the top-3 most efficient jobs (date + the ratio + waste-type chip). Empty state when `earningsPerKm == null`. | ✅ | 2026-06-28 |
+| TASK-014 | Add a `showEarningsEfficiency` bool param to `AnalyticsTab` (default false). Insert the "كفاءة الأرباح" section after the Cycle-Time section (driver-only block), rendered only when `showEarningsEfficiency && vm.earningsPerKm != null`. Driver home passes `showEarningsEfficiency: true`. | ✅ | 2026-06-28 |
 
 ### Implementation Phase 6 — Wire role homes + final verification
 
@@ -93,10 +93,10 @@ The features are layered into the existing analytics tab layout; they do not rep
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
-| TASK-015 | Update `lib/ui/features/home/driver/driver_home_view.dart` (or wherever the driver `AnalyticsTab` is constructed): pass `showCycleTime: true`, `showEarningsEfficiency: true`. Streak shows automatically. | | |
-| TASK-016 | Update `lib/ui/features/home/supplier/individual_supplier_home_view.dart`: pass `showProfitability: true`. Streak shows automatically. | | |
-| TASK-017 | Update `lib/ui/features/home/recycling/recycling_home_view.dart`: pass `showProfitability: true` (in addition to the existing `heroMetric: HeroMetric.weight`). Streak shows automatically. | | |
-| TASK-018 | Run `flutter analyze` — must report "No issues found!". Run `flutter test` — all analytics tests + the pre-existing 335 must pass (the 3 documented pre-existing failures in `mock_auth_repository_test.dart` / `chat_view_test.dart` remain acceptable per AGENTS.md §4). Fix any new failure introduced by these changes. | | |
+| TASK-015 | Update `lib/ui/features/home/driver/driver_home_view.dart` (or wherever the driver `AnalyticsTab` is constructed): pass `showCycleTime: true`, `showEarningsEfficiency: true`. Streak shows automatically. | ✅ | 2026-06-28 |
+| TASK-016 | Update `lib/ui/features/home/supplier/individual_supplier_home_view.dart`: pass `showProfitability: true`. Streak shows automatically. | ✅ | 2026-06-28 |
+| TASK-017 | Update `lib/ui/features/home/recycling/recycling_home_view.dart`: pass `showProfitability: true` (in addition to the existing `heroMetric: HeroMetric.weight`). Streak shows automatically. | ✅ | 2026-06-28 |
+| TASK-018 | Run `flutter analyze` — must report "No issues found!". Run `flutter test` — all analytics tests + the pre-existing 335 must pass (the 3 documented pre-existing failures in `mock_auth_repository_test.dart` / `chat_view_test.dart` remain acceptable per AGENTS.md §4). Fix any new failure introduced by these changes. | ✅ | 2026-06-28 |
 
 ## 3. Alternatives
 
