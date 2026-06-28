@@ -69,6 +69,60 @@ class DirectionsService {
     }
   }
 
+  /// Reverse geocodes [point] to a human-readable Arabic address string.
+  /// Returns null on any error (network, quota, missing key).
+  static Future<String?> reverseGeocode({
+    required LatLng point,
+    required String apiKey,
+  }) async {
+    if (apiKey.isEmpty) return null;
+
+    final uri = Uri.https('maps.googleapis.com', '/maps/api/geocode/json', {
+      'latlng': '${point.latitude},${point.longitude}',
+      'language': 'ar',
+      'key': apiKey,
+    });
+
+    try {
+      final client = HttpClient()..connectionTimeout = _timeout;
+      final request = await client.getUrl(uri);
+      final response = await request.close().timeout(_timeout);
+      final body = await response.transform(utf8.decoder).join();
+      client.close();
+
+      if (response.statusCode != 200) {
+        debugPrint('[DirectionsService] reverseGeocode HTTP ${response.statusCode}');
+        return null;
+      }
+
+      final data = jsonDecode(body) as Map<String, dynamic>;
+      if (data['status'] != 'OK') {
+        debugPrint('[DirectionsService] reverseGeocode status: ${data["status"]}');
+        return null;
+      }
+
+      final results = (data['results'] as List?)?.cast<Map<String, dynamic>>();
+      if (results == null || results.isEmpty) return null;
+
+      // Prefer a result covering a named route/neighbourhood over a plus-code.
+      final best = results.firstWhere(
+        (r) {
+          final types = (r['types'] as List?)?.cast<String>() ?? [];
+          return types.contains('route') ||
+              types.contains('neighborhood') ||
+              types.contains('sublocality') ||
+              types.contains('premise');
+        },
+        orElse: () => results.first,
+      );
+
+      return best['formatted_address'] as String?;
+    } catch (e, st) {
+      debugPrint('[DirectionsService] reverseGeocode error: $e\n$st');
+      return null;
+    }
+  }
+
   // Standard Google encoded-polyline algorithm.
   static List<LatLng> _decodePolyline(String encoded) {
     final points = <LatLng>[];
