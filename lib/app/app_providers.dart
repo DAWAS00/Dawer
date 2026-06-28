@@ -28,6 +28,7 @@ import '../domain/services/i_notification_service.dart';
 import '../domain/services/i_signup_orchestrator.dart';
 import '../domain/repositories/i_report_request_repository.dart';
 import '../data/repositories/mock_report_request_repository.dart';
+import '../data/repositories/supabase_report_request_repository.dart';
 import '../ui/features/auth/viewmodels/login_viewmodel.dart';
 
 /// Builds the full provider list for [DawerApp].
@@ -123,7 +124,9 @@ List buildProviders({
 
     // ── Report requests ─────────────────────────────────────────────────────
     Provider<IReportRequestRepository>(
-      create: (_) => MockReportRequestRepository(),
+      create: (_) => useSupabase
+          ? SupabaseReportRequestRepository(SupabaseService.client)
+          : MockReportRequestRepository(),
     ),
 
     // ── ViewModels ──────────────────────────────────────────────────────────
