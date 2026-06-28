@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dwaar/data/models/order/order.dart';
 import 'package:dwaar/ui/features/home/supplier/controllers/publish_form_controller.dart';
+import 'package:dwaar/l10n/l10n.dart';
 import 'wizard_style_tokens.dart';
 
 class Step2QuantityAndPrice extends StatelessWidget {
@@ -12,16 +13,17 @@ class Step2QuantityAndPrice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          const _StepHeader(
-            title: 'تفاصيل المادة',
-            subtitle: 'حدد الكمية والحالة والسعر المطلوب',
+          _StepHeader(
+            title: l10n.wizardStep2Title,
+            subtitle: l10n.wizardStep2Subtitle,
           ),
-          const _FieldLabel(text: 'حالة المواد *'),
+          _FieldLabel(text: l10n.wizardMaterialCondition),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
@@ -38,7 +40,7 @@ class Step2QuantityAndPrice extends StatelessWidget {
             }).toList(),
           ),
           const SizedBox(height: 24),
-          const _FieldLabel(text: 'حجم الكمية *'),
+          _FieldLabel(text: l10n.wizardQuantitySize),
           const SizedBox(height: 10),
           ...WeightCategory.values.map((cat) {
             final isSelected = controller.weightCategory == cat;
@@ -54,7 +56,7 @@ class Step2QuantityAndPrice extends StatelessWidget {
             );
           }),
           const SizedBox(height: 24),
-          const _FieldLabel(text: 'السعر المطلوب (د.أ) — اختياري'),
+          _FieldLabel(text: l10n.wizardRequestedPrice),
           const SizedBox(height: 10),
           _PriceInput(controller: controller.priceCtrl),
           const SizedBox(height: 24),
@@ -250,7 +252,7 @@ class _PriceInput extends StatelessWidget {
             fontWeight: FontWeight.w700,
             color: WizardColors.textHint,
           ),
-          suffixText: 'دينار',
+          suffixText: context.l10n.orderCurrencyJD,
           suffixStyle: GoogleFonts.cairo(
             fontSize: 13,
             color: WizardColors.textSecondary,

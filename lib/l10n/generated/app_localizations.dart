@@ -4759,6 +4759,210 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'ديسمبر'**
   String get monthDecember;
+
+  /// No description provided for @wizardStep1Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'ماذا تريد أن تبيع؟'**
+  String get wizardStep1Title;
+
+  /// No description provided for @wizardStep1Subtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف تفاصيل المواد التي تريد بيعها'**
+  String get wizardStep1Subtitle;
+
+  /// No description provided for @wizardMaterialPhotosOptional.
+  ///
+  /// In ar, this message translates to:
+  /// **'صور المواد — اختياري'**
+  String get wizardMaterialPhotosOptional;
+
+  /// No description provided for @wizardMaterialTypeRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع المواد *'**
+  String get wizardMaterialTypeRequired;
+
+  /// No description provided for @wizardAiAnalyzing.
+  ///
+  /// In ar, this message translates to:
+  /// **'يقوم الفريق الذكي بتحليل طلبك...'**
+  String get wizardAiAnalyzing;
+
+  /// No description provided for @wizardAiAnalysisFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل في تحليل الصورة: {error}'**
+  String wizardAiAnalysisFailed(String error);
+
+  /// No description provided for @wizardStep2Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل المادة'**
+  String get wizardStep2Title;
+
+  /// No description provided for @wizardStep2Subtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدد الكمية والحالة والسعر المطلوب'**
+  String get wizardStep2Subtitle;
+
+  /// No description provided for @wizardMaterialCondition.
+  ///
+  /// In ar, this message translates to:
+  /// **'حالة المواد *'**
+  String get wizardMaterialCondition;
+
+  /// No description provided for @wizardQuantitySize.
+  ///
+  /// In ar, this message translates to:
+  /// **'حجم الكمية *'**
+  String get wizardQuantitySize;
+
+  /// No description provided for @wizardRequestedPrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر المطلوب (د.أ) — اختياري'**
+  String get wizardRequestedPrice;
+
+  /// No description provided for @wizardStep3Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر خطوة!'**
+  String get wizardStep3Title;
+
+  /// No description provided for @wizardStep3Subtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدد موقع الاستلام وراجع الإعلان قبل النشر'**
+  String get wizardStep3Subtitle;
+
+  /// No description provided for @wizardPickupAddress.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنوان الاستلام *'**
+  String get wizardPickupAddress;
+
+  /// No description provided for @wizardTapToSetLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط لتحديد الموقع على الخريطة'**
+  String get wizardTapToSetLocation;
+
+  /// No description provided for @wizardNotesOptional.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظات — اختياري'**
+  String get wizardNotesOptional;
+
+  /// No description provided for @wizardNotesHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: المواد موجودة خلف المستودع...'**
+  String get wizardNotesHint;
+
+  /// No description provided for @wizardListingSummary.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملخص الإعلان والتأثير البيئي'**
+  String get wizardListingSummary;
+
+  /// No description provided for @wizardChangeLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير الموقع'**
+  String get wizardChangeLocation;
+
+  /// No description provided for @wizardUseCurrentLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'استخدام موقعي الحالي'**
+  String get wizardUseCurrentLocation;
+
+  /// No description provided for @wizardSummaryMaterialType.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع المواد'**
+  String get wizardSummaryMaterialType;
+
+  /// No description provided for @wizardSummaryCondition.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحالة'**
+  String get wizardSummaryCondition;
+
+  /// No description provided for @wizardSummaryQuantity.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكمية'**
+  String get wizardSummaryQuantity;
+
+  /// No description provided for @wizardSummaryPrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر'**
+  String get wizardSummaryPrice;
+
+  /// No description provided for @wizardPriceUndefined.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير محدد'**
+  String get wizardPriceUndefined;
+
+  /// No description provided for @wizardCo2Savings.
+  ///
+  /// In ar, this message translates to:
+  /// **'توفير CO2'**
+  String get wizardCo2Savings;
+
+  /// No description provided for @wizardWaterSavings.
+  ///
+  /// In ar, this message translates to:
+  /// **'توفير مياه'**
+  String get wizardWaterSavings;
+
+  /// No description provided for @wizardWaterLiters.
+  ///
+  /// In ar, this message translates to:
+  /// **'{liters} لتر'**
+  String wizardWaterLiters(String liters);
+
+  /// No description provided for @wizardLocationDefined.
+  ///
+  /// In ar, this message translates to:
+  /// **'موقع محدد'**
+  String get wizardLocationDefined;
+
+  /// No description provided for @wizardPublishedToMarket.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم النشر في السوق بنجاح! ✓'**
+  String get wizardPublishedToMarket;
+
+  /// No description provided for @wizardPickupRequestSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال طلب الاستلام بنجاح! ✓'**
+  String get wizardPickupRequestSent;
+
+  /// No description provided for @wizardPickupRequestFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل في إرسال طلب الاستلام'**
+  String get wizardPickupRequestFailed;
+
+  /// No description provided for @wizardNewPickupTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب استلام جديد'**
+  String get wizardNewPickupTitle;
+
+  /// No description provided for @wizardPublishToMarket.
+  ///
+  /// In ar, this message translates to:
+  /// **'نشر في السوق'**
+  String get wizardPublishToMarket;
 }
 
 class _AppLocalizationsDelegate

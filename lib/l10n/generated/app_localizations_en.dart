@@ -2486,4 +2486,113 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get monthDecember => 'December';
+
+  @override
+  String get wizardStep1Title => 'What would you like to sell?';
+
+  @override
+  String get wizardStep1Subtitle =>
+      'Add details of the materials you want to sell';
+
+  @override
+  String get wizardMaterialPhotosOptional => 'Material photos — optional';
+
+  @override
+  String get wizardMaterialTypeRequired => 'Material type *';
+
+  @override
+  String get wizardAiAnalyzing => 'The smart team is analyzing your request...';
+
+  @override
+  String wizardAiAnalysisFailed(String error) {
+    return 'Failed to analyze image: $error';
+  }
+
+  @override
+  String get wizardStep2Title => 'Material details';
+
+  @override
+  String get wizardStep2Subtitle =>
+      'Specify quantity, condition, and requested price';
+
+  @override
+  String get wizardMaterialCondition => 'Material condition *';
+
+  @override
+  String get wizardQuantitySize => 'Quantity size *';
+
+  @override
+  String get wizardRequestedPrice => 'Requested price (JOD) — optional';
+
+  @override
+  String get wizardStep3Title => 'Last step!';
+
+  @override
+  String get wizardStep3Subtitle =>
+      'Set the pickup location and review the listing before publishing';
+
+  @override
+  String get wizardPickupAddress => 'Pickup address *';
+
+  @override
+  String get wizardTapToSetLocation => 'Tap to set the location on the map';
+
+  @override
+  String get wizardNotesOptional => 'Notes — optional';
+
+  @override
+  String get wizardNotesHint => 'e.g., materials are behind the warehouse...';
+
+  @override
+  String get wizardListingSummary => 'Listing summary & environmental impact';
+
+  @override
+  String get wizardChangeLocation => 'Change location';
+
+  @override
+  String get wizardUseCurrentLocation => 'Use my current location';
+
+  @override
+  String get wizardSummaryMaterialType => 'Material type';
+
+  @override
+  String get wizardSummaryCondition => 'Condition';
+
+  @override
+  String get wizardSummaryQuantity => 'Quantity';
+
+  @override
+  String get wizardSummaryPrice => 'Price';
+
+  @override
+  String get wizardPriceUndefined => 'Undefined';
+
+  @override
+  String get wizardCo2Savings => 'CO2 savings';
+
+  @override
+  String get wizardWaterSavings => 'Water savings';
+
+  @override
+  String wizardWaterLiters(String liters) {
+    return '$liters liters';
+  }
+
+  @override
+  String get wizardLocationDefined => 'Location defined';
+
+  @override
+  String get wizardPublishedToMarket => 'Published to market successfully! ✓';
+
+  @override
+  String get wizardPickupRequestSent => 'Pickup request sent successfully! ✓';
+
+  @override
+  String get wizardPickupRequestFailed => 'Failed to send pickup request';
+
+  @override
+  String get wizardNewPickupTitle => 'New pickup request';
+
+  @override
+  String get wizardPublishToMarket => 'Publish to market';
 }

@@ -2457,4 +2457,110 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get monthDecember => 'ديسمبر';
+
+  @override
+  String get wizardStep1Title => 'ماذا تريد أن تبيع؟';
+
+  @override
+  String get wizardStep1Subtitle => 'أضف تفاصيل المواد التي تريد بيعها';
+
+  @override
+  String get wizardMaterialPhotosOptional => 'صور المواد — اختياري';
+
+  @override
+  String get wizardMaterialTypeRequired => 'نوع المواد *';
+
+  @override
+  String get wizardAiAnalyzing => 'يقوم الفريق الذكي بتحليل طلبك...';
+
+  @override
+  String wizardAiAnalysisFailed(String error) {
+    return 'فشل في تحليل الصورة: $error';
+  }
+
+  @override
+  String get wizardStep2Title => 'تفاصيل المادة';
+
+  @override
+  String get wizardStep2Subtitle => 'حدد الكمية والحالة والسعر المطلوب';
+
+  @override
+  String get wizardMaterialCondition => 'حالة المواد *';
+
+  @override
+  String get wizardQuantitySize => 'حجم الكمية *';
+
+  @override
+  String get wizardRequestedPrice => 'السعر المطلوب (د.أ) — اختياري';
+
+  @override
+  String get wizardStep3Title => 'آخر خطوة!';
+
+  @override
+  String get wizardStep3Subtitle => 'حدد موقع الاستلام وراجع الإعلان قبل النشر';
+
+  @override
+  String get wizardPickupAddress => 'عنوان الاستلام *';
+
+  @override
+  String get wizardTapToSetLocation => 'اضغط لتحديد الموقع على الخريطة';
+
+  @override
+  String get wizardNotesOptional => 'ملاحظات — اختياري';
+
+  @override
+  String get wizardNotesHint => 'مثال: المواد موجودة خلف المستودع...';
+
+  @override
+  String get wizardListingSummary => 'ملخص الإعلان والتأثير البيئي';
+
+  @override
+  String get wizardChangeLocation => 'تغيير الموقع';
+
+  @override
+  String get wizardUseCurrentLocation => 'استخدام موقعي الحالي';
+
+  @override
+  String get wizardSummaryMaterialType => 'نوع المواد';
+
+  @override
+  String get wizardSummaryCondition => 'الحالة';
+
+  @override
+  String get wizardSummaryQuantity => 'الكمية';
+
+  @override
+  String get wizardSummaryPrice => 'السعر';
+
+  @override
+  String get wizardPriceUndefined => 'غير محدد';
+
+  @override
+  String get wizardCo2Savings => 'توفير CO2';
+
+  @override
+  String get wizardWaterSavings => 'توفير مياه';
+
+  @override
+  String wizardWaterLiters(String liters) {
+    return '$liters لتر';
+  }
+
+  @override
+  String get wizardLocationDefined => 'موقع محدد';
+
+  @override
+  String get wizardPublishedToMarket => 'تم النشر في السوق بنجاح! ✓';
+
+  @override
+  String get wizardPickupRequestSent => 'تم إرسال طلب الاستلام بنجاح! ✓';
+
+  @override
+  String get wizardPickupRequestFailed => 'فشل في إرسال طلب الاستلام';
+
+  @override
+  String get wizardNewPickupTitle => 'طلب استلام جديد';
+
+  @override
+  String get wizardPublishToMarket => 'نشر في السوق';
 }

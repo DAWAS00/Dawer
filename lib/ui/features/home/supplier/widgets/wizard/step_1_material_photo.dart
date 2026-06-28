@@ -4,6 +4,7 @@ import 'package:dwaar/data/models/order/order.dart';
 import 'package:dwaar/core/constants/waste_type_icons.dart';
 import 'package:dwaar/ui/features/home/supplier/controllers/publish_form_controller.dart';
 import 'package:dwaar/ui/features/home/supplier/widgets/image_picker_grid.dart';
+import 'package:dwaar/l10n/l10n.dart';
 import 'wizard_style_tokens.dart';
 
 class Step1MaterialAndPhoto extends StatelessWidget {
@@ -13,16 +14,17 @@ class Step1MaterialAndPhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          const _StepHeader(
-            title: 'ماذا تريد أن تبيع؟',
-            subtitle: 'أضف تفاصيل المواد التي تريد بيعها',
+          _StepHeader(
+            title: l10n.wizardStep1Title,
+            subtitle: l10n.wizardStep1Subtitle,
           ),
-          const _FieldLabel(text: 'صور المواد — اختياري'),
+          _FieldLabel(text: l10n.wizardMaterialPhotosOptional),
           const SizedBox(height: 10),
           ImagePickerGrid(
             imagePaths: controller.images,
@@ -32,13 +34,13 @@ class Step1MaterialAndPhoto extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           if (controller.aiController.isAnalyzing)
-            _aiAnalyzingBanner()
+            _aiAnalyzingBanner(l10n)
           else if (controller.aiError != null)
-            _aiErrorBanner(controller.aiError!)
+            _aiErrorBanner(l10n, controller.aiError!)
           else if (controller.aiController.filledFieldLabels.isNotEmpty)
             _aiFilledBanner(controller.aiController.filledFieldLabels),
           const SizedBox(height: 24),
-          const _FieldLabel(text: 'نوع المواد *'),
+          _FieldLabel(text: l10n.wizardMaterialTypeRequired),
           const SizedBox(height: 10),
           GridView.builder(
             shrinkWrap: true,
@@ -67,7 +69,7 @@ class Step1MaterialAndPhoto extends StatelessWidget {
     );
   }
 
-  Widget _aiAnalyzingBanner() => Container(
+  Widget _aiAnalyzingBanner(AppLocalizations l10n) => Container(
     margin: const EdgeInsets.only(bottom: 12),
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
@@ -79,7 +81,7 @@ class Step1MaterialAndPhoto extends StatelessWidget {
       const SizedBox(width: 20, height: 20,
           child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF1E40AF))),
       const Spacer(),
-      Text('يقوم الفريق الذكي بتحليل طلبك...',
+      Text(l10n.wizardAiAnalyzing,
           style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold,
               color: const Color(0xFF1E40AF))),
       const SizedBox(width: 10),
@@ -114,7 +116,7 @@ class Step1MaterialAndPhoto extends StatelessWidget {
     ]),
   );
 
-  Widget _aiErrorBanner(String error) => Container(
+  Widget _aiErrorBanner(AppLocalizations l10n, String error) => Container(
     margin: const EdgeInsets.only(bottom: 12),
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
@@ -132,7 +134,7 @@ class Step1MaterialAndPhoto extends StatelessWidget {
       const Spacer(),
       Expanded(
         child: Text(
-          'فشل في تحليل الصورة: $error',
+          l10n.wizardAiAnalysisFailed(error),
           style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold,
               color: const Color(0xFFC62828)),
           textAlign: TextAlign.right,

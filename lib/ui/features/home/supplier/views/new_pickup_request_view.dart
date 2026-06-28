@@ -9,6 +9,7 @@ import 'package:dwaar/ui/features/home/supplier/controllers/publish_form_control
 import 'package:dwaar/ui/features/home/shared/viewmodels/base_supplier_viewmodel.dart';
 import 'package:dwaar/domain/requests/create_pickup_request.dart';
 import 'package:dwaar/core/utils/haptic_util.dart';
+import 'package:dwaar/l10n/l10n.dart';
 
 import 'package:dwaar/ui/features/home/supplier/widgets/wizard/top_bar.dart';
 import 'package:dwaar/ui/features/home/supplier/widgets/wizard/progress_bar.dart';
@@ -84,7 +85,7 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
     if (widget.onSubmit != null) {
       widget.onSubmit!(
         wasteTypes: _controller.selectedTypes.toList(),
-        pickupAddress: _controller.pickedAddress ?? 'موقع محدد',
+        pickupAddress: _controller.pickedAddress ?? context.l10n.wizardLocationDefined,
         images: List.from(_controller.images),
         notes: _controller.notesCtrl.text.trim().isNotEmpty ? _controller.notesCtrl.text.trim() : null,
         wasteForm: _controller.wasteForm,
@@ -100,9 +101,10 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
   }
 
   Future<void> _handleDefaultSubmit() async {
+    final l10n = context.l10n;
     final vm = context.read<BaseSupplierViewModel>();
     final wasteTypes = _controller.selectedTypes.toList();
-    final pickupAddress = _controller.pickedAddress ?? 'موقع محدد';
+    final pickupAddress = _controller.pickedAddress ?? l10n.wizardLocationDefined;
     final notes = _controller.notesCtrl.text.trim().isNotEmpty 
         ? _controller.notesCtrl.text.trim() 
         : null;
@@ -124,9 +126,9 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم النشر في السوق بنجاح! ✓'),
-            backgroundColor: Color(0xFF2E7D32),
+          SnackBar(
+            content: Text(l10n.wizardPublishedToMarket),
+            backgroundColor: const Color(0xFF2E7D32),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -151,9 +153,9 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
       if (mounted) {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تم إرسال طلب الاستلام بنجاح! ✓'),
-              backgroundColor: Color(0xFF2E7D32),
+            SnackBar(
+              content: Text(l10n.wizardPickupRequestSent),
+              backgroundColor: const Color(0xFF2E7D32),
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -161,7 +163,7 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(vm.pickupSubmitError?.message ?? 'فشل في إرسال طلب الاستلام'),
+              content: Text(vm.pickupSubmitError?.message ?? l10n.wizardPickupRequestFailed),
               backgroundColor: const Color(0xFFC62828),
               behavior: SnackBarBehavior.floating,
             ),
@@ -181,7 +183,7 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
             WizardTopBar(
               currentStep: _controller.currentStep,
               totalSteps: 3,
-              title: _controller.mode == OrderMode.marketplace ? 'نشر في السوق' : 'طلب استلام جديد',
+              title: _controller.mode == OrderMode.marketplace ? context.l10n.wizardPublishToMarket : context.l10n.wizardNewPickupTitle,
               onBack: () {
                 HapticUtil.light();
                 if (_controller.currentStep > 0) {

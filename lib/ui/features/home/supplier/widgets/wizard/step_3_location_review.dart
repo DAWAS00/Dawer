@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dwaar/data/models/order/order.dart';
 import 'package:dwaar/data/utils/eco_impact_calculator.dart';
+import 'package:dwaar/l10n/l10n.dart';
 import 'package:dwaar/ui/common/map/location_picker_screen.dart';
 import 'package:dwaar/ui/features/home/supplier/controllers/publish_form_controller.dart';
 import 'wizard_style_tokens.dart';
@@ -13,21 +14,23 @@ class Step3LocationAndReview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          const _StepHeader(
-            title: 'آخر خطوة!',
-            subtitle: 'حدد موقع الاستلام وراجع الإعلان قبل النشر',
+          _StepHeader(
+            title: l10n.wizardStep3Title,
+            subtitle: l10n.wizardStep3Subtitle,
           ),
 
-          const _FieldLabel(text: 'عنوان الاستلام *'),
+          _FieldLabel(text: l10n.wizardPickupAddress),
           const SizedBox(height: 10),
           _LocationCard(
             hasLocation: controller.pickedLat != null,
-            address: controller.pickedAddress ?? 'اضغط لتحديد الموقع على الخريطة',
+            address: controller.pickedAddress ?? l10n.wizardTapToSetLocation,
+            changeLabel: l10n.wizardChangeLocation,
             onTap: () async {
               final result = await Navigator.push<(double, double)?>(
                 context,
@@ -44,10 +47,10 @@ class Step3LocationAndReview extends StatelessWidget {
             },
           ),
           const SizedBox(height: 12),
-          _CurrentLocationButton(controller: controller),
+          _CurrentLocationButton(controller: controller, label: l10n.wizardUseCurrentLocation),
           const SizedBox(height: 20),
 
-          const _FieldLabel(text: 'ملاحظات — اختياري'),
+          _FieldLabel(text: l10n.wizardNotesOptional),
           const SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
@@ -61,17 +64,17 @@ class Step3LocationAndReview extends StatelessWidget {
               textAlign: TextAlign.right,
               textDirection: TextDirection.rtl,
               style: GoogleFonts.cairo(fontSize: 13, color: WizardColors.textPrimary),
-              decoration: const InputDecoration(
-                hintText: 'مثال: المواد موجودة خلف المستودع...',
-                hintStyle: TextStyle(fontSize: 13, color: WizardColors.textHint),
+              decoration: InputDecoration(
+                hintText: l10n.wizardNotesHint,
+                hintStyle: const TextStyle(fontSize: 13, color: WizardColors.textHint),
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.all(14),
+                contentPadding: const EdgeInsets.all(14),
               ),
             ),
           ),
           const SizedBox(height: 20),
 
-          const _FieldLabel(text: 'ملخص الإعلان والتأثير البيئي'),
+          _FieldLabel(text: l10n.wizardListingSummary),
           const SizedBox(height: 10),
           _SummaryCard(controller: controller),
           const SizedBox(height: 24),
@@ -84,11 +87,13 @@ class Step3LocationAndReview extends StatelessWidget {
 class _LocationCard extends StatelessWidget {
   final bool hasLocation;
   final String address;
+  final String changeLabel;
   final VoidCallback onTap;
 
   const _LocationCard({
     required this.hasLocation,
     required this.address,
+    required this.changeLabel,
     required this.onTap,
   });
 
@@ -147,9 +152,9 @@ class _LocationCard extends StatelessWidget {
                       color: WizardColors.primaryMid,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Text(
-                      'تغيير الموقع',
-                      style: TextStyle(
+                    child: Text(
+                      changeLabel,
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
@@ -185,7 +190,8 @@ class _LocationCard extends StatelessWidget {
 
 class _CurrentLocationButton extends StatelessWidget {
   final PublishFormController controller;
-  const _CurrentLocationButton({required this.controller});
+  final String label;
+  const _CurrentLocationButton({required this.controller, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -207,7 +213,7 @@ class _CurrentLocationButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'استخدام موقعي الحالي',
+              label,
               style: GoogleFonts.cairo(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -229,6 +235,9 @@ class _SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    // Locale-aware separator for joining multiple waste-type labels.
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final impact = EcoImpactCalculator.calculate(
       controller.selectedTypes.toList(),
       controller.weightCategory,
@@ -244,21 +253,21 @@ class _SummaryCard extends StatelessWidget {
         children: [
           _SummaryRow(
             icon: Icons.recycling_outlined,
-            label: 'نوع المواد',
-            value: controller.selectedTypes.isNotEmpty 
-                ? controller.selectedTypes.map((t) => t.label).join('، ') 
+            label: l10n.wizardSummaryMaterialType,
+            value: controller.selectedTypes.isNotEmpty
+                ? controller.selectedTypes.map((t) => t.label).join(isAr ? '، ' : ', ')
                 : '—',
             hasValue: controller.selectedTypes.isNotEmpty,
           ),
           _SummaryRow(
             icon: Icons.category_outlined,
-            label: 'الحالة',
+            label: l10n.wizardSummaryCondition,
             value: controller.wasteForm?.label ?? '—',
             hasValue: controller.wasteForm != null,
           ),
           _SummaryRow(
             icon: Icons.monitor_weight_outlined,
-            label: 'الكمية',
+            label: l10n.wizardSummaryQuantity,
             value: controller.weightCategory != null
                 ? '${controller.weightCategory!.shortLabel} (${controller.weightCategory!.label})'
                 : '—',
@@ -266,23 +275,23 @@ class _SummaryCard extends StatelessWidget {
           ),
           _SummaryRow(
             icon: Icons.sell_outlined,
-            label: 'السعر',
-            value: controller.priceCtrl.text.isNotEmpty 
-                ? '${controller.priceCtrl.text} دينار' 
-                : 'غير محدد',
+            label: l10n.wizardSummaryPrice,
+            value: controller.priceCtrl.text.isNotEmpty
+                ? l10n.marketListingPrice(controller.priceCtrl.text)
+                : l10n.wizardPriceUndefined,
             hasValue: controller.priceCtrl.text.isNotEmpty,
           ),
           _SummaryRow(
             icon: Icons.eco_rounded,
-            label: 'توفير CO2',
-            value: '${impact.co2SavedKg.toStringAsFixed(1)} كغ',
+            label: l10n.wizardCo2Savings,
+            value: l10n.orderWeightKgLabel(impact.co2SavedKg.toStringAsFixed(1)),
             hasValue: true,
             color: const Color(0xFF059669),
           ),
           _SummaryRow(
             icon: Icons.water_drop_rounded,
-            label: 'توفير مياه',
-            value: '${impact.waterSavedLiters.toStringAsFixed(0)} لتر',
+            label: l10n.wizardWaterSavings,
+            value: l10n.wizardWaterLiters(impact.waterSavedLiters.toStringAsFixed(0)),
             hasValue: true,
             color: const Color(0xFF1E40AF),
             isLast: true,
