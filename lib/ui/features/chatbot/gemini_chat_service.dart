@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../../../data/services/gemini_service.dart';
@@ -32,6 +34,8 @@ class GeminiChatService {
   GenerativeModel? _model;
   ChatSession? _session;
 
+  static const _timeout = Duration(seconds: 30);
+
   Future<String> sendMessage(String text) async {
     if (!GeminiService.instance.isInitialized) {
       throw StateError('Gemini AI not available');
@@ -39,9 +43,15 @@ class GeminiChatService {
     _model ??= GeminiService.instance.model(systemInstruction: _systemContent);
     _session ??= _model!.startChat();
 
-    final response = await _session!.sendMessage(Content.text(text));
-    return response.text?.trim() ??
-        'عذراً، لم أتمكن من معالجة طلبك. حاول مرة أخرى.';
+    try {
+      final response = await _session!
+          .sendMessage(Content.text(text))
+          .timeout(_timeout);
+      return response.text?.trim() ??
+          'عذراً، لم أتمكن من معالجة طلبك. حاول مرة أخرى.';
+    } on TimeoutException {
+      return 'استغرق الرد وقتاً طويلاً. يرجى المحاولة مرة أخرى.';
+    }
   }
 
   /// Clears accumulated conversation history. Call only when the user
