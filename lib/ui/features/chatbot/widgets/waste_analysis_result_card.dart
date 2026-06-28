@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:dwaar/data/models/oil_analysis_result.dart';
+import 'package:dwaar/data/models/waste_analysis_result.dart';
 
-/// Rich card displayed in the Dawa chat when Gemini Vision analyzes
-/// a user-submitted oil photo. Shown instead of a plain text bubble.
-class OilAnalysisResultCard extends StatelessWidget {
-  final OilAnalysisResult result;
+/// Rich card displayed in the Dawa chat when Gemini Vision analyzes a
+/// user-submitted photo of ANY recyclable material — oil, wood, plastic,
+/// metal, electronics, and more. Shown instead of a plain text bubble.
+class WasteAnalysisResultCard extends StatelessWidget {
+  final WasteAnalysisResult result;
 
-  const OilAnalysisResultCard({super.key, required this.result});
+  const WasteAnalysisResultCard({super.key, required this.result});
 
   @override
   Widget build(BuildContext context) {
@@ -38,38 +39,26 @@ class OilAnalysisResultCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _OilConfirmRow(isOil: result.isUsedCookingOil),
+                _RecyclabilityRow(result: result),
                 const SizedBox(height: 10),
                 _GradeBadge(result: result),
                 const SizedBox(height: 12),
-                _IndicatorRow(
-                  icon: Icons.water_drop_rounded,
-                  label: 'محتوى الماء',
-                  value: result.waterLabel,
-                  valueColor: result.waterColor,
-                ),
-                const SizedBox(height: 6),
-                _IndicatorRow(
-                  icon: Icons.warning_amber_rounded,
-                  label: 'الشوائب',
-                  value: result.impurityLabel,
-                  valueColor: result.impurityColor,
-                ),
-                if (result.estimatedLiters > 0) ...[
-                  const SizedBox(height: 6),
-                  _IndicatorRow(
-                    icon: Icons.local_drink_rounded,
+                if (result.estimatedQuantity > 0) ...[
+                  _MetricRow(
+                    icon: Icons.scale_rounded,
                     label: 'الكمية المقدّرة',
-                    value: '~${result.estimatedLiters.toStringAsFixed(1)} لتر',
+                    value: result.quantityLabel,
                     valueColor: const Color(0xFF1E5C35),
                   ),
+                  const SizedBox(height: 6),
                 ],
-                const SizedBox(height: 6),
-                _IndicatorRow(
+                _MetricRow(
                   icon: Icons.payments_rounded,
                   label: 'السعر المتوقع',
                   value: result.payoutRangeLabel,
-                  valueColor: const Color(0xFF1E5C35),
+                  valueColor: result.hasEstimatedPayout
+                      ? const Color(0xFF1E5C35)
+                      : const Color(0xFF991B1B),
                   bold: true,
                 ),
                 if (result.explanation.isNotEmpty) ...[
@@ -91,6 +80,37 @@ class OilAnalysisResultCard extends StatelessWidget {
                     textDirection: TextDirection.rtl,
                   ),
                 ],
+                if (result.recycleTips.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  ...result.recycleTips.map(
+                    (tip) => Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('💡',
+                              style: TextStyle(fontSize: 12)),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              tip,
+                              style: GoogleFonts.cairo(
+                                fontSize: 12,
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.color
+                                        ?.withValues(alpha: 0.70) ??
+                                    Colors.black54,
+                              ),
+                              textDirection: TextDirection.rtl,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -100,10 +120,10 @@ class OilAnalysisResultCard extends StatelessWidget {
   }
 }
 
-// ── Header ───────────────────────────────────────────────────────────────────
+// ── Header ────────────────────────────────────────────────────────────────────
 
 class _Header extends StatelessWidget {
-  final OilAnalysisResult result;
+  final WasteAnalysisResult result;
   const _Header({required this.result});
 
   @override
@@ -116,19 +136,26 @@ class _Header extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text('🛢️', style: const TextStyle(fontSize: 18)),
+          Text(result.materialIcon,
+              style: const TextStyle(fontSize: 20)),
           const SizedBox(width: 8),
-          Text(
-            'تحليل جودة الزيت المستعمل',
-            style: GoogleFonts.cairo(
-              fontSize: 13.5,
-              fontWeight: FontWeight.w700,
-              color: result.gradeColor,
+          Expanded(
+            child: Text(
+              result.materialType.isNotEmpty
+                  ? result.materialType
+                  : 'تحليل المواد القابلة للتدوير',
+              style: GoogleFonts.cairo(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w700,
+                color: result.gradeColor,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          const Spacer(),
+          const SizedBox(width: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: result.gradeColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(6),
@@ -148,28 +175,33 @@ class _Header extends StatelessWidget {
   }
 }
 
-// ── Oil confirmation row ─────────────────────────────────────────────────────
+// ── Recyclability row ─────────────────────────────────────────────────────────
 
-class _OilConfirmRow extends StatelessWidget {
-  final bool isOil;
-  const _OilConfirmRow({required this.isOil});
+class _RecyclabilityRow extends StatelessWidget {
+  final WasteAnalysisResult result;
+  const _RecyclabilityRow({required this.result});
 
   @override
   Widget build(BuildContext context) {
+    final color = result.isRecyclable
+        ? const Color(0xFF1E5C35)
+        : const Color(0xFF991B1B);
     return Row(
       children: [
         Icon(
-          isOil ? Icons.check_circle_rounded : Icons.cancel_rounded,
-          color: isOil ? const Color(0xFF1E5C35) : const Color(0xFF991B1B),
+          result.isRecyclable
+              ? Icons.check_circle_rounded
+              : Icons.cancel_rounded,
+          color: color,
           size: 18,
         ),
         const SizedBox(width: 8),
         Text(
-          isOil ? 'زيت طبخ مستعمل حقيقي' : 'ليس زيت طبخ مستعمل',
+          result.isRecyclable ? 'مادة قابلة للتدوير' : 'غير قابلة للتدوير',
           style: GoogleFonts.cairo(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: isOil ? const Color(0xFF1E5C35) : const Color(0xFF991B1B),
+            color: color,
           ),
         ),
       ],
@@ -177,10 +209,10 @@ class _OilConfirmRow extends StatelessWidget {
   }
 }
 
-// ── Grade badge ──────────────────────────────────────────────────────────────
+// ── Grade badge ───────────────────────────────────────────────────────────────
 
 class _GradeBadge extends StatelessWidget {
-  final OilAnalysisResult result;
+  final WasteAnalysisResult result;
   const _GradeBadge({required this.result});
 
   @override
@@ -198,7 +230,7 @@ class _GradeBadge extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'الدرجة',
+            'درجة الجودة',
             style: GoogleFonts.cairo(
               fontSize: 11,
               color: result.gradeColor.withValues(alpha: 0.70),
@@ -219,16 +251,16 @@ class _GradeBadge extends StatelessWidget {
   }
 }
 
-// ── Indicator row ────────────────────────────────────────────────────────────
+// ── Metric row ────────────────────────────────────────────────────────────────
 
-class _IndicatorRow extends StatelessWidget {
+class _MetricRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
   final Color valueColor;
   final bool bold;
 
-  const _IndicatorRow({
+  const _MetricRow({
     required this.icon,
     required this.label,
     required this.value,

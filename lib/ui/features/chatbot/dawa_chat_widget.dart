@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'dawa_chat_view_model.dart';
-import 'widgets/oil_analysis_result_card.dart';
+import 'widgets/waste_analysis_result_card.dart';
 
 /// Entry-point widget for the Dawa support chat.
 ///
@@ -387,13 +387,13 @@ class _MessageBubble extends StatelessWidget {
     final isUser = message.isUser;
 
     // Oil analysis messages render as a rich card, not a plain bubble.
-    if (!isUser && message.oilAnalysis != null) {
+    if (!isUser && message.wasteAnalysis != null) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            OilAnalysisResultCard(result: message.oilAnalysis!),
+            WasteAnalysisResultCard(result: message.wasteAnalysis!),
             if (message.followUps.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 6),
