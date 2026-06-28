@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../../data/models/oil_analysis_result.dart';
 import '../../../../../data/models/order.dart';
+import '../../../../../data/services/gemini_oil_analysis_service.dart';
 import 'dawa_chatbot_service.dart';
 import 'dawa_image_scan_service.dart';
 import 'gemini_chat_service.dart';
@@ -20,12 +22,17 @@ class DawaMessage {
   /// When non-null, displays an image thumbnail above the text bubble.
   final String? imagePath;
 
+  /// When non-null, renders an [OilAnalysisResultCard] instead of a plain
+  /// text bubble. Only set on bot messages triggered by Gemini Vision.
+  final OilAnalysisResult? oilAnalysis;
+
   const DawaMessage({
     required this.text,
     required this.isUser,
     this.followUps = const [],
     this.mlSource,
     this.imagePath,
+    this.oilAnalysis,
   });
 }
 
@@ -41,7 +48,11 @@ class DawaChatViewModel extends ChangeNotifier {
   bool _isThinking = false;
   bool get isThinking => _isThinking;
 
-  bool get isBusy => _isScanning || _isThinking;
+  // True while Gemini Vision is analyzing an oil image (after ML Kit completes).
+  bool _isAnalyzing = false;
+  bool get isAnalyzing => _isAnalyzing;
+
+  bool get isBusy => _isScanning || _isThinking || _isAnalyzing;
 
   bool _disposed = false;
 
@@ -215,8 +226,14 @@ class DawaChatViewModel extends ChangeNotifier {
     _addBotMessage(entry, mlSource: mlLabel);
   }
 
-  /// Lets the user pick an image from [source], runs ML Kit, and replies
-  /// with detailed recycling information for oil or construction wood.
+  /// Lets the user pick an image from [source].
+  ///
+  /// Flow:
+  /// 1. ML Kit classifies the image (fast, on-device).
+  /// 2. If ML Kit identifies oil, Gemini Vision runs a deep quality analysis
+  ///    and returns an [OilAnalysisResult] shown as a rich result card.
+  /// 3. For non-oil materials (wood, etc.) the existing KB response is used.
+  /// 4. If Gemini Vision fails, falls back to the standard KB enriched entry.
   Future<void> handleImagePick(ImageSource source) async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: source, imageQuality: 85);
@@ -229,7 +246,7 @@ class DawaChatViewModel extends ChangeNotifier {
       imagePath: imagePath,
     ));
     _isScanning = true;
-    notifyListeners();
+    _safeNotify();
 
     try {
       final result = await DawaImageScanService.classify(File(imagePath));
@@ -258,25 +275,15 @@ class DawaChatViewModel extends ChangeNotifier {
           ),
           mlSource: result.topLabel,
         );
+      } else if (result.category == 'oil') {
+        // Oil detected — run Gemini Vision for deep quality analysis.
+        await _runOilAnalysis(imagePath, result);
       } else {
-        final entry = DawaChatbotService.matchFromMlLabel(result.category);
-        final categoryAr =
-            result.category == 'oil' ? 'زيت مستعمل 🛢️' : 'خشب بناء 🪵';
-        final confPct = (result.confidence * 100).toStringAsFixed(0);
-        final header =
-            '✅ تم التعرف على: $categoryAr (دقة: $confPct%)';
-        final enriched = DawaEntry(
-          id: entry.id,
-          keywords: entry.keywords,
-          response: '$header\n\n${entry.response}',
-          followUpIds: entry.followUpIds,
-          mlLabel: entry.mlLabel,
-        );
-        _addBotMessage(enriched, mlSource: result.category);
+        // Non-oil material (e.g. wood) — use existing KB entry.
+        _addEnrichedMlEntry(result);
       }
     } catch (e) {
       _isScanning = false;
-      notifyListeners();
       final detail = e is DawaImageScanException ? e.message : e.toString();
       _addBotMessage(
         DawaEntry(
@@ -290,6 +297,59 @@ class DawaChatViewModel extends ChangeNotifier {
         ),
       );
     }
+  }
+
+  /// Runs Gemini Vision oil quality analysis after ML Kit confirms oil.
+  /// Falls back to the standard KB enriched entry if Gemini is unavailable.
+  Future<void> _runOilAnalysis(
+    String imagePath,
+    DawaImageScanResult mlResult,
+  ) async {
+    if (_disposed) return;
+    _isAnalyzing = true;
+    _safeNotify();
+
+    final oilResult =
+        await GeminiOilAnalysisService.instance.analyze(imagePath);
+
+    if (_disposed) return;
+    _isAnalyzing = false;
+
+    if (oilResult != null) {
+      // Show the rich Gemini Vision result card.
+      _messages.add(DawaMessage(
+        text: oilResult.explanation,
+        isUser: false,
+        oilAnalysis: oilResult,
+        followUps: [
+          DawaChatbotService.entryById('how_to_post_request'),
+          DawaChatbotService.entryById('recycle_oil'),
+          DawaChatbotService.entryById('support'),
+        ],
+        mlSource: 'oil',
+      ));
+    } else {
+      // Gemini unavailable — fall back to ML Kit KB entry.
+      _addEnrichedMlEntry(mlResult);
+    }
+    _safeNotify();
+  }
+
+  void _addEnrichedMlEntry(DawaImageScanResult result) {
+    final entry = DawaChatbotService.matchFromMlLabel(result.category);
+    final categoryAr =
+        result.category == 'oil' ? 'زيت مستعمل 🛢️' : 'خشب بناء 🪵';
+    final confPct = (result.confidence * 100).toStringAsFixed(0);
+    _addBotMessage(
+      DawaEntry(
+        id: entry.id,
+        keywords: entry.keywords,
+        response: '✅ تم التعرف على: $categoryAr (دقة: $confPct%)\n\n${entry.response}',
+        followUpIds: entry.followUpIds,
+        mlLabel: entry.mlLabel,
+      ),
+      mlSource: result.category,
+    );
   }
 
   // ──────────────────────────────────────────────

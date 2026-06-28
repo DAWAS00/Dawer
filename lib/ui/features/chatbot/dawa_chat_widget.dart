@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'dawa_chat_view_model.dart';
+import 'widgets/oil_analysis_result_card.dart';
 
 /// Entry-point widget for the Dawa support chat.
 ///
@@ -216,6 +217,45 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
                 ),
               ),
 
+            // Oil analysis indicator (Gemini Vision running after ML Kit)
+            if (vm.isAnalyzing)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: const Color(0xFF1E5C35),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'جاري تحليل جودة الزيت بالذكاء الاصطناعي...',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
             // Thinking indicator (Gemini is generating a reply)
             if (vm.isThinking)
               Padding(
@@ -345,6 +385,57 @@ class _MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     const primaryGreen = Color(0xFF1E5C35);
     final isUser = message.isUser;
+
+    // Oil analysis messages render as a rich card, not a plain bubble.
+    if (!isUser && message.oilAnalysis != null) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            OilAnalysisResultCard(result: message.oilAnalysis!),
+            if (message.followUps.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  alignment: WrapAlignment.end,
+                  children: message.followUps.map((entry) {
+                    final label = entry.response.split('\n').first;
+                    final short = label.length > 30
+                        ? '${label.substring(0, 28)}…'
+                        : label;
+                    return GestureDetector(
+                      onTap: () => onFollowUpTap(entry.id),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: primaryGreen.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: primaryGreen.withValues(alpha: 0.35),
+                          ),
+                        ),
+                        child: Text(
+                          short,
+                          style: const TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: primaryGreen,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+          ],
+        ),
+      );
+    }
 
     final bubbleColor = isUser
         ? primaryGreen
