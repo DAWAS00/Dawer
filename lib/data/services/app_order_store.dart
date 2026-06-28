@@ -223,6 +223,14 @@ class AppOrderStore extends ChangeNotifier {
       .where((o) => o.type == OrderType.pickup && o.supplierId == userId)
       .toList();
 
+  /// Completed pickup orders submitted by this supplier (by name, mock mode).
+  /// Used by the Analytics tab to compute earnings and history.
+  List<Order> supplierCompletedOrdersFor(String supplierName) =>
+      _orders.where((o) =>
+          o.type == OrderType.pickup &&
+          o.supplierName == supplierName &&
+          o.status == OrderStatus.completed).toList();
+
   // ─────────────────────────────────────────────────────────────────────────
   // Recycling Company views
   // ─────────────────────────────────────────────────────────────────────────

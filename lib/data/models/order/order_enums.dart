@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 enum OrderType { pickup, collection, collectionSale }
 enum OrderMode { pickup, marketplace }
 
@@ -139,5 +141,26 @@ extension OrderStatusLabel on OrderStatus {
         OrderStatus.arrivedAtDropoff => 'وصل للتسليم',
         OrderStatus.completed => 'مكتمل',
         OrderStatus.cancelled => 'ملغي',
+      };
+}
+
+extension WasteTypeColor on WasteType {
+  Color get ganttColor => switch (this) {
+        WasteType.oil => const Color(0xFFD97706),
+        WasteType.plastic => const Color(0xFF2563EB),
+        WasteType.paper => const Color(0xFF16A34A),
+        WasteType.electronics => const Color(0xFF7C3AED),
+        WasteType.batteries => const Color(0xFFDC2626),
+        WasteType.metal => const Color(0xFF64748B),
+        WasteType.glass => const Color(0xFF0891B2),
+        WasteType.organic => const Color(0xFF65A30D),
+        WasteType.chemicals => const Color(0xFFEA580C),
+        WasteType.textile => const Color(0xFFDB2777),
+        WasteType.wood => const Color(0xFF92400E),
+        WasteType.rubber => const Color(0xFF374151),
+        WasteType.furniture => const Color(0xFF6D28D9),
+        WasteType.tires => const Color(0xFF111827),
+        WasteType.construction => const Color(0xFF9CA3AF),
+        WasteType.copperAluminium => const Color(0xFFB45309),
       };
 }

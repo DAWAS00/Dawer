@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../data/models/order/order.dart';
 import '../../../../data/services/app_order_store.dart';
+import '../../../../domain/repositories/i_report_request_repository.dart';
+import '../../analytics/analytics_tab.dart';
 import '../../auth/viewmodels/login_viewmodel.dart';
 import '../../../common/app_nav_item.dart';
 import '../shared/tabs/marketplace_tab.dart';
@@ -65,6 +67,13 @@ class _RecyclingHomeBody extends StatelessWidget {
       ),
       MarketplaceTab(role: UserRole.recyclingCo, currentUserName: userName),
       RecyclingOrdersTab(incoming: vm.incoming, jobs: vm.jobs, salesForJob: vm.salesForJob),
+      AnalyticsTab(
+        userId: vm.companyName,
+        allOrders: [...vm.incoming, ...vm.jobs],
+        reportRepository: context.read<IReportRequestRepository>(),
+        showMilestones: false,
+        showReportCenter: true,
+      ),
       RecyclingProfileTab(userName: userName),
     ];
 
@@ -175,7 +184,8 @@ class _RecyclingHomeBody extends StatelessWidget {
               AppNavItem(icon: Icons.home_rounded, label: l10n.navHome, isSelected: vm.currentTab == 0, onTap: () => vm.setTab(0)),
               AppNavItem(icon: Icons.storefront_rounded, label: l10n.navMarket, isSelected: vm.currentTab == 1, onTap: () => vm.setTab(1)),
               AppNavItem(icon: Icons.receipt_long_rounded, label: l10n.navOrders, isSelected: vm.currentTab == 2, onTap: () => vm.setTab(2)),
-              AppNavItem(icon: Icons.business_rounded, label: l10n.navAccount, isSelected: vm.currentTab == 3, onTap: () => vm.setTab(3)),
+              AppNavItem(icon: Icons.bar_chart_rounded, label: 'تقاريري', isSelected: vm.currentTab == 3, onTap: () => vm.setTab(3)),
+              AppNavItem(icon: Icons.business_rounded, label: l10n.navAccount, isSelected: vm.currentTab == 4, onTap: () => vm.setTab(4)),
             ],
           ),
         ),

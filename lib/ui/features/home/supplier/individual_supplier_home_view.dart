@@ -5,7 +5,9 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../data/models/order/order.dart';
 import '../../../../data/services/app_order_store.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
+import '../../../../domain/repositories/i_report_request_repository.dart';
 import '../../../features/auth/viewmodels/login_viewmodel.dart';
+import '../../analytics/analytics_tab.dart';
 import 'viewmodels/individual_supplier_viewmodel.dart';
 import 'tabs/individual_supplier_home_tab.dart';
 import 'tabs/supplier_orders_tab.dart';
@@ -89,6 +91,13 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
         onCancelOrder: vm.cancelOrder,
         onStartTransit: vm.startCollectionSaleTransit,
         onComplete: vm.completeCollectionSale,
+      ),
+      AnalyticsTab(
+        userId: vm.user.id,
+        allOrders: context.read<AppOrderStore>().supplierCompletedOrdersFor(vm.user.name),
+        reportRepository: context.read<IReportRequestRepository>(),
+        showMilestones: true,
+        showReportCenter: true,
       ),
       SupplierProfileTab(
         user: vm.user,

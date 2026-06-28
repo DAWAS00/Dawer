@@ -19,7 +19,9 @@ import '../supplier/views/new_pickup_request_view.dart';
 import 'views/pickup_proof_view.dart';
 import '../../auth/viewmodels/login_viewmodel.dart';
 import '../../../../../domain/repositories/i_hub_repository.dart';
+import '../../../../../domain/repositories/i_report_request_repository.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../analytics/analytics_tab.dart';
 
 class DriverHomeView extends StatelessWidget {
   final String userName;
@@ -166,6 +168,13 @@ class _DriverHomeBody extends StatelessWidget {
         },
         onMarkArrivedAtDropoff: (order) => vm.markArrivedAtDropoff(order, context.l10n),
       ),
+      AnalyticsTab(
+        userId: vm.user.id,
+        allOrders: vm.history,
+        reportRepository: context.read<IReportRequestRepository>(),
+        showMilestones: true,
+        showReportCenter: false,
+      ),
       const DriverProfileTab(),
     ];
 
@@ -282,6 +291,11 @@ class _DriverHomeBody extends StatelessWidget {
             child: const Icon(Icons.receipt_long_rounded, color: AppColors.primaryGreen),
           ),
           label: context.l10n.navMyOrders,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.bar_chart_outlined),
+          selectedIcon: const Icon(Icons.bar_chart_rounded, color: AppColors.primaryGreen),
+          label: 'تقاريري',
         ),
         NavigationDestination(
           icon: const Icon(LucideIcons.user),
