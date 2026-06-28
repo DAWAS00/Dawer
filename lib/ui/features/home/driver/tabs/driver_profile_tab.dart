@@ -17,6 +17,7 @@ import '../../../../features/auth/viewmodels/vehicle_registration_viewmodel.dart
 import '../../../../features/auth/views/widgets/vehicle_registration_scan_section.dart';
 import '../viewmodels/driver_home_viewmodel.dart';
 import '../widgets/driver_profile_tile.dart';
+import '../../shared/rewards/driver_fuel_voucher_widget.dart';
 
 class DriverProfileTab extends StatelessWidget {
   const DriverProfileTab({super.key});
@@ -157,6 +158,13 @@ class DriverProfileTab extends StatelessWidget {
               InkWell(
                 onTap: _launchHelpCenter,
                 child: DriverProfileTile(icon: Icons.help_center_rounded, label: context.l10n.profileContactSupport, value: '', showArrow: true),
+              ),
+
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: DriverFuelVoucherWidget(
+                    completedDeliveries: vm.totalCompletedRides),
               ),
 
               const SizedBox(height: 32),

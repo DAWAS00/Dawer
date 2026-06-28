@@ -212,7 +212,11 @@ class SupplierProfileTab extends StatelessWidget {
               const SizedBox(height: 32),
               _buildActionTile(context, context.l10n.supplierMyRewards, Icons.emoji_events_rounded, const Color(0xFFD97706), () {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => RewardsView(totalPoints: totalPoints),
+                  builder: (_) => RewardsView(
+                totalPoints: totalPoints,
+                userName: user.name,
+                completedOrders: totalOrders,
+              ),
                 ));
               }),
               _buildActionTile(context, context.l10n.profileEditProfile, Icons.edit_rounded, const Color(0xFF002819), () => _showEditProfileSheet(context)),
