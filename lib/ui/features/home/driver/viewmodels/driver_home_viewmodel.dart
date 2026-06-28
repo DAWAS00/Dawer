@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:dwaar/l10n/generated/app_localizations.dart';
 import '../../../../../data/models/driver_wallet.dart';
 import '../../../../../data/models/hub.dart';
 import '../../../../../data/models/order/order.dart';
@@ -137,9 +138,9 @@ class DriverHomeViewModel extends ChangeNotifier {
 
   // ── Availability ──────────────────────────────────────────────────────────
 
-  String? toggleAvailability(bool value) {
+  String? toggleAvailability(bool value, AppLocalizations l10n) {
     if (!value && _store.driverHasActiveOrder) {
-      return 'لا يمكنك تغيير حالتك إلى غير متاح أثناء وجود طلب نشط.';
+      return l10n.driverErrorToggleOfflineWithActive;
     }
     _isAvailable = value;
     notifyListeners();
@@ -148,9 +149,9 @@ class DriverHomeViewModel extends ChangeNotifier {
 
   // ── Order actions ─────────────────────────────────────────────────────────
 
-  Future<String?> acceptOrder(Order order) async {
+  Future<String?> acceptOrder(Order order, AppLocalizations l10n) async {
     if (!_isAvailable) {
-      return 'أنت غير متاح حالياً. لا يمكنك قبول الطلب.';
+      return l10n.driverErrorAcceptWhileOffline;
     }
     final error = _store.acceptOrder(order.id, _user);
     if (error == null) {
@@ -165,9 +166,9 @@ class DriverHomeViewModel extends ChangeNotifier {
   /// Called after PickupProofView collects weight + photo.
   /// Client GPS provides instant UX feedback; the Edge Function is the
   /// authoritative server-side gate (reads Supabase driver_locations).
-  Future<String?> markArrivedAtPickup(Order order, {OrderProof? pickupProof}) async {
+  Future<String?> markArrivedAtPickup(Order order, AppLocalizations l10n, {OrderProof? pickupProof}) async {
     final pos = await _locationService.getCurrentLocation();
-    if (pos == null) return 'تعذّر تحديد موقعك. تحقق من صلاحية الموقع.';
+    if (pos == null) return l10n.driverErrorLocationUnavailable;
 
     if (order.pickupLat == null || order.pickupLng == null) {
       _store.markArrivedAtPickup(order.id, pickupProof: pickupProof);
@@ -183,7 +184,7 @@ class DriverHomeViewModel extends ChangeNotifier {
     );
     if (clientDist > ProximityService.pickupRadiusMeters * 3) {
       _store.recordFraudAttempt(order.id);
-      return 'أنت بعيد جداً عن الموقع (${clientDist.round()} م). يجب أن تكون ضمن 200 م.';
+      return l10n.driverErrorTooFarPickup(clientDist.round());
     }
 
     // Server-side gate: reads the GPS row that LocationPublisher streamed.
@@ -191,6 +192,7 @@ class DriverHomeViewModel extends ChangeNotifier {
       orderId: order.id,
       targetLat: order.pickupLat!,
       targetLng: order.pickupLng!,
+      l10n: l10n,
     );
     if (serverResult != null) return serverResult;
 
@@ -216,9 +218,9 @@ class DriverHomeViewModel extends ChangeNotifier {
   }
 
   /// Called when driver taps "I'm Here" at the dropoff location.
-  Future<String?> markArrivedAtDropoff(Order order) async {
+  Future<String?> markArrivedAtDropoff(Order order, AppLocalizations l10n) async {
     final pos = await _locationService.getCurrentLocation();
-    if (pos == null) return 'تعذّر تحديد موقعك. تحقق من صلاحية الموقع.';
+    if (pos == null) return l10n.driverErrorLocationUnavailable;
 
     if (order.dropoffLat == null || order.dropoffLng == null) {
       _store.markArrivedAtDropoff(order.id);
@@ -230,13 +232,14 @@ class DriverHomeViewModel extends ChangeNotifier {
     );
     if (clientDist > ProximityService.dropoffRadiusMeters * 3) {
       _store.recordFraudAttempt(order.id);
-      return 'أنت بعيد جداً عن موقع التسليم (${clientDist.round()} م). يجب أن تكون ضمن 200 م.';
+      return l10n.driverErrorTooFarDelivery(clientDist.round());
     }
 
     final serverResult = await _verifyArrivalServerSide(
       orderId: order.id,
       targetLat: order.dropoffLat!,
       targetLng: order.dropoffLng!,
+      l10n: l10n,
     );
     if (serverResult != null) return serverResult;
 
@@ -253,13 +256,14 @@ class DriverHomeViewModel extends ChangeNotifier {
     required String orderId,
     required double targetLat,
     required double targetLng,
+    required AppLocalizations l10n,
   }) async {
     final res = await _store.verifyArrival(orderId, targetLat, targetLng);
     return res.fold(
       onSuccess: (allowed) {
         if (!allowed) {
           _store.recordFraudAttempt(orderId);
-          return 'التحقق من الموقع فشل على الخادم. يجب أن تكون ضمن 200 م.';
+          return l10n.driverErrorServerGeofence;
         }
         return null;
       },

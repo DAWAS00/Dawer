@@ -193,13 +193,14 @@ class _DriverActiveOrderCardState extends State<DriverActiveOrderCard> {
   }
 
   Widget _buildRouteLine() {
+    final l10n = context.l10n;
     return Row(
       textDirection: TextDirection.rtl,
       children: [
         _buildRouteNode(
           active: _isHeadingToPickup,
           icon: LucideIcons.packageOpen,
-          title: 'الاستلام',
+          title: l10n.driverPickupLabel,
         ),
         Expanded(
           child: Container(
@@ -213,7 +214,7 @@ class _DriverActiveOrderCardState extends State<DriverActiveOrderCard> {
         _buildRouteNode(
           active: !_isHeadingToPickup,
           icon: LucideIcons.building2,
-          title: 'التسليم',
+          title: l10n.driverDeliveryLabel,
         ),
       ],
     );
@@ -257,17 +258,18 @@ class _DriverActiveOrderCardState extends State<DriverActiveOrderCard> {
   }
 
   Widget _buildAddressRows() {
+    final l10n = context.l10n;
     return Column(
       children: [
         _AddressRow(
           color: AppColors.primaryGreen,
-          label: 'الاستلام',
+          label: l10n.driverPickupLabel,
           address: widget.order.pickupAddress,
         ),
         const SizedBox(height: 8),
         _AddressRow(
           color: const Color(0xFFD32F2F),
-          label: 'التسليم',
+          label: l10n.driverDeliveryLabel,
           address: widget.order.dropoffAddress,
         ),
       ],
@@ -275,11 +277,13 @@ class _DriverActiveOrderCardState extends State<DriverActiveOrderCard> {
   }
 
   Widget _buildMetricsRow() {
+    final l10n = context.l10n;
     final distanceText = widget.order.distanceKm != null
-        ? '${widget.order.distanceKm!.toStringAsFixed(1)} كم'
+        ? l10n.orderDistKm(widget.order.distanceKm!.toStringAsFixed(1))
         : '--';
-    final etaText =
-        widget.order.etaMinutes != null ? '${widget.order.etaMinutes} د' : '--';
+    final etaText = widget.order.etaMinutes != null
+        ? l10n.driverActiveOrderEtaMinutes('${widget.order.etaMinutes}')
+        : '--';
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -292,20 +296,20 @@ class _DriverActiveOrderCardState extends State<DriverActiveOrderCard> {
         children: [
           _MetricItem(
             icon: LucideIcons.coins,
-            label: 'العائد',
-            value: '${widget.order.reward.toStringAsFixed(1)} د.أ',
+            label: l10n.driverRewardLabel,
+            value: l10n.orderRewardJD(widget.order.reward.toStringAsFixed(1)),
             valueColor: AppColors.primaryGreen,
           ),
           Container(width: 1, height: 28, color: AppColors.borderSubtle),
           _MetricItem(
             icon: LucideIcons.clock,
-            label: 'الوقت',
+            label: l10n.driverTimeLabel,
             value: etaText,
           ),
           Container(width: 1, height: 28, color: AppColors.borderSubtle),
           _MetricItem(
             icon: LucideIcons.map,
-            label: 'المسافة',
+            label: l10n.driverDistanceLabel,
             value: distanceText,
           ),
         ],
@@ -314,6 +318,7 @@ class _DriverActiveOrderCardState extends State<DriverActiveOrderCard> {
   }
 
   Widget _buildActionButton() {
+    final l10n = context.l10n;
     return SizedBox(
       width: double.infinity,
       height: 66,
@@ -334,8 +339,8 @@ class _DriverActiveOrderCardState extends State<DriverActiveOrderCard> {
             const SizedBox(width: 8),
             Text(
               _isHeadingToPickup
-                  ? 'عرض تفاصيل الاستلام'
-                  : 'عرض تفاصيل التسليم',
+                  ? l10n.driverActiveOrderViewPickupDetails
+                  : l10n.driverActiveOrderViewDeliveryDetails,
               style: GoogleFonts.cairo(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -354,12 +359,17 @@ class _OrderProgressStepper extends StatelessWidget {
   const _OrderProgressStepper({required this.currentStep});
   final int currentStep;
 
-  static const _steps = ['مقبول', 'وصلت\nللاستلام', 'في\nالطريق', 'تم\nالتسليم'];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final steps = [
+      l10n.driverActiveOrderStepAccepted,
+      l10n.driverActiveOrderStepArrivedPickup,
+      l10n.driverActiveOrderStepInTransit,
+      l10n.driverActiveOrderStepDelivered,
+    ];
     return Row(
-      children: List.generate(_steps.length * 2 - 1, (i) {
+      children: List.generate(steps.length * 2 - 1, (i) {
         if (i.isOdd) {
           final connectorStep = i ~/ 2;
           return Expanded(
@@ -392,7 +402,7 @@ class _OrderProgressStepper extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              _steps[step],
+              steps[step],
               textAlign: TextAlign.center,
               style: GoogleFonts.cairo(
                 fontSize: 9,

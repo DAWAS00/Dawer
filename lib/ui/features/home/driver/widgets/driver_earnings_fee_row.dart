@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dwaar/l10n/l10n.dart';
 import '../viewmodels/driver_earnings_viewmodel.dart';
 
 class DriverEarningsFeeRow extends StatelessWidget {
@@ -21,7 +22,7 @@ class DriverEarningsFeeRow extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            '${amount.toStringAsFixed(2)} د',
+            '${amount.toStringAsFixed(2)} ${context.l10n.currencyJodShort}',
             style: GoogleFonts.dmSans(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -49,6 +50,7 @@ class DriverEarningsFinancialsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       margin: const EdgeInsets.fromLTRB(24, 20, 24, 32),
       padding: const EdgeInsets.all(20),
@@ -67,7 +69,7 @@ class DriverEarningsFinancialsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(
-            'تفاصيل العوائد المالية',
+            l10n.earningsFinancialDetails,
             style: GoogleFonts.cairo(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -75,15 +77,15 @@ class DriverEarningsFinancialsCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          DriverEarningsFeeRow(label: 'الرسوم الأساسية', amount: financials.baseFee),
-          DriverEarningsFeeRow(label: 'رسوم المسافات', amount: financials.distanceFee),
-          DriverEarningsFeeRow(label: 'حوفر المواد', amount: financials.materialFee),
-          DriverEarningsFeeRow(label: 'رسوم الاستعجال', amount: financials.urgencyFee),
+          DriverEarningsFeeRow(label: l10n.orderBaseFee, amount: financials.baseFee),
+          DriverEarningsFeeRow(label: l10n.earningsDistanceFees, amount: financials.distanceFee),
+          DriverEarningsFeeRow(label: l10n.orderMaterialFee, amount: financials.materialFee),
+          DriverEarningsFeeRow(label: l10n.orderUrgencyFee, amount: financials.urgencyFee),
           const Divider(height: 24, thickness: 1, color: Color(0xFFE6E9E7)),
           Row(
             children: [
               Text(
-                '${financials.total.toStringAsFixed(2)} د.أ',
+                '${financials.total.toStringAsFixed(2)} ${l10n.currencyJodShort}',
                 style: GoogleFonts.dmSans(
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
@@ -92,7 +94,7 @@ class DriverEarningsFinancialsCard extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                'المجموع الصافي',
+                l10n.earningsNetTotalLabel,
                 style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,

@@ -4963,6 +4963,330 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'نشر في السوق'**
   String get wizardPublishToMarket;
+
+  /// No description provided for @driverActiveOrderViewPickupDetails.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض تفاصيل الاستلام'**
+  String get driverActiveOrderViewPickupDetails;
+
+  /// No description provided for @driverActiveOrderViewDeliveryDetails.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض تفاصيل التسليم'**
+  String get driverActiveOrderViewDeliveryDetails;
+
+  /// No description provided for @driverActiveOrderStepAccepted.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقبول'**
+  String get driverActiveOrderStepAccepted;
+
+  /// No description provided for @driverActiveOrderStepArrivedPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت\nللاستلام'**
+  String get driverActiveOrderStepArrivedPickup;
+
+  /// No description provided for @driverActiveOrderStepInTransit.
+  ///
+  /// In ar, this message translates to:
+  /// **'في\nالطريق'**
+  String get driverActiveOrderStepInTransit;
+
+  /// No description provided for @driverActiveOrderStepDelivered.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم\nالتسليم'**
+  String get driverActiveOrderStepDelivered;
+
+  /// No description provided for @driverActiveOrderEtaMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'{minutes} د'**
+  String driverActiveOrderEtaMinutes(String minutes);
+
+  /// No description provided for @proofCancelTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء توثيق الاستلام؟'**
+  String get proofCancelTitle;
+
+  /// No description provided for @proofCancelBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'ستُفقد الصورة والوزن المُدخل.'**
+  String get proofCancelBody;
+
+  /// No description provided for @proofBack.
+  ///
+  /// In ar, this message translates to:
+  /// **'تراجع'**
+  String get proofBack;
+
+  /// No description provided for @proofTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'توثيق الاستلام'**
+  String get proofTitle;
+
+  /// No description provided for @proofShipmentWeight.
+  ///
+  /// In ar, this message translates to:
+  /// **'وزن الشحنة (كغ)'**
+  String get proofShipmentWeight;
+
+  /// No description provided for @proofChangePhoto.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير الصورة'**
+  String get proofChangePhoto;
+
+  /// No description provided for @proofPhotoCaptured.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة مُلتقطة ✓'**
+  String get proofPhotoCaptured;
+
+  /// No description provided for @proofCapturePhoto.
+  ///
+  /// In ar, this message translates to:
+  /// **'التقط صورة الشحنة'**
+  String get proofCapturePhoto;
+
+  /// No description provided for @proofRetry.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة المحاولة'**
+  String get proofRetry;
+
+  /// No description provided for @proofConfirmPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد الاستلام'**
+  String get proofConfirmPickup;
+
+  /// No description provided for @proofSuccessTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم توثيق الاستلام'**
+  String get proofSuccessTitle;
+
+  /// No description provided for @proofSuccessBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيتم إشعار المورّد الآن'**
+  String get proofSuccessBody;
+
+  /// No description provided for @driverErrorToggleOfflineWithActive.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكنك تغيير حالتك إلى غير متاح أثناء وجود طلب نشط.'**
+  String get driverErrorToggleOfflineWithActive;
+
+  /// No description provided for @driverErrorAcceptWhileOffline.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت غير متاح حالياً. لا يمكنك قبول الطلب.'**
+  String get driverErrorAcceptWhileOffline;
+
+  /// No description provided for @driverErrorLocationUnavailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تحديد موقعك. تحقق من صلاحية الموقع.'**
+  String get driverErrorLocationUnavailable;
+
+  /// No description provided for @driverErrorTooFarPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت بعيد جداً عن موقع الاستلام ({meters} م). يجب أن تكون ضمن 200 م.'**
+  String driverErrorTooFarPickup(int meters);
+
+  /// No description provided for @driverErrorTooFarDelivery.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت بعيد جداً عن موقع التسليم ({meters} م). يجب أن تكون ضمن 200 م.'**
+  String driverErrorTooFarDelivery(int meters);
+
+  /// No description provided for @driverErrorServerGeofence.
+  ///
+  /// In ar, this message translates to:
+  /// **'التحقق من الموقع فشل على الخادم. يجب أن تكون ضمن 200 م.'**
+  String get driverErrorServerGeofence;
+
+  /// No description provided for @earningsFilterMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهر'**
+  String get earningsFilterMonth;
+
+  /// No description provided for @earningsFilterWeek.
+  ///
+  /// In ar, this message translates to:
+  /// **'أسبوع'**
+  String get earningsFilterWeek;
+
+  /// No description provided for @earningsFilterDay.
+  ///
+  /// In ar, this message translates to:
+  /// **'يوم'**
+  String get earningsFilterDay;
+
+  /// No description provided for @earningsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأرباح'**
+  String get earningsTitle;
+
+  /// No description provided for @earningsNetTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الأرباح الصافية'**
+  String get earningsNetTotal;
+
+  /// No description provided for @earningsIncreaseVsPrev.
+  ///
+  /// In ar, this message translates to:
+  /// **'زيادة عن الفترة السابقة'**
+  String get earningsIncreaseVsPrev;
+
+  /// No description provided for @earningsFinancialDetails.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل العوائد المالية'**
+  String get earningsFinancialDetails;
+
+  /// No description provided for @earningsDistanceFees.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم المسافات'**
+  String get earningsDistanceFees;
+
+  /// No description provided for @earningsNetTotalLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المجموع الصافي'**
+  String get earningsNetTotalLabel;
+
+  /// No description provided for @earningsBestDay.
+  ///
+  /// In ar, this message translates to:
+  /// **'يومك الأفضل'**
+  String get earningsBestDay;
+
+  /// No description provided for @weekdayMonday.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإثنين'**
+  String get weekdayMonday;
+
+  /// No description provided for @weekdayTuesday.
+  ///
+  /// In ar, this message translates to:
+  /// **'الثلاثاء'**
+  String get weekdayTuesday;
+
+  /// No description provided for @weekdayWednesday.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأربعاء'**
+  String get weekdayWednesday;
+
+  /// No description provided for @weekdayThursday.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخميس'**
+  String get weekdayThursday;
+
+  /// No description provided for @weekdayFriday.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجمعة'**
+  String get weekdayFriday;
+
+  /// No description provided for @weekdaySaturday.
+  ///
+  /// In ar, this message translates to:
+  /// **'السبت'**
+  String get weekdaySaturday;
+
+  /// No description provided for @weekdaySunday.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأحد'**
+  String get weekdaySunday;
+
+  /// No description provided for @earningsMyEarnings.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرباحي'**
+  String get earningsMyEarnings;
+
+  /// No description provided for @earningsRefresh.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديث البيانات'**
+  String get earningsRefresh;
+
+  /// No description provided for @earningsTrend.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتجاه الأرباح'**
+  String get earningsTrend;
+
+  /// No description provided for @earningsRecentActivity.
+  ///
+  /// In ar, this message translates to:
+  /// **'النشاط الأخير'**
+  String get earningsRecentActivity;
+
+  /// No description provided for @earningsDownloadReport.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحميل تقرير الأداء'**
+  String get earningsDownloadReport;
+
+  /// No description provided for @earningsTotalEarnings.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الأرباح'**
+  String get earningsTotalEarnings;
+
+  /// No description provided for @earningsTripsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدد الرحلات'**
+  String get earningsTripsCount;
+
+  /// No description provided for @earningsAverage.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوسط الأرباح'**
+  String get earningsAverage;
+
+  /// No description provided for @chatDateToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'اليوم'**
+  String get chatDateToday;
+
+  /// No description provided for @chatDateYesterday.
+  ///
+  /// In ar, this message translates to:
+  /// **'أمس'**
+  String get chatDateYesterday;
+
+  /// No description provided for @chatTyping.
+  ///
+  /// In ar, this message translates to:
+  /// **'يكتب الآن'**
+  String get chatTyping;
+
+  /// Kilogram unit abbreviation
+  ///
+  /// In ar, this message translates to:
+  /// **'كغ'**
+  String get unitKg;
 }
 
 class _AppLocalizationsDelegate

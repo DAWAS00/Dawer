@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dwaar/l10n/l10n.dart';
 import '../viewmodels/driver_earnings_viewmodel.dart';
 
 class DriverEarningsHeader extends StatelessWidget {
@@ -16,6 +17,7 @@ class DriverEarningsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
       decoration: const BoxDecoration(
@@ -28,25 +30,25 @@ class DriverEarningsHeader extends StatelessWidget {
           Row(
             children: [
               _PeriodChip(
-                label: 'شهر',
+                label: l10n.earningsFilterMonth,
                 isSelected: currentPeriod == EarningsPeriod.month,
                 onTap: () => onPeriodChanged(EarningsPeriod.month),
               ),
               const SizedBox(width: 8),
               _PeriodChip(
-                label: 'أسبوع',
+                label: l10n.earningsFilterWeek,
                 isSelected: currentPeriod == EarningsPeriod.week,
                 onTap: () => onPeriodChanged(EarningsPeriod.week),
               ),
               const SizedBox(width: 8),
               _PeriodChip(
-                label: 'يوم',
+                label: l10n.earningsFilterDay,
                 isSelected: currentPeriod == EarningsPeriod.day,
                 onTap: () => onPeriodChanged(EarningsPeriod.day),
               ),
               const Spacer(),
               Text(
-                'الأرباح',
+                l10n.earningsTitle,
                 style: GoogleFonts.cairo(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -57,7 +59,7 @@ class DriverEarningsHeader extends StatelessWidget {
           ),
           const SizedBox(height: 28),
           Text(
-            'إجمالي الأرباح الصافية',
+            l10n.earningsNetTotal,
             style: GoogleFonts.cairo(fontSize: 13, color: Colors.white.withValues(alpha: 0.7)),
           ),
           const SizedBox(height: 4),
@@ -67,7 +69,7 @@ class DriverEarningsHeader extends StatelessWidget {
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
-                'د.أ',
+                l10n.currencyJodShort,
                 style: GoogleFonts.cairo(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -112,7 +114,7 @@ class DriverEarningsHeader extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'زيادة عن الفترة السابقة',
+                l10n.earningsIncreaseVsPrev,
                 style: GoogleFonts.cairo(fontSize: 11, color: Colors.white.withValues(alpha: 0.6)),
               ),
             ],

@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order/order.dart';
 import '../../../../../data/services/proof_builder.dart';
+import '../../../../../l10n/l10n.dart';
 
 enum _ProofState { initial, hasWeight, hasPhoto, hasBoth, uploading, error, success }
 
@@ -157,29 +158,30 @@ class _PickupProofViewState extends State<PickupProofView>
     final hasData = _image != null || _weightController.text.isNotEmpty;
     if (!hasData) return true;
 
+    final l10n = context.l10n;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'إلغاء توثيق الاستلام؟',
+          l10n.proofCancelTitle,
           textAlign: TextAlign.right,
           style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
         ),
         content: Text(
-          'ستُفقد الصورة والوزن المُدخل.',
+          l10n.proofCancelBody,
           textAlign: TextAlign.right,
           style: GoogleFonts.cairo(),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('تراجع', style: GoogleFonts.cairo()),
+            child: Text(l10n.proofBack, style: GoogleFonts.cairo()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text('إلغاء', style: GoogleFonts.cairo()),
+            child: Text(l10n.cancel, style: GoogleFonts.cairo()),
           ),
         ],
       ),
@@ -204,7 +206,7 @@ class _PickupProofViewState extends State<PickupProofView>
           backgroundColor: AppColors.primaryGreen,
           foregroundColor: Colors.white,
           title: Text(
-            'توثيق الاستلام',
+            context.l10n.proofTitle,
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
           ),
           centerTitle: true,
@@ -239,11 +241,12 @@ class _PickupProofViewState extends State<PickupProofView>
   }
 
   Widget _buildWeightField() {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          'وزن الشحنة (كغ)',
+          l10n.proofShipmentWeight,
           style: GoogleFonts.cairo(
             fontSize: 15,
             fontWeight: FontWeight.w600,
@@ -268,7 +271,7 @@ class _PickupProofViewState extends State<PickupProofView>
               decoration: InputDecoration(
                 hintText: '0.0',
                 hintStyle: GoogleFonts.dmSans(color: AppColors.mutedText),
-                suffixText: 'كغ',
+                suffixText: l10n.unitKg,
                 suffixStyle: GoogleFonts.cairo(color: AppColors.mutedText),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -327,7 +330,7 @@ class _PickupProofViewState extends State<PickupProofView>
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          'تغيير الصورة',
+                          context.l10n.proofChangePhoto,
                           style: GoogleFonts.cairo(
                               fontSize: 12, color: Colors.white),
                         ),
@@ -352,7 +355,7 @@ class _PickupProofViewState extends State<PickupProofView>
         ),
         const SizedBox(height: 12),
         Text(
-          captured ? 'صورة مُلتقطة ✓' : 'التقط صورة الشحنة',
+          captured ? context.l10n.proofPhotoCaptured : context.l10n.proofCapturePhoto,
           style: GoogleFonts.cairo(
             fontSize: 15,
             color: captured ? AppColors.primaryGreen : AppColors.mutedText,
@@ -416,7 +419,7 @@ class _PickupProofViewState extends State<PickupProofView>
                 ),
               )
             : Text(
-                isError ? 'إعادة المحاولة' : 'تأكيد الاستلام',
+                isError ? context.l10n.proofRetry : context.l10n.proofConfirmPickup,
                 style: GoogleFonts.cairo(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -448,7 +451,7 @@ class _PickupProofViewState extends State<PickupProofView>
             ),
             const SizedBox(height: 24),
             Text(
-              'تم توثيق الاستلام',
+              context.l10n.proofSuccessTitle,
               style: GoogleFonts.cairo(
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
@@ -457,7 +460,7 @@ class _PickupProofViewState extends State<PickupProofView>
             ),
             const SizedBox(height: 8),
             Text(
-              'سيتم إشعار المورّد الآن',
+              context.l10n.proofSuccessBody,
               style: GoogleFonts.cairo(
                 fontSize: 14,
                 color: AppColors.mutedText,

@@ -2563,4 +2563,176 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wizardPublishToMarket => 'نشر في السوق';
+
+  @override
+  String get driverActiveOrderViewPickupDetails => 'عرض تفاصيل الاستلام';
+
+  @override
+  String get driverActiveOrderViewDeliveryDetails => 'عرض تفاصيل التسليم';
+
+  @override
+  String get driverActiveOrderStepAccepted => 'مقبول';
+
+  @override
+  String get driverActiveOrderStepArrivedPickup => 'وصلت\nللاستلام';
+
+  @override
+  String get driverActiveOrderStepInTransit => 'في\nالطريق';
+
+  @override
+  String get driverActiveOrderStepDelivered => 'تم\nالتسليم';
+
+  @override
+  String driverActiveOrderEtaMinutes(String minutes) {
+    return '$minutes د';
+  }
+
+  @override
+  String get proofCancelTitle => 'إلغاء توثيق الاستلام؟';
+
+  @override
+  String get proofCancelBody => 'ستُفقد الصورة والوزن المُدخل.';
+
+  @override
+  String get proofBack => 'تراجع';
+
+  @override
+  String get proofTitle => 'توثيق الاستلام';
+
+  @override
+  String get proofShipmentWeight => 'وزن الشحنة (كغ)';
+
+  @override
+  String get proofChangePhoto => 'تغيير الصورة';
+
+  @override
+  String get proofPhotoCaptured => 'صورة مُلتقطة ✓';
+
+  @override
+  String get proofCapturePhoto => 'التقط صورة الشحنة';
+
+  @override
+  String get proofRetry => 'إعادة المحاولة';
+
+  @override
+  String get proofConfirmPickup => 'تأكيد الاستلام';
+
+  @override
+  String get proofSuccessTitle => 'تم توثيق الاستلام';
+
+  @override
+  String get proofSuccessBody => 'سيتم إشعار المورّد الآن';
+
+  @override
+  String get driverErrorToggleOfflineWithActive =>
+      'لا يمكنك تغيير حالتك إلى غير متاح أثناء وجود طلب نشط.';
+
+  @override
+  String get driverErrorAcceptWhileOffline =>
+      'أنت غير متاح حالياً. لا يمكنك قبول الطلب.';
+
+  @override
+  String get driverErrorLocationUnavailable =>
+      'تعذّر تحديد موقعك. تحقق من صلاحية الموقع.';
+
+  @override
+  String driverErrorTooFarPickup(int meters) {
+    return 'أنت بعيد جداً عن موقع الاستلام ($meters م). يجب أن تكون ضمن 200 م.';
+  }
+
+  @override
+  String driverErrorTooFarDelivery(int meters) {
+    return 'أنت بعيد جداً عن موقع التسليم ($meters م). يجب أن تكون ضمن 200 م.';
+  }
+
+  @override
+  String get driverErrorServerGeofence =>
+      'التحقق من الموقع فشل على الخادم. يجب أن تكون ضمن 200 م.';
+
+  @override
+  String get earningsFilterMonth => 'شهر';
+
+  @override
+  String get earningsFilterWeek => 'أسبوع';
+
+  @override
+  String get earningsFilterDay => 'يوم';
+
+  @override
+  String get earningsTitle => 'الأرباح';
+
+  @override
+  String get earningsNetTotal => 'إجمالي الأرباح الصافية';
+
+  @override
+  String get earningsIncreaseVsPrev => 'زيادة عن الفترة السابقة';
+
+  @override
+  String get earningsFinancialDetails => 'تفاصيل العوائد المالية';
+
+  @override
+  String get earningsDistanceFees => 'رسوم المسافات';
+
+  @override
+  String get earningsNetTotalLabel => 'المجموع الصافي';
+
+  @override
+  String get earningsBestDay => 'يومك الأفضل';
+
+  @override
+  String get weekdayMonday => 'الإثنين';
+
+  @override
+  String get weekdayTuesday => 'الثلاثاء';
+
+  @override
+  String get weekdayWednesday => 'الأربعاء';
+
+  @override
+  String get weekdayThursday => 'الخميس';
+
+  @override
+  String get weekdayFriday => 'الجمعة';
+
+  @override
+  String get weekdaySaturday => 'السبت';
+
+  @override
+  String get weekdaySunday => 'الأحد';
+
+  @override
+  String get earningsMyEarnings => 'أرباحي';
+
+  @override
+  String get earningsRefresh => 'تحديث البيانات';
+
+  @override
+  String get earningsTrend => 'اتجاه الأرباح';
+
+  @override
+  String get earningsRecentActivity => 'النشاط الأخير';
+
+  @override
+  String get earningsDownloadReport => 'تحميل تقرير الأداء';
+
+  @override
+  String get earningsTotalEarnings => 'إجمالي الأرباح';
+
+  @override
+  String get earningsTripsCount => 'عدد الرحلات';
+
+  @override
+  String get earningsAverage => 'متوسط الأرباح';
+
+  @override
+  String get chatDateToday => 'اليوم';
+
+  @override
+  String get chatDateYesterday => 'أمس';
+
+  @override
+  String get chatTyping => 'يكتب الآن';
+
+  @override
+  String get unitKg => 'كغ';
 }

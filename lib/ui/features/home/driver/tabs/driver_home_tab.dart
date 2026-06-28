@@ -65,7 +65,7 @@ class DriverHomeTab extends StatelessWidget {
             onStatusToggle: (val) {
               // Handle toggle here — context is inside the Scaffold subtree so
               // ScaffoldMessenger finds the right messenger for the snackbar.
-              final error = driverVm.toggleAvailability(val);
+              final error = driverVm.toggleAvailability(val, context.l10n);
               if (error != null && context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

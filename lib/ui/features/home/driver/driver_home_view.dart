@@ -59,7 +59,7 @@ class _DriverHomeBody extends StatelessWidget {
 
   Future<String?> _handleAcceptOrder(
       BuildContext context, DriverHomeViewModel vm, order) async {
-    final error = await vm.acceptOrder(order);
+    final error = await vm.acceptOrder(order, context.l10n);
     if (error != null && context.mounted) {
       showDialog(
         context: context,
@@ -89,7 +89,7 @@ class _DriverHomeBody extends StatelessWidget {
 
   void _handleToggleAvailability(
       BuildContext context, DriverHomeViewModel vm, bool value) {
-    final error = vm.toggleAvailability(value);
+    final error = vm.toggleAvailability(value, context.l10n);
     if (error != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -117,18 +117,19 @@ class _DriverHomeBody extends StatelessWidget {
         onAcceptOrder: (order) => _handleAcceptOrder(context, vm, order),
         onCompleteOrder: vm.completeOrder,
         onMarkArrivedAtPickup: (order) async {
+          final l10n = context.l10n;
           await Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (_) => PickupProofView(
                 order: order,
                 onConfirm: (proof) =>
-                    vm.markArrivedAtPickup(order, pickupProof: proof),
+                    vm.markArrivedAtPickup(order, l10n, pickupProof: proof),
               ),
             ),
           );
           return null;
         },
-        onMarkArrivedAtDropoff: vm.markArrivedAtDropoff,
+        onMarkArrivedAtDropoff: (order) => vm.markArrivedAtDropoff(order, context.l10n),
       ),
       MarketplaceTab(
         role: UserRole.driver,
@@ -151,18 +152,19 @@ class _DriverHomeBody extends StatelessWidget {
         onStartTransit: vm.startCollectionSaleTransit,
         onComplete: vm.completeCollectionSale,
         onMarkArrivedAtPickup: (order) async {
+          final l10n = context.l10n;
           await Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (_) => PickupProofView(
                 order: order,
                 onConfirm: (proof) =>
-                    vm.markArrivedAtPickup(order, pickupProof: proof),
+                    vm.markArrivedAtPickup(order, l10n, pickupProof: proof),
               ),
             ),
           );
           return null;
         },
-        onMarkArrivedAtDropoff: vm.markArrivedAtDropoff,
+        onMarkArrivedAtDropoff: (order) => vm.markArrivedAtDropoff(order, context.l10n),
       ),
       const DriverProfileTab(),
     ];

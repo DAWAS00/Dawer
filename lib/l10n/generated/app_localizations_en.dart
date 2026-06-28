@@ -2595,4 +2595,176 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wizardPublishToMarket => 'Publish to market';
+
+  @override
+  String get driverActiveOrderViewPickupDetails => 'View pickup details';
+
+  @override
+  String get driverActiveOrderViewDeliveryDetails => 'View delivery details';
+
+  @override
+  String get driverActiveOrderStepAccepted => 'Accepted';
+
+  @override
+  String get driverActiveOrderStepArrivedPickup => 'Arrived\nat pickup';
+
+  @override
+  String get driverActiveOrderStepInTransit => 'In\ntransit';
+
+  @override
+  String get driverActiveOrderStepDelivered => 'Delivered';
+
+  @override
+  String driverActiveOrderEtaMinutes(String minutes) {
+    return '$minutes m';
+  }
+
+  @override
+  String get proofCancelTitle => 'Cancel pickup proof?';
+
+  @override
+  String get proofCancelBody => 'The photo and entered weight will be lost.';
+
+  @override
+  String get proofBack => 'Back';
+
+  @override
+  String get proofTitle => 'Pickup proof';
+
+  @override
+  String get proofShipmentWeight => 'Shipment weight (kg)';
+
+  @override
+  String get proofChangePhoto => 'Change photo';
+
+  @override
+  String get proofPhotoCaptured => 'Photo captured ✓';
+
+  @override
+  String get proofCapturePhoto => 'Take a photo of the shipment';
+
+  @override
+  String get proofRetry => 'Retry';
+
+  @override
+  String get proofConfirmPickup => 'Confirm pickup';
+
+  @override
+  String get proofSuccessTitle => 'Pickup verified';
+
+  @override
+  String get proofSuccessBody => 'The supplier will be notified now';
+
+  @override
+  String get driverErrorToggleOfflineWithActive =>
+      'You can\'t switch to unavailable while you have an active order.';
+
+  @override
+  String get driverErrorAcceptWhileOffline =>
+      'You\'re currently unavailable. You can\'t accept the order.';
+
+  @override
+  String get driverErrorLocationUnavailable =>
+      'Couldn\'t determine your location. Check location permission.';
+
+  @override
+  String driverErrorTooFarPickup(int meters) {
+    return 'You\'re too far from the pickup location ($meters m). You must be within 200 m.';
+  }
+
+  @override
+  String driverErrorTooFarDelivery(int meters) {
+    return 'You\'re too far from the delivery location ($meters m). You must be within 200 m.';
+  }
+
+  @override
+  String get driverErrorServerGeofence =>
+      'Server-side location verification failed. You must be within 200 m.';
+
+  @override
+  String get earningsFilterMonth => 'Month';
+
+  @override
+  String get earningsFilterWeek => 'Week';
+
+  @override
+  String get earningsFilterDay => 'Day';
+
+  @override
+  String get earningsTitle => 'Earnings';
+
+  @override
+  String get earningsNetTotal => 'Net total earnings';
+
+  @override
+  String get earningsIncreaseVsPrev => 'increase vs previous period';
+
+  @override
+  String get earningsFinancialDetails => 'Financial returns details';
+
+  @override
+  String get earningsDistanceFees => 'Distance fees';
+
+  @override
+  String get earningsNetTotalLabel => 'Net total';
+
+  @override
+  String get earningsBestDay => 'Your best day';
+
+  @override
+  String get weekdayMonday => 'Monday';
+
+  @override
+  String get weekdayTuesday => 'Tuesday';
+
+  @override
+  String get weekdayWednesday => 'Wednesday';
+
+  @override
+  String get weekdayThursday => 'Thursday';
+
+  @override
+  String get weekdayFriday => 'Friday';
+
+  @override
+  String get weekdaySaturday => 'Saturday';
+
+  @override
+  String get weekdaySunday => 'Sunday';
+
+  @override
+  String get earningsMyEarnings => 'My earnings';
+
+  @override
+  String get earningsRefresh => 'Refresh data';
+
+  @override
+  String get earningsTrend => 'Earnings trend';
+
+  @override
+  String get earningsRecentActivity => 'Recent activity';
+
+  @override
+  String get earningsDownloadReport => 'Download performance report';
+
+  @override
+  String get earningsTotalEarnings => 'Total earnings';
+
+  @override
+  String get earningsTripsCount => 'Trips count';
+
+  @override
+  String get earningsAverage => 'Average earnings';
+
+  @override
+  String get chatDateToday => 'Today';
+
+  @override
+  String get chatDateYesterday => 'Yesterday';
+
+  @override
+  String get chatTyping => 'typing';
+
+  @override
+  String get unitKg => 'kg';
 }
