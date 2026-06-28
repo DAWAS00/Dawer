@@ -9,11 +9,15 @@ class MaterialTimelineChart extends StatelessWidget {
     required this.orders,
     required this.periodStart,
     required this.periodEnd,
+    this.onTap,
   });
 
   final List<Order> orders;
   final DateTime periodStart;
   final DateTime periodEnd;
+
+  /// Tap hook for drill-down (no-op safe when null).
+  final VoidCallback? onTap;
 
   static const double _rowHeight = 32.0;
   static const double _rowSpacing = 6.0;
@@ -40,18 +44,23 @@ class MaterialTimelineChart extends StatelessWidget {
         final chartHeight =
             orders.length * (_rowHeight + _rowSpacing) + _axisHeight;
 
-        return SizedBox(
-          height: chartHeight,
-          width: availableWidth,
-          child: CustomPaint(
-            size: Size(availableWidth, chartHeight),
-            painter: _GanttPainter(
-              orders: orders,
-              periodStart: periodStart,
-              totalMs: totalMs,
-              rowHeight: _rowHeight,
-              rowSpacing: _rowSpacing,
-              axisHeight: _axisHeight,
+        return RepaintBoundary(
+          child: GestureDetector(
+            onTap: onTap,
+            child: SizedBox(
+              height: chartHeight,
+              width: availableWidth,
+              child: CustomPaint(
+                size: Size(availableWidth, chartHeight),
+                painter: _GanttPainter(
+                  orders: orders,
+                  periodStart: periodStart,
+                  totalMs: totalMs,
+                  rowHeight: _rowHeight,
+                  rowSpacing: _rowSpacing,
+                  axisHeight: _axisHeight,
+                ),
+              ),
             ),
           ),
         );
