@@ -106,6 +106,7 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
       ),
       SupplierProfileTab(
         user: vm.user,
+        userId: context.read<IAuthRepository>().currentSession?.userId ?? '',
         totalPoints: vm.totalPoints,
         totalOrders: vm.totalOrders,
         supplierType: SupplierType.individual,
