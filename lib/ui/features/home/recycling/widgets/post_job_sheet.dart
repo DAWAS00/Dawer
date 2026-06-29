@@ -52,88 +52,99 @@ class PostJobSheet extends HookWidget {
       Navigator.pop(context);
     }
 
-    return Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD1D5DB),
-                  borderRadius: BorderRadius.circular(9999),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'نشر وظيفة تجميع جديدة',
-              style: GoogleFonts.cairo(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF002819),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'حدّد المواد والتسعيرة وسيظهر في السوق للجميع',
-              style: GoogleFonts.cairo(
-                  fontSize: 12, color: const Color(0xFF717973)),
-            ),
-            const SizedBox(height: 20),
-            PostJobFormBody(
-              selectedTypes: selected.value,
-              onToggleType: (t) {
-                final newSet = Set<WasteType>.from(selected.value);
-                if (newSet.contains(t)) {
-                  newSet.remove(t);
-                } else {
-                  newSet.add(t);
-                }
-                selected.value = newSet;
-              },
-              paymentModel: paymentModel.value,
-              onPaymentModelChanged: (m) => paymentModel.value = m,
-              priceCtrl: priceCtrl,
-              minQtyCtrl: minQtyCtrl,
-              areaCtrl: areaCtrl,
-              descriptionCtrl: descCtrl,
-            ),
-            const SizedBox(height: 28),
-            ListenableBuilder(
-              listenable:
-                  Listenable.merge([priceCtrl, areaCtrl, descCtrl, selected, paymentModel]),
-              builder: (context, _) => SizedBox(
-                width: double.infinity,
-                height: 54,
-                child: ElevatedButton(
-                  onPressed: isValid() ? submit : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF14401F),
-                    disabledBackgroundColor:
-                        const Color(0xFF14401F).withValues(alpha: 0.35),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'نشر الوظيفة',
-                    style: GoogleFonts.cairo(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).bottomSheetTheme.backgroundColor ??
+            Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.92,
+      ),
+      child: Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(
+              24, 16, 24, MediaQuery.of(context).padding.bottom + 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD1D5DB),
+                    borderRadius: BorderRadius.circular(9999),
                   ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              Text(
+                'نشر وظيفة تجميع جديدة',
+                style: GoogleFonts.cairo(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF002819),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'حدّد المواد والتسعيرة وسيظهر في السوق للجميع',
+                style: GoogleFonts.cairo(
+                    fontSize: 12, color: const Color(0xFF717973)),
+              ),
+              const SizedBox(height: 20),
+              PostJobFormBody(
+                selectedTypes: selected.value,
+                onToggleType: (t) {
+                  final newSet = Set<WasteType>.from(selected.value);
+                  if (newSet.contains(t)) {
+                    newSet.remove(t);
+                  } else {
+                    newSet.add(t);
+                  }
+                  selected.value = newSet;
+                },
+                paymentModel: paymentModel.value,
+                onPaymentModelChanged: (m) => paymentModel.value = m,
+                priceCtrl: priceCtrl,
+                minQtyCtrl: minQtyCtrl,
+                areaCtrl: areaCtrl,
+                descriptionCtrl: descCtrl,
+              ),
+              const SizedBox(height: 28),
+              ListenableBuilder(
+                listenable: Listenable.merge(
+                    [priceCtrl, areaCtrl, descCtrl, selected, paymentModel]),
+                builder: (context, _) => SizedBox(
+                  width: double.infinity,
+                  height: 54,
+                  child: ElevatedButton(
+                    onPressed: isValid() ? submit : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF14401F),
+                      disabledBackgroundColor:
+                          const Color(0xFF14401F).withValues(alpha: 0.35),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      'نشر الوظيفة',
+                      style: GoogleFonts.cairo(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
