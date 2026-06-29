@@ -28,8 +28,8 @@ abstract class GeminiVisionTask<T> {
   /// Parse a decoded JSON map into the typed result.
   T fromJson(Map<String, dynamic> json);
 
-  /// Model to use — defaults to gemini-1.5-flash.
-  String get modelName => 'gemini-1.5-flash';
+  /// Model to use — defaults to gemini-2.5-flash.
+  String get modelName => 'gemini-2.5-flash';
 
   /// Timeout for the Gemini API call. Adjust for slower/larger models.
   Duration get timeout => const Duration(seconds: 30);

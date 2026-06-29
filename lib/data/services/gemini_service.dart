@@ -21,12 +21,12 @@ class GeminiService {
 
   /// Returns a [GenerativeModel] ready for use.
   ///
-  /// [modelName] — defaults to `gemini-1.5-flash`
+  /// [modelName] — defaults to `gemini-2.5-flash`
   /// [systemInstruction] — optional system-level prompt
   /// [config] — optional generation config (temperature, JSON mode, etc.)
   /// [safetySettings] — defaults to [kDefaultSafetySettings]
   GenerativeModel model({
-    String modelName = 'gemini-1.5-flash',
+    String modelName = 'gemini-2.5-flash',
     Content? systemInstruction,
     GenerationConfig? config,
     List<SafetySetting>? safetySettings,

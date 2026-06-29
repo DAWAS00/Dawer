@@ -11,7 +11,7 @@ class GeminiVehicleRegistrationService implements IAiVehicleRegistrationService 
 
   GeminiVehicleRegistrationService()
       : _model = GenerativeModel(
-          model: 'gemini-1.5-flash',
+          model: 'gemini-2.5-flash',
           apiKey: AiConfig.geminiApiKey,
           generationConfig: GenerationConfig(
             responseMimeType: 'application/json',
