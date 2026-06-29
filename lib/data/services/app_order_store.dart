@@ -12,6 +12,10 @@ import '../mock/order_mock_data.dart';
 import '../models/order/order.dart';
 import '../models/user.dart';
 import '../models/user_role.dart';
+import '../models/reward_transaction.dart';
+import '../mock/green_credits_mock_data.dart';
+import '../../domain/entities/green_level.dart';
+import 'green_credits_service.dart';
 import 'reward_service.dart';
 
 /// Singleton shared order store — the single source of truth for all orders
@@ -42,6 +46,12 @@ class AppOrderStore extends ChangeNotifier {
   final bool _skipMockSeed;
   StreamSubscription<List<Order>>? _remoteSub;
 
+  // ── Green Credits ─────────────────────────────────────────────────────────
+  String? _currentUserId;
+  final Map<String, int> _greenPointsMap = {};
+  final Map<String, List<RewardTransaction>> _rewardLedger = {};
+  final GreenCreditsService _greenCreditsService = const GreenCreditsService();
+
   // ── Error state ───────────────────────────────────────────────────────────
 
   AppFailure? get lastError => _lastError;
@@ -65,7 +75,11 @@ class AppOrderStore extends ChangeNotifier {
   String? _activeOrderId;
 
   /// IDs of orders completed by our mock driver (their personal history).
-  final List<String> _driverCompletedIds = ['ORD-H01', 'ORD-H02'];
+  final List<String> _driverCompletedIds = [
+    'DRV-DONE-01',
+    'DRV-DONE-02',
+    'DRV-DONE-03',
+  ];
 
   /// True until the first bootstrap completes. Used by home tabs to show skeleton UI.
   bool _isLoading = true;
@@ -134,6 +148,8 @@ class AppOrderStore extends ChangeNotifier {
   /// Call this once from [HomeRouter] after the user's session is established.
   void configureForUser(String userId, UserRole role) {
     _remoteSub?.cancel();
+    _currentUserId = userId;
+    _seedGreenCreditsFor(userId);
     _remoteSub = _remote.watchOrdersForUser(userId, role).listen(
       (remoteOrders) {
         if (remoteOrders.isEmpty) return;
@@ -207,6 +223,129 @@ class AppOrderStore extends ChangeNotifier {
       .toList();
 
   bool get driverHasActiveOrder => _activeOrderId != null;
+
+  // ── Green Credits ─────────────────────────────────────────────────────────
+
+  /// Returns the current خُضَر balance for [userId].
+  /// Returns 0 if the user has not earned any credits yet.
+  int greenPointsFor(String userId) => _greenPointsMap[userId] ?? 0;
+
+  /// Returns the [GreenLevel] for [userId] based on their current balance.
+  GreenLevel greenLevelFor(String userId) =>
+      GreenLevelInfo.fromPoints(greenPointsFor(userId));
+
+  /// Reward transaction history (earned / bonus / redeemed) for [userId],
+  /// most recent first.
+  List<RewardTransaction> greenTransactionsFor(String userId) {
+    final list = _rewardLedger[userId] ?? const [];
+    final sorted = [...list]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return List.unmodifiable(sorted);
+  }
+
+  /// Loads persisted balance for [userId]. On first use (balance still 0) and
+  /// when seed data exists, seeds the demo balance + transaction history.
+  void _seedGreenCreditsFor(String userId) {
+    final persisted = _store?.readGreenPoints(userId) ?? 0;
+    if (persisted == 0 && GreenCreditsMockData.hasSeed(userId)) {
+      final seed = GreenCreditsMockData.pointsFor(userId);
+      _greenPointsMap[userId] = seed;
+      unawaited(_store?.writeGreenPoints(userId, seed) ?? Future.value());
+    } else {
+      _greenPointsMap[userId] = persisted;
+    }
+    // Seed the in-memory transaction history once per session.
+    _rewardLedger[userId] ??= [...GreenCreditsMockData.transactionsFor(userId)];
+  }
+
+  /// Redeems [cost] خُضَر from [userId] for the reward described by
+  /// [description]. Returns true on success, false if the balance is too low.
+  bool redeemGreenCredits(
+    String userId, {
+    required int cost,
+    required String description,
+  }) {
+    final balance = _greenPointsMap[userId] ?? 0;
+    if (cost <= 0 || balance < cost) return false;
+
+    _greenPointsMap[userId] = balance - cost;
+    unawaited(
+        _store?.writeGreenPoints(userId, _greenPointsMap[userId]!) ??
+            Future.value());
+
+    (_rewardLedger[userId] ??= []).add(RewardTransaction(
+      id: 'redeem-${DateTime.now().microsecondsSinceEpoch}',
+      type: RewardTransactionType.redeemed,
+      points: cost,
+      description: description,
+      createdAt: DateTime.now(),
+    ));
+
+    notifyListeners();
+    return true;
+  }
+
+  void _recordRewardTxn(String userId, RewardTransaction txn) {
+    (_rewardLedger[userId] ??= []).add(txn);
+  }
+
+  Future<void> _awardGreenCredits(Order order) async {
+    final uid = _currentUserId;
+    if (uid == null) return;
+
+    // Compute week streak from orders the current driver has completed.
+    final driverCompleted = _orders
+        .where((o) =>
+            _driverCompletedIds.contains(o.id) && o.completedAt != null)
+        .toList();
+    final streak = GreenCreditsService.weekStreakFrom(driverCompleted);
+
+    // Award credits to the driver (current user)
+    final driverEarned =
+        _greenCreditsService.creditsForOrder(order, weekStreak: streak);
+    _greenPointsMap[uid] = (_greenPointsMap[uid] ?? 0) + driverEarned;
+    unawaited(_store?.writeGreenPoints(uid, _greenPointsMap[uid]!) ??
+        Future.value());
+    _recordRewardTxn(
+      uid,
+      RewardTransaction(
+        id: 'earn-${order.id}-drv',
+        type: RewardTransactionType.earned,
+        points: driverEarned,
+        description: 'إكمال طلب · ${order.pickupAddress}',
+        createdAt: DateTime.now(),
+        linkedOrderId: order.id,
+      ),
+    );
+
+    // Also award credits to the supplier who recycled the waste.
+    final supplierId = order.supplierId;
+    if (supplierId != null && supplierId.isNotEmpty && supplierId != uid) {
+      if (!_greenPointsMap.containsKey(supplierId)) {
+        _greenPointsMap[supplierId] =
+            _store?.readGreenPoints(supplierId) ?? 0;
+      }
+      // Supplier earns base credits (no streak bonus — streak is driver-side)
+      final supplierEarned = _greenCreditsService.creditsForOrder(order);
+      _greenPointsMap[supplierId] =
+          _greenPointsMap[supplierId]! + supplierEarned;
+      unawaited(
+          _store?.writeGreenPoints(supplierId, _greenPointsMap[supplierId]!) ??
+              Future.value());
+      _recordRewardTxn(
+        supplierId,
+        RewardTransaction(
+          id: 'earn-${order.id}-sup',
+          type: RewardTransactionType.earned,
+          points: supplierEarned,
+          description: 'تدوير مواد · ${order.pickupAddress}',
+          createdAt: DateTime.now(),
+          linkedOrderId: order.id,
+        ),
+      );
+    }
+
+    notifyListeners();
+  }
 
   // ─────────────────────────────────────────────────────────────────────────
   // Supplier views
@@ -452,6 +591,7 @@ class AppOrderStore extends ChangeNotifier {
 
     unawaited(_pushRemote(_remote.markCompleted(completedOrder.id, actualWeightKg: completedOrder.weightKg)));
     unawaited(_recordTransactionFor(completedOrder));
+    unawaited(_awardGreenCredits(completedOrder));
     if (completedOrder.reward > 0) {
       unawaited(_wallet.releaseForOrder(completedOrder.id, completedOrder.reward));
     }

@@ -177,6 +177,10 @@ class _DriverHomeBody extends StatelessWidget {
         showReportCenter: false,
         showCycleTime: true,
         showEarningsEfficiency: true,
+        showGreenCredits: true,
+        greenPoints: context.read<AppOrderStore>().greenPointsFor(
+              context.read<IAuthRepository>().currentSession?.userId ?? '',
+            ),
       ),
       const DriverProfileTab(),
     ];

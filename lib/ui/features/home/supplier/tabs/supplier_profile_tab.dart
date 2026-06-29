@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/models/user_role.dart';
@@ -13,6 +13,7 @@ import '../../shared/profile/widgets/profile_section_header.dart';
 import '../../shared/profile/widgets/profile_tile.dart';
 import '../../shared/profile/widgets/profile_action_tile.dart';
 import '../../shared/profile/widgets/payment_wallet_card.dart';
+import '../../../../../data/services/app_order_store.dart';
 import '../views/rewards_view.dart';
 
 class SupplierProfileTab extends StatelessWidget {
@@ -22,6 +23,10 @@ class SupplierProfileTab extends StatelessWidget {
   final SupplierType supplierType;
   final void Function({String? name, String? phone, String? address}) onUpdateProfile;
 
+  /// Auth session user id — used to look up خُضَر green credits and open the
+  /// rewards screen. Defaults to empty for callers that don't have it wired.
+  final String userId;
+
   const SupplierProfileTab({
     super.key,
     required this.user,
@@ -29,15 +34,12 @@ class SupplierProfileTab extends StatelessWidget {
     required this.totalOrders,
     required this.supplierType,
     required this.onUpdateProfile,
+    this.userId = '',
   });
 
   void _openRewards(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => RewardsView(
-        totalPoints: totalPoints,
-        userName: user.name,
-        completedOrders: totalOrders,
-      ),
+      builder: (_) => RewardsView(userId: userId),
     ));
   }
 
@@ -56,6 +58,10 @@ class SupplierProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isStore = supplierType == SupplierType.storeBusiness;
+    // Unified currency: prefer live خُضَر balance when the auth id is wired.
+    final greenPoints = userId.isNotEmpty
+        ? context.watch<AppOrderStore>().greenPointsFor(userId)
+        : totalPoints;
 
     return CustomScrollView(
       slivers: [
@@ -70,14 +76,14 @@ class SupplierProfileTab extends StatelessWidget {
               ),
               ProfileStatCard(
                 stats: [
-                  ProfileStat(value: totalPoints.toString(), label: context.l10n.supplierRecyclingPoints),
+                  ProfileStat(value: greenPoints.toString(), label: context.l10n.supplierRecyclingPoints),
                   ProfileStat(value: totalOrders.toString(), label: context.l10n.supplierTotalOrders),
                 ],
               ),
 
               // ── Rewards / Payment ──
               PaymentWalletCard.supplier(
-                points: totalPoints,
+                points: greenPoints,
                 onViewRewards: () => _openRewards(context),
               ),
 

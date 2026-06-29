@@ -399,7 +399,7 @@ class _PickupProofViewState extends State<PickupProofView>
     final isError = _state == _ProofState.error;
 
     return SizedBox(
-      height: 52,
+      height: 56,
       child: ElevatedButton(
         onPressed: canSubmit ? _submit : null,
         style: ElevatedButton.styleFrom(
@@ -408,6 +408,7 @@ class _PickupProofViewState extends State<PickupProofView>
           disabledBackgroundColor: AppColors.mutedText.withValues(alpha: 0.3),
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          padding: const EdgeInsets.symmetric(vertical: 8),
         ),
         child: isLoading
             ? const SizedBox(
@@ -423,6 +424,7 @@ class _PickupProofViewState extends State<PickupProofView>
                 style: GoogleFonts.cairo(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
+                  height: 1.1,
                 ),
               ),
       ),

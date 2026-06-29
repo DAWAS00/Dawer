@@ -19,6 +19,11 @@ import '../../shared/profile/widgets/profile_section_header.dart';
 import '../../shared/profile/widgets/profile_tile.dart';
 import '../../shared/profile/widgets/profile_action_tile.dart';
 import '../../shared/profile/widgets/payment_wallet_card.dart';
+import '../../supplier/views/rewards_view.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../data/services/app_order_store.dart';
+import '../../../../../domain/entities/green_level.dart';
+import '../../../../../domain/repositories/i_auth_repository.dart';
 import '../viewmodels/driver_home_viewmodel.dart';
 import '../../shared/rewards/driver_fuel_voucher_widget.dart';
 
@@ -82,6 +87,11 @@ class DriverProfileTab extends StatelessWidget {
                 balance: vm.wallet.balance,
                 heldAmount: vm.wallet.heldAmount,
                 onWithdraw: () {},
+              ),
+
+              // ── خُضَر Green Credits ──
+              _GreenRewardsCard(
+                userId: context.read<IAuthRepository>().currentSession?.userId ?? '',
               ),
 
               // ── Personal & vehicle ──
@@ -163,6 +173,82 @@ class DriverProfileTab extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Tappable خُضَر green-credits summary card on the driver profile.
+/// Shows the live balance + level and opens the full [RewardsView].
+class _GreenRewardsCard extends StatelessWidget {
+  const _GreenRewardsCard({required this.userId});
+  final String userId;
+
+  @override
+  Widget build(BuildContext context) {
+    final points = context.watch<AppOrderStore>().greenPointsFor(userId);
+    final level = GreenLevelInfo.fromPoints(points);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => RewardsView(userId: userId),
+          )),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [AppColors.primaryGreen, Color(0xFF1E6B35)],
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+              ),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.eco_rounded, color: Color(0xFFB9F6CA), size: 32),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('مكافآت خُضَر',
+                          style: GoogleFonts.cairo(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white)),
+                      const SizedBox(height: 2),
+                      Text('${level.emoji} ${level.arabicLabel}',
+                          style: GoogleFonts.cairo(
+                              fontSize: 12,
+                              color: Colors.white.withValues(alpha: 0.85))),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('$points',
+                        style: GoogleFonts.dmSans(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white)),
+                    Text('خُضَر',
+                        style: GoogleFonts.cairo(
+                            fontSize: 11,
+                            color: Colors.white.withValues(alpha: 0.8))),
+                  ],
+                ),
+                const SizedBox(width: 4),
+                const Icon(Icons.chevron_left_rounded, color: Colors.white),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

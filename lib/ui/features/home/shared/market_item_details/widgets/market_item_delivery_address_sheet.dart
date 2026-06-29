@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../../data/models/order/order.dart';
+import '../../../../../../l10n/l10n.dart';
 
 class MarketItemDeliveryAddressSheet extends StatefulWidget {
   final Order item;
@@ -32,6 +33,8 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final distanceLabel = widget.item.distanceKm?.toStringAsFixed(1) ?? '–';
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SingleChildScrollView(
@@ -51,7 +54,7 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
             ),
             const SizedBox(height: 20),
             Text(
-              'تأكيد الشراء والتوصيل',
+              l10n.marketDeliveryConfirmTitle,
               style: GoogleFonts.cairo(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -60,7 +63,7 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
             ),
             const SizedBox(height: 4),
             Text(
-              'رسوم التوصيل محسوبة حسب المسافة والوزن',
+              l10n.marketDeliveryFeeNote,
               style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF717973)),
             ),
             const SizedBox(height: 20),
@@ -68,7 +71,7 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
               icon: Icons.storefront_rounded,
               bg: const Color(0xFF06402B).withValues(alpha: 0.08),
               color: const Color(0xFF06402B),
-              label: 'موقع البائع',
+              label: l10n.marketDeliverySellerLocation,
               value: widget.item.pickupAddress,
             ),
             Padding(
@@ -85,7 +88,7 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      '${widget.item.distanceKm?.toStringAsFixed(1) ?? '–'} كم',
+                      '$distanceLabel ${l10n.unitKm}',
                       style: GoogleFonts.dmSans(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -101,7 +104,7 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
             GestureDetector(
               onTap: () => ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('سيتم ربط خرائط جوجل قريباً', style: GoogleFonts.cairo()),
+                  content: Text(l10n.mapsComingSoon, style: GoogleFonts.cairo()),
                   backgroundColor: const Color(0xFF1E5C35),
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -111,8 +114,8 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
                 icon: Icons.home_rounded,
                 bg: const Color(0xFFFEF3C7),
                 color: const Color(0xFFC8860A),
-                label: 'عنوان التوصيل',
-                value: 'اضغط لتحديد موقعك على الخريطة',
+                label: l10n.marketDeliveryAddressLabel,
+                value: l10n.newOrderTapToSelectLocation,
                 isPlaceholder: true,
               ),
             ),
@@ -127,15 +130,33 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
               ),
               child: Column(
                 children: [
-                  _costRow('سعر المواد', '${widget.item.itemPrice?.toStringAsFixed(2) ?? '0.00'} د.أ'),
+                  _costRow(
+                    l10n.marketItemPriceLabel,
+                    '${widget.item.itemPrice?.toStringAsFixed(2) ?? '0.00'} ${l10n.currencyJodShort}',
+                  ),
                   const SizedBox(height: 8),
-                  _costRow('رسوم المسافة  (${widget.item.distanceKm?.toStringAsFixed(1) ?? '–'} كم × 0.2)', '${_distanceFee.toStringAsFixed(2)} د.أ'),
+                  _costRow(
+                    l10n.marketDeliveryDistanceFeeRow(distanceLabel),
+                    '${_distanceFee.toStringAsFixed(2)} ${l10n.currencyJodShort}',
+                  ),
                   const SizedBox(height: 8),
-                  _costRow('رسوم الوزن  (${widget.item.weightCategory?.shortLabel ?? '–'})', '${_weightSurcharge.toStringAsFixed(2)} د.أ'),
+                  _costRow(
+                    l10n.marketDeliveryWeightFeeRow(
+                      widget.item.weightCategory?.shortLabel ?? '–',
+                    ),
+                    '${_weightSurcharge.toStringAsFixed(2)} ${l10n.currencyJodShort}',
+                  ),
                   const SizedBox(height: 8),
-                  _costRow('رسوم التوصيل الأساسية', '1.50 د.أ'),
+                  _costRow(
+                    l10n.marketDeliveryBaseFee,
+                    '1.50 ${l10n.currencyJodShort}',
+                  ),
                   const Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Divider(height: 1)),
-                  _costRow('الإجمالي', '${_totalCost.toStringAsFixed(2)} د.أ', isBold: true),
+                  _costRow(
+                    l10n.marketDeliveryTotal,
+                    '${_totalCost.toStringAsFixed(2)} ${l10n.currencyJodShort}',
+                    isBold: true,
+                  ),
                 ],
               ),
             ),
@@ -144,7 +165,7 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
               width: double.infinity,
               height: 44,
               child: ElevatedButton(
-                onPressed: () => widget.onConfirm('عنواني الحالي', _deliveryFee),
+                onPressed: () => widget.onConfirm(l10n.newOrderCurrentAddress, _deliveryFee),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF06402B),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -154,7 +175,9 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'تأكيد الشراء — ${_totalCost.toStringAsFixed(2)} د.أ',
+                      l10n.marketDeliveryConfirmButton(
+                        '${_totalCost.toStringAsFixed(2)} ${l10n.currencyJodShort}',
+                      ),
                       style: GoogleFonts.cairo(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,

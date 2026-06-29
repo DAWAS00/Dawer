@@ -401,7 +401,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
                     : (_canComplete
                         ? AppColors.primaryGreen
                         : AppColors.mutedText.withValues(alpha: 0.4)),
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
@@ -425,6 +425,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
+                        height: 1.1,
                       ),
                     ),
             ),

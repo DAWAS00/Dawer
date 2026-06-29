@@ -99,9 +99,14 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
         showMilestones: true,
         showReportCenter: true,
         showProfitability: true,
+        showGreenCredits: true,
+        greenPoints: context.read<AppOrderStore>().greenPointsFor(
+              context.read<IAuthRepository>().currentSession?.userId ?? '',
+            ),
       ),
       SupplierProfileTab(
         user: vm.user,
+        userId: context.read<IAuthRepository>().currentSession?.userId ?? '',
         totalPoints: vm.totalPoints,
         totalOrders: vm.totalOrders,
         supplierType: SupplierType.individual,

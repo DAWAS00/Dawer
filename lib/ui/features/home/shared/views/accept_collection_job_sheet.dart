@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order/order.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Bottom sheet shown when a supplier (individual or restaurant) taps
 /// "قبول" on a collection job. The supplier makes two choices:
@@ -51,6 +52,7 @@ class _AcceptCollectionJobSheetState extends State<AcceptCollectionJobSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final bottomPad = MediaQuery.of(context).viewInsets.bottom;
     return Container(
       padding: EdgeInsets.fromLTRB(20, 12, 20, 20 + bottomPad),
@@ -63,18 +65,18 @@ class _AcceptCollectionJobSheetState extends State<AcceptCollectionJobSheet> {
         children: [
           _buildHandle(),
           const SizedBox(height: 12),
-          _buildHeader(),
+          _buildHeader(context),
           const SizedBox(height: 20),
-          _buildSectionTitle('طريقة التوصيل'),
+          _buildSectionTitle(l10n.collectionSaleDeliveryMethodLabel),
           const SizedBox(height: 10),
           _buildDeliveryOptions(),
           const SizedBox(height: 20),
-          _buildSectionTitle('نوع المعاملة'),
+          _buildSectionTitle(l10n.collectionSaleTransactionTypeLabel),
           const SizedBox(height: 10),
           _buildTransactionOptions(),
           if (_canConfirm) ...[
             const SizedBox(height: 16),
-            _buildSummary(),
+            _buildSummary(context),
           ],
           const SizedBox(height: 20),
           _buildConfirmButton(context),
@@ -94,29 +96,32 @@ class _AcceptCollectionJobSheetState extends State<AcceptCollectionJobSheet> {
         ),
       );
 
-  Widget _buildHeader() => Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text(
-            'كيف تريد المتابعة؟',
-            textAlign: TextAlign.right,
-            style: GoogleFonts.cairo(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF002819),
-            ),
+  Widget _buildHeader(BuildContext context) {
+    final l10n = context.l10n;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          l10n.acceptJobTitle,
+          textAlign: TextAlign.right,
+          style: GoogleFonts.cairo(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF002819),
           ),
-          const SizedBox(height: 4),
-          Text(
-            'اختر طريقة التوصيل ونوع المعاملة لقبول الوظيفة',
-            textAlign: TextAlign.right,
-            style: GoogleFonts.cairo(
-              fontSize: 13,
-              color: const Color(0xFF717973),
-            ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          l10n.acceptJobSubtitle,
+          textAlign: TextAlign.right,
+          style: GoogleFonts.cairo(
+            fontSize: 13,
+            color: const Color(0xFF717973),
           ),
-        ],
-      );
+        ),
+      ],
+    );
+  }
 
   Widget _buildSectionTitle(String title) => Align(
         alignment: Alignment.centerRight,
@@ -184,10 +189,11 @@ class _AcceptCollectionJobSheetState extends State<AcceptCollectionJobSheet> {
         ],
       );
 
-  Widget _buildSummary() {
+  Widget _buildSummary(BuildContext context) {
+    final l10n = context.l10n;
     final deliveryFeeNote = _transaction == CollectionTransactionType.donate
-        ? 'رسوم التوصيل على الشركة'
-        : 'رسوم التوصيل عليك';
+        ? l10n.acceptJobDeliveryFeeCompany
+        : l10n.acceptJobDeliveryFeeYou;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
@@ -241,7 +247,7 @@ class _AcceptCollectionJobSheetState extends State<AcceptCollectionJobSheet> {
                 borderRadius: BorderRadius.circular(16)),
           ),
           child: Text(
-            'تأكيد القبول',
+            context.l10n.acceptJobConfirmButton,
             style: GoogleFonts.cairo(
               fontSize: 15,
               fontWeight: FontWeight.bold,

@@ -82,6 +82,10 @@ class _RecyclingHomeBody extends StatelessWidget {
         showMilestones: false,
         showReportCenter: true,
         showProfitability: true,
+        showGreenCredits: true,
+        greenPoints: context.read<AppOrderStore>().greenPointsFor(
+              context.read<IAuthRepository>().currentSession?.userId ?? '',
+            ),
       ),
       RecyclingProfileTab(userName: userName),
     ];

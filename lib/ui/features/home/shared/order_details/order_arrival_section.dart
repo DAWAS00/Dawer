@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order/order.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Shown in order details for:
 ///   - Driver in `accepted` state   → "I'm Here — Pickup" button
@@ -50,6 +51,7 @@ class _OrderArrivalSectionState extends State<OrderArrivalSection> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final s = widget.order.status;
 
     if (_isDriverView) {
@@ -59,9 +61,9 @@ class _OrderArrivalSectionState extends State<OrderArrivalSection> {
           iconColor: const Color(0xFF06402B),
           iconBg: const Color(0xFFD1FAE5),
           borderColor: const Color(0xFF06402B),
-          title: 'وصلت إلى موقع الاستلام؟',
-          subtitle: 'سيتم التحقق من موقعك (ضمن 200 م)',
-          buttonLabel: 'أنا هنا — الاستلام',
+          title: l10n.orderArrivalAtPickup,
+          subtitle: l10n.orderArrivalGeoNote,
+          buttonLabel: l10n.orderArrivalHerePickup,
           buttonColor: const Color(0xFF06402B),
           loading: _loading,
           onTap: () => _tap(widget.onMarkArrivedAtPickup!),
@@ -76,9 +78,9 @@ class _OrderArrivalSectionState extends State<OrderArrivalSection> {
           iconColor: const Color(0xFF1E40AF),
           iconBg: const Color(0xFFDBEAFE),
           borderColor: const Color(0xFF1E40AF),
-          title: 'وصلت إلى موقع التسليم؟',
-          subtitle: 'سيتم التحقق من موقعك (ضمن 200 م)',
-          buttonLabel: 'أنا هنا — التسليم',
+          title: l10n.orderArrivalAtDropoff,
+          subtitle: l10n.orderArrivalGeoNote,
+          buttonLabel: l10n.orderArrivalHereDropoff,
           buttonColor: const Color(0xFF1E40AF),
           loading: _loading,
           onTap: () => _tap(widget.onMarkArrivedAtDropoff!),
@@ -144,7 +146,7 @@ class _ArrivalCard extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
                 child: Icon(icon, color: iconColor, size: 20),
               ),
@@ -164,17 +166,17 @@ class _ArrivalCard extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: buttonColor,
                 disabledBackgroundColor: buttonColor.withValues(alpha: 0.5),
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
                 elevation: 0,
-                minimumSize: const Size(double.infinity, 56),
+                minimumSize: const Size(double.infinity, 70),
               ),
               child: loading
                   ? const SizedBox(
-                      height: 20,
-                      width: 20,
+                      height: 30,
+                      width: 30,
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: Colors.white),
                     )
@@ -184,6 +186,7 @@ class _ArrivalCard extends StatelessWidget {
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
+                        height: 1.1,
                       ),
                     ),
             ),
@@ -199,6 +202,7 @@ class _ArrivalCard extends StatelessWidget {
 class _AwaitingBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
       child: Container(
@@ -218,7 +222,7 @@ class _AwaitingBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'في انتظار تأكيد المورد',
+                    l10n.orderArrivalAwaitingSupplier,
                     style: GoogleFonts.cairo(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -227,7 +231,7 @@ class _AwaitingBanner extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'المورد لديه 5 دقائق للرد — سيُعوَّض السائق تلقائياً عند انتهاء المهلة',
+                    l10n.orderArrivalAwaitingSubtitle,
                     textAlign: TextAlign.right,
                     style: GoogleFonts.cairo(
                       fontSize: 11,
@@ -265,6 +269,7 @@ class _SupplierConfirmCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
       child: Column(
@@ -274,7 +279,7 @@ class _SupplierConfirmCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
-                'السائق وصل!',
+                l10n.orderArrivalDriverArrived,
                 style: GoogleFonts.cairo(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -298,7 +303,7 @@ class _SupplierConfirmCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'السائق في موقعك الآن. هل أنت متاح لتسليم المواد؟',
+            l10n.orderArrivalDriverAtLocation,
             textAlign: TextAlign.right,
             style: GoogleFonts.cairo(
               fontSize: 14,
@@ -317,12 +322,16 @@ class _SupplierConfirmCard extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     minimumSize: const Size(0, 56),
                   ),
                   child: Text(
-                    'غير متاح',
-                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 15),
+                    l10n.unavailable,
+                    style: GoogleFonts.cairo(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      height: 1.1,
+                    ),
                   ),
                 ),
               ),
@@ -332,7 +341,7 @@ class _SupplierConfirmCard extends StatelessWidget {
                   onPressed: () => onConfirm(true),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF06402B),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
@@ -340,11 +349,12 @@ class _SupplierConfirmCard extends StatelessWidget {
                     minimumSize: const Size(0, 56),
                   ),
                   child: Text(
-                    'أنا متاح',
+                    l10n.orderArrivalIAmAvailable,
                     style: GoogleFonts.cairo(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                       color: Colors.white,
+                      height: 1.1,
                     ),
                   ),
                 ),
