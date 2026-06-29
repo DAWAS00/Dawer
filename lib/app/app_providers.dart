@@ -14,8 +14,8 @@ import '../data/repositories/supabase_hub_repository.dart';
 import '../data/repositories/supabase_order_repository.dart';
 import '../data/repositories/supabase_wallet_repository.dart';
 import '../data/services/app_order_store.dart';
+import '../data/services/fcm_notification_service.dart';
 import '../data/services/mock_signup_orchestrator.dart';
-import '../data/services/noop_notification_service.dart';
 import '../data/services/signup_orchestrator.dart';
 import '../data/services/user_signup_service.dart';
 import '../domain/chat/repositories/i_chat_repository.dart';
@@ -47,7 +47,7 @@ List buildProviders({
     Provider<LocalStore>.value(value: localStore),
 
     Provider<INotificationService>(
-      create: (_) => const NoopNotificationService(),
+      create: (_) => FcmNotificationService.instance,
     ),
 
     // ── Data repositories ───────────────────────────────────────────────────

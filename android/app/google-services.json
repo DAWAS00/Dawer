@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "283403520293",
+    "project_id": "dawer-prod",
+    "storage_bucket": "dawer-prod.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283403520293:android:b14597ce12d4cae5e2f2cc",
+        "android_client_info": {
+          "package_name": "com.example.dwaar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfR0PD0yckHx8Nm14OKL9ZH8MmaG-kEYg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
