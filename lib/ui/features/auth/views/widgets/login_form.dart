@@ -55,33 +55,62 @@ class LoginForm extends StatelessWidget {
                     const SizedBox(height: 12),
                     Directionality(
                       textDirection: TextDirection.ltr,
-                      child: TextFormField(
-                        key: const ValueKey('phone_input'),
-                        decoration: InputDecoration(
-                          hintText: '07XXXXXXXX',
-                          hintStyle: GoogleFonts.dmSans(
-                            fontSize: 16,
-                            color: const Color(0xFF6B7280).withValues(alpha: 0.5),
+                      child: Row(
+                        children: [
+                          // Jordan country-code badge (fixed, non-editable)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE6E9E7),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '🇯🇴 +962',
+                              style: GoogleFonts.dmSans(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF191C1B),
+                              ),
+                            ),
                           ),
-                          filled: true,
-                          fillColor: const Color(0xFFE6E9E7),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: TextFormField(
+                              key: const ValueKey('phone_input'),
+                              decoration: InputDecoration(
+                                hintText: '7XXXXXXXX',
+                                hintStyle: GoogleFonts.dmSans(
+                                  fontSize: 16,
+                                  color: const Color(0xFF6B7280)
+                                      .withValues(alpha: 0.5),
+                                ),
+                                filled: true,
+                                fillColor: const Color(0xFFE6E9E7),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide.none,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 16),
+                                counterText: '',
+                              ),
+                              keyboardType: TextInputType.phone,
+                              maxLength: 9,
+                              style: GoogleFonts.dmSans(
+                                fontSize: 16,
+                                color: const Color(0xFF191C1B),
+                              ),
+                              onChanged: (val) {
+                                // Normalize to 07XXXXXXXX before storing
+                                final normalized = val.startsWith('0')
+                                    ? val
+                                    : '0$val';
+                                viewModel.setPhone(normalized);
+                              },
+                            ),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 16),
-                          counterText: '',
-                        ),
-                        keyboardType: TextInputType.phone,
-                        maxLength: 10,
-                        style: GoogleFonts.dmSans(
-                          fontSize: 16,
-                          color: const Color(0xFF191C1B),
-                        ),
-                        onChanged: (val) {
-                          viewModel.setPhone(val);
-                        },
+                        ],
                       ),
                     ),
                     if (viewModel.error != null) ...[

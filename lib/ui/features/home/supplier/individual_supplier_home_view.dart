@@ -99,6 +99,10 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
         showMilestones: true,
         showReportCenter: true,
         showProfitability: true,
+        showGreenCredits: true,
+        greenPoints: context.read<AppOrderStore>().greenPointsFor(
+              context.read<IAuthRepository>().currentSession?.userId ?? '',
+            ),
       ),
       SupplierProfileTab(
         user: vm.user,

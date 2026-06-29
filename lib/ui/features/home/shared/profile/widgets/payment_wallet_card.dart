@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../../core/constants/app_colors.dart';
+import '../../../../../../l10n/l10n.dart';
 
 /// Government payment portal — منصة فواتيركم (eFawateercom), operated by the
 /// Central Bank of Jordan. All government-adjacent services in Jordan collect
@@ -18,6 +19,8 @@ Future<void> _openEfawateercom() async {
   }
 }
 
+enum _WalletVariant { driver, supplier, company }
+
 /// Role-aware payment / wallet section on the profile page.
 ///
 /// Three variants via named constructors:
@@ -28,12 +31,12 @@ Future<void> _openEfawateercom() async {
 /// Every variant ends with the shared eFawateercom government-payment row.
 class PaymentWalletCard extends StatelessWidget {
   const PaymentWalletCard._({
-    required this.title,
+    required _WalletVariant variant,
     required this.icon,
     required this.body,
-  });
+  }) : _variant = variant;
 
-  final String title;
+  final _WalletVariant _variant;
   final IconData icon;
   final Widget body;
 
@@ -44,7 +47,7 @@ class PaymentWalletCard extends StatelessWidget {
     VoidCallback? onWithdraw,
   }) {
     return PaymentWalletCard._(
-      title: 'محفظتي',
+      variant: _WalletVariant.driver,
       icon: Icons.account_balance_wallet_rounded,
       body: _DriverBody(
         balance: balance,
@@ -60,7 +63,7 @@ class PaymentWalletCard extends StatelessWidget {
     VoidCallback? onViewRewards,
   }) {
     return PaymentWalletCard._(
-      title: 'نقاطي ومكافآتي',
+      variant: _WalletVariant.supplier,
       icon: Icons.emoji_events_rounded,
       body: _SupplierBody(points: points, onViewRewards: onViewRewards),
     );
@@ -74,7 +77,7 @@ class PaymentWalletCard extends StatelessWidget {
     VoidCallback? onViewInvoice,
   }) {
     return PaymentWalletCard._(
-      title: 'الفوترة والمدفوعات',
+      variant: _WalletVariant.company,
       icon: Icons.receipt_long_rounded,
       body: _CompanyBody(
         periodLabel: periodLabel,
@@ -85,10 +88,19 @@ class PaymentWalletCard extends StatelessWidget {
     );
   }
 
+  String _resolveTitle(AppLocalizations l10n) {
+    return switch (_variant) {
+      _WalletVariant.driver => l10n.walletTitle,
+      _WalletVariant.supplier => l10n.walletPointsAndRewards,
+      _WalletVariant.company => l10n.walletBillingPayments,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = context.l10n;
 
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 4, 20, 20),
@@ -118,7 +130,7 @@ class PaymentWalletCard extends StatelessWidget {
                 Icon(icon, size: 20, color: theme.primaryColor),
                 const SizedBox(width: 8),
                 Text(
-                  title,
+                  _resolveTitle(l10n),
                   style: GoogleFonts.cairo(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -157,13 +169,14 @@ class _DriverBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     return Column(
       children: [
         Row(
           children: [
             Expanded(
               child: _AmountColumn(
-                label: 'الرصيد المتاح',
+                label: l10n.walletAvailableBalance,
                 amount: balance,
                 emphasize: true,
               ),
@@ -171,7 +184,7 @@ class _DriverBody extends StatelessWidget {
             Container(width: 1, height: 36, color: theme.dividerColor),
             Expanded(
               child: _AmountColumn(
-                label: 'المحجوز',
+                label: l10n.walletHeldAmount,
                 amount: heldAmount,
               ),
             ),
@@ -193,7 +206,7 @@ class _DriverBody extends StatelessWidget {
               ),
             ),
             label: Text(
-              'طلب صرف رصيد',
+              l10n.walletWithdrawButton,
               style: GoogleFonts.cairo(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
@@ -220,6 +233,7 @@ class _AmountColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     return Column(
       children: [
         Text(
@@ -233,7 +247,7 @@ class _AmountColumn extends StatelessWidget {
         FittedBox(
           fit: BoxFit.scaleDown,
           child: Text(
-            '${amount.toStringAsFixed(2)} د.أ',
+            '${amount.toStringAsFixed(2)} ${l10n.currencyJodShort}',
             textDirection: TextDirection.ltr,
             style: GoogleFonts.dmSans(
               fontSize: emphasize ? 22 : 18,
@@ -262,6 +276,7 @@ class _SupplierBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final intoTier = points % _tierStep;
     final progress = intoTier / _tierStep;
     final remaining = _tierStep - intoTier;
@@ -285,7 +300,7 @@ class _SupplierBody extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
-                'نقطة',
+                l10n.walletPointUnit,
                 style: GoogleFonts.cairo(
                   fontSize: 14,
                   color: theme.textTheme.bodyMedium?.color,
@@ -306,7 +321,7 @@ class _SupplierBody extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'تبقّى $remaining نقطة للمكافأة القادمة',
+          l10n.walletPointsToNextReward('$remaining'),
           textAlign: TextAlign.right,
           style: GoogleFonts.cairo(
             fontSize: 12,
@@ -328,7 +343,7 @@ class _SupplierBody extends StatelessWidget {
               ),
             ),
             label: Text(
-              'عرض المكافآت',
+              l10n.walletViewRewards,
               style: GoogleFonts.cairo(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
@@ -359,13 +374,14 @@ class _CompanyBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
           children: [
             Text(
-              'الفترة الحالية:',
+              l10n.walletCurrentPeriod,
               style: GoogleFonts.cairo(
                 fontSize: 13,
                 color: theme.textTheme.bodyMedium?.color,
@@ -388,14 +404,14 @@ class _CompanyBody extends StatelessWidget {
             Expanded(
               child: _MiniStat(
                 value: '$shipments',
-                label: 'الشحنات',
+                label: l10n.walletShipments,
               ),
             ),
             Container(width: 1, height: 32, color: theme.dividerColor),
             Expanded(
               child: _MiniStat(
                 value: weightLabel,
-                label: 'الوزن (كغ)',
+                label: l10n.walletWeightKg,
               ),
             ),
           ],
@@ -415,7 +431,7 @@ class _CompanyBody extends StatelessWidget {
               ),
             ),
             label: Text(
-              'عرض الفاتورة',
+              l10n.walletViewInvoice,
               style: GoogleFonts.cairo(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
@@ -467,6 +483,7 @@ class _MiniStat extends StatelessWidget {
 class _EfawateercomRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return InkWell(
       onTap: _openEfawateercom,
       borderRadius: const BorderRadius.vertical(bottom: Radius.circular(18)),
@@ -493,7 +510,7 @@ class _EfawateercomRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'الدفع عبر فواتيركم',
+                    l10n.walletEfawateerTitle,
                     style: GoogleFonts.cairo(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -502,7 +519,7 @@ class _EfawateercomRow extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'منصة الدفع الإلكتروني الحكومية',
+                    l10n.walletEfawateerSubtitle,
                     style: GoogleFonts.cairo(
                       fontSize: 11,
                       color: Theme.of(context).textTheme.bodyMedium?.color,

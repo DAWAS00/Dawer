@@ -24,6 +24,7 @@ import 'widgets/streak_heatmap.dart';
 import 'widgets/trend_chart.dart';
 import 'widgets/waste_profitability_chart.dart';
 import 'widgets/waste_type_breakdown.dart';
+import 'widgets/green_level_card.dart';
 
 /// Which metric the hero card leads with.
 ///
@@ -63,6 +64,8 @@ class AnalyticsTab extends StatelessWidget {
     this.showCycleTime = false,
     this.showProfitability = false,
     this.showEarningsEfficiency = false,
+    this.greenPoints = 0,
+    this.showGreenCredits = false,
   });
 
   final String userId;
@@ -82,6 +85,12 @@ class AnalyticsTab extends StatelessWidget {
   final bool showProfitability;
   final bool showEarningsEfficiency;
 
+  /// The user's current خُضَر balance. Shown as a GreenLevelCard section.
+  final int greenPoints;
+
+  /// Whether to show the green credits section. Set to true for all roles.
+  final bool showGreenCredits;
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -96,6 +105,8 @@ class AnalyticsTab extends StatelessWidget {
         showCycleTime: showCycleTime,
         showProfitability: showProfitability,
         showEarningsEfficiency: showEarningsEfficiency,
+        greenPoints: greenPoints,
+        showGreenCredits: showGreenCredits,
       ),
     );
   }
@@ -112,6 +123,8 @@ class _AnalyticsTabBody extends StatelessWidget {
     required this.showCycleTime,
     required this.showProfitability,
     required this.showEarningsEfficiency,
+    required this.greenPoints,
+    required this.showGreenCredits,
   });
 
   final String userId;
@@ -123,6 +136,8 @@ class _AnalyticsTabBody extends StatelessWidget {
   final bool showCycleTime;
   final bool showProfitability;
   final bool showEarningsEfficiency;
+  final int greenPoints;
+  final bool showGreenCredits;
 
   @override
   Widget build(BuildContext context) {
@@ -259,6 +274,13 @@ class _AnalyticsTabBody extends StatelessWidget {
               ).animate().fadeIn(delay: 80.ms, duration: 300.ms),
 
               const SizedBox(height: 28),
+
+              // ── Green Credits Level ────────────────────────────────────
+              if (showGreenCredits) ...[
+                _SectionHeader(title: 'مستوى خُضَر'),
+                GreenLevelCard(greenPoints: greenPoints),
+                const SizedBox(height: 28),
+              ],
 
               // ── Trend ──────────────────────────────────────────────────
               _SectionHeader(title: 'الاتجاه'),

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/models/user_role.dart';
@@ -33,7 +33,7 @@ class SupplierProfileTab extends StatelessWidget {
 
   void _openRewards(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => RewardsView(totalPoints: totalPoints),
+      builder: (_) => RewardsView(userId: user.id),
     ));
   }
 

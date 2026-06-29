@@ -77,34 +77,54 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
           
           // Segmented Control for Lists
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
-              child: AnimatedToggleSwitch<int>.size(
-                current: _viewMode,
-                values: const [0, 1],
-                indicatorSize: const Size.fromWidth(200),
-                customIconBuilder: (context, local, global) {
-                  final text = local.value == 0 ? l10n.recyclingIncomingShipmentsCount(widget.incoming.length) : l10n.recyclingActiveJobsCount(widget.jobs.length);
-                  final color = Color.lerp(AppColors.mutedText, AppColors.surface, local.animationValue);
-                  return Text(
-                    text,
-                    style: GoogleFonts.cairo(
-                      color: color,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  );
-                },
-                borderWidth: 4.0,
-                style: ToggleStyle(
-                  indicatorColor: AppColors.primaryGreen,
-                  backgroundColor: AppColors.surface,
-                  borderColor: AppColors.borderSubtle,
-                  borderRadius: BorderRadius.circular(100),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                const padding = EdgeInsets.fromLTRB(16, 32, 16, 16);
+                final availableWidth = constraints.maxWidth - (padding.left + padding.right);
+                final tabWidth = (availableWidth / 2) - 4;
+                final textWidth = tabWidth - 12;
+
+                return Padding(
+                  padding: padding,
+                  child: AnimatedToggleSwitch<int>.size(
+                    current: _viewMode,
+                    values: const [0, 1],
+                    indicatorSize: Size.fromWidth(tabWidth),
+                    customIconBuilder: (context, local, global) {
+                      final text = local.value == 0
+                          ? l10n.recyclingIncomingShipmentsCount(widget.incoming.length)
+                          : l10n.recyclingActiveJobsCount(widget.jobs.length);
+                      final color = Color.lerp(AppColors.mutedText, AppColors.surface, local.animationValue);
+                      return SizedBox(
+                        width: textWidth,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Text(
+                              text,
+                              style: GoogleFonts.cairo(
+                                color: color,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    borderWidth: 4.0,
+                    style: ToggleStyle(
+                      indicatorColor: AppColors.primaryGreen,
+                      backgroundColor: AppColors.surface,
+                      borderColor: AppColors.borderSubtle,
+                      borderRadius: BorderRadius.circular(100),
                 ),
                 onChanged: (val) => setState(() => _viewMode = val),
-              ).animate().fadeIn(duration: 300.ms),
-            ),
+                  ),
+                );
+              },
+            ).animate().fadeIn(duration: 300.ms),
           ),
           
           // Dynamic List Content

@@ -32,7 +32,9 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final localStore = await LocalStore.init();
 
-  const mockAuth = false;
+  // mockAuth = true → keep MockAuthRepository (phone OTP not required for testing).
+  // Flip to false when real Supabase phone OTP is configured.
+  const mockAuth = true ;
 
   runApp(
     DawerApp(

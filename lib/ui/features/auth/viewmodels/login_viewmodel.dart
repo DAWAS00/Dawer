@@ -54,6 +54,7 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   /// Requests an OTP for the provided phone number.
+  /// Accepts either 9-digit (7XXXXXXXX) or 10-digit (07XXXXXXXX) local format.
   Future<void> requestOtp(String phone) async {
     _phone = phone.trim();
     if (_phone.isEmpty) {
@@ -61,8 +62,12 @@ class LoginViewModel extends ChangeNotifier {
       notifyListeners();
       return;
     }
+    // Accept 9-digit (7XXXXXXXX) and normalise to 10-digit (07XXXXXXXX)
+    if (_phone.length == 9 && RegExp(r'^7\d{8}$').hasMatch(_phone)) {
+      _phone = '0$_phone';
+    }
     if (_phone.length != 10 || !RegExp(r'^07\d{8}$').hasMatch(_phone)) {
-      _error = 'رقم الهاتف يجب أن يتكون من 10 أرقام ويبدأ بـ 07 (مثال: 07XXXXXXXX)';
+      _error = 'أدخل الرقم بالصيغة: 7XXXXXXXX (9 أرقام)';
       notifyListeners();
       return;
     }
@@ -71,7 +76,7 @@ class LoginViewModel extends ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    // Normalize for backend/firebase
+    // Convert 07XXXXXXXX → +9627XXXXXXXX
     final normalizedPhone = '+962${_phone.substring(1)}';
 
     final result = await _authRepository.requestOtp(normalizedPhone);

@@ -1,60 +1,122 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/date_formatter.dart';
 import '../../../../../data/models/reward_transaction.dart';
+import '../../../../../data/services/app_order_store.dart';
+import '../../../../../domain/entities/green_level.dart';
 import '../../../../../l10n/l10n.dart';
 
-/// Phase 10 — Rewards Redemption UI.
-/// Shows the supplier's points balance, progress to next tier,
-/// and a history of reward transactions.
-class RewardsView extends StatelessWidget {
-  final int totalPoints;
-  final List<RewardTransaction> transactions;
-
-  const RewardsView({
-    super.key,
-    required this.totalPoints,
-    this.transactions = const [],
+/// A single redemption offer in the خُضَر catalogue.
+class _RedeemOption {
+  const _RedeemOption({
+    required this.cost,
+    required this.title,
+    required this.reward,
+    required this.icon,
   });
+  final int cost;
+  final String title;
+  final String reward;
+  final IconData icon;
+}
 
-  List<(int, String, Color)> _tiers(BuildContext context) => [
-    (0, context.l10n.tierBronze, const Color(0xFFB45309)),
-    (100, context.l10n.tierSilver, const Color(0xFF6B7280)),
-    (300, context.l10n.tierGold, const Color(0xFFD97706)),
-    (600, context.l10n.tierPlatinum, const Color(0xFF1E40AF)),
+/// خُضَر Green Credits rewards screen — shared by driver and supplier.
+///
+/// Reads the live balance + transaction history from [AppOrderStore] for
+/// [userId] and lets the user redeem credits for real rewards (balance is
+/// deducted and a redemption transaction is recorded).
+class RewardsView extends StatelessWidget {
+  final String userId;
+
+  const RewardsView({super.key, required this.userId});
+
+  static const List<_RedeemOption> _options = [
+    _RedeemOption(
+      cost: 500,
+      title: 'خصم على الطلبات',
+      reward: '٥ د.أ',
+      icon: Icons.discount_rounded,
+    ),
+    _RedeemOption(
+      cost: 1000,
+      title: 'قسيمة شراء',
+      reward: '١٢ د.أ',
+      icon: Icons.card_giftcard_rounded,
+    ),
+    _RedeemOption(
+      cost: 2000,
+      title: 'شحن مجاني',
+      reward: 'لمدة شهر',
+      icon: Icons.local_shipping_rounded,
+    ),
   ];
 
-  (String, Color, int) _currentTier(BuildContext context) {
-    final tiers = _tiers(context);
-    for (int i = tiers.length - 1; i >= 0; i--) {
-      if (totalPoints >= tiers[i].$1) {
-        return (tiers[i].$2, tiers[i].$3, tiers[i].$1);
-      }
-    }
-    return (tiers[0].$2, tiers[0].$3, tiers[0].$1);
-  }
+  Future<void> _confirmRedeem(
+    BuildContext context,
+    _RedeemOption option,
+  ) async {
+    final store = context.read<AppOrderStore>();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('تأكيد الاستبدال',
+            style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        content: Text(
+          'سيتم خصم ${option.cost} خُضَر مقابل "${option.title} — ${option.reward}". هل تريد المتابعة؟',
+          style: GoogleFonts.cairo(),
+          textAlign: TextAlign.right,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('إلغاء', style: GoogleFonts.cairo()),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryGreen),
+            child: Text('استبدال',
+                style: GoogleFonts.cairo(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
 
-  int _nextTierThreshold(BuildContext context) {
-    for (final tier in _tiers(context)) {
-      if (totalPoints < tier.$1) return tier.$1;
-    }
-    return _tiers(context).last.$1;
+    final ok = store.redeemGreenCredits(
+      userId,
+      cost: option.cost,
+      description: 'استبدال: ${option.title} — ${option.reward}',
+    );
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        ok
+            ? 'تم الاستبدال بنجاح 🎉 ${option.reward}'
+            : 'رصيد خُضَر غير كافٍ',
+        style: GoogleFonts.cairo(color: Colors.white),
+      ),
+      backgroundColor:
+          ok ? const Color(0xFF166534) : const Color(0xFF991B1B),
+      behavior: SnackBarBehavior.floating,
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
-    final (tierName, tierColor, tierStart) = _currentTier(context);
-    final nextThreshold = _nextTierThreshold(context);
-    final progress = nextThreshold > tierStart
-        ? (totalPoints - tierStart) / (nextThreshold - tierStart)
-        : 1.0;
+    final store = context.watch<AppOrderStore>();
+    final points = store.greenPointsFor(userId);
+    final transactions = store.greenTransactionsFor(userId);
+    final level = GreenLevelInfo.fromPoints(points);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F5),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF06402B),
+        backgroundColor: AppColors.primaryGreen,
         foregroundColor: Colors.white,
-        title: Text(context.l10n.rewardsTitle,
+        title: Text('مكافآت خُضَر',
             style: GoogleFonts.cairo(
                 fontWeight: FontWeight.bold, color: Colors.white)),
         centerTitle: true,
@@ -62,30 +124,33 @@ class RewardsView extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          _buildBalanceCard(context, tierName, tierColor, progress, nextThreshold),
+          _BalanceCard(points: points, level: level),
           const SizedBox(height: 20),
-          _buildRedemptionSection(context),
+          _buildRedemptionSection(context, points),
           const SizedBox(height: 20),
-          if (transactions.isNotEmpty) ...[
-            Text(context.l10n.rewardsHistoryTitle,
-                textAlign: TextAlign.right,
-                style: GoogleFonts.cairo(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF002819))),
-            const SizedBox(height: 12),
-            ...transactions.map((t) => _TransactionTile(transaction: t)),
-          ] else
-            Center(
-              child: Column(
-                children: [
-                  const Icon(Icons.emoji_events_outlined,
-                      size: 64, color: Color(0xFFD97706)),
-                  const SizedBox(height: 12),
-                  Text(context.l10n.rewardsNoHistory,
-                      style: GoogleFonts.cairo(
-                          fontSize: 14, color: const Color(0xFF717973))),
-                ],
+          Text(context.l10n.rewardsHistoryTitle,
+              textAlign: TextAlign.right,
+              style: GoogleFonts.cairo(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF002819))),
+          const SizedBox(height: 12),
+          if (transactions.isNotEmpty)
+            ...transactions.map((t) => _TransactionTile(transaction: t))
+          else
+            Padding(
+              padding: const EdgeInsets.only(top: 24),
+              child: Center(
+                child: Column(
+                  children: [
+                    const Icon(Icons.eco_outlined,
+                        size: 64, color: AppColors.primaryGreen),
+                    const SizedBox(height: 12),
+                    Text(context.l10n.rewardsNoHistory,
+                        style: GoogleFonts.cairo(
+                            fontSize: 14, color: const Color(0xFF717973))),
+                  ],
+                ),
               ),
             ),
         ],
@@ -93,13 +158,100 @@ class RewardsView extends StatelessWidget {
     );
   }
 
-  Widget _buildBalanceCard(
-      BuildContext context, String tierName, Color tierColor, double progress, int nextThreshold) {
+  Widget _buildRedemptionSection(BuildContext context, int points) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text('استبدل نقاط خُضَر',
+            textAlign: TextAlign.right,
+            style: GoogleFonts.cairo(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF002819))),
+        const SizedBox(height: 12),
+        Row(
+          children: _options.map((o) {
+            final affordable = points >= o.cost;
+            return Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Opacity(
+                  opacity: affordable ? 1.0 : 0.5,
+                  child: GestureDetector(
+                    onTap: affordable
+                        ? () => _confirmRedeem(context, o)
+                        : null,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: affordable
+                              ? AppColors.primaryGreen.withValues(alpha: 0.4)
+                              : const Color(0xFFE6E9E7),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.04),
+                              blurRadius: 6),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(o.icon,
+                              color: AppColors.primaryGreen, size: 28),
+                          const SizedBox(height: 6),
+                          Text(o.title,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.cairo(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF002819))),
+                          const SizedBox(height: 2),
+                          Text(o.reward,
+                              style: GoogleFonts.cairo(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primaryGreen)),
+                          const SizedBox(height: 4),
+                          Text('${o.cost} خُضَر',
+                              style: GoogleFonts.cairo(
+                                  fontSize: 10,
+                                  color: const Color(0xFF717973))),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+}
+
+class _BalanceCard extends StatelessWidget {
+  const _BalanceCard({required this.points, required this.level});
+  final int points;
+  final GreenLevel level;
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = level.isMaxLevel
+        ? 1.0
+        : ((points - level.lowerThreshold) /
+                (level.nextThreshold - level.lowerThreshold))
+            .clamp(0.0, 1.0);
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [const Color(0xFF06402B), const Color(0xFF1E6B35)],
+        gradient: const LinearGradient(
+          colors: [AppColors.primaryGreen, Color(0xFF1E6B35)],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
         ),
@@ -114,118 +266,58 @@ class RewardsView extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: tierColor.withValues(alpha: 0.2),
+                  color: Colors.white.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: tierColor.withValues(alpha: 0.5)),
+                  border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.4)),
                 ),
-                child: Text(tierName,
+                child: Text('${level.emoji} ${level.arabicLabel}',
                     style: GoogleFonts.cairo(
-                        fontSize: 12,
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
-                        color: tierColor)),
+                        color: Colors.white)),
               ),
               const Spacer(),
-              const Icon(Icons.emoji_events_rounded,
-                  color: Color(0xFFFFC107), size: 28),
+              const Icon(Icons.eco_rounded,
+                  color: Color(0xFFB9F6CA), size: 28),
             ],
           ),
           const SizedBox(height: 16),
-          Text(
-            '$totalPoints',
-            style: GoogleFonts.dmSans(
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-                color: Colors.white),
-          ),
-          Text(context.l10n.rewardsPointsLabel,
+          Text('$points',
+              style: GoogleFonts.dmSans(
+                  fontSize: 48,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white)),
+          Text('خُضَر',
               style: GoogleFonts.cairo(
-                  fontSize: 14, color: Colors.white.withValues(alpha: 0.8))),
+                  fontSize: 14,
+                  color: Colors.white.withValues(alpha: 0.8))),
           const SizedBox(height: 16),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
-              value: progress.clamp(0.0, 1.0),
+              value: progress,
               backgroundColor: Colors.white.withValues(alpha: 0.2),
               valueColor:
-                  const AlwaysStoppedAnimation<Color>(Color(0xFFFFC107)),
+                  const AlwaysStoppedAnimation<Color>(Color(0xFFB9F6CA)),
               minHeight: 8,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            context.l10n.rewardsProgressText(totalPoints, nextThreshold),
+            level.isMaxLevel
+                ? 'وصلت لأعلى مستوى — حارس الغابة 🌍'
+                : '$points / ${level.nextThreshold} للمستوى التالي',
             style: GoogleFonts.cairo(
-                fontSize: 11, color: Colors.white.withValues(alpha: 0.7)),
+                fontSize: 11, color: Colors.white.withValues(alpha: 0.75)),
           ),
+          const SizedBox(height: 4),
+          Text(level.unlockDescription,
+              style: GoogleFonts.cairo(
+                  fontSize: 11,
+                  color: Colors.white.withValues(alpha: 0.6))),
         ],
       ),
-    );
-  }
-
-  Widget _buildRedemptionSection(BuildContext context) {
-    final options = [
-      (Icons.discount_rounded, context.l10n.rewardsDiscountOrders, context.l10n.rewards50Points),
-      (Icons.card_giftcard_rounded, context.l10n.rewardsGiftCard, context.l10n.rewards100Points),
-      (Icons.local_shipping_rounded, context.l10n.rewardsFreeDelivery, context.l10n.rewards30Points),
-    ];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(context.l10n.rewardsRedeem,
-            textAlign: TextAlign.right,
-            style: GoogleFonts.cairo(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF002819))),
-        const SizedBox(height: 12),
-        Row(
-          children: options.map((o) {
-            return Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: GestureDetector(
-                  onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(context.l10n.rewardsComingSoon,
-                          style: GoogleFonts.cairo()),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16, horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.04),
-                            blurRadius: 6),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(o.$1, color: const Color(0xFF06402B), size: 28),
-                        const SizedBox(height: 6),
-                        Text(o.$2,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF002819))),
-                        const SizedBox(height: 2),
-                        Text(o.$3,
-                            style: GoogleFonts.cairo(
-                                fontSize: 10, color: const Color(0xFF717973))),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
     );
   }
 }
@@ -262,18 +354,21 @@ class _TransactionTile extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(transaction.description,
-                  style: GoogleFonts.cairo(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF002819))),
-              Text(DateFormatter.relative(transaction.createdAt),
-                  style: GoogleFonts.cairo(
-                      fontSize: 11, color: const Color(0xFF717973))),
-            ],
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(transaction.description,
+                    textAlign: TextAlign.right,
+                    style: GoogleFonts.cairo(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF002819))),
+                Text(DateFormatter.relative(transaction.createdAt),
+                    style: GoogleFonts.cairo(
+                        fontSize: 11, color: const Color(0xFF717973))),
+              ],
+            ),
           ),
         ],
       ),

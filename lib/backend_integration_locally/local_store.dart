@@ -21,6 +21,7 @@ class LocalStore {
   static const String _marketDraftKey = 'dwaar_market_draft';
   static const String _pickupDraftKey = 'dwaar_pickup_draft';
   static const String _firstLaunchKey = 'dwaar_first_launch_done';
+  static const String _greenPointsKeyPrefix = 'dwaar_green_points_';
 
   /// Async factory. Must be awaited exactly once during app bootstrap.
   static Future<LocalStore> init() async {
@@ -38,6 +39,17 @@ class LocalStore {
 
   Future<void> clearAllUsers() async {
     await _prefs.remove(_usersKey);
+  }
+
+  // ── Green Credits ─────────────────────────────────────────────────────────
+
+  /// Reads the cached خُضَر balance for [userId]. Returns 0 if never written.
+  int readGreenPoints(String userId) =>
+      _prefs.getInt('$_greenPointsKeyPrefix$userId') ?? 0;
+
+  /// Persists [points] as the خُضَر balance for [userId].
+  Future<void> writeGreenPoints(String userId, int points) async {
+    await _prefs.setInt('$_greenPointsKeyPrefix$userId', points);
   }
 
   // ── Orders ───────────────────────────────────────────────────────────────

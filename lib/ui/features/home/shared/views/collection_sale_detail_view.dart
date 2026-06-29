@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order/order.dart';
 import 'package:dwaar/ui/common/map/route_map_placeholder.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Full-screen detail view for a [OrderType.collectionSale] commitment.
 /// Shows drop-off location, delivery method, transaction type, and status.
@@ -15,6 +16,7 @@ class CollectionSaleDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F5),
       appBar: AppBar(
@@ -23,7 +25,7 @@ class CollectionSaleDetailView extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'تفاصيل الالتزام',
+          l10n.collectionSaleDetailTitle,
           style: GoogleFonts.cairo(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -33,26 +35,26 @@ class CollectionSaleDetailView extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _buildStatusRow(),
+          _buildStatusRow(context),
           const SizedBox(height: 16),
           if (sale.pickupLat != null && sale.dropoffLat != null) ...[
             _buildMapSection(),
             const SizedBox(height: 12),
           ],
-          _buildDropoffCard(),
+          _buildDropoffCard(context),
           const SizedBox(height: 12),
           if (sale.collectionDeliveryMethod != null ||
               sale.collectionTransactionType != null) ...[
-            _buildChoicesCard(),
+            _buildChoicesCard(context),
             const SizedBox(height: 12),
           ],
-          _buildWasteCard(),
+          _buildWasteCard(context),
           if (sale.pricePerKg != null || sale.itemPrice != null) ...[
             const SizedBox(height: 12),
-            _buildPricingCard(),
+            _buildPricingCard(context),
           ],
           const SizedBox(height: 12),
-          _buildMetaCard(),
+          _buildMetaCard(context),
         ],
       ),
     );
@@ -71,7 +73,8 @@ class CollectionSaleDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusRow() {
+  Widget _buildStatusRow(BuildContext context) {
+    final l10n = context.l10n;
     final isNew = _isNew;
     return Row(
       children: [
@@ -83,7 +86,7 @@ class CollectionSaleDetailView extends StatelessWidget {
               color: const Color(0xFF14401F),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text('جديد',
+            child: Text(l10n.collectionSaleNew,
                 style: GoogleFonts.cairo(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -116,7 +119,8 @@ class CollectionSaleDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildDropoffCard() {
+  Widget _buildDropoffCard(BuildContext context) {
+    final l10n = context.l10n;
     return _card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -127,7 +131,7 @@ class CollectionSaleDetailView extends StatelessWidget {
                   color: Color(0xFF14401F), size: 20),
               const Spacer(),
               Text(
-                'موقع التسليم',
+                l10n.collectionSaleDeliveryLocationNoColon,
                 style: GoogleFonts.cairo(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -157,7 +161,7 @@ class CollectionSaleDetailView extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                'الشركة: ${sale.supplierNotes}',
+                l10n.collectionSaleCompanyNote(sale.supplierNotes!),
                 style: GoogleFonts.cairo(
                     fontSize: 12, color: const Color(0xFF717973)),
               ),
@@ -168,12 +172,13 @@ class CollectionSaleDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildChoicesCard() {
+  Widget _buildChoicesCard(BuildContext context) {
+    final l10n = context.l10n;
     return _card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text('تفاصيل الاتفاق',
+          Text(l10n.collectionSaleAgreementTitle,
               style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -185,7 +190,7 @@ class CollectionSaleDetailView extends StatelessWidget {
                       CollectionDeliveryMethod.selfDelivery
                   ? Icons.directions_car_rounded
                   : Icons.local_shipping_rounded,
-              label: 'طريقة التوصيل',
+              label: l10n.collectionSaleDeliveryMethodLabel,
               value: sale.collectionDeliveryMethod!.label,
               subtitle: sale.collectionDeliveryMethod!.description,
             ),
@@ -197,7 +202,7 @@ class CollectionSaleDetailView extends StatelessWidget {
                       CollectionTransactionType.donate
                   ? Icons.volunteer_activism_rounded
                   : Icons.sell_rounded,
-              label: 'نوع المعاملة',
+              label: l10n.collectionSaleTransactionTypeLabel,
               value: sale.collectionTransactionType!.label,
               subtitle: sale.collectionTransactionType!.description,
               valueColor: sale.collectionTransactionType ==
@@ -210,12 +215,13 @@ class CollectionSaleDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildWasteCard() {
+  Widget _buildWasteCard(BuildContext context) {
+    final l10n = context.l10n;
     return _card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text('أنواع النفايات',
+          Text(l10n.collectionSaleWasteTypesLabel,
               style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -256,9 +262,13 @@ class CollectionSaleDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildPricingCard() {
+  Widget _buildPricingCard(BuildContext context) {
+    final l10n = context.l10n;
     final isPerKg = sale.paymentModel == PaymentModel.perKg;
     final price = sale.pricePerKg ?? sale.itemPrice ?? 0;
+    final priceUnit = isPerKg
+        ? '${l10n.currencyJodShort} / ${l10n.unitKg}'
+        : l10n.currencyJodShort;
     return _card(
       child: Row(
         children: [
@@ -270,7 +280,7 @@ class CollectionSaleDetailView extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              '${price.toStringAsFixed(2)} ${isPerKg ? 'د.أ / كغ' : 'د.أ'}',
+              '${price.toStringAsFixed(2)} $priceUnit',
               style: GoogleFonts.dmSans(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -278,7 +288,7 @@ class CollectionSaleDetailView extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          Text('السعر المتفق عليه',
+          Text(l10n.collectionSaleAgreedPriceNoColon,
               style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -288,23 +298,24 @@ class CollectionSaleDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildMetaCard() {
+  Widget _buildMetaCard(BuildContext context) {
+    final l10n = context.l10n;
     final diff = DateTime.now().difference(sale.createdAt);
     final ageStr = diff.inDays > 0
-        ? 'منذ ${diff.inDays} يوم'
+        ? l10n.timeAgoDays(diff.inDays)
         : diff.inHours > 0
-            ? 'منذ ${diff.inHours} ساعة'
-            : 'منذ ${diff.inMinutes} دقيقة';
+            ? l10n.timeAgoHours(diff.inHours)
+            : l10n.timeAgoMinutes(diff.inMinutes);
     return _card(
       child: Column(
         children: [
-          _metaRow('رقم الالتزام', sale.id),
+          _metaRow(l10n.collectionSaleCommitmentNumber, sale.id),
           if (sale.linkedJobId != null) ...[
             const SizedBox(height: 6),
-            _metaRow('رقم الوظيفة', sale.linkedJobId!),
+            _metaRow(l10n.collectionSaleJobNumberLabel, sale.linkedJobId!),
           ],
           const SizedBox(height: 6),
-          _metaRow('تاريخ القبول', ageStr),
+          _metaRow(l10n.collectionSaleAcceptedAt, ageStr),
         ],
       ),
     );
