@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'dawa_chat_view_model.dart';
+import 'widgets/waste_analysis_result_card.dart';
 
 /// Entry-point widget for the Dawa support chat.
 ///
@@ -42,9 +43,27 @@ class _DawaChatBody extends StatefulWidget {
 class _DawaChatBodyState extends State<_DawaChatBody> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
+  DawaChatViewModel? _vm;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Subscribe once to auto-scroll whenever a new message or state arrives.
+    final vm = context.read<DawaChatViewModel>();
+    if (_vm != vm) {
+      _vm?.removeListener(_onVmChanged);
+      _vm = vm;
+      _vm!.addListener(_onVmChanged);
+    }
+  }
+
+  void _onVmChanged() {
+    _scrollToBottom();
+  }
 
   @override
   void dispose() {
+    _vm?.removeListener(_onVmChanged);
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -55,7 +74,6 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
     if (text.trim().isEmpty) return;
     _controller.clear();
     vm.handleUserMessage(text);
-    _scrollToBottom();
   }
 
   void _showImagePicker(DawaChatViewModel vm) {
@@ -90,7 +108,7 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
               ),
               onTap: () {
                 Navigator.pop(context);
-                vm.handleImagePick(ImageSource.camera).then((_) => _scrollToBottom());
+                vm.handleImagePick(ImageSource.camera);
               },
             ),
             ListTile(
@@ -104,7 +122,7 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
               ),
               onTap: () {
                 Navigator.pop(context);
-                vm.handleImagePick(ImageSource.gallery).then((_) => _scrollToBottom());
+                vm.handleImagePick(ImageSource.gallery);
               },
             ),
             const SizedBox(height: 12),
@@ -154,16 +172,13 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
                   return _MessageBubble(
                     message: msg,
                     theme: theme,
-                    onFollowUpTap: (id) {
-                      vm.handleFollowUpTap(id);
-                      _scrollToBottom();
-                    },
+                    onFollowUpTap: (id) => vm.handleFollowUpTap(id),
                   );
                 },
               ),
             ),
 
-            // Scanning indicator
+            // Scanning indicator (ML Kit image analysis in progress)
             if (vm.isScanning)
               Padding(
                 padding:
@@ -202,9 +217,88 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
                 ),
               ),
 
+            // Oil analysis indicator (Gemini Vision running after ML Kit)
+            if (vm.isAnalyzing)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: const Color(0xFF1E5C35),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'جاري تحليل جودة الزيت بالذكاء الاصطناعي...',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+            // Thinking indicator (Gemini is generating a reply)
+            if (vm.isThinking)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: const Color(0xFF1E5C35),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'داوة تفكر...',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
             _InputBar(
               controller: _controller,
               theme: theme,
+              isBusy: vm.isBusy,
               onSend: () => _send(vm),
               onImagePick: () => _showImagePicker(vm),
             ),
@@ -291,6 +385,57 @@ class _MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     const primaryGreen = Color(0xFF1E5C35);
     final isUser = message.isUser;
+
+    // Oil analysis messages render as a rich card, not a plain bubble.
+    if (!isUser && message.wasteAnalysis != null) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            WasteAnalysisResultCard(result: message.wasteAnalysis!),
+            if (message.followUps.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  alignment: WrapAlignment.end,
+                  children: message.followUps.map((entry) {
+                    final label = entry.response.split('\n').first;
+                    final short = label.length > 30
+                        ? '${label.substring(0, 28)}…'
+                        : label;
+                    return GestureDetector(
+                      onTap: () => onFollowUpTap(entry.id),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: primaryGreen.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: primaryGreen.withValues(alpha: 0.35),
+                          ),
+                        ),
+                        child: Text(
+                          short,
+                          style: const TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: primaryGreen,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+          ],
+        ),
+      );
+    }
 
     final bubbleColor = isUser
         ? primaryGreen
@@ -428,12 +573,14 @@ class _MessageBubble extends StatelessWidget {
 class _InputBar extends StatelessWidget {
   final TextEditingController controller;
   final ThemeData theme;
+  final bool isBusy;
   final VoidCallback onSend;
   final VoidCallback onImagePick;
 
   const _InputBar({
     required this.controller,
     required this.theme,
+    required this.isBusy,
     required this.onSend,
     required this.onImagePick,
   });
@@ -454,17 +601,17 @@ class _InputBar extends StatelessWidget {
         top: false,
         child: Row(
           children: [
-            // Camera / image pick button
+            // Camera / image pick button — disabled while busy
             Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: onImagePick,
+                onTap: isBusy ? null : onImagePick,
                 customBorder: const CircleBorder(),
                 child: Padding(
                   padding: const EdgeInsets.all(8),
                   child: Icon(
                     Icons.add_photo_alternate_rounded,
-                    color: primaryGreen,
+                    color: isBusy ? Colors.grey : primaryGreen,
                     size: 26,
                   ),
                 ),
@@ -491,16 +638,17 @@ class _InputBar extends StatelessWidget {
                   ),
                 ),
                 style: const TextStyle(fontFamily: 'Cairo', fontSize: 14),
-                onSubmitted: (_) => onSend(),
+                onSubmitted: isBusy ? null : (_) => onSend(),
                 textInputAction: TextInputAction.send,
               ),
             ),
             const SizedBox(width: 8),
+            // Send button — visually disabled while busy
             Material(
-              color: primaryGreen,
+              color: isBusy ? Colors.grey.shade400 : primaryGreen,
               shape: const CircleBorder(),
               child: InkWell(
-                onTap: onSend,
+                onTap: isBusy ? null : onSend,
                 customBorder: const CircleBorder(),
                 child: const Padding(
                   padding: EdgeInsets.all(10),

@@ -25,6 +25,7 @@ import '../../../../../data/services/app_order_store.dart';
 import '../../../../../domain/entities/green_level.dart';
 import '../../../../../domain/repositories/i_auth_repository.dart';
 import '../viewmodels/driver_home_viewmodel.dart';
+import '../../shared/rewards/driver_fuel_voucher_widget.dart';
 
 class DriverProfileTab extends StatelessWidget {
   const DriverProfileTab({super.key});
@@ -154,6 +155,13 @@ class DriverProfileTab extends StatelessWidget {
                 label: context.l10n.profileContactSupport,
                 showArrow: true,
                 onTap: () => _launchHelpCenter(context),
+              ),
+
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: DriverFuelVoucherWidget(
+                    completedDeliveries: vm.totalCompletedRides),
               ),
 
               const SizedBox(height: 32),

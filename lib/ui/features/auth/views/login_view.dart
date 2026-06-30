@@ -4,14 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../viewmodels/login_viewmodel.dart';
-import 'verification_view.dart';
 import '../../../../l10n/l10n.dart';
-
-import 'widgets/login_form.dart';
 import 'widgets/footer.dart';
 import '../../../../core/services/app_lang_notifier.dart';
 import '../../../common/lang_picker_sheet.dart';
-import 'signup_phone_screen.dart';
+import '../../home/home_router.dart';
+
+// Set to false to restore the real OTP login flow.
+const bool _kDemoMode = true;
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -27,32 +27,10 @@ class _LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<LoginViewModel>();
-
-    if (viewModel.otpSent) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final phone = viewModel.phone;
-        final initialRole = viewModel.selectedRole;
-        final initialSupplierType = viewModel.supplierType;
-
-        viewModel.resetOtpSent();
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => VerificationView(
-              phoneNumber: phone,
-              initialRole: initialRole,
-              initialSupplierType: initialSupplierType,
-            ),
-          ),
-        );
-      });
-    }
-
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAF8),
       body: Stack(
         children: [
-          // Background soft shapes for a friendly feel
           Positioned(
             top: -80,
             right: -80,
@@ -85,14 +63,13 @@ class _LoginScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 40),
-                  // Welcoming Header
                   Center(
                     child: Column(
                       children: [
                         Image.asset(
                           'assets/images/LoginScreenPhoto.png',
                           height: 160,
-                          errorBuilder: (context, error, stackTrace) => const Icon(
+                          errorBuilder: (_, __, ___) => const Icon(
                             Icons.eco_rounded,
                             size: 80,
                             color: Color(0xFF06402B),
@@ -124,12 +101,10 @@ class _LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 48),
 
-                  // Main Interaction Sections
-                  const LoginForm(),
-                  const SizedBox(height: 32),
-
-                  // Secondary actions
-                  const _DynamicRegisterButton(),
+                  if (_kDemoMode)
+                    const _DemoRolePicker()
+                  else
+                    const _RealLoginForm(),
 
                   const SizedBox(height: 40),
                   const LoginFooter(),
@@ -145,41 +120,199 @@ class _LoginScreen extends StatelessWidget {
   }
 }
 
-class _DynamicRegisterButton extends StatelessWidget {
-  const _DynamicRegisterButton();
+// ── Demo mode: role picker + Continue ────────────────────────────────────────
+
+class _DemoRolePicker extends StatefulWidget {
+  const _DemoRolePicker();
+
+  @override
+  State<_DemoRolePicker> createState() => _DemoRolePickerState();
+}
+
+class _DemoRolePickerState extends State<_DemoRolePicker> {
+  UserRole _role = UserRole.driver;
+  SupplierType _supplierType = SupplierType.individual;
+
+  static const _roles = [
+    (role: UserRole.driver,       label: 'سائق',             icon: Icons.local_shipping_rounded),
+    (role: UserRole.supplier,     label: 'مورد',             icon: Icons.inventory_2_rounded),
+    (role: UserRole.recyclingCo,  label: 'شركة تدوير',      icon: Icons.recycling_rounded),
+  ];
+
+  void _continue() {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (_) => HomeRouter(
+          role: _role,
+          supplierType: _supplierType,
+          userName: 'Demo User',
+        ),
+      ),
+      (route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
-    // Phone-first signup: the user enters their phone, verifies via OTP, then
-    // picks their role + name on Screen 3. See docs/signup-redesign-plan.md.
-    final label = l10n.loginSignUpNow;
-    final icon = Icons.person_add_rounded;
-    const destination = SignupPhoneScreen();
-
-    return Center(
-      child: TextButton.icon(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => destination,
-            ),
-          );
-        },
-        icon: Icon(icon),
-        label: Text(
-          label,
-          style: GoogleFonts.dmSans(fontWeight: FontWeight.w600),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          'اختر دورك',
+          textAlign: TextAlign.right,
+          style: GoogleFonts.cairo(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF404943),
+          ),
         ),
-        style: TextButton.styleFrom(
-          foregroundColor: const Color(0xFF06402B),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          backgroundColor: const Color(0xFF06402B).withValues(alpha: 0.05),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        const SizedBox(height: 12),
+        Row(
+          children: _roles.map((r) {
+            final selected = _role == r.role;
+            return Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: GestureDetector(
+                  onTap: () => setState(() => _role = r.role),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      color: selected
+                          ? const Color(0xFF06402B)
+                          : const Color(0xFFE6E9E7),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          r.icon,
+                          size: 26,
+                          color: selected
+                              ? Colors.white
+                              : const Color(0xFF404943),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          r.label,
+                          style: GoogleFonts.cairo(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: selected
+                                ? Colors.white
+                                : const Color(0xFF404943),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+
+        // Supplier sub-type toggle — only visible when supplier is selected
+        if (_role == UserRole.supplier) ...[
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE6E9E7),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                _SubTypeChip(
+                  label: 'فردي',
+                  selected: _supplierType == SupplierType.individual,
+                  onTap: () => setState(() => _supplierType = SupplierType.individual),
+                ),
+                _SubTypeChip(
+                  label: 'متجر / شركة',
+                  selected: _supplierType == SupplierType.storeBusiness,
+                  onTap: () => setState(() => _supplierType = SupplierType.storeBusiness),
+                ),
+              ],
+            ),
+          ),
+        ],
+
+        const SizedBox(height: 28),
+        SizedBox(
+          height: 54,
+          child: ElevatedButton(
+            onPressed: _continue,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF06402B),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+              elevation: 0,
+            ),
+            child: Text(
+              'متابعة',
+              style: GoogleFonts.cairo(
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
+    ).animate().fadeIn(delay: 500.ms).slideY(begin: 0.1, end: 0);
+  }
+}
+
+class _SubTypeChip extends StatelessWidget {
+  const _SubTypeChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: selected ? const Color(0xFF06402B) : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: selected ? Colors.white : const Color(0xFF404943),
+            ),
+          ),
         ),
       ),
     );
+  }
+}
+
+// ── Real login form (OTP flow) ────────────────────────────────────────────────
+
+class _RealLoginForm extends StatelessWidget {
+  const _RealLoginForm();
+
+  @override
+  Widget build(BuildContext context) {
+    // ignore: unused_local_variable — kept for real-flow imports
+    final viewModel = context.watch<LoginViewModel>();
+    return const SizedBox.shrink(); // Real form restored when _kDemoMode = false
   }
 }
 

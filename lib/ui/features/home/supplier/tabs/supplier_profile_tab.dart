@@ -39,7 +39,11 @@ class SupplierProfileTab extends StatelessWidget {
 
   void _openRewards(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => RewardsView(userId: userId),
+      builder: (_) => RewardsView(
+        userId: userId,
+        userName: user.name,
+        completedOrders: totalOrders,
+      ),
     ));
   }
 
@@ -125,6 +129,7 @@ class SupplierProfileTab extends StatelessWidget {
               ProfileTile(icon: Icons.notifications_active_rounded, label: context.l10n.profileNotifications, value: context.l10n.profileNotificationsEnabled),
 
               const SizedBox(height: 32),
+              ProfileActionTile(icon: Icons.emoji_events_rounded, title: context.l10n.supplierMyRewards, color: const Color(0xFFD97706), onTap: () => _openRewards(context)),
               ProfileActionTile(icon: Icons.logout_rounded, title: context.l10n.logout, color: Colors.red.shade700, onTap: () => showLogoutDialog(context)),
               ProfileActionTile(icon: Icons.person_remove_rounded, title: context.l10n.profileDeleteAccount, color: Colors.red.shade700, onTap: () {}),
 

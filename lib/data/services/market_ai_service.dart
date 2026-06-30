@@ -112,7 +112,7 @@ class MarketAiService implements IMarketAiService {
 
   /// Production constructor — reads key from compile-time env.
   MarketAiService() : _model = GenerativeModel(
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.5-flash',
     apiKey: AiConfig.geminiApiKey,
     generationConfig: GenerationConfig(
       responseMimeType: 'application/json',

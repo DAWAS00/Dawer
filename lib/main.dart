@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'app/app.dart';
 import 'backend_integration_locally/local_store.dart';
 import 'core/config/ai_config.dart';
+import 'core/config/maps_config.dart';
 import 'core/services/supabase_service.dart';
 import 'data/services/gemini_service.dart';
 
@@ -28,6 +29,11 @@ void main() async {
 
   final geminiKey = dotenv.env['GEMINI_API_KEY']?.trim() ?? '';
   if (geminiKey.isNotEmpty) GeminiService.instance.init(geminiKey);
+
+  final mapsKey = dotenv.env['MAPS_API_KEY']?.trim() ?? '';
+  if (mapsKey.isNotEmpty) {
+    MapsConfig.init(mapsKey);
+  }
 
   final prefs = await SharedPreferences.getInstance();
   final localStore = await LocalStore.init();
