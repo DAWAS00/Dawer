@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -40,15 +42,40 @@ class _CreateReservationBodyState extends State<_CreateReservationBody> {
   bool _isSubmitting = false;
   String? _error;
 
+  Timer? _phoneLookupDebounce;
+  bool _isLookingUpBuyer = false;
+  String? _buyerName;
+  bool _buyerLookupAttempted = false;
+
   double get _amount => double.tryParse(_amountCtrl.text) ?? 0;
   double get _penaltyPreview => double.parse((_amount * 0.10).toStringAsFixed(2));
 
   @override
   void dispose() {
+    _phoneLookupDebounce?.cancel();
     _itemTitleCtrl.dispose();
     _phoneCtrl.dispose();
     _amountCtrl.dispose();
     super.dispose();
+  }
+
+  void _onPhoneChanged(String value) {
+    setState(() {
+      _buyerName = null;
+      _buyerLookupAttempted = false;
+    });
+    _phoneLookupDebounce?.cancel();
+    if (value.trim().isEmpty) return;
+    _phoneLookupDebounce = Timer(const Duration(milliseconds: 500), () async {
+      setState(() => _isLookingUpBuyer = true);
+      final name = await context.read<ReservationViewModel>().lookupBuyerName(value);
+      if (!mounted) return;
+      setState(() {
+        _isLookingUpBuyer = false;
+        _buyerName = name;
+        _buyerLookupAttempted = true;
+      });
+    });
   }
 
   Future<void> _submit() async {
@@ -56,7 +83,7 @@ class _CreateReservationBodyState extends State<_CreateReservationBody> {
     if (_itemTitleCtrl.text.trim().isEmpty ||
         _phoneCtrl.text.trim().isEmpty ||
         _amount <= 0) {
-      setState(() => _error = l10n.reservationBuyerNotFound);
+      setState(() => _error = l10n.reservationFieldsRequired);
       return;
     }
 
@@ -108,7 +135,11 @@ class _CreateReservationBodyState extends State<_CreateReservationBody> {
           children: [
             _label(l10n.reservationItemTitleLabel),
             const SizedBox(height: 8),
-            _field(controller: _itemTitleCtrl, hint: l10n.reservationItemTitleHint),
+            _field(
+              controller: _itemTitleCtrl,
+              hint: l10n.reservationItemTitleHint,
+              onChanged: (_) => setState(() {}),
+            ),
             const SizedBox(height: 20),
 
             _label(l10n.reservationBuyerPhoneLabel),
@@ -117,7 +148,29 @@ class _CreateReservationBodyState extends State<_CreateReservationBody> {
               controller: _phoneCtrl,
               hint: l10n.reservationBuyerPhoneHint,
               keyboardType: TextInputType.phone,
+              onChanged: _onPhoneChanged,
             ),
+            if (_isLookingUpBuyer) ...[
+              const SizedBox(height: 6),
+              Text(
+                '...جارٍ البحث',
+                style: GoogleFonts.cairo(fontSize: 12, color: AppColors.mutedText),
+              ),
+            ] else if (_buyerLookupAttempted) ...[
+              const SizedBox(height: 6),
+              Text(
+                _buyerName != null
+                    ? '${l10n.reservationBuyerTag}: $_buyerName'
+                    : l10n.reservationBuyerNotFound,
+                style: GoogleFonts.cairo(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: _buyerName != null
+                      ? AppColors.primaryGreen
+                      : AppColors.statusCancelledText,
+                ),
+              ),
+            ],
             const SizedBox(height: 20),
 
             _label(l10n.reservationInvoiceAmountLabel),

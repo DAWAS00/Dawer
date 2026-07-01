@@ -1165,6 +1165,7 @@
   "reservationBuyerPhoneLabel": "رقم هاتف المشتري",
   "reservationBuyerPhoneHint": "7XXXXXXXX",
   "reservationBuyerNotFound": "رقم الهاتف غير مسجل في التطبيق",
+  "reservationFieldsRequired": "يرجى تعبئة وصف الطلب ورقم الهاتف والمبلغ",
   "reservationInvoiceAmountLabel": "قيمة الفاتورة (د.أ)",
   "reservationDurationLabel": "مدة الحجز",
   "reservationDurationMinutes": "{minutes} دقيقة",

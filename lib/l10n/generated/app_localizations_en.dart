@@ -3036,6 +3036,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'This phone number is not registered in the app';
 
   @override
+  String get reservationFieldsRequired =>
+      'Please fill in the item description, phone number, and amount';
+
+  @override
   String get reservationInvoiceAmountLabel => 'Invoice amount (JOD)';
 
   @override

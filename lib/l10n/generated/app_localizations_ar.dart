@@ -3003,6 +3003,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reservationBuyerNotFound => 'رقم الهاتف غير مسجل في التطبيق';
 
   @override
+  String get reservationFieldsRequired =>
+      'يرجى تعبئة وصف الطلب ورقم الهاتف والمبلغ';
+
+  @override
   String get reservationInvoiceAmountLabel => 'قيمة الفاتورة (د.أ)';
 
   @override

@@ -5732,6 +5732,12 @@ abstract class AppLocalizations {
   /// **'رقم الهاتف غير مسجل في التطبيق'**
   String get reservationBuyerNotFound;
 
+  /// No description provided for @reservationFieldsRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'يرجى تعبئة وصف الطلب ورقم الهاتف والمبلغ'**
+  String get reservationFieldsRequired;
+
   /// No description provided for @reservationInvoiceAmountLabel.
   ///
   /// In ar, this message translates to:
