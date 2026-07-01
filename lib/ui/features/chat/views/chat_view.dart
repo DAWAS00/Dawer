@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/state/view_state.dart';
-import '../../../../data/chat/mock_chat_repository.dart';
 import '../../../../data/models/order/order.dart';
 import '../../../../data/models/user_role.dart';
 import '../../../../domain/chat/entities/chat_message.dart';
