@@ -12,6 +12,7 @@ import '../data/repositories/supabase_auth_repository.dart';
 import '../data/repositories/supabase_file_storage_repository.dart';
 import '../data/repositories/supabase_hub_repository.dart';
 import '../data/repositories/supabase_order_repository.dart';
+import '../data/repositories/supabase_reservation_repository.dart';
 import '../data/repositories/supabase_wallet_repository.dart';
 import '../data/services/app_order_store.dart';
 import '../data/services/fcm_notification_service.dart';
@@ -23,6 +24,7 @@ import '../domain/repositories/i_auth_repository.dart';
 import '../domain/repositories/i_file_storage_repository.dart';
 import '../domain/repositories/i_hub_repository.dart';
 import '../domain/repositories/i_order_repository.dart';
+import '../domain/repositories/i_reservation_repository.dart';
 import '../domain/repositories/i_wallet_repository.dart';
 import '../domain/services/i_notification_service.dart';
 import '../domain/services/i_signup_orchestrator.dart';
@@ -73,6 +75,12 @@ List buildProviders({
       create: (_) => useSupabase
           ? SupabaseHubRepository(SupabaseService.client)
           : const NoOpHubRepository(),
+    ),
+
+    Provider<IReservationRepository>(
+      create: (_) => useSupabase
+          ? SupabaseReservationRepository(SupabaseService.client)
+          : const NoOpReservationRepository(),
     ),
 
     Provider<IChatRepository>(
