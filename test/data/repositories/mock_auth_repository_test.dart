@@ -43,7 +43,7 @@ void main() {
     });
 
     test('verifyOtp returns success with correct session for magic driver number', () async {
-      final result = await repo.verifyOtp('0790000001', MockAuthRepository.simulatedOtp);
+      final result = await repo.verifyOtp('0791234567', MockAuthRepository.simulatedOtp);
       
       expect(result.isSuccess, isTrue);
       result.fold(
@@ -55,7 +55,7 @@ void main() {
     });
 
     test('verifyOtp normalizes phone number properly', () async {
-      final result = await repo.verifyOtp('0790000001', MockAuthRepository.simulatedOtp);
+      final result = await repo.verifyOtp('0791234567', MockAuthRepository.simulatedOtp);
       
       expect(result.isSuccess, isTrue);
       result.fold(

@@ -212,7 +212,6 @@ class _DynamicRegisterButton extends StatelessWidget {
     );
   }
 }
-
 class _LangToggleButton extends StatelessWidget {
   const _LangToggleButton();
 

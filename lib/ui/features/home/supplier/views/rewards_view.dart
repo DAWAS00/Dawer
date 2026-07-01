@@ -8,9 +8,6 @@ import '../../../../../data/services/app_order_store.dart';
 import '../../../../../data/services/eco_points_engine.dart';
 import '../../../../../domain/entities/green_level.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../shared/rewards/eco_hero_badge_widget.dart';
-import '../../shared/rewards/neighborhood_leaderboard_widget.dart';
-import '../../shared/rewards/discount_coupons_widget.dart';
 
 /// A single redemption offer in the خُضَر catalogue.
 class _RedeemOption {
@@ -26,7 +23,7 @@ class _RedeemOption {
   final IconData icon;
 }
 
-/// D3 — Enhanced Rewards System & خُضَر Green Credits.
+/// D3 — Enhanced Rewards System & خُضَر Green Credits rewards screen — shared by driver and supplier.
 ///
 /// Shows: live points balance + tier progress, Eco Hero badge (100 kg),
 /// achievement badges, redemption catalog, partner coupons,
@@ -126,7 +123,6 @@ class RewardsView extends StatelessWidget {
     final points = store.greenPointsFor(userId);
     final transactions = store.greenTransactionsFor(userId);
     final level = GreenLevelInfo.fromPoints(points);
-    
     final currentLifetimeKg = _getLifetimeKg(points);
     final isEcoHero = EcoPointsEngine.isEcoHero(currentLifetimeKg);
 
@@ -240,7 +236,6 @@ class RewardsView extends StatelessWidget {
       child: child,
     );
   }
-
   Widget _buildRedemptionSection(BuildContext context, int points) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,

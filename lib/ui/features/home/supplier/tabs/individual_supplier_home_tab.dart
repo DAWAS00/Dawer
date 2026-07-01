@@ -11,6 +11,7 @@ import '../../shared/order_card.dart';
 import '../../shared/order_details_view.dart';
 import '../../shared/viewmodels/base_supplier_viewmodel.dart';
 import '../../../../core/components/dwaar_elevated_card.dart';
+import '../../../reservations/views/reservation_inbox_view.dart';
 
 class IndividualSupplierHomeTab extends StatelessWidget {
   final String userName;
@@ -170,41 +171,54 @@ class IndividualSupplierHomeTab extends StatelessWidget {
         children: [
           Row(
             textDirection: TextDirection.rtl,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.surface.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.surface.withValues(alpha: 0.2),
-                    width: 1,
-                  ),
-                ),
-                child: const Icon(LucideIcons.user, color: AppColors.surface, size: 24),
-              ),
-              const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 textDirection: TextDirection.rtl,
                 children: [
-                  Text(
-                    l10n.supplierWelcome(userName.split(' ').first),
-                    style: GoogleFonts.cairo(
-                      fontSize: 14,
-                      color: AppColors.surface.withValues(alpha: 0.8),
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: AppColors.surface.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.surface.withValues(alpha: 0.2),
+                        width: 1,
+                      ),
                     ),
+                    child: const Icon(LucideIcons.user, color: AppColors.surface, size: 24),
                   ),
-                  Text(
-                    l10n.supplierAccountIndividual,
-                    style: GoogleFonts.cairo(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.surface,
-                    ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    textDirection: TextDirection.rtl,
+                    children: [
+                      Text(
+                        l10n.supplierWelcome(userName.split(' ').first),
+                        style: GoogleFonts.cairo(
+                          fontSize: 14,
+                          color: AppColors.surface.withValues(alpha: 0.8),
+                        ),
+                      ),
+                      Text(
+                        l10n.supplierAccountIndividual,
+                        style: GoogleFonts.cairo(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.surface,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
+              ),
+              IconButton(
+                tooltip: l10n.reservationInboxTitle,
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const ReservationInboxView()),
+                ),
+                icon: const Icon(LucideIcons.calendarClock, color: AppColors.surface),
               ),
             ],
           ).animate().fadeIn(duration: 400.ms),

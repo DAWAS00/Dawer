@@ -3,16 +3,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'app/app.dart';
 import 'backend_integration_locally/local_store.dart';
 import 'core/config/ai_config.dart';
 import 'core/config/maps_config.dart';
 import 'core/services/supabase_service.dart';
+import 'data/services/fcm_notification_service.dart';
 import 'data/services/gemini_service.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await FcmNotificationService.instance.init();
 
   try {
     await dotenv.load(fileName: '.env.local');
@@ -37,9 +43,7 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final localStore = await LocalStore.init();
-
-  // mockAuth = true → keep MockAuthRepository (phone OTP not required for testing).
-  // Flip to false when real Supabase phone OTP is configured.
+ 
   const mockAuth = true ;
 
   runApp(

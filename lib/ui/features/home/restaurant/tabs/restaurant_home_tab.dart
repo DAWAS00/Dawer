@@ -11,6 +11,8 @@ import '../../shared/order_card.dart';
 import '../../shared/order_details_view.dart';
 import '../../shared/viewmodels/base_supplier_viewmodel.dart';
 import '../../../../core/components/dwaar_elevated_card.dart';
+import '../../../reservations/views/create_reservation_view.dart';
+import '../../../reservations/views/reservation_inbox_view.dart';
 
 class RestaurantHomeTab extends StatelessWidget {
   final String userName;
@@ -170,41 +172,54 @@ class RestaurantHomeTab extends StatelessWidget {
         children: [
           Row(
             textDirection: TextDirection.rtl,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.surface.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.surface.withValues(alpha: 0.2),
-                    width: 1,
-                  ),
-                ),
-                child: const Icon(LucideIcons.store, color: AppColors.surface, size: 24),
-              ),
-              const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 textDirection: TextDirection.rtl,
                 children: [
-                  Text(
-                    l10n.supplierWelcome(userName.split(' ').first),
-                    style: GoogleFonts.cairo(
-                      fontSize: 14,
-                      color: AppColors.surface.withValues(alpha: 0.8),
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: AppColors.surface.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.surface.withValues(alpha: 0.2),
+                        width: 1,
+                      ),
                     ),
+                    child: const Icon(LucideIcons.store, color: AppColors.surface, size: 24),
                   ),
-                  Text(
-                    l10n.supplierAccountBusiness,
-                    style: GoogleFonts.cairo(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.surface,
-                    ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    textDirection: TextDirection.rtl,
+                    children: [
+                      Text(
+                        l10n.supplierWelcome(userName.split(' ').first),
+                        style: GoogleFonts.cairo(
+                          fontSize: 14,
+                          color: AppColors.surface.withValues(alpha: 0.8),
+                        ),
+                      ),
+                      Text(
+                        l10n.supplierAccountBusiness,
+                        style: GoogleFonts.cairo(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.surface,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
+              ),
+              IconButton(
+                tooltip: l10n.reservationInboxTitle,
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const ReservationInboxView()),
+                ),
+                icon: const Icon(LucideIcons.calendarClock, color: AppColors.surface),
               ),
             ],
           ).animate().fadeIn(duration: 400.ms),
@@ -236,6 +251,26 @@ class RestaurantHomeTab extends StatelessWidget {
                   color: const Color(0xFF059669),
                 ),
               ],
+            ),
+          ).animate().slideY(begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOutBack),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const CreateReservationView()),
+              ),
+              style: OutlinedButton.styleFrom(
+                backgroundColor: AppColors.surface.withValues(alpha: 0.1),
+                side: BorderSide(color: AppColors.surface.withValues(alpha: 0.3)),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              icon: const Icon(LucideIcons.calendarPlus2, color: AppColors.surface, size: 18),
+              label: Text(
+                l10n.reservationBookButton,
+                style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: AppColors.surface),
+              ),
             ),
           ).animate().slideY(begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOutBack),
         ],
