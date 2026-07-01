@@ -9,6 +9,39 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get chatbotTitle => 'Dawar Smart Assistant';
+
+  @override
+  String get chatbotInputHint => 'Type your question or send a photo...';
+
+  @override
+  String get chatbotThinking => 'Dawa is thinking...';
+
+  @override
+  String get chatbotScanningImage => 'Analyzing image...';
+
+  @override
+  String get chatbotAnalyzingOil => 'Analyzing oil quality with AI...';
+
+  @override
+  String get chatbotTakePhoto => 'Take a photo';
+
+  @override
+  String get chatbotPickFromGallery => 'Choose from gallery';
+
+  @override
+  String get chatbotImageScanResult => 'Image analysis result';
+
+  @override
+  String get chatbotOpenAssistant => 'Open Dawar assistant';
+
+  @override
+  String get chatbotOnlineNow => 'Online now • replies instantly';
+
+  @override
+  String get chatbotSendImageTooltip => 'Send a photo for analysis';
+
+  @override
   String get appTitle => 'Dawar';
 
   @override

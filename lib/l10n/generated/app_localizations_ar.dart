@@ -9,6 +9,40 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get chatbotTitle => 'مساعد دوّر الذكي';
+
+  @override
+  String get chatbotInputHint => 'اكتب سؤالك أو أرسل صورة...';
+
+  @override
+  String get chatbotThinking => 'داوة تفكر...';
+
+  @override
+  String get chatbotScanningImage => 'جاري تحليل الصورة...';
+
+  @override
+  String get chatbotAnalyzingOil =>
+      'جاري تحليل جودة الزيت بالذكاء الاصطناعي...';
+
+  @override
+  String get chatbotTakePhoto => 'التقاط صورة بالكاميرا';
+
+  @override
+  String get chatbotPickFromGallery => 'اختيار من المعرض';
+
+  @override
+  String get chatbotImageScanResult => 'نتيجة تحليل الصورة';
+
+  @override
+  String get chatbotOpenAssistant => 'افتح مساعد دوّر';
+
+  @override
+  String get chatbotOnlineNow => 'متصل الآن • يرد فوراً';
+
+  @override
+  String get chatbotSendImageTooltip => 'إرسال صورة للتحليل';
+
+  @override
   String get appTitle => 'دوّر';
 
   @override

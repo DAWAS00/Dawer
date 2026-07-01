@@ -98,6 +98,72 @@ abstract class AppLocalizations {
     Locale('en'),
   ];
 
+  /// No description provided for @chatbotTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساعد دوّر الذكي'**
+  String get chatbotTitle;
+
+  /// No description provided for @chatbotInputHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب سؤالك أو أرسل صورة...'**
+  String get chatbotInputHint;
+
+  /// No description provided for @chatbotThinking.
+  ///
+  /// In ar, this message translates to:
+  /// **'داوة تفكر...'**
+  String get chatbotThinking;
+
+  /// No description provided for @chatbotScanningImage.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري تحليل الصورة...'**
+  String get chatbotScanningImage;
+
+  /// No description provided for @chatbotAnalyzingOil.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري تحليل جودة الزيت بالذكاء الاصطناعي...'**
+  String get chatbotAnalyzingOil;
+
+  /// No description provided for @chatbotTakePhoto.
+  ///
+  /// In ar, this message translates to:
+  /// **'التقاط صورة بالكاميرا'**
+  String get chatbotTakePhoto;
+
+  /// No description provided for @chatbotPickFromGallery.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار من المعرض'**
+  String get chatbotPickFromGallery;
+
+  /// No description provided for @chatbotImageScanResult.
+  ///
+  /// In ar, this message translates to:
+  /// **'نتيجة تحليل الصورة'**
+  String get chatbotImageScanResult;
+
+  /// No description provided for @chatbotOpenAssistant.
+  ///
+  /// In ar, this message translates to:
+  /// **'افتح مساعد دوّر'**
+  String get chatbotOpenAssistant;
+
+  /// No description provided for @chatbotOnlineNow.
+  ///
+  /// In ar, this message translates to:
+  /// **'متصل الآن • يرد فوراً'**
+  String get chatbotOnlineNow;
+
+  /// No description provided for @chatbotSendImageTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال صورة للتحليل'**
+  String get chatbotSendImageTooltip;
+
   /// No description provided for @appTitle.
   ///
   /// In ar, this message translates to:

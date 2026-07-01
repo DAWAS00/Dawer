@@ -5,7 +5,7 @@ import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/order_labels.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../l10n/l10n.dart';
-import 'package:dwaar/ui/common/map/route_map_placeholder.dart';
+import 'package:dwaar/ui/common/map/route_map_view.dart';
 import '../../../../features/auth/viewmodels/login_viewmodel.dart';
 import '../viewmodels/marketplace_viewmodel.dart';
 import '../../recycling/widgets/edit_collection_job_sheet.dart';
@@ -97,7 +97,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
   Widget _buildMapSection() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
-      child: RouteMapPlaceholder(
+      child: RouteMapView(
         pickupLat: _job.pickupLat!,
         pickupLng: _job.pickupLng!,
         dropoffLat: _job.dropoffLat!,

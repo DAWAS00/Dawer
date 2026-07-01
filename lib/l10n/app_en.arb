@@ -1,6 +1,18 @@
 {
   "@@locale": "en",
 
+  "chatbotTitle": "Dawar Smart Assistant",
+  "chatbotInputHint": "Type your question or send a photo...",
+  "chatbotThinking": "Dawa is thinking...",
+  "chatbotScanningImage": "Analyzing image...",
+  "chatbotAnalyzingOil": "Analyzing oil quality with AI...",
+  "chatbotTakePhoto": "Take a photo",
+  "chatbotPickFromGallery": "Choose from gallery",
+  "chatbotImageScanResult": "Image analysis result",
+  "chatbotOpenAssistant": "Open Dawar assistant",
+  "chatbotOnlineNow": "Online now • replies instantly",
+  "chatbotSendImageTooltip": "Send a photo for analysis",
+
   "appTitle": "Dawar",
   "appTagline": "Turn Waste Into Value",
   "appSystemTitle": "Smart Waste Recycling Management System",

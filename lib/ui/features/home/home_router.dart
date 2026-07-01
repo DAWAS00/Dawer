@@ -5,6 +5,7 @@ import '../../../data/services/app_order_store.dart';
 import '../../../domain/failures/app_failure.dart';
 import '../../../domain/repositories/i_auth_repository.dart';
 import '../auth/viewmodels/login_viewmodel.dart';
+import '../chatbot/dawa_assistant_host.dart';
 import 'driver/driver_home_view.dart';
 import 'supplier/individual_supplier_home_view.dart';
 import 'recycling/recycling_home_view.dart';
@@ -93,7 +94,7 @@ class _HomeRouterState extends State<HomeRouter> {
       }
     });
 
-    return switch (widget.role) {
+    final Widget shell = switch (widget.role) {
       UserRole.driver => DriverHomeView(
           userName: widget.userName,
           aiSuggestedCategories: widget.aiSuggestedCategories,
@@ -114,5 +115,8 @@ class _HomeRouterState extends State<HomeRouter> {
           aiSuggestedCategories: widget.aiSuggestedCategories,
         ),
     };
+
+    // Global Dawa-assistant bubble — same entry point for every role.
+    return DawaAssistantHost(child: shell);
   }
 }

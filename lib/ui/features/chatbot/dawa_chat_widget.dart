@@ -2,7 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:dwaar/core/constants/app_colors.dart';
+import 'package:dwaar/l10n/l10n.dart';
 import 'dawa_chat_view_model.dart';
+import 'dawa_chatbot_service.dart' show DawaEntry;
 import 'widgets/waste_analysis_result_card.dart';
 
 /// Entry-point widget for the Dawa support chat.
@@ -77,6 +80,7 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
   }
 
   void _showImagePicker(DawaChatViewModel vm) {
+    final l10n = context.l10n;
     showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -100,11 +104,11 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
             ListTile(
               leading: const Icon(
                 Icons.camera_alt_rounded,
-                color: Color(0xFF1E5C35),
+                color: AppColors.primaryGreen,
               ),
-              title: const Text(
-                'التقاط صورة بالكاميرا',
-                style: TextStyle(fontFamily: 'Cairo'),
+              title: Text(
+                l10n.chatbotTakePhoto,
+                style: const TextStyle(fontFamily: 'Cairo'),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -114,11 +118,11 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
             ListTile(
               leading: const Icon(
                 Icons.photo_library_rounded,
-                color: Color(0xFF1E5C35),
+                color: AppColors.primaryGreen,
               ),
-              title: const Text(
-                'اختيار من المعرض',
-                style: TextStyle(fontFamily: 'Cairo'),
+              title: Text(
+                l10n.chatbotPickFromGallery,
+                style: const TextStyle(fontFamily: 'Cairo'),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -178,122 +182,13 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
               ),
             ),
 
-            // Scanning indicator (ML Kit image analysis in progress)
+            // One busy indicator at a time: image scan → oil analysis → reply.
             if (vm.isScanning)
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          width: 14,
-                          height: 14,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: const Color(0xFF1E5C35),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'جاري تحليل الصورة...',
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-            // Oil analysis indicator (Gemini Vision running after ML Kit)
-            if (vm.isAnalyzing)
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          width: 14,
-                          height: 14,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: const Color(0xFF1E5C35),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'جاري تحليل جودة الزيت بالذكاء الاصطناعي...',
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-            // Thinking indicator (Gemini is generating a reply)
-            if (vm.isThinking)
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          width: 14,
-                          height: 14,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: const Color(0xFF1E5C35),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'داوة تفكر...',
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              _BusyIndicator(theme: theme, label: context.l10n.chatbotScanningImage)
+            else if (vm.isAnalyzing)
+              _BusyIndicator(theme: theme, label: context.l10n.chatbotAnalyzingOil)
+            else if (vm.isThinking)
+              _BusyIndicator(theme: theme, label: context.l10n.chatbotThinking),
 
             _InputBar(
               controller: _controller,
@@ -310,6 +205,166 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
 }
 
 // ─────────────────────────────────────────────────────────────────
+//  Busy indicator — animated typing dots, shared by scan / analysis /
+//  thinking states. Rendered as a bot-side bubble with the Dawa avatar.
+// ─────────────────────────────────────────────────────────────────
+
+class _BusyIndicator extends StatelessWidget {
+  final ThemeData theme;
+  final String label;
+
+  const _BusyIndicator({required this.theme, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const _DawaAvatar(size: 28),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(4),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const _TypingDots(),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 12,
+                    color: theme.hintColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Three staggered bouncing dots — the classic "typing…" affordance.
+class _TypingDots extends StatefulWidget {
+  const _TypingDots();
+
+  @override
+  State<_TypingDots> createState() => _TypingDotsState();
+}
+
+class _TypingDotsState extends State<_TypingDots>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _ctrl,
+      builder: (_, __) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(3, (i) {
+            // Each dot bounces in a staggered 0.2-phase offset.
+            final t = (_ctrl.value + i * 0.2) % 1.0;
+            final bounce = t < 0.5 ? t * 2 : (1 - t) * 2;
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 1.5),
+              child: Transform.translate(
+                offset: Offset(0, -3 * bounce),
+                child: Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryGreen
+                        .withValues(alpha: 0.4 + 0.6 * bounce),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            );
+          }),
+        );
+      },
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  Dawa avatar — shared by header, bot bubbles, and busy indicator
+// ─────────────────────────────────────────────────────────────────
+
+class _DawaAvatar extends StatelessWidget {
+  final double size;
+  final bool showOnlineDot;
+
+  const _DawaAvatar({required this.size, this.showOnlineDot = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [AppColors.primaryGreen, AppColors.primaryDark],
+            ),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(Icons.eco_rounded, color: Colors.white, size: size * 0.5),
+        ),
+        if (showOnlineDot)
+          Positioned(
+            bottom: 0,
+            left: 0,
+            child: Container(
+              width: size * 0.28,
+              height: size * 0.28,
+              decoration: BoxDecoration(
+                color: const Color(0xFF22C55E),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
 //  Header — drag handle + Dawer branding
 // ─────────────────────────────────────────────────────────────────
 
@@ -319,11 +374,10 @@ class _DawaChatHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dawer primary green
-    const primaryGreen = Color(0xFF1E5C35);
+    final l10n = context.l10n;
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
         border: Border(
@@ -343,19 +397,61 @@ class _DawaChatHeader extends StatelessWidget {
             ),
           ),
 
-          // Title row — leaf icon + label
+          // Identity row — avatar + name + live status
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.eco_rounded, color: primaryGreen, size: 20),
-              const SizedBox(width: 6),
-              Text(
-                'مساعد دوّر الذكي',
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: primaryGreen,
+              const _DawaAvatar(size: 42, showOnlineDot: true),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.chatbotTitle,
+                      style: const TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryGreen,
+                      ),
+                    ),
+                    Text(
+                      l10n.chatbotOnlineNow,
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 11,
+                        color: theme.hintColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // AI badge
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryGreen.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: AppColors.primaryGreen.withValues(alpha: 0.25),
+                  ),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.auto_awesome_rounded,
+                        size: 12, color: AppColors.primaryGreen),
+                    SizedBox(width: 4),
+                    Text(
+                      'AI',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.primaryGreen,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -383,7 +479,7 @@ class _MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const primaryGreen = Color(0xFF1E5C35);
+    const primaryGreen = AppColors.primaryGreen;
     final isUser = message.isUser;
 
     // Oil analysis messages render as a rich card, not a plain bubble.
@@ -395,42 +491,9 @@ class _MessageBubble extends StatelessWidget {
           children: [
             WasteAnalysisResultCard(result: message.wasteAnalysis!),
             if (message.followUps.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  alignment: WrapAlignment.end,
-                  children: message.followUps.map((entry) {
-                    final label = entry.response.split('\n').first;
-                    final short = label.length > 30
-                        ? '${label.substring(0, 28)}…'
-                        : label;
-                    return GestureDetector(
-                      onTap: () => onFollowUpTap(entry.id),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: primaryGreen.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(
-                            color: primaryGreen.withValues(alpha: 0.35),
-                          ),
-                        ),
-                        child: Text(
-                          short,
-                          style: const TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: primaryGreen,
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
+              _FollowUpChips(
+                followUps: message.followUps,
+                onTap: onFollowUpTap,
               ),
           ],
         ),
@@ -461,9 +524,9 @@ class _MessageBubble extends StatelessWidget {
                   color: const Color(0xFFFEF3C7),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Text(
-                  '📸 نتيجة تحليل الصورة',
-                  style: TextStyle(
+                child: Text(
+                  context.l10n.chatbotImageScanResult,
+                  style: const TextStyle(
                     fontSize: 11,
                     color: Color(0xFFC8860A),
                     fontFamily: 'Cairo',
@@ -472,95 +535,145 @@ class _MessageBubble extends StatelessWidget {
               ),
             ),
 
-          // Bubble (with optional image thumbnail inside)
-          Align(
-            alignment:
-                isUser ? Alignment.centerLeft : Alignment.centerRight,
-            child: Container(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.78,
-              ),
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: bubbleColor,
-                borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(16),
-                  topRight: const Radius.circular(16),
-                  bottomLeft: Radius.circular(isUser ? 4 : 16),
-                  bottomRight: Radius.circular(isUser ? 16 : 4),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Image thumbnail
-                  if (message.imagePath != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.file(
-                          File(message.imagePath!),
-                          height: 160,
-                          fit: BoxFit.cover,
+          // Bubble row — bot messages carry the Dawa avatar beside them.
+          Row(
+            mainAxisAlignment:
+                isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              if (!isUser) ...[
+                const _DawaAvatar(size: 28),
+                const SizedBox(width: 8),
+              ],
+              Flexible(
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.74,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: bubbleColor,
+                    borderRadius: BorderRadius.only(
+                      topLeft: const Radius.circular(16),
+                      topRight: const Radius.circular(16),
+                      bottomLeft: Radius.circular(isUser ? 4 : 16),
+                      bottomRight: Radius.circular(isUser ? 16 : 4),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: (isUser
+                                ? AppColors.primaryDark
+                                : Colors.black)
+                            .withValues(alpha: 0.06),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Image thumbnail
+                      if (message.imagePath != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.file(
+                              File(message.imagePath!),
+                              height: 160,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      Text(
+                        message.text,
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 14,
+                          color: textColor,
+                          height: 1.6,
                         ),
                       ),
-                    ),
-                  Text(
-                    message.text,
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 14,
-                      color: textColor,
-                      height: 1.6,
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
 
           // Follow-up chips (bot messages only)
           if (!isUser && message.followUps.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                alignment: WrapAlignment.end,
-                children: message.followUps.map((entry) {
-                  final label = entry.response.split('\n').first;
-                  final short = label.length > 30
-                      ? '${label.substring(0, 28)}…'
-                      : label;
-                  return GestureDetector(
-                    onTap: () => onFollowUpTap(entry.id),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: primaryGreen.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(
-                          color: primaryGreen.withValues(alpha: 0.35),
-                        ),
-                      ),
-                      child: Text(
-                        short,
-                        style: const TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: primaryGreen,
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
+            _FollowUpChips(
+              followUps: message.followUps,
+              onTap: onFollowUpTap,
             ),
         ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  Follow-up chips — quick-reply suggestions under bot messages
+// ─────────────────────────────────────────────────────────────────
+
+class _FollowUpChips extends StatelessWidget {
+  final List<DawaEntry> followUps;
+  final ValueChanged<String> onTap;
+
+  const _FollowUpChips({required this.followUps, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      // Indent past the 28px avatar + 8px gap so chips align with the bubble.
+      padding: const EdgeInsetsDirectional.only(top: 6, start: 36),
+      child: Wrap(
+        spacing: 6,
+        runSpacing: 6,
+        alignment: WrapAlignment.end,
+        children: followUps.map((entry) {
+          final label = entry.response.split('\n').first;
+          final short =
+              label.length > 30 ? '${label.substring(0, 28)}…' : label;
+          return Material(
+            color: AppColors.primaryGreen.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(18),
+            child: InkWell(
+              onTap: () => onTap(entry.id),
+              borderRadius: BorderRadius.circular(18),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: AppColors.primaryGreen.withValues(alpha: 0.35),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.bolt_rounded,
+                        size: 13, color: AppColors.primaryGreen),
+                    const SizedBox(width: 4),
+                    Text(
+                      short,
+                      style: const TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryGreen,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -587,10 +700,10 @@ class _InputBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const primaryGreen = Color(0xFF1E5C35);
+    final l10n = context.l10n;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 14),
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
         border: Border(
@@ -600,61 +713,95 @@ class _InputBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            // Camera / image pick button — disabled while busy
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: isBusy ? null : onImagePick,
-                customBorder: const CircleBorder(),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Icon(
-                    Icons.add_photo_alternate_rounded,
-                    color: isBusy ? Colors.grey : primaryGreen,
-                    size: 26,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 4),
+            // Text field with camera action inside the pill
             Expanded(
-              child: TextField(
-                controller: controller,
-                textDirection: TextDirection.rtl,
-                decoration: InputDecoration(
-                  hintText: 'اكتب سؤالك أو أرسل صورة...',
-                  hintStyle: TextStyle(
-                    fontFamily: 'Cairo',
-                    color: theme.hintColor,
-                  ),
-                  filled: true,
-                  fillColor: theme.colorScheme.surfaceContainerHighest,
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: AppColors.primaryGreen.withValues(alpha: 0.15),
                   ),
                 ),
-                style: const TextStyle(fontFamily: 'Cairo', fontSize: 14),
-                onSubmitted: isBusy ? null : (_) => onSend(),
-                textInputAction: TextInputAction.send,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: controller,
+                        textDirection: TextDirection.rtl,
+                        minLines: 1,
+                        maxLines: 4,
+                        decoration: InputDecoration(
+                          hintText: l10n.chatbotInputHint,
+                          hintStyle: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 13,
+                            color: theme.hintColor,
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsetsDirectional
+                              .fromSTEB(16, 12, 4, 12),
+                        ),
+                        style: const TextStyle(
+                            fontFamily: 'Cairo', fontSize: 14),
+                        onSubmitted: isBusy ? null : (_) => onSend(),
+                        textInputAction: TextInputAction.send,
+                      ),
+                    ),
+                    // Camera / image pick — disabled while busy
+                    IconButton(
+                      onPressed: isBusy ? null : onImagePick,
+                      tooltip: l10n.chatbotSendImageTooltip,
+                      icon: Icon(
+                        Icons.add_photo_alternate_rounded,
+                        color: isBusy
+                            ? Colors.grey
+                            : AppColors.primaryGreen,
+                        size: 24,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(width: 8),
-            // Send button — visually disabled while busy
-            Material(
-              color: isBusy ? Colors.grey.shade400 : primaryGreen,
-              shape: const CircleBorder(),
-              child: InkWell(
-                onTap: isBusy ? null : onSend,
-                customBorder: const CircleBorder(),
-                child: const Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Icon(Icons.send_rounded,
-                      color: Colors.white, size: 22),
+            // Send button — gradient pill, visually disabled while busy
+            GestureDetector(
+              onTap: isBusy ? null : onSend,
+              child: Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  gradient: isBusy
+                      ? LinearGradient(colors: [
+                          Colors.grey.shade400,
+                          Colors.grey.shade500,
+                        ])
+                      : const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            AppColors.primaryGreen,
+                            AppColors.primaryDark,
+                          ],
+                        ),
+                  shape: BoxShape.circle,
+                  boxShadow: isBusy
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: AppColors.primaryDark
+                                .withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
                 ),
+                child: const Icon(Icons.send_rounded,
+                    color: Colors.white, size: 20),
               ),
             ),
           ],

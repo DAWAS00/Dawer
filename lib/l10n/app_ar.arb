@@ -1,6 +1,18 @@
 {
   "@@locale": "ar",
 
+  "chatbotTitle": "مساعد دوّر الذكي",
+  "chatbotInputHint": "اكتب سؤالك أو أرسل صورة...",
+  "chatbotThinking": "داوة تفكر...",
+  "chatbotScanningImage": "جاري تحليل الصورة...",
+  "chatbotAnalyzingOil": "جاري تحليل جودة الزيت بالذكاء الاصطناعي...",
+  "chatbotTakePhoto": "التقاط صورة بالكاميرا",
+  "chatbotPickFromGallery": "اختيار من المعرض",
+  "chatbotImageScanResult": "نتيجة تحليل الصورة",
+  "chatbotOpenAssistant": "افتح مساعد دوّر",
+  "chatbotOnlineNow": "متصل الآن • يرد فوراً",
+  "chatbotSendImageTooltip": "إرسال صورة للتحليل",
+
   "appTitle": "دوّر",
   "appTagline": "حوّل النفايات إلى قيمة",
   "appSystemTitle": "نظام إدارة تدوير النفايات الذكي",
