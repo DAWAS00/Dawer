@@ -53,10 +53,7 @@ class ChatView extends StatelessWidget {
       child: _ChatScaffold(orderId: orderId),
     );
   }
-}
-
-// ── Scaffold ──────────────────────────────────────────────────────────────────
-
+} 
 class _ChatScaffold extends StatelessWidget {
   final String orderId;
   const _ChatScaffold({required this.orderId});
@@ -149,8 +146,7 @@ class _ChatScaffold extends StatelessWidget {
     );
   }
 }
-
-// ── AppBar ────────────────────────────────────────────────────────────────────
+ 
 
 class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String orderId;
@@ -164,9 +160,7 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
     final vm = context.watch<ChatViewModel>();
     final otherName = vm.otherPartyName;
     final otherRole = vm.otherPartyRoleLabel;
-    final statusLabel = vm.orderStatusLabel;
-
-    // Subtitle: "خالد السائق · في الطريق" or just "#ORD-001" if no order.
+    final statusLabel = vm.orderStatusLabel; 
     final String subtitle;
     if (otherName != null && otherRole != null) {
       subtitle = statusLabel != null
@@ -208,8 +202,6 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
-
-// ── Message List ──────────────────────────────────────────────────────────────
 
 class _MessageList extends StatefulWidget {
   final ChatViewModel vm;
