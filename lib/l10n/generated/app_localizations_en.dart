@@ -3012,4 +3012,153 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get analyticsEfficiencyEmpty =>
       'No distance data to compute efficiency';
+
+  @override
+  String get aboutDwaarButtonLabel => 'About Dwaar';
+
+  @override
+  String get aboutDwaarSheetTitle => 'Who we are & what we offer';
+
+  @override
+  String get aboutDwaarIntroBody =>
+      'Dwaar is a Jordanian platform connecting three sides: suppliers who have recyclable waste, drivers who transport it, and recycling companies who buy it. Our goal is to turn waste into a valuable resource and make the circular economy in Jordan simple — right from your phone.';
+
+  @override
+  String get aboutDwaarServicesTitle => 'Our services';
+
+  @override
+  String get aboutDwaarServiceSupplierTitle =>
+      'For suppliers (individuals & stores)';
+
+  @override
+  String get aboutDwaarServiceSupplierBody =>
+      'Request a pickup for your recyclable waste, choose to sell it to a recycling company or list it on the marketplace for the nearest driver, and earn points and rewards for every completed order.';
+
+  @override
+  String get aboutDwaarServiceDriverTitle => 'For drivers';
+
+  @override
+  String get aboutDwaarServiceDriverBody =>
+      'Browse nearby pickup requests filtered by your vehicle type, accept the ones that fit, and track your earnings in real time with every trip you complete.';
+
+  @override
+  String get aboutDwaarServiceRecyclingTitle => 'For recycling companies';
+
+  @override
+  String get aboutDwaarServiceRecyclingBody =>
+      'Post collection jobs by material type, quantity, and area, and receive a steady, documented stream of raw material directly from suppliers and drivers.';
+
+  @override
+  String get aboutDwaarHowItWorksTitle => 'How an order works';
+
+  @override
+  String get aboutDwaarHowItWorksStep1 =>
+      '1. The supplier requests a pickup, specifying material type, estimated weight, and location';
+
+  @override
+  String get aboutDwaarHowItWorksStep2 =>
+      '2. A matching driver accepts the request, sharing live location on the map until arrival';
+
+  @override
+  String get aboutDwaarHowItWorksStep3 =>
+      '3. On delivery, the actual weight is recorded and both sides confirm receipt';
+
+  @override
+  String get aboutDwaarHowItWorksStep4 =>
+      '4. Rewards and earnings are released automatically, and material moves to the recycling company or nearest hub';
+
+  @override
+  String get aboutDwaarRewardsTitle => 'The reward system (Khudar points)';
+
+  @override
+  String get aboutDwaarRewardsBody =>
+      'Every completed recycling order earns you Khudar green points based on material type and weight. Collect points to climb the green tier levels, and redeem them for discounts on future orders or partner vouchers. Drivers also earn a per-trip payout calculated from a base fee, distance, and the material transported.';
+
+  @override
+  String get aboutDwaarHubsTitle => 'Recycling hubs';
+
+  @override
+  String get aboutDwaarHubsBody =>
+      'Hubs are physical collection points run by the Dwaar team, used by drivers as a nearby dropoff instead of driving straight to each recycling company. If you have a suitable facility or space and want to host a new hub in your area, reach out using the form below and our team will review it.';
+
+  @override
+  String get aboutDwaarImpactTitle => 'Our impact so far';
+
+  @override
+  String get aboutDwaarImpactSubtitle =>
+      'A live snapshot of what our community has achieved together';
+
+  @override
+  String get aboutDwaarImpactOrders => 'Orders completed';
+
+  @override
+  String get aboutDwaarImpactWeight => 'Weight recycled';
+
+  @override
+  String get aboutDwaarImpactCo2 => 'CO2 saved';
+
+  @override
+  String get aboutDwaarImpactWater => 'Water saved';
+
+  @override
+  String get aboutDwaarImpactEnergy => 'Energy saved';
+
+  @override
+  String get aboutDwaarImpactDownloadButton => 'Download CO2 certificate (PDF)';
+
+  @override
+  String get aboutDwaarImpactDownloadGenerating => 'Generating...';
+
+  @override
+  String get aboutDwaarImpactDownloadError =>
+      'Couldn\'t generate the certificate. Please try again.';
+
+  @override
+  String get aboutDwaarDataTitle => 'Want to buy our data or partner with us?';
+
+  @override
+  String get aboutDwaarDataBody =>
+      'We make aggregated, non-personal recycling data available to select partners — municipalities, research groups, sustainability firms. If you\'re interested in purchasing data or building a partnership, leave your details and our team will follow up by email.';
+
+  @override
+  String get aboutDwaarDataFormCompanyLabel => 'Company / organization name';
+
+  @override
+  String get aboutDwaarDataFormContactNameLabel => 'Contact person\'s name';
+
+  @override
+  String get aboutDwaarDataFormEmailLabel => 'Contact email';
+
+  @override
+  String get aboutDwaarDataFormPhoneLabel => 'Phone number (optional)';
+
+  @override
+  String get aboutDwaarDataFormMessageLabel => 'Tell us about your request';
+
+  @override
+  String get aboutDwaarDataFormMessageHint =>
+      'What kind of data or partnership are you looking for?';
+
+  @override
+  String get aboutDwaarDataFormSubmit => 'Send request';
+
+  @override
+  String get aboutDwaarDataFormSubmitting => 'Sending...';
+
+  @override
+  String get aboutDwaarDataFormRequired => 'This field is required';
+
+  @override
+  String get aboutDwaarDataFormEmailInvalid => 'Enter a valid email address';
+
+  @override
+  String get aboutDwaarDataFormSuccess =>
+      'Your request has been received — our team will reach out to your email soon.';
+
+  @override
+  String get aboutDwaarDataFormError =>
+      'Couldn\'t send your request, please try again';
+
+  @override
+  String get aboutDwaarCloseButton => 'Close';
 }

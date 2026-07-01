@@ -120,6 +120,82 @@ void main() {
     });
   });
 
+  group('AnalyticsViewModel daily report (today snapshot)', () {
+    test('todaysCompletedOrders only includes orders completed today, ignoring period', () {
+      final now = DateTime(2026, 6, 28, 18);
+      final orders = [
+        makeOrder(reward: 10, createdAt: DateTime(2026, 6, 28, 8), weightKg: 20),
+        makeOrder(reward: 20, createdAt: DateTime(2026, 6, 27, 8), weightKg: 30),
+      ];
+      final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
+      // Even with allTime selected, "today" stats must stay pinned to today.
+      vm.setPeriod(AnalyticsPeriod.allTime);
+      expect(vm.todaysCompletedOrders.length, 1);
+      expect(vm.todaysOrderCount, 1);
+      expect(vm.todaysWeightKg, 20.0);
+      expect(vm.todaysEarnings, 10.0);
+    });
+
+    test('todaysCompletedOrders excludes non-completed orders', () {
+      final now = DateTime(2026, 6, 28, 18);
+      final orders = [
+        makeOrder(
+          reward: 10,
+          createdAt: DateTime(2026, 6, 28, 8),
+          completedAt: null,
+          status: OrderStatus.arrivedAtDropoff,
+        ),
+      ];
+      final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
+      expect(vm.todaysOrderCount, 0);
+      expect(vm.todaysWeightKg, 0);
+    });
+
+    test('todaysEcoImpact sums per-order impact from actual weight', () {
+      final now = DateTime(2026, 6, 28, 18);
+      final orders = [
+        makeOrder(
+          reward: 10,
+          createdAt: DateTime(2026, 6, 28, 8),
+          wasteType: WasteType.metal,
+          weightKg: 10,
+        ),
+        makeOrder(
+          reward: 10,
+          createdAt: DateTime(2026, 6, 28, 9),
+          wasteType: WasteType.glass,
+          weightKg: 10,
+        ),
+      ];
+      final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
+      // metal: 10*4.5=45, glass: 10*0.3=3 -> 48 total.
+      expect(vm.todaysEcoImpact.co2SavedKg, closeTo(48.0, 0.001));
+    });
+
+    test('todaysEcoImpact ignores orders with no weight or no waste types', () {
+      final now = DateTime(2026, 6, 28, 18);
+      final orders = [
+        makeOrder(
+          reward: 10,
+          createdAt: DateTime(2026, 6, 28, 8),
+          weightKg: 0,
+        ),
+      ];
+      final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
+      expect(vm.todaysEcoImpact.co2SavedKg, 0);
+    });
+
+    test('todaysCompletedOrders is empty when no orders completed today', () {
+      final now = DateTime(2026, 6, 28);
+      final orders = [
+        makeOrder(reward: 10, createdAt: DateTime(2026, 6, 20)),
+      ];
+      final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
+      expect(vm.todaysOrderCount, 0);
+      expect(vm.todaysEcoImpact.co2SavedKg, 0);
+    });
+  });
+
   group('AnalyticsViewModel deltas', () {
     test('deltaEarningsPct positive when current > previous', () {
       // Week ending 6/28. Previous week ends at range.start = 6/21.

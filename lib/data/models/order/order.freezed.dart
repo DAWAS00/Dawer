@@ -94,7 +94,15 @@ mixin _$Order {
       throw _privateConstructorUsedError;
   DateTime? get expiresAt => throw _privateConstructorUsedError;
   bool get isVatApplicable => throw _privateConstructorUsedError;
-  double? get vatAmountJd => throw _privateConstructorUsedError;
+  double? get vatAmountJd =>
+      throw _privateConstructorUsedError; // ── Reservation (10 % escrow) ─────────────────────────────────────────
+  ReservationStatus? get reservationStatus =>
+      throw _privateConstructorUsedError;
+  DateTime? get reservationPickupDate => throw _privateConstructorUsedError;
+  String? get reservedByName => throw _privateConstructorUsedError;
+  String? get reservedById => throw _privateConstructorUsedError;
+  double? get buyerDepositAmount => throw _privateConstructorUsedError;
+  double? get sellerDepositAmount => throw _privateConstructorUsedError;
 
   /// Serializes this Order to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -181,6 +189,12 @@ abstract class $OrderCopyWith<$Res> {
     DateTime? expiresAt,
     bool isVatApplicable,
     double? vatAmountJd,
+    ReservationStatus? reservationStatus,
+    DateTime? reservationPickupDate,
+    String? reservedByName,
+    String? reservedById,
+    double? buyerDepositAmount,
+    double? sellerDepositAmount,
   });
 
   $OrderProofCopyWith<$Res>? get proof;
@@ -272,6 +286,12 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
     Object? expiresAt = freezed,
     Object? isVatApplicable = null,
     Object? vatAmountJd = freezed,
+    Object? reservationStatus = freezed,
+    Object? reservationPickupDate = freezed,
+    Object? reservedByName = freezed,
+    Object? reservedById = freezed,
+    Object? buyerDepositAmount = freezed,
+    Object? sellerDepositAmount = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -555,6 +575,30 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
                 ? _value.vatAmountJd
                 : vatAmountJd // ignore: cast_nullable_to_non_nullable
                       as double?,
+            reservationStatus: freezed == reservationStatus
+                ? _value.reservationStatus
+                : reservationStatus // ignore: cast_nullable_to_non_nullable
+                      as ReservationStatus?,
+            reservationPickupDate: freezed == reservationPickupDate
+                ? _value.reservationPickupDate
+                : reservationPickupDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            reservedByName: freezed == reservedByName
+                ? _value.reservedByName
+                : reservedByName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            reservedById: freezed == reservedById
+                ? _value.reservedById
+                : reservedById // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            buyerDepositAmount: freezed == buyerDepositAmount
+                ? _value.buyerDepositAmount
+                : buyerDepositAmount // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            sellerDepositAmount: freezed == sellerDepositAmount
+                ? _value.sellerDepositAmount
+                : sellerDepositAmount // ignore: cast_nullable_to_non_nullable
+                      as double?,
           )
           as $Val,
     );
@@ -668,6 +712,12 @@ abstract class _$$OrderImplCopyWith<$Res> implements $OrderCopyWith<$Res> {
     DateTime? expiresAt,
     bool isVatApplicable,
     double? vatAmountJd,
+    ReservationStatus? reservationStatus,
+    DateTime? reservationPickupDate,
+    String? reservedByName,
+    String? reservedById,
+    double? buyerDepositAmount,
+    double? sellerDepositAmount,
   });
 
   @override
@@ -760,6 +810,12 @@ class __$$OrderImplCopyWithImpl<$Res>
     Object? expiresAt = freezed,
     Object? isVatApplicable = null,
     Object? vatAmountJd = freezed,
+    Object? reservationStatus = freezed,
+    Object? reservationPickupDate = freezed,
+    Object? reservedByName = freezed,
+    Object? reservedById = freezed,
+    Object? buyerDepositAmount = freezed,
+    Object? sellerDepositAmount = freezed,
   }) {
     return _then(
       _$OrderImpl(
@@ -1043,6 +1099,30 @@ class __$$OrderImplCopyWithImpl<$Res>
             ? _value.vatAmountJd
             : vatAmountJd // ignore: cast_nullable_to_non_nullable
                   as double?,
+        reservationStatus: freezed == reservationStatus
+            ? _value.reservationStatus
+            : reservationStatus // ignore: cast_nullable_to_non_nullable
+                  as ReservationStatus?,
+        reservationPickupDate: freezed == reservationPickupDate
+            ? _value.reservationPickupDate
+            : reservationPickupDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        reservedByName: freezed == reservedByName
+            ? _value.reservedByName
+            : reservedByName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        reservedById: freezed == reservedById
+            ? _value.reservedById
+            : reservedById // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        buyerDepositAmount: freezed == buyerDepositAmount
+            ? _value.buyerDepositAmount
+            : buyerDepositAmount // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        sellerDepositAmount: freezed == sellerDepositAmount
+            ? _value.sellerDepositAmount
+            : sellerDepositAmount // ignore: cast_nullable_to_non_nullable
+                  as double?,
       ),
     );
   }
@@ -1122,6 +1202,12 @@ class _$OrderImpl implements _Order {
     this.expiresAt,
     this.isVatApplicable = false,
     this.vatAmountJd,
+    this.reservationStatus,
+    this.reservationPickupDate,
+    this.reservedByName,
+    this.reservedById,
+    this.buyerDepositAmount,
+    this.sellerDepositAmount,
   }) : _wasteTypes = wasteTypes,
        _images = images,
        _invoices = invoices;
@@ -1298,10 +1384,23 @@ class _$OrderImpl implements _Order {
   final bool isVatApplicable;
   @override
   final double? vatAmountJd;
+  // ── Reservation (10 % escrow) ─────────────────────────────────────────
+  @override
+  final ReservationStatus? reservationStatus;
+  @override
+  final DateTime? reservationPickupDate;
+  @override
+  final String? reservedByName;
+  @override
+  final String? reservedById;
+  @override
+  final double? buyerDepositAmount;
+  @override
+  final double? sellerDepositAmount;
 
   @override
   String toString() {
-    return 'Order(id: $id, type: $type, wasteTypes: $wasteTypes, pickupAddress: $pickupAddress, dropoffAddress: $dropoffAddress, status: $status, reward: $reward, createdAt: $createdAt, acceptedAt: $acceptedAt, inTransitAt: $inTransitAt, completedAt: $completedAt, scheduledAt: $scheduledAt, driverName: $driverName, driverPhone: $driverPhone, driverRating: $driverRating, driverVehicle: $driverVehicle, driverVehicleModel: $driverVehicleModel, driverVehicleColor: $driverVehicleColor, driverLicensePlate: $driverLicensePlate, driverVehiclePhotoPath: $driverVehiclePhotoPath, supplierId: $supplierId, supplierName: $supplierName, supplierPhone: $supplierPhone, weightKg: $weightKg, eta: $eta, distanceKm: $distanceKm, proofImagePath: $proofImagePath, paidAmount: $paidAmount, supplierNotes: $supplierNotes, images: $images, estimatedWeightKg: $estimatedWeightKg, wasteForm: $wasteForm, weightCategory: $weightCategory, deliveryFee: $deliveryFee, pickupTarget: $pickupTarget, itemPrice: $itemPrice, jobDescription: $jobDescription, pricePerKg: $pricePerKg, paymentModel: $paymentModel, minQuantityKg: $minQuantityKg, isEdited: $isEdited, editedAt: $editedAt, editNote: $editNote, linkedJobId: $linkedJobId, collectionDeliveryMethod: $collectionDeliveryMethod, collectionTransactionType: $collectionTransactionType, pickupLat: $pickupLat, pickupLng: $pickupLng, dropoffLat: $dropoffLat, dropoffLng: $dropoffLng, etaMinutes: $etaMinutes, isMarketplaceShared: $isMarketplaceShared, requiresRider: $requiresRider, rewardBreakdown: $rewardBreakdown, invoices: $invoices, arrivedAtPickupAt: $arrivedAtPickupAt, arrivedAtDropoffAt: $arrivedAtDropoffAt, arrivalConfirmationStatus: $arrivalConfirmationStatus, proof: $proof, pickupProof: $pickupProof, supplierHoldAmount: $supplierHoldAmount, driverCompensationAmount: $driverCompensationAmount, fraudAttemptCount: $fraudAttemptCount, weightVarianceFlag: $weightVarianceFlag, requiredVehicleType: $requiredVehicleType, requiresChemicalPermit: $requiresChemicalPermit, adminApprovalStatus: $adminApprovalStatus, expiresAt: $expiresAt, isVatApplicable: $isVatApplicable, vatAmountJd: $vatAmountJd)';
+    return 'Order(id: $id, type: $type, wasteTypes: $wasteTypes, pickupAddress: $pickupAddress, dropoffAddress: $dropoffAddress, status: $status, reward: $reward, createdAt: $createdAt, acceptedAt: $acceptedAt, inTransitAt: $inTransitAt, completedAt: $completedAt, scheduledAt: $scheduledAt, driverName: $driverName, driverPhone: $driverPhone, driverRating: $driverRating, driverVehicle: $driverVehicle, driverVehicleModel: $driverVehicleModel, driverVehicleColor: $driverVehicleColor, driverLicensePlate: $driverLicensePlate, driverVehiclePhotoPath: $driverVehiclePhotoPath, supplierId: $supplierId, supplierName: $supplierName, supplierPhone: $supplierPhone, weightKg: $weightKg, eta: $eta, distanceKm: $distanceKm, proofImagePath: $proofImagePath, paidAmount: $paidAmount, supplierNotes: $supplierNotes, images: $images, estimatedWeightKg: $estimatedWeightKg, wasteForm: $wasteForm, weightCategory: $weightCategory, deliveryFee: $deliveryFee, pickupTarget: $pickupTarget, itemPrice: $itemPrice, jobDescription: $jobDescription, pricePerKg: $pricePerKg, paymentModel: $paymentModel, minQuantityKg: $minQuantityKg, isEdited: $isEdited, editedAt: $editedAt, editNote: $editNote, linkedJobId: $linkedJobId, collectionDeliveryMethod: $collectionDeliveryMethod, collectionTransactionType: $collectionTransactionType, pickupLat: $pickupLat, pickupLng: $pickupLng, dropoffLat: $dropoffLat, dropoffLng: $dropoffLng, etaMinutes: $etaMinutes, isMarketplaceShared: $isMarketplaceShared, requiresRider: $requiresRider, rewardBreakdown: $rewardBreakdown, invoices: $invoices, arrivedAtPickupAt: $arrivedAtPickupAt, arrivedAtDropoffAt: $arrivedAtDropoffAt, arrivalConfirmationStatus: $arrivalConfirmationStatus, proof: $proof, pickupProof: $pickupProof, supplierHoldAmount: $supplierHoldAmount, driverCompensationAmount: $driverCompensationAmount, fraudAttemptCount: $fraudAttemptCount, weightVarianceFlag: $weightVarianceFlag, requiredVehicleType: $requiredVehicleType, requiresChemicalPermit: $requiresChemicalPermit, adminApprovalStatus: $adminApprovalStatus, expiresAt: $expiresAt, isVatApplicable: $isVatApplicable, vatAmountJd: $vatAmountJd, reservationStatus: $reservationStatus, reservationPickupDate: $reservationPickupDate, reservedByName: $reservedByName, reservedById: $reservedById, buyerDepositAmount: $buyerDepositAmount, sellerDepositAmount: $sellerDepositAmount)';
   }
 
   @override
@@ -1454,7 +1553,19 @@ class _$OrderImpl implements _Order {
             (identical(other.isVatApplicable, isVatApplicable) ||
                 other.isVatApplicable == isVatApplicable) &&
             (identical(other.vatAmountJd, vatAmountJd) ||
-                other.vatAmountJd == vatAmountJd));
+                other.vatAmountJd == vatAmountJd) &&
+            (identical(other.reservationStatus, reservationStatus) ||
+                other.reservationStatus == reservationStatus) &&
+            (identical(other.reservationPickupDate, reservationPickupDate) ||
+                other.reservationPickupDate == reservationPickupDate) &&
+            (identical(other.reservedByName, reservedByName) ||
+                other.reservedByName == reservedByName) &&
+            (identical(other.reservedById, reservedById) ||
+                other.reservedById == reservedById) &&
+            (identical(other.buyerDepositAmount, buyerDepositAmount) ||
+                other.buyerDepositAmount == buyerDepositAmount) &&
+            (identical(other.sellerDepositAmount, sellerDepositAmount) ||
+                other.sellerDepositAmount == sellerDepositAmount));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1531,6 +1642,12 @@ class _$OrderImpl implements _Order {
     expiresAt,
     isVatApplicable,
     vatAmountJd,
+    reservationStatus,
+    reservationPickupDate,
+    reservedByName,
+    reservedById,
+    buyerDepositAmount,
+    sellerDepositAmount,
   ]);
 
   /// Create a copy of Order
@@ -1619,6 +1736,12 @@ abstract class _Order implements Order {
     final DateTime? expiresAt,
     final bool isVatApplicable,
     final double? vatAmountJd,
+    final ReservationStatus? reservationStatus,
+    final DateTime? reservationPickupDate,
+    final String? reservedByName,
+    final String? reservedById,
+    final double? buyerDepositAmount,
+    final double? sellerDepositAmount,
   }) = _$OrderImpl;
 
   factory _Order.fromJson(Map<String, dynamic> json) = _$OrderImpl.fromJson;
@@ -1762,7 +1885,19 @@ abstract class _Order implements Order {
   @override
   bool get isVatApplicable;
   @override
-  double? get vatAmountJd;
+  double? get vatAmountJd; // ── Reservation (10 % escrow) ─────────────────────────────────────────
+  @override
+  ReservationStatus? get reservationStatus;
+  @override
+  DateTime? get reservationPickupDate;
+  @override
+  String? get reservedByName;
+  @override
+  String? get reservedById;
+  @override
+  double? get buyerDepositAmount;
+  @override
+  double? get sellerDepositAmount;
 
   /// Create a copy of Order
   /// with the given fields replaced by the non-null parameter values.

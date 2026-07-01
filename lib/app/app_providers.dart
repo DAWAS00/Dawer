@@ -29,6 +29,9 @@ import '../domain/services/i_signup_orchestrator.dart';
 import '../domain/repositories/i_report_request_repository.dart';
 import '../data/repositories/mock_report_request_repository.dart';
 import '../data/repositories/supabase_report_request_repository.dart';
+import '../domain/repositories/i_partner_data_request_repository.dart';
+import '../data/repositories/mock_partner_data_request_repository.dart';
+import '../data/repositories/supabase_partner_data_request_repository.dart';
 import '../ui/features/auth/viewmodels/login_viewmodel.dart';
 
 /// Builds the full provider list for [DawerApp].
@@ -127,6 +130,13 @@ List buildProviders({
       create: (_) => useSupabase
           ? SupabaseReportRequestRepository(SupabaseService.client)
           : MockReportRequestRepository(),
+    ),
+
+    // ── Partner data-access leads (About Dwaar sheet, pre-auth) ────────────
+    Provider<IPartnerDataRequestRepository>(
+      create: (_) => useSupabase
+          ? SupabasePartnerDataRequestRepository(SupabaseService.client)
+          : MockPartnerDataRequestRepository(),
     ),
 
     // ── ViewModels ──────────────────────────────────────────────────────────

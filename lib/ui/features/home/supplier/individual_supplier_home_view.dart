@@ -20,6 +20,7 @@ import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../shared/widgets/pickup_fab.dart';
 import 'views/new_pickup_request_view.dart';
 import 'package:dwaar/ui/common/widgets/dev_testing_panel.dart';
+import 'widgets/pending_reservations_dialog.dart';
 
 class IndividualSupplierHomeView extends StatelessWidget {
   final String userName;
@@ -56,13 +57,32 @@ class IndividualSupplierHomeView extends StatelessWidget {
   }
 }
 
-class _IndividualSupplierHomeBody extends StatelessWidget {
+class _IndividualSupplierHomeBody extends StatefulWidget {
   final String userName;
 
   const _IndividualSupplierHomeBody({required this.userName});
 
   @override
+  State<_IndividualSupplierHomeBody> createState() =>
+      _IndividualSupplierHomeBodyState();
+}
+
+class _IndividualSupplierHomeBodyState
+    extends State<_IndividualSupplierHomeBody> {
+  @override
+  void initState() {
+    super.initState();
+    // Show reservation popup after first frame so Providers are ready
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        PendingReservationsDialog.showIfNeeded(context, widget.userName);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final userName = widget.userName;
     final vm = context.watch<BaseSupplierViewModel>();
 
     final tabs = [

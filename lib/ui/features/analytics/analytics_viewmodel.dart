@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../data/models/order/order.dart';
+import '../../../data/utils/eco_impact_calculator.dart';
 import 'models/analytics_period.dart';
 
 /// One bucket of the trend series.
@@ -127,6 +128,48 @@ class AnalyticsViewModel extends ChangeNotifier {
   /// Average reward per completed order (0 if none).
   double get avgRewardPerOrder =>
       orderCount == 0 ? 0 : totalEarnings / orderCount;
+
+  // ── Daily report (today's snapshot, independent of the period filter) ─────
+
+  /// Orders completed today, regardless of the selected [period].
+  List<Order> get todaysCompletedOrders {
+    final today = DateTime(_now.year, _now.month, _now.day);
+    return _allOrders
+        .where((o) =>
+            o.status == OrderStatus.completed &&
+            o.completedAt != null &&
+            DateTime(o.completedAt!.year, o.completedAt!.month, o.completedAt!.day) ==
+                today)
+        .toList();
+  }
+
+  int get todaysOrderCount => todaysCompletedOrders.length;
+
+  double get todaysWeightKg =>
+      todaysCompletedOrders.fold(0.0, (sum, o) => sum + (o.weightKg ?? 0));
+
+  double get todaysEarnings =>
+      todaysCompletedOrders.fold(0.0, (sum, o) => sum + o.reward);
+
+  /// Environmental impact of today's completed orders, computed per-order
+  /// from actual weight (not the wizard's category estimate) so it reflects
+  /// what was really processed.
+  EcoImpactResult get todaysEcoImpact {
+    var co2 = 0.0, water = 0.0, energy = 0.0;
+    for (final o in todaysCompletedOrders) {
+      final w = o.weightKg;
+      if (w == null || w <= 0 || o.wasteTypes.isEmpty) continue;
+      final impact = EcoImpactCalculator.calculateForWeight(o.wasteTypes, w);
+      co2 += impact.co2SavedKg;
+      water += impact.waterSavedLiters;
+      energy += impact.energySavedKwh;
+    }
+    return EcoImpactResult(
+      co2SavedKg: co2,
+      waterSavedLiters: water,
+      energySavedKwh: energy,
+    );
+  }
 
   // ── Deltas vs previous period ─────────────────────────────────────────────
 

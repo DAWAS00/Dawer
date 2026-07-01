@@ -84,6 +84,13 @@ class Order with _$Order {
     DateTime? expiresAt,
     @Default(false) bool isVatApplicable,
     double? vatAmountJd,
+    // ── Reservation (10 % escrow) ─────────────────────────────────────────
+    ReservationStatus? reservationStatus,
+    DateTime? reservationPickupDate,
+    String? reservedByName,
+    String? reservedById,
+    double? buyerDepositAmount,
+    double? sellerDepositAmount,
   }) = _Order;
 
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);

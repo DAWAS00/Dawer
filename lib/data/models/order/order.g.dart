@@ -134,6 +134,17 @@ _$OrderImpl _$$OrderImplFromJson(Map<String, dynamic> json) => _$OrderImpl(
       : DateTime.parse(json['expiresAt'] as String),
   isVatApplicable: json['isVatApplicable'] as bool? ?? false,
   vatAmountJd: (json['vatAmountJd'] as num?)?.toDouble(),
+  reservationStatus: $enumDecodeNullable(
+    _$ReservationStatusEnumMap,
+    json['reservationStatus'],
+  ),
+  reservationPickupDate: json['reservationPickupDate'] == null
+      ? null
+      : DateTime.parse(json['reservationPickupDate'] as String),
+  reservedByName: json['reservedByName'] as String?,
+  reservedById: json['reservedById'] as String?,
+  buyerDepositAmount: (json['buyerDepositAmount'] as num?)?.toDouble(),
+  sellerDepositAmount: (json['sellerDepositAmount'] as num?)?.toDouble(),
 );
 
 Map<String, dynamic> _$$OrderImplToJson(
@@ -213,6 +224,12 @@ Map<String, dynamic> _$$OrderImplToJson(
   'expiresAt': instance.expiresAt?.toIso8601String(),
   'isVatApplicable': instance.isVatApplicable,
   'vatAmountJd': instance.vatAmountJd,
+  'reservationStatus': _$ReservationStatusEnumMap[instance.reservationStatus],
+  'reservationPickupDate': instance.reservationPickupDate?.toIso8601String(),
+  'reservedByName': instance.reservedByName,
+  'reservedById': instance.reservedById,
+  'buyerDepositAmount': instance.buyerDepositAmount,
+  'sellerDepositAmount': instance.sellerDepositAmount,
 };
 
 const _$OrderTypeEnumMap = {
@@ -305,4 +322,13 @@ const _$AdminApprovalStatusEnumMap = {
   AdminApprovalStatus.pendingApproval: 'pendingApproval',
   AdminApprovalStatus.approved: 'approved',
   AdminApprovalStatus.rejected: 'rejected',
+};
+
+const _$ReservationStatusEnumMap = {
+  ReservationStatus.pending: 'pending',
+  ReservationStatus.accepted: 'accepted',
+  ReservationStatus.rejected: 'rejected',
+  ReservationStatus.cancelledByBuyer: 'cancelledByBuyer',
+  ReservationStatus.cancelledBySeller: 'cancelledBySeller',
+  ReservationStatus.completedByReservation: 'completedByReservation',
 };

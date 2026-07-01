@@ -70,7 +70,7 @@ class _RecyclingHomeBody extends StatelessWidget {
       RecyclingOrdersTab(incoming: vm.incoming, jobs: vm.jobs, salesForJob: vm.salesForJob),
       AnalyticsTab(
         userId: context.read<IAuthRepository>().currentSession?.userId ?? '',
-        allOrders: [...vm.incoming, ...vm.jobs],
+        allOrders: [...vm.incoming, ...vm.jobs, ...vm.completedDeliveries],
         reportRepository: context.read<IReportRequestRepository>(),
         heroMetric: HeroMetric.weight,
         roleKpi: RoleKpi(
