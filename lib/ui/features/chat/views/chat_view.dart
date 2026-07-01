@@ -123,7 +123,7 @@ class _ChatScaffold extends StatelessWidget {
 
   // Dev-only banner — hidden in release builds and when live repo is wired.
   Widget _frontendOnlyBanner(BuildContext context) {
-    final isMock = context.read<IChatRepository>() is MockChatRepository;
+    final isMock = context.read<IChatRepository>().runtimeType.toString() != 'SupabaseChatRepository';
     if (!kDebugMode || !isMock) return const SizedBox.shrink();
     return Container(
       width: double.infinity,

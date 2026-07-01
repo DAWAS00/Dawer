@@ -3161,4 +3161,93 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutDwaarCloseButton => 'Close';
+
+  @override
+  String get reservationBookButton => 'Book Now';
+
+  @override
+  String get reservationFormTitle => 'Create a New Reservation';
+
+  @override
+  String get reservationItemTitleLabel => 'Order description';
+
+  @override
+  String get reservationItemTitleHint => 'e.g. Table for four, 7 PM';
+
+  @override
+  String get reservationBuyerPhoneLabel => 'Buyer\'s phone number';
+
+  @override
+  String get reservationBuyerPhoneHint => '7XXXXXXXX';
+
+  @override
+  String get reservationBuyerNotFound =>
+      'This phone number is not registered in the app';
+
+  @override
+  String get reservationInvoiceAmountLabel => 'Invoice amount (JOD)';
+
+  @override
+  String get reservationDurationLabel => 'Reservation duration';
+
+  @override
+  String reservationDurationMinutes(int minutes) {
+    return '$minutes minutes';
+  }
+
+  @override
+  String reservationPenaltyBanner(String amount) {
+    return 'Notice: 10% of the invoice value ($amount JOD) will be deducted from the breaching party to guarantee transaction rights';
+  }
+
+  @override
+  String get reservationSubmitButton => 'Create Reservation';
+
+  @override
+  String get reservationCreateSuccess =>
+      'Reservation created and sent to the buyer';
+
+  @override
+  String get reservationInboxTitle => 'Reservation Requests';
+
+  @override
+  String get reservationEmptyInbox => 'No reservation requests right now';
+
+  @override
+  String get reservationInvoiceTotalLabel => 'Total amount';
+
+  @override
+  String get reservationTimeRemainingLabel => 'Time remaining';
+
+  @override
+  String get reservationApproveButton => 'Approve & Lock In';
+
+  @override
+  String get reservationApproveSuccess => 'Reservation locked in';
+
+  @override
+  String get reservationCompleteButton => 'Confirm Purchase Completed';
+
+  @override
+  String get reservationCancelButton => 'Cancel Reservation';
+
+  @override
+  String get reservationCancelReasonTitle => 'Cancellation reason';
+
+  @override
+  String get reservationCancelReasonSoldElsewhere =>
+      'Item was sold to another party';
+
+  @override
+  String get reservationCancelReasonOther => 'Other reason';
+
+  @override
+  String get reservationCancelFraudWarning =>
+      'Warning: choosing this reason will immediately deduct 10% from your account as compensation to the buyer';
+
+  @override
+  String get reservationSellerTag => 'You are the seller';
+
+  @override
+  String get reservationBuyerTag => 'You are the buyer';
 }

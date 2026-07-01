@@ -315,7 +315,7 @@ class MarketItemDetailsView extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                err != null ? err : 'تم إرسال طلب الحجز — بانتظار موافقة البائع',
+                err ?? 'تم إرسال طلب الحجز — بانتظار موافقة البائع',
                 style: GoogleFonts.cairo(),
               ),
               backgroundColor: err != null

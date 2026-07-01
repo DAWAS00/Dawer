@@ -5953,6 +5953,168 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إغلاق'**
   String get aboutDwaarCloseButton;
+
+  /// No description provided for @reservationBookButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'حجز الآن'**
+  String get reservationBookButton;
+
+  /// No description provided for @reservationFormTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء حجز جديد'**
+  String get reservationFormTitle;
+
+  /// No description provided for @reservationItemTitleLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصف الطلب'**
+  String get reservationItemTitleLabel;
+
+  /// No description provided for @reservationItemTitleHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: طاولة لأربعة أشخاص، ٧ مساءً'**
+  String get reservationItemTitleHint;
+
+  /// No description provided for @reservationBuyerPhoneLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم هاتف المشتري'**
+  String get reservationBuyerPhoneLabel;
+
+  /// No description provided for @reservationBuyerPhoneHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'7XXXXXXXX'**
+  String get reservationBuyerPhoneHint;
+
+  /// No description provided for @reservationBuyerNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الهاتف غير مسجل في التطبيق'**
+  String get reservationBuyerNotFound;
+
+  /// No description provided for @reservationInvoiceAmountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيمة الفاتورة (د.أ)'**
+  String get reservationInvoiceAmountLabel;
+
+  /// No description provided for @reservationDurationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مدة الحجز'**
+  String get reservationDurationLabel;
+
+  /// No description provided for @reservationDurationMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'{minutes} دقيقة'**
+  String reservationDurationMinutes(int minutes);
+
+  /// No description provided for @reservationPenaltyBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنبيه: سيتم خصم ١٠٪ من قيمة الفاتورة ({amount} د.أ) من الطرف المخالف لضمان حقوق التعامل'**
+  String reservationPenaltyBanner(String amount);
+
+  /// No description provided for @reservationSubmitButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء الحجز'**
+  String get reservationSubmitButton;
+
+  /// No description provided for @reservationCreateSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إنشاء الحجز وإرساله للمشتري'**
+  String get reservationCreateSuccess;
+
+  /// No description provided for @reservationInboxTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبات الحجز'**
+  String get reservationInboxTitle;
+
+  /// No description provided for @reservationEmptyInbox.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد طلبات حجز حالياً'**
+  String get reservationEmptyInbox;
+
+  /// No description provided for @reservationInvoiceTotalLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ الإجمالي'**
+  String get reservationInvoiceTotalLabel;
+
+  /// No description provided for @reservationTimeRemainingLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوقت المتبقي'**
+  String get reservationTimeRemainingLabel;
+
+  /// No description provided for @reservationApproveButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'قبول وتثبيت الحجز'**
+  String get reservationApproveButton;
+
+  /// No description provided for @reservationApproveSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تثبيت الحجز'**
+  String get reservationApproveSuccess;
+
+  /// No description provided for @reservationCompleteButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد إتمام الشراء'**
+  String get reservationCompleteButton;
+
+  /// No description provided for @reservationCancelButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء الحجز'**
+  String get reservationCancelButton;
+
+  /// No description provided for @reservationCancelReasonTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سبب الإلغاء'**
+  String get reservationCancelReasonTitle;
+
+  /// No description provided for @reservationCancelReasonSoldElsewhere.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم بيع البضاعة لطرف آخر'**
+  String get reservationCancelReasonSoldElsewhere;
+
+  /// No description provided for @reservationCancelReasonOther.
+  ///
+  /// In ar, this message translates to:
+  /// **'سبب آخر'**
+  String get reservationCancelReasonOther;
+
+  /// No description provided for @reservationCancelFraudWarning.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحذير: اختيار هذا السبب سيؤدي لخصم ١٠٪ من حسابك فوراً كتعويض للمشتري'**
+  String get reservationCancelFraudWarning;
+
+  /// No description provided for @reservationSellerTag.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت البائع'**
+  String get reservationSellerTag;
+
+  /// No description provided for @reservationBuyerTag.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت المشتري'**
+  String get reservationBuyerTag;
 }
 
 class _AppLocalizationsDelegate

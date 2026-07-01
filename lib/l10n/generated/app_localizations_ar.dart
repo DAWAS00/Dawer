@@ -3126,4 +3126,90 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get aboutDwaarCloseButton => 'إغلاق';
+
+  @override
+  String get reservationBookButton => 'حجز الآن';
+
+  @override
+  String get reservationFormTitle => 'إنشاء حجز جديد';
+
+  @override
+  String get reservationItemTitleLabel => 'وصف الطلب';
+
+  @override
+  String get reservationItemTitleHint => 'مثال: طاولة لأربعة أشخاص، ٧ مساءً';
+
+  @override
+  String get reservationBuyerPhoneLabel => 'رقم هاتف المشتري';
+
+  @override
+  String get reservationBuyerPhoneHint => '7XXXXXXXX';
+
+  @override
+  String get reservationBuyerNotFound => 'رقم الهاتف غير مسجل في التطبيق';
+
+  @override
+  String get reservationInvoiceAmountLabel => 'قيمة الفاتورة (د.أ)';
+
+  @override
+  String get reservationDurationLabel => 'مدة الحجز';
+
+  @override
+  String reservationDurationMinutes(int minutes) {
+    return '$minutes دقيقة';
+  }
+
+  @override
+  String reservationPenaltyBanner(String amount) {
+    return 'تنبيه: سيتم خصم ١٠٪ من قيمة الفاتورة ($amount د.أ) من الطرف المخالف لضمان حقوق التعامل';
+  }
+
+  @override
+  String get reservationSubmitButton => 'إنشاء الحجز';
+
+  @override
+  String get reservationCreateSuccess => 'تم إنشاء الحجز وإرساله للمشتري';
+
+  @override
+  String get reservationInboxTitle => 'طلبات الحجز';
+
+  @override
+  String get reservationEmptyInbox => 'لا توجد طلبات حجز حالياً';
+
+  @override
+  String get reservationInvoiceTotalLabel => 'المبلغ الإجمالي';
+
+  @override
+  String get reservationTimeRemainingLabel => 'الوقت المتبقي';
+
+  @override
+  String get reservationApproveButton => 'قبول وتثبيت الحجز';
+
+  @override
+  String get reservationApproveSuccess => 'تم تثبيت الحجز';
+
+  @override
+  String get reservationCompleteButton => 'تأكيد إتمام الشراء';
+
+  @override
+  String get reservationCancelButton => 'إلغاء الحجز';
+
+  @override
+  String get reservationCancelReasonTitle => 'سبب الإلغاء';
+
+  @override
+  String get reservationCancelReasonSoldElsewhere => 'تم بيع البضاعة لطرف آخر';
+
+  @override
+  String get reservationCancelReasonOther => 'سبب آخر';
+
+  @override
+  String get reservationCancelFraudWarning =>
+      'تحذير: اختيار هذا السبب سيؤدي لخصم ١٠٪ من حسابك فوراً كتعويض للمشتري';
+
+  @override
+  String get reservationSellerTag => 'أنت البائع';
+
+  @override
+  String get reservationBuyerTag => 'أنت المشتري';
 }

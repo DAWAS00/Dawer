@@ -36,8 +36,8 @@ void main() {
       }
     });
 
-    test('ORD-S01 inTransit order has inTransitAt set', () {
-      final ordS01 = orders.firstWhere((o) => o.id == 'ORD-S01');
+    test('DRV-TRANSIT-01 inTransit order has inTransitAt set', () {
+      final ordS01 = orders.firstWhere((o) => o.id == 'DRV-TRANSIT-01');
       expect(ordS01.inTransitAt, isNotNull);
     });
   });

@@ -8,6 +8,9 @@ import '../../../../../data/services/app_order_store.dart';
 import '../../../../../data/services/eco_points_engine.dart';
 import '../../../../../domain/entities/green_level.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../shared/rewards/discount_coupons_widget.dart';
+import '../../shared/rewards/eco_hero_badge_widget.dart';
+import '../../shared/rewards/neighborhood_leaderboard_widget.dart';
 
 /// A single redemption offer in the خُضَر catalogue.
 class _RedeemOption {
