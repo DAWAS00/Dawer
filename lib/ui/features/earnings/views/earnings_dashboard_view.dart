@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/state/view_state.dart';
+import '../../../../core/theme/app_tokens.dart';
 import '../../../../domain/entities/earnings/earnings_summary.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
 import '../viewmodels/earnings_viewmodel.dart';
@@ -42,7 +43,10 @@ class _EarningsDashboardViewState extends State<EarningsDashboardView> {
           Loaded(:final data) => _buildDashboard(data, vm),
         };
         if (!widget.useScaffold) return body;
-        return Scaffold(backgroundColor: AppColors.background, body: body);
+        return Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          body: body,
+        );
       },
     );
   }
@@ -58,8 +62,8 @@ class _EarningsDashboardViewState extends State<EarningsDashboardView> {
           SliverAppBar(
             pinned: true,
             expandedHeight: 0,
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
+            backgroundColor: context.dt.surface,
+            foregroundColor: context.dt.onSurface,
             automaticallyImplyLeading: false,
             leading: showBack
                 ? IconButton(

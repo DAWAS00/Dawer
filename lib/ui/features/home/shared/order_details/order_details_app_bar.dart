@@ -17,7 +17,7 @@ class OrderDetailsAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       pinned: true,
-      backgroundColor: const Color(0xFF06402B),
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       foregroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.arrow_forward_ios_rounded, size: 18),

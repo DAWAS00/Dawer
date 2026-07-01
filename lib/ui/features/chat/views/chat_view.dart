@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/state/view_state.dart';
+import '../../../../core/theme/app_tokens.dart';
 import '../../../../data/chat/mock_chat_repository.dart';
 import '../../../../data/models/order/order.dart';
 import '../../../../data/models/user_role.dart';
@@ -65,7 +66,7 @@ class _ChatScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<ChatViewModel>();
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F5),
+      backgroundColor: context.dt.scaffold,
       appBar: _ChatAppBar(orderId: orderId),
       body: Column(
         children: [
@@ -177,7 +178,7 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
 
     return AppBar(
-      backgroundColor: const Color(0xFF06402B),
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       foregroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.arrow_forward_ios_rounded, size: 18),
@@ -279,7 +280,7 @@ class _MessageListState extends State<_MessageList> {
       return Center(
         child: Text(
           state.failure.message,
-          style: GoogleFonts.cairo(color: AppColors.mutedText),
+          style: GoogleFonts.cairo(color: context.dt.onSurfaceMuted),
         ),
       );
     }
@@ -342,6 +343,7 @@ class _OrderContextCardState extends State<_OrderContextCard> {
         : null;
     final weight =
         o.weightKg != null ? '${o.weightKg!.toStringAsFixed(0)} كجم' : null;
+    final accent = Theme.of(context).primaryColor;
 
     return AnimatedSize(
       duration: const Duration(milliseconds: 200),
@@ -351,10 +353,10 @@ class _OrderContextCardState extends State<_OrderContextCard> {
         child: Container(
           margin: const EdgeInsets.fromLTRB(12, 10, 12, 4),
           decoration: BoxDecoration(
-            color: const Color(0xFF06402B).withValues(alpha: 0.06),
+            color: accent.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: const Color(0xFF06402B).withValues(alpha: 0.18),
+              color: accent.withValues(alpha: 0.18),
             ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -369,7 +371,7 @@ class _OrderContextCardState extends State<_OrderContextCard> {
                         ? Icons.keyboard_arrow_up_rounded
                         : Icons.keyboard_arrow_down_rounded,
                     size: 18,
-                    color: const Color(0xFF06402B),
+                    color: accent,
                   ),
                   const Spacer(),
                   if (wasteLabel != null)
@@ -382,13 +384,12 @@ class _OrderContextCardState extends State<_OrderContextCard> {
                         style: GoogleFonts.cairo(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF06402B),
+                          color: accent,
                         ),
                       ),
                     ),
                   const SizedBox(width: 6),
-                  const Icon(Icons.inventory_2_rounded,
-                      size: 15, color: Color(0xFF06402B)),
+                  Icon(Icons.inventory_2_rounded, size: 15, color: accent),
                 ],
               ),
               // Expanded details.
@@ -431,9 +432,8 @@ class _ContextRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = highlight
-        ? const Color(0xFFC8860A)
-        : const Color(0xFF404943);
+    final color =
+        highlight ? const Color(0xFFC8860A) : context.dt.onSurfaceVariant;
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: Row(
@@ -480,19 +480,19 @@ class _DateSeparator extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         children: [
-          const Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+          Expanded(child: Divider(color: context.dt.border)),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
               _label(),
               style: GoogleFonts.cairo(
                 fontSize: 11,
-                color: AppColors.mutedText,
+                color: context.dt.onSurfaceMuted,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
-          const Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+          Expanded(child: Divider(color: context.dt.border)),
         ],
       ),
     );
@@ -549,7 +549,7 @@ class _TypingIndicatorState extends State<_TypingIndicator>
           ? Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(16, 6, 16, 4),
-              color: const Color(0xFFF4F6F5),
+              color: context.dt.scaffold,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -557,7 +557,7 @@ class _TypingIndicatorState extends State<_TypingIndicator>
                     'يكتب الآن',
                     style: GoogleFonts.cairo(
                       fontSize: 11,
-                      color: AppColors.mutedText,
+                      color: context.dt.onSurfaceMuted,
                     ),
                   ),
                   const SizedBox(width: 6),
@@ -614,12 +614,12 @@ class _EmptyState extends StatelessWidget {
         children: [
           Icon(Icons.chat_bubble_outline_rounded,
               size: 48,
-              color: AppColors.mutedText.withValues(alpha: 0.4)),
+              color: context.dt.onSurfaceMuted.withValues(alpha: 0.4)),
           const SizedBox(height: 12),
           Text(
             context.l10n.chatEmpty,
-            style:
-                GoogleFonts.cairo(fontSize: 14, color: AppColors.mutedText),
+            style: GoogleFonts.cairo(
+                fontSize: 14, color: context.dt.onSurfaceMuted),
           ),
         ],
       ),

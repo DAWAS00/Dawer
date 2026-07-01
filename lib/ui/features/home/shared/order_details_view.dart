@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme/app_tokens.dart';
 import '../../../../data/models/order/order.dart';
 import '../../../../data/services/app_order_store.dart';
 import 'widgets/rate_driver_sheet.dart';
@@ -43,7 +44,7 @@ class OrderDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAF8),
+      backgroundColor: context.dt.scaffold,
       bottomNavigationBar: _buildBottomBar(context),
       body: CustomScrollView(
         slivers: [
@@ -168,11 +169,11 @@ class OrderDetailsView extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.dt.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF06402B).withValues(alpha: 0.08),
+            color: context.dt.shadow.withValues(alpha: 0.08),
             blurRadius: 24,
             offset: const Offset(0, -8),
           ),
@@ -220,12 +221,12 @@ class _DriverStatusStepper extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.dt.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEF2EE)),
+        border: Border.all(color: context.dt.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: context.dt.shadow.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -241,8 +242,8 @@ class _DriverStatusStepper extends StatelessWidget {
                 height: 2,
                 decoration: BoxDecoration(
                   color: active
-                      ? const Color(0xFF06402B)
-                      : const Color(0xFFDDE3DD),
+                      ? Theme.of(context).primaryColor
+                      : context.dt.surfaceVariant,
                   borderRadius: BorderRadius.circular(1),
                 ),
               ),
@@ -277,10 +278,10 @@ class _StepDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color bg = done || current
-        ? const Color(0xFF06402B)
-        : const Color(0xFFEEF2EE);
-    final Color fg = done || current ? Colors.white : const Color(0xFF9EA89E);
+    final accent = Theme.of(context).primaryColor;
+    final Color bg = done || current ? accent : context.dt.surfaceVariant;
+    final Color fg =
+        done || current ? Colors.white : context.dt.onSurfaceMuted;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -295,7 +296,7 @@ class _StepDot extends StatelessWidget {
             boxShadow: current
                 ? [
                     BoxShadow(
-                      color: const Color(0xFF06402B).withValues(alpha: 0.3),
+                      color: accent.withValues(alpha: 0.3),
                       blurRadius: 8,
                       spreadRadius: 1,
                     )
@@ -315,10 +316,10 @@ class _StepDot extends StatelessWidget {
             fontSize: 9,
             fontWeight: current ? FontWeight.bold : FontWeight.w500,
             color: current
-                ? const Color(0xFF06402B)
+                ? accent
                 : done
-                    ? const Color(0xFF404943)
-                    : const Color(0xFF9EA89E),
+                    ? context.dt.onSurfaceVariant
+                    : context.dt.onSurfaceMuted,
           ),
         ),
       ],

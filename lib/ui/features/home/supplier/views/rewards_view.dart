@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../core/utils/date_formatter.dart';
 import '../../../../../data/models/reward_transaction.dart';
 import '../../../../../data/services/app_order_store.dart';
@@ -112,9 +113,9 @@ class RewardsView extends StatelessWidget {
     final level = GreenLevelInfo.fromPoints(points);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F5),
+      backgroundColor: context.dt.scaffold,
       appBar: AppBar(
-        backgroundColor: AppColors.primaryGreen,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         foregroundColor: Colors.white,
         title: Text('مكافآت خُضَر',
             style: GoogleFonts.cairo(
@@ -133,7 +134,7 @@ class RewardsView extends StatelessWidget {
               style: GoogleFonts.cairo(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819))),
+                  color: context.dt.onSurface)),
           const SizedBox(height: 12),
           if (transactions.isNotEmpty)
             ...transactions.map((t) => _TransactionTile(transaction: t))
@@ -148,7 +149,7 @@ class RewardsView extends StatelessWidget {
                     const SizedBox(height: 12),
                     Text(context.l10n.rewardsNoHistory,
                         style: GoogleFonts.cairo(
-                            fontSize: 14, color: const Color(0xFF717973))),
+                            fontSize: 14, color: context.dt.onSurfaceMuted)),
                   ],
                 ),
               ),
@@ -169,7 +170,7 @@ class RewardsView extends StatelessWidget {
             style: GoogleFonts.cairo(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF002819))),
+                color: context.dt.onSurface)),
         const SizedBox(height: 12),
         Row(
           children: _options.map((o) {
@@ -187,16 +188,16 @@ class RewardsView extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           vertical: 16, horizontal: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: context.dt.surface,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: affordable
                               ? AppColors.primaryGreen.withValues(alpha: 0.4)
-                              : const Color(0xFFE6E9E7),
+                              : context.dt.border,
                         ),
                         boxShadow: [
                           BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.04),
+                              color: context.dt.shadow.withValues(alpha: 0.04),
                               blurRadius: 6),
                         ],
                       ),
@@ -210,7 +211,7 @@ class RewardsView extends StatelessWidget {
                               style: GoogleFonts.cairo(
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF002819))),
+                                  color: context.dt.onSurface)),
                           const SizedBox(height: 2),
                           Text(o.reward,
                               style: GoogleFonts.cairo(
@@ -221,7 +222,7 @@ class RewardsView extends StatelessWidget {
                           Text('${o.cost} خُضَر',
                               style: GoogleFonts.cairo(
                                   fontSize: 10,
-                                  color: const Color(0xFF717973))),
+                                  color: context.dt.onSurfaceMuted)),
                         ],
                       ),
                     ),
@@ -336,11 +337,11 @@ class _TransactionTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.dt.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03), blurRadius: 4),
+              color: context.dt.shadow.withValues(alpha: 0.03), blurRadius: 4),
         ],
       ),
       child: Row(
@@ -365,10 +366,10 @@ class _TransactionTile extends StatelessWidget {
                     style: GoogleFonts.cairo(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF002819))),
+                        color: context.dt.onSurface)),
                 Text(DateFormatter.relative(transaction.createdAt),
                     style: GoogleFonts.cairo(
-                        fontSize: 11, color: const Color(0xFF717973))),
+                        fontSize: 11, color: context.dt.onSurfaceMuted)),
               ],
             ),
           ),

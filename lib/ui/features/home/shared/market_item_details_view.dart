@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../../../../core/theme/app_tokens.dart';
 import '../../../../data/models/order/order.dart';
 import '../../../../data/models/order_labels.dart';
 import '../../../../data/models/user.dart';
@@ -34,14 +35,14 @@ class MarketItemDetailsView extends StatelessWidget {
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context);
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F5),
+      backgroundColor: context.dt.scaffold,
       body: CustomScrollView(
         slivers: [
           // ── App bar with image carousel ──
           SliverAppBar(
             expandedHeight: 280,
             pinned: true,
-            backgroundColor: const Color(0xFF14401F),
+            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
             leading: IconButton(
               icon: Container(
                 padding: const EdgeInsets.all(6),
@@ -111,7 +112,6 @@ class MarketItemDetailsView extends StatelessWidget {
   void _showSupplierPurchaseChoiceSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -170,10 +170,10 @@ class MarketItemDetailsView extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.dt.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: context.dt.shadow.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, -4),
           ),
@@ -211,7 +211,6 @@ class MarketItemDetailsView extends StatelessWidget {
   void _showRiderChoiceSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -231,7 +230,6 @@ class MarketItemDetailsView extends StatelessWidget {
   void _showRiderInvoiceSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -285,7 +283,6 @@ class MarketItemDetailsView extends StatelessWidget {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),

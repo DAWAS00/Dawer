@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/theme/app_tokens.dart';
 import '../../../../domain/chat/entities/chat_message.dart';
 
 // ── ChatBubble ────────────────────────────────────────────────────────────────
@@ -48,9 +49,7 @@ class ChatBubble extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           decoration: BoxDecoration(
-            color: isMine
-                ? AppColors.primaryGreen
-                : const Color(0xFFF1F5F9),
+            color: isMine ? AppColors.primaryGreen : context.dt.surface,
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(18),
               topRight: const Radius.circular(18),
@@ -121,7 +120,7 @@ class _TextBubbleBody extends StatelessWidget {
                 : TextAlign.left,
             style: GoogleFonts.cairo(
               fontSize: 14,
-              color: isMine ? Colors.white : const Color(0xFF1E293B),
+              color: isMine ? Colors.white : context.dt.onSurface,
             ),
           ),
           const SizedBox(height: 4),
@@ -189,7 +188,7 @@ class _ImageBubbleBody extends StatelessWidget {
                   textDirection: _detectDirection(message.content),
                   style: GoogleFonts.cairo(
                     fontSize: 13,
-                    color: isMine ? Colors.white : const Color(0xFF1E293B),
+                    color: isMine ? Colors.white : context.dt.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -215,8 +214,8 @@ class _ImagePlaceholder extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: 180,
-      color: Colors.black12,
-      child: const Icon(Icons.image_rounded, size: 40, color: Colors.white54),
+      color: context.dt.surfaceVariant,
+      child: Icon(Icons.image_rounded, size: 40, color: context.dt.onSurfaceMuted),
     );
   }
 }
@@ -247,8 +246,9 @@ class _LocationBubbleBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = isMine ? Colors.white : const Color(0xFF1E293B);
-    final subColor = isMine ? Colors.white70 : AppColors.mutedText;
+    final textColor = isMine ? Colors.white : context.dt.onSurface;
+    final subColor = isMine ? Colors.white70 : context.dt.onSurfaceMuted;
+    final accent = Theme.of(context).primaryColor;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -261,7 +261,7 @@ class _LocationBubbleBody extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.location_on_rounded,
-                  size: 18, color: isMine ? Colors.white70 : AppColors.primaryGreen),
+                  size: 18, color: isMine ? Colors.white70 : accent),
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
@@ -290,22 +290,21 @@ class _LocationBubbleBody extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isMine
                     ? Colors.white.withValues(alpha: 0.2)
-                    : AppColors.primaryGreen.withValues(alpha: 0.1),
+                    : accent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.open_in_new_rounded,
-                      size: 12,
-                      color: isMine ? Colors.white : AppColors.primaryGreen),
+                      size: 12, color: isMine ? Colors.white : accent),
                   const SizedBox(width: 4),
                   Text(
                     'افتح في الخريطة',
                     style: GoogleFonts.cairo(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: isMine ? Colors.white : AppColors.primaryGreen,
+                      color: isMine ? Colors.white : accent,
                     ),
                   ),
                 ],
@@ -340,7 +339,7 @@ class _SystemMessage extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
           decoration: BoxDecoration(
-            color: AppColors.mutedText.withValues(alpha: 0.12),
+            color: context.dt.onSurfaceMuted.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
@@ -348,7 +347,7 @@ class _SystemMessage extends StatelessWidget {
             textAlign: TextAlign.center,
             style: GoogleFonts.cairo(
               fontSize: 11,
-              color: AppColors.mutedText,
+              color: context.dt.onSurfaceMuted,
             ),
           ),
         ),
@@ -372,7 +371,7 @@ class _SenderLabel extends StatelessWidget {
         style: GoogleFonts.cairo(
           fontSize: 11,
           fontWeight: FontWeight.bold,
-          color: AppColors.primaryGreen,
+          color: Theme.of(context).primaryColor,
         ),
       ),
     );
@@ -455,7 +454,7 @@ class _Timestamp extends StatelessWidget {
             fontSize: 10,
             color: isMine
                 ? Colors.white.withValues(alpha: 0.7)
-                : AppColors.mutedText,
+                : context.dt.onSurfaceMuted,
           ),
         ),
       ],

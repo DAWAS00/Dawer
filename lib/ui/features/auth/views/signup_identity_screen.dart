@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/theme/app_tokens.dart';
 import '../../../../data/models/user_role.dart';
 import '../../../../domain/services/i_signup_orchestrator.dart';
 import '../../../../l10n/l10n.dart';
@@ -113,7 +114,7 @@ class _SignupIdentityBodyState extends State<_SignupIdentityBody> {
             controller.supplierType == SupplierType.storeBusiness);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_forward_ios_rounded),
@@ -122,7 +123,7 @@ class _SignupIdentityBodyState extends State<_SignupIdentityBody> {
         title: Text(l10n.signupTitle, style: GoogleFonts.cairo()),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: const Color(0xFF191C1B),
+        foregroundColor: context.dt.onSurface,
       ),
       body: SafeArea(
         child: SingleChildScrollView(

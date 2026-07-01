@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/waste_type_icons.dart';
+import '../../../../core/theme/app_tokens.dart';
 import '../../../../data/models/order/order.dart' show WasteType, WasteTypeLabel, VehicleTypeLabel;
 import '../../../../data/models/user_role.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
@@ -189,7 +190,7 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
         if (!didPop) _navigateHome();
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_forward_ios_rounded),
@@ -199,7 +200,7 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
           title: Text(l10n.signupTitle, style: GoogleFonts.cairo()),
           backgroundColor: Colors.transparent,
           elevation: 0,
-          foregroundColor: const Color(0xFF191C1B),
+          foregroundColor: context.dt.onSurface,
           actions: [
             TextButton(
               onPressed: _navigateHome,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../data/services/eco_points_engine.dart';
 
 /// Amman neighborhood leaderboard showing kg collected per district.
@@ -66,9 +67,9 @@ class NeighborhoodLeaderboardPage extends StatelessWidget {
     final maxKg = entries.first.kgCollected;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F5),
+      backgroundColor: context.dt.scaffold,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF06402B),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         foregroundColor: Colors.white,
         title: Text(
           'لوحة الأحياء — عمان ♻️',
@@ -82,9 +83,13 @@ class NeighborhoodLeaderboardPage extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF06402B), Color(0xFF1E6B35)],
+                colors: [
+                  Theme.of(context).appBarTheme.backgroundColor ??
+                      Theme.of(context).primaryColor,
+                  const Color(0xFF1E6B35),
+                ],
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
               ),
@@ -185,7 +190,7 @@ class _LeaderboardTile extends StatelessWidget {
                 'كغ',
                 style: GoogleFonts.cairo(
                   fontSize: 11,
-                  color: const Color(0xFF717973),
+                  color: context.dt.onSurfaceMuted,
                 ),
               ),
               const Spacer(),

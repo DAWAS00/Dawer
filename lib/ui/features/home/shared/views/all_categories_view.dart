@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/constants/waste_type_icons.dart';
+import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/order_labels.dart';
 import '../../../../../data/models/user_role.dart';
@@ -20,9 +21,9 @@ class AllCategoriesView extends StatelessWidget {
     final locale = Localizations.localeOf(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAF8),
+      backgroundColor: context.dt.scaffold,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF06402B),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         foregroundColor: Colors.white,
         title: Text(
           'الفئات والطلبات',
@@ -108,7 +109,7 @@ class _CategorySection extends StatelessWidget {
                 style: GoogleFonts.cairo(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819),
+                  color: context.dt.onSurface,
                 ),
               ),
               const SizedBox(width: 8),
@@ -126,7 +127,7 @@ class _CategorySection extends StatelessWidget {
               textAlign: TextAlign.end,
               style: GoogleFonts.cairo(
                 fontSize: 12,
-                color: const Color(0xFF9CA3AF),
+                color: context.dt.onSurfaceMuted,
               ),
             ),
           )
