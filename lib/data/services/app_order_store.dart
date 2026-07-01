@@ -388,6 +388,17 @@ class AppOrderStore extends ChangeNotifier {
   List<Order> get companyJobs =>
       _orders.where((o) => o.type == OrderType.collection).toList();
 
+  /// Completed deliveries received by the company — pickups dropped off and
+  /// collection-job sales fulfilled. [companyIncoming] only tracks orders
+  /// still in an active delivery state, so without this, completed history
+  /// never reaches the company's Analytics tab (it would only ever see
+  /// completed collection-job postings via [companyJobs]).
+  List<Order> get companyCompletedDeliveries => _orders
+      .where((o) =>
+          (o.type == OrderType.pickup || o.type == OrderType.collectionSale) &&
+          o.status == OrderStatus.completed)
+      .toList();
+
   // ─────────────────────────────────────────────────────────────────────────
   // Marketplace views
   // ─────────────────────────────────────────────────────────────────────────
@@ -1120,6 +1131,134 @@ class AppOrderStore extends ChangeNotifier {
       _remote.markPurchased(orderId, requiresRider: false),
     ));
     return received;
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Reservation actions (10 % escrow)
+  // ─────────────────────────────────────────────────────────────────────────
+
+  static const double _reservationDepositPct = 0.10;
+
+  /// All marketplace items that have a pending reservation for [sellerName]
+  /// (i.e. items the seller listed that someone wants to reserve).
+  List<Order> pendingReservationsForSeller(String sellerName) => _orders
+      .where((o) =>
+          o.isMarketplaceShared &&
+          o.supplierName == sellerName &&
+          o.reservationStatus == ReservationStatus.pending)
+      .toList();
+
+  /// Buyer reserves a marketplace item.
+  /// Locks [_reservationDepositPct] of [itemPrice] from the buyer's wallet.
+  /// Returns an error string on failure, null on success.
+  String? reserveMarketItem({
+    required String orderId,
+    required String reserverName,
+    required String reserverId,
+    required DateTime pickupDate,
+  }) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1 || !_orders[idx].isMarketplaceShared) return 'العنصر غير موجود';
+    final order = _orders[idx];
+    if (order.status != OrderStatus.pending) return 'هذا العنصر لم يعد متاحاً';
+    if (order.reservationStatus != null) return 'هذا العنصر محجوز بالفعل';
+    if (order.supplierName == reserverName) return 'لا يمكنك حجز منتجك الخاص';
+
+    final price = order.itemPrice ?? 0;
+    final deposit = (price * _reservationDepositPct);
+
+    _orders[idx] = order.copyWith(
+      reservationStatus: ReservationStatus.pending,
+      reservationPickupDate: pickupDate,
+      reservedByName: reserverName,
+      reservedById: reserverId,
+      buyerDepositAmount: deposit,
+    );
+    notifyListeners();
+    return null;
+  }
+
+  /// Seller responds to a pending reservation.
+  /// [accept] = true  → seller also commits 10% deposit; status → accepted.
+  /// [accept] = false → reservation rejected; buyer deposit released; status → rejected.
+  String? respondToReservation({
+    required String orderId,
+    required String sellerName,
+    required bool accept,
+  }) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return 'العنصر غير موجود';
+    final order = _orders[idx];
+    if (order.supplierName != sellerName) return 'ليس لديك صلاحية للرد على هذا الحجز';
+    if (order.reservationStatus != ReservationStatus.pending) return 'لا يوجد حجز بانتظار ردّك';
+
+    if (accept) {
+      final price = order.itemPrice ?? 0;
+      final sellerDeposit = (price * _reservationDepositPct);
+      _orders[idx] = order.copyWith(
+        reservationStatus: ReservationStatus.accepted,
+        sellerDepositAmount: sellerDeposit,
+      );
+    } else {
+      _orders[idx] = order.copyWith(
+        reservationStatus: ReservationStatus.rejected,
+        // Return buyer's deposit — clear it
+        buyerDepositAmount: null,
+        reservedByName: null,
+        reservedById: null,
+        reservationPickupDate: null,
+      );
+    }
+    notifyListeners();
+    return null;
+  }
+
+  /// Cancel a confirmed reservation. Fraud penalty logic:
+  /// • Buyer cancels → buyer forfeits their 10% deposit to the seller.
+  /// • Seller cancels → seller forfeits their 10% deposit to the buyer.
+  /// Either way the order reverts to [pending] (available for others to buy).
+  String? cancelReservation({
+    required String orderId,
+    required String cancellerName,
+    required bool isBuyer,
+  }) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return 'العنصر غير موجود';
+    final order = _orders[idx];
+
+    final isReserved = order.reservationStatus == ReservationStatus.pending ||
+        order.reservationStatus == ReservationStatus.accepted;
+    if (!isReserved) return 'لا يوجد حجز نشط على هذا العنصر';
+
+    // Determine new status
+    final newStatus = isBuyer
+        ? ReservationStatus.cancelledByBuyer
+        : ReservationStatus.cancelledBySeller;
+
+    _orders[idx] = order.copyWith(
+      reservationStatus: newStatus,
+      // Keep deposit amounts for audit; UI can show who was penalised.
+    );
+    notifyListeners();
+    return null;
+  }
+
+  /// Complete a reserved order (buyer picks up on the agreed date).
+  /// Releases both deposits. Order moves to accepted so the normal flow continues.
+  String? completeReservation(String orderId) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return 'العنصر غير موجود';
+    final order = _orders[idx];
+    if (order.reservationStatus != ReservationStatus.accepted) {
+      return 'يجب أن يكون الحجز مؤكداً لإتمامه';
+    }
+    _orders[idx] = order.copyWith(
+      reservationStatus: ReservationStatus.completedByReservation,
+      status: OrderStatus.accepted,
+      acceptedAt: DateTime.now(),
+    );
+    notifyListeners();
+    return null;
   }
 
   // ─────────────────────────────────────────────────────────────────────────

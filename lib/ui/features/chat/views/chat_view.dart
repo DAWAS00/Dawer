@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/state/view_state.dart';
 import '../../../../core/theme/app_tokens.dart';
-import '../../../../data/chat/mock_chat_repository.dart';
 import '../../../../data/models/order/order.dart';
 import '../../../../data/models/user_role.dart';
 import '../../../../domain/chat/entities/chat_message.dart';
@@ -124,7 +123,7 @@ class _ChatScaffold extends StatelessWidget {
 
   // Dev-only banner — hidden in release builds and when live repo is wired.
   Widget _frontendOnlyBanner(BuildContext context) {
-    final isMock = context.read<IChatRepository>() is MockChatRepository;
+    final isMock = context.read<IChatRepository>().runtimeType.toString() != 'SupabaseChatRepository';
     if (!kDebugMode || !isMock) return const SizedBox.shrink();
     return Container(
       width: double.infinity,

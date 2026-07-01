@@ -81,6 +81,11 @@ class RecyclingHomeViewModel extends ChangeNotifier {
   List<Order> get incoming => _store.companyIncoming;
   List<Order> get jobs => _store.companyJobs;
 
+  /// Completed deliveries (pickups + collection-job sales) — feeds Analytics
+  /// with the company's actual recycling history, which [incoming] alone
+  /// excludes (it only tracks orders still in an active delivery state).
+  List<Order> get completedDeliveries => _store.companyCompletedDeliveries;
+
   /// All collectionSale orders linked to this company's jobs.
   /// Used to show who accepted which job and their status.
   List<Order> get jobSales => _store.salesForCompanyJobs(_company.name);

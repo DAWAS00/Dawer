@@ -126,15 +126,17 @@ void main() {
         find.byKey(const ValueKey('phone_input')),
         '790000001',
       );
+      await tester.pump();
 
-      await tester.tap(find.byIcon(Icons.arrow_forward_rounded));
+      final vm = _vm(tester);
+
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pump(); // start loading
       await tester.pump(const Duration(milliseconds: 16)); // resolve future
 
       expect(repo.requestOtpCallCount, 1);
       expect(repo.lastPhone, '+962790000001');
 
-      final vm = _vm(tester);
       expect(vm.otpSent, isTrue);
       expect(vm.error, isNull);
       expect(vm.isLoading, isFalse);
@@ -152,8 +154,9 @@ void main() {
         find.byKey(const ValueKey('phone_input')),
         '790000001',
       );
+      await tester.pump();
 
-      await tester.tap(find.byIcon(Icons.arrow_forward_rounded));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 16));
 

@@ -120,6 +120,43 @@ class MarketItemCard extends StatelessWidget {
               ),
             ),
 
+            // ── Reservation badge ──
+            if (item.reservationStatus != null) ...[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 0, 14, 6),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFEF3C7),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: const Color(0xFFFCD34D)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            item.reservationStatus!.label,
+                            style: GoogleFonts.cairo(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF92400E),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.lock_clock_rounded,
+                              color: Color(0xFFD97706), size: 11),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
             // ── Waste type chips ──
             if (item.wasteTypes.isNotEmpty)
               Padding(

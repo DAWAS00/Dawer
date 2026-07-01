@@ -10,7 +10,7 @@ import 'package:dwaar/data/services/driver_location_stream.dart';
 import 'package:dwaar/l10n/l10n.dart';
 import 'package:dwaar/ui/common/map/live_tracking_map_view.dart';
 import 'package:dwaar/ui/common/map/pickup_map_view.dart';
-import 'package:dwaar/ui/common/map/route_map_placeholder.dart';
+import 'package:dwaar/ui/common/map/route_map_view.dart';
 
 class OrderMapSection extends StatelessWidget {
   final Order order;
@@ -54,7 +54,7 @@ class OrderMapSection extends StatelessWidget {
               height: 232,
             );
     } else if (pLat != null && dLat != null) {
-      mapContent = RouteMapPlaceholder(
+      mapContent = RouteMapView(
         pickupLat: pLat,
         pickupLng: pLng!,
         dropoffLat: dLat,

@@ -9,6 +9,7 @@ import '../../../../l10n/l10n.dart';
 
 import 'widgets/login_form.dart';
 import 'widgets/footer.dart';
+import 'widgets/about_dwaar_sheet.dart';
 import '../../../../core/services/app_lang_notifier.dart';
 import '../../../common/lang_picker_sheet.dart';
 import 'signup_phone_screen.dart';
@@ -119,6 +120,11 @@ class _LoginScreen extends StatelessWidget {
                             color: const Color(0xFF446649),
                           ),
                         ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2, end: 0),
+                        const SizedBox(height: 16),
+                        const _AboutDwaarButton()
+                            .animate()
+                            .fadeIn(delay: 500.ms)
+                            .slideY(begin: 0.2, end: 0),
                       ],
                     ),
                   ),
@@ -140,6 +146,30 @@ class _LoginScreen extends StatelessWidget {
           ),
           const _LangToggleButton(),
         ],
+      ),
+    );
+  }
+}
+
+class _AboutDwaarButton extends StatelessWidget {
+  const _AboutDwaarButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: OutlinedButton.icon(
+        onPressed: () => showAboutDwaarSheet(context),
+        icon: const Icon(Icons.info_outline_rounded, size: 18),
+        label: Text(
+          context.l10n.aboutDwaarButtonLabel,
+          style: GoogleFonts.cairo(fontSize: 13, fontWeight: FontWeight.w600),
+        ),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: const Color(0xFF06402B),
+          side: const BorderSide(color: Color(0xFF06402B), width: 1),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        ),
       ),
     );
   }
@@ -182,7 +212,6 @@ class _DynamicRegisterButton extends StatelessWidget {
     );
   }
 }
-
 class _LangToggleButton extends StatelessWidget {
   const _LangToggleButton();
 

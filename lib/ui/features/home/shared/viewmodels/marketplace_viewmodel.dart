@@ -145,6 +145,54 @@ class MarketplaceViewModel extends ChangeNotifier {
   Order? receiveAtFacility(String orderId, String facilityAddress) =>
       _store.receiveAtFacility(orderId, facilityAddress);
 
+  // ── Reservation (10 % escrow) ─────────────────────────────────────────────
+
+  /// Items in the marketplace that are still available (not actively reserved).
+  bool isAvailableForReservation(Order item) =>
+      item.status == OrderStatus.pending && item.reservationStatus == null;
+
+  /// Reserve a marketplace item. Returns an error string or null on success.
+  String? reserveItem({
+    required String orderId,
+    required String reserverName,
+    required String reserverId,
+    required DateTime pickupDate,
+  }) =>
+      _store.reserveMarketItem(
+        orderId: orderId,
+        reserverName: reserverName,
+        reserverId: reserverId,
+        pickupDate: pickupDate,
+      );
+
+  /// Seller accepts or rejects a reservation.
+  String? respondToReservation({
+    required String orderId,
+    required String sellerName,
+    required bool accept,
+  }) =>
+      _store.respondToReservation(
+        orderId: orderId,
+        sellerName: sellerName,
+        accept: accept,
+      );
+
+  /// Cancel a reservation (buyer or seller).
+  String? cancelReservation({
+    required String orderId,
+    required String cancellerName,
+    required bool isBuyer,
+  }) =>
+      _store.cancelReservation(
+        orderId: orderId,
+        cancellerName: cancellerName,
+        isBuyer: isBuyer,
+      );
+
+  /// Pending reservation requests for items listed by [sellerName].
+  List<Order> pendingReservationsForSeller(String sellerName) =>
+      _store.pendingReservationsForSeller(sellerName);
+
   // ── Collection jobs (recycling company postings) ───────────────────────────
 
   /// All pending collection jobs — shown in marketplace for all roles.

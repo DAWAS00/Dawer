@@ -98,6 +98,72 @@ abstract class AppLocalizations {
     Locale('en'),
   ];
 
+  /// No description provided for @chatbotTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساعد دوّر الذكي'**
+  String get chatbotTitle;
+
+  /// No description provided for @chatbotInputHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب سؤالك أو أرسل صورة...'**
+  String get chatbotInputHint;
+
+  /// No description provided for @chatbotThinking.
+  ///
+  /// In ar, this message translates to:
+  /// **'داوة تفكر...'**
+  String get chatbotThinking;
+
+  /// No description provided for @chatbotScanningImage.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري تحليل الصورة...'**
+  String get chatbotScanningImage;
+
+  /// No description provided for @chatbotAnalyzingOil.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري تحليل جودة الزيت بالذكاء الاصطناعي...'**
+  String get chatbotAnalyzingOil;
+
+  /// No description provided for @chatbotTakePhoto.
+  ///
+  /// In ar, this message translates to:
+  /// **'التقاط صورة بالكاميرا'**
+  String get chatbotTakePhoto;
+
+  /// No description provided for @chatbotPickFromGallery.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار من المعرض'**
+  String get chatbotPickFromGallery;
+
+  /// No description provided for @chatbotImageScanResult.
+  ///
+  /// In ar, this message translates to:
+  /// **'نتيجة تحليل الصورة'**
+  String get chatbotImageScanResult;
+
+  /// No description provided for @chatbotOpenAssistant.
+  ///
+  /// In ar, this message translates to:
+  /// **'افتح مساعد دوّر'**
+  String get chatbotOpenAssistant;
+
+  /// No description provided for @chatbotOnlineNow.
+  ///
+  /// In ar, this message translates to:
+  /// **'متصل الآن • يرد فوراً'**
+  String get chatbotOnlineNow;
+
+  /// No description provided for @chatbotSendImageTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال صورة للتحليل'**
+  String get chatbotSendImageTooltip;
+
   /// No description provided for @appTitle.
   ///
   /// In ar, this message translates to:
@@ -5689,6 +5755,270 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لا توجد بيانات مسافة لحساب الكفاءة'**
   String get analyticsEfficiencyEmpty;
+
+  /// No description provided for @aboutDwaarButtonLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعرّف على دوّر'**
+  String get aboutDwaarButtonLabel;
+
+  /// No description provided for @aboutDwaarSheetTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'من نحن وماذا نقدّم'**
+  String get aboutDwaarSheetTitle;
+
+  /// No description provided for @aboutDwaarIntroBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوّر (Dwaar) منصة أردنية تربط بين ثلاثة أطراف: الموردين الذين لديهم نفايات قابلة لإعادة التدوير، السائقين الذين ينقلونها، وشركات إعادة التدوير التي تشتريها. هدفنا تحويل النفايات إلى مورد ذو قيمة، وتسهيل الاقتصاد الدائري في الأردن بخطوات بسيطة من هاتفك.'**
+  String get aboutDwaarIntroBody;
+
+  /// No description provided for @aboutDwaarServicesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'خدماتنا لكل طرف'**
+  String get aboutDwaarServicesTitle;
+
+  /// No description provided for @aboutDwaarServiceSupplierTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'للموردين (أفراد ومتاجر)'**
+  String get aboutDwaarServiceSupplierTitle;
+
+  /// No description provided for @aboutDwaarServiceSupplierBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'اطلب استلام نفاياتك القابلة لإعادة التدوير من موقعك، اختر بيعها لشركة تدوير أو عرضها في السوق لأقرب سائق، واربح نقاط ومكافآت مقابل كل عملية.'**
+  String get aboutDwaarServiceSupplierBody;
+
+  /// No description provided for @aboutDwaarServiceDriverTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'للسائقين'**
+  String get aboutDwaarServiceDriverTitle;
+
+  /// No description provided for @aboutDwaarServiceDriverBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصفّح طلبات الاستلام القريبة منك حسب نوع مركبتك، اقبل الطلب المناسب، وتتبّع أرباحك لحظة بلحظة مع كل رحلة تُنجزها.'**
+  String get aboutDwaarServiceDriverBody;
+
+  /// No description provided for @aboutDwaarServiceRecyclingTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'لشركات إعادة التدوير'**
+  String get aboutDwaarServiceRecyclingTitle;
+
+  /// No description provided for @aboutDwaarServiceRecyclingBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'انشر طلبات تجميع بحسب نوع المادة والكمية والمنطقة، واستقبل تدفقًا منظّمًا وموثّقًا من المواد الخام مباشرة من الموردين والسائقين.'**
+  String get aboutDwaarServiceRecyclingBody;
+
+  /// No description provided for @aboutDwaarHowItWorksTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'كيف تعمل دورة الطلب؟'**
+  String get aboutDwaarHowItWorksTitle;
+
+  /// No description provided for @aboutDwaarHowItWorksStep1.
+  ///
+  /// In ar, this message translates to:
+  /// **'١. المورد يطلب استلام النفايات ويحدّد النوع والوزن التقريبي والموقع'**
+  String get aboutDwaarHowItWorksStep1;
+
+  /// No description provided for @aboutDwaarHowItWorksStep2.
+  ///
+  /// In ar, this message translates to:
+  /// **'٢. سائق مناسب يقبل الطلب، ويظهر موقعه المباشر على الخريطة حتى الوصول'**
+  String get aboutDwaarHowItWorksStep2;
+
+  /// No description provided for @aboutDwaarHowItWorksStep3.
+  ///
+  /// In ar, this message translates to:
+  /// **'٣. عند التسليم، يتم توثيق الوزن الفعلي وتأكيد الاستلام من الطرفين'**
+  String get aboutDwaarHowItWorksStep3;
+
+  /// No description provided for @aboutDwaarHowItWorksStep4.
+  ///
+  /// In ar, this message translates to:
+  /// **'٤. تُصرف المكافآت والأرباح تلقائيًا، وتنتقل المواد إلى شركة إعادة التدوير أو المركز الأقرب'**
+  String get aboutDwaarHowItWorksStep4;
+
+  /// No description provided for @aboutDwaarRewardsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'نظام المكافآت (نقاط خُضَر)'**
+  String get aboutDwaarRewardsTitle;
+
+  /// No description provided for @aboutDwaarRewardsBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل عملية تدوير مكتملة تمنحك نقاط خُضَر بحسب نوع المادة ووزنها. اجمع النقاط لترتقي في مستويات البطاقة الخضراء، واستبدلها بخصومات على الطلبات القادمة أو قسائم شراء من شركائنا. السائقون أيضًا يحصلون على أجرة لكل رحلة تُحتسب من الأجرة الأساسية والمسافة ونوع المادة المنقولة.'**
+  String get aboutDwaarRewardsBody;
+
+  /// No description provided for @aboutDwaarHubsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مراكز التجميع (Hubs)'**
+  String get aboutDwaarHubsTitle;
+
+  /// No description provided for @aboutDwaarHubsBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'مراكز التجميع نقاط استلام فعلية تديرها فرق دوّر، يستخدمها السائقون كوجهة تسليم قريبة بدل التوجه مباشرة لكل شركة تدوير. إذا كانت لديك منشأة أو أرض مناسبة وتودّ استضافة مركز تجميع جديد في منطقتك، تواصل معنا عبر النموذج أدناه وسيقيّم فريقنا الطلب.'**
+  String get aboutDwaarHubsBody;
+
+  /// No description provided for @aboutDwaarImpactTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أثرنا حتى الآن'**
+  String get aboutDwaarImpactTitle;
+
+  /// No description provided for @aboutDwaarImpactSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'لمحة حيّة عمّا حققه مجتمعنا معًا'**
+  String get aboutDwaarImpactSubtitle;
+
+  /// No description provided for @aboutDwaarImpactOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبات مكتملة'**
+  String get aboutDwaarImpactOrders;
+
+  /// No description provided for @aboutDwaarImpactWeight.
+  ///
+  /// In ar, this message translates to:
+  /// **'وزن معاد تدويره'**
+  String get aboutDwaarImpactWeight;
+
+  /// No description provided for @aboutDwaarImpactCo2.
+  ///
+  /// In ar, this message translates to:
+  /// **'CO₂ وُفِّر'**
+  String get aboutDwaarImpactCo2;
+
+  /// No description provided for @aboutDwaarImpactWater.
+  ///
+  /// In ar, this message translates to:
+  /// **'مياه وُفِّرت'**
+  String get aboutDwaarImpactWater;
+
+  /// No description provided for @aboutDwaarImpactEnergy.
+  ///
+  /// In ar, this message translates to:
+  /// **'طاقة وُفِّرت'**
+  String get aboutDwaarImpactEnergy;
+
+  /// No description provided for @aboutDwaarImpactDownloadButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنزيل شهادة CO₂ (PDF)'**
+  String get aboutDwaarImpactDownloadButton;
+
+  /// No description provided for @aboutDwaarImpactDownloadGenerating.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري الإنشاء...'**
+  String get aboutDwaarImpactDownloadGenerating;
+
+  /// No description provided for @aboutDwaarImpactDownloadError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر إنشاء الشهادة. حاول مرة أخرى.'**
+  String get aboutDwaarImpactDownloadError;
+
+  /// No description provided for @aboutDwaarDataTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد شراء بياناتنا أو الشراكة معنا؟'**
+  String get aboutDwaarDataTitle;
+
+  /// No description provided for @aboutDwaarDataBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوفّر لبعض الجهات (بلديات، جهات بحثية، شركات استدامة) بيانات مجمّعة وغير شخصية حول أنماط التدوير. إن كنت مهتمًا بشراء بيانات أو ببناء شراكة، اترك بياناتك وسيتواصل معك فريقنا عبر البريد الإلكتروني.'**
+  String get aboutDwaarDataBody;
+
+  /// No description provided for @aboutDwaarDataFormCompanyLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم الجهة / الشركة'**
+  String get aboutDwaarDataFormCompanyLabel;
+
+  /// No description provided for @aboutDwaarDataFormContactNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم الشخص المسؤول'**
+  String get aboutDwaarDataFormContactNameLabel;
+
+  /// No description provided for @aboutDwaarDataFormEmailLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'البريد الإلكتروني للتواصل'**
+  String get aboutDwaarDataFormEmailLabel;
+
+  /// No description provided for @aboutDwaarDataFormPhoneLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الهاتف (اختياري)'**
+  String get aboutDwaarDataFormPhoneLabel;
+
+  /// No description provided for @aboutDwaarDataFormMessageLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل طلبك'**
+  String get aboutDwaarDataFormMessageLabel;
+
+  /// No description provided for @aboutDwaarDataFormMessageHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما نوع البيانات أو الشراكة التي تبحث عنها؟'**
+  String get aboutDwaarDataFormMessageHint;
+
+  /// No description provided for @aboutDwaarDataFormSubmit.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال الطلب'**
+  String get aboutDwaarDataFormSubmit;
+
+  /// No description provided for @aboutDwaarDataFormSubmitting.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري الإرسال...'**
+  String get aboutDwaarDataFormSubmitting;
+
+  /// No description provided for @aboutDwaarDataFormRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا الحقل مطلوب'**
+  String get aboutDwaarDataFormRequired;
+
+  /// No description provided for @aboutDwaarDataFormEmailInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل بريدًا إلكترونيًا صحيحًا'**
+  String get aboutDwaarDataFormEmailInvalid;
+
+  /// No description provided for @aboutDwaarDataFormSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم استلام طلبك، سيتواصل معك فريقنا عبر بريدك الإلكتروني قريبًا.'**
+  String get aboutDwaarDataFormSuccess;
+
+  /// No description provided for @aboutDwaarDataFormError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر إرسال الطلب، حاول مرة أخرى'**
+  String get aboutDwaarDataFormError;
+
+  /// No description provided for @aboutDwaarCloseButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إغلاق'**
+  String get aboutDwaarCloseButton;
 
   /// No description provided for @reservationBookButton.
   ///

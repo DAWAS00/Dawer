@@ -6,8 +6,12 @@ import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../core/utils/date_formatter.dart';
 import '../../../../../data/models/reward_transaction.dart';
 import '../../../../../data/services/app_order_store.dart';
+import '../../../../../data/services/eco_points_engine.dart';
 import '../../../../../domain/entities/green_level.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../shared/rewards/discount_coupons_widget.dart';
+import '../../shared/rewards/eco_hero_badge_widget.dart';
+import '../../shared/rewards/neighborhood_leaderboard_widget.dart';
 
 /// A single redemption offer in the خُضَر catalogue.
 class _RedeemOption {
@@ -23,15 +27,24 @@ class _RedeemOption {
   final IconData icon;
 }
 
-/// خُضَر Green Credits rewards screen — shared by driver and supplier.
+/// D3 — Enhanced Rewards System & خُضَر Green Credits rewards screen — shared by driver and supplier.
 ///
-/// Reads the live balance + transaction history from [AppOrderStore] for
-/// [userId] and lets the user redeem credits for real rewards (balance is
-/// deducted and a redemption transaction is recorded).
+/// Shows: live points balance + tier progress, Eco Hero badge (100 kg),
+/// achievement badges, redemption catalog, partner coupons,
+/// neighborhood leaderboard, and transaction history.
 class RewardsView extends StatelessWidget {
   final String userId;
+  final String userName;
+  final int completedOrders;
+  final double? lifetimeKg;
 
-  const RewardsView({super.key, required this.userId});
+  const RewardsView({
+    super.key,
+    required this.userId,
+    this.userName = '',
+    this.completedOrders = 0,
+    this.lifetimeKg,
+  });
 
   static const List<_RedeemOption> _options = [
     _RedeemOption(
@@ -105,42 +118,89 @@ class RewardsView extends StatelessWidget {
     ));
   }
 
+  double _getLifetimeKg(int points) =>
+      lifetimeKg ?? EcoPointsEngine.lifetimeKgFromPoints(points);
+
   @override
   Widget build(BuildContext context) {
     final store = context.watch<AppOrderStore>();
     final points = store.greenPointsFor(userId);
     final transactions = store.greenTransactionsFor(userId);
     final level = GreenLevelInfo.fromPoints(points);
+    final currentLifetimeKg = _getLifetimeKg(points);
+    final isEcoHero = EcoPointsEngine.isEcoHero(currentLifetimeKg);
 
     return Scaffold(
       backgroundColor: context.dt.scaffold,
       appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         foregroundColor: Colors.white,
-        title: Text('مكافآت خُضَر',
-            style: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold, color: Colors.white)),
+        title: Text(
+          context.l10n.rewardsTitle,
+          style: GoogleFonts.cairo(
+              fontWeight: FontWeight.bold, color: Colors.white),
+        ),
         centerTitle: true,
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          _BalanceCard(points: points, level: level),
-          const SizedBox(height: 20),
+          // ── Points balance card ───────────────────────────────────────────
+          _BalanceCard(
+            points: points,
+            level: level,
+            lifetimeKg: currentLifetimeKg,
+          ),
+          const SizedBox(height: 16),
+
+          // ── Eco Hero banner (shown only when earned) ──────────────────────
+          if (isEcoHero) ...[
+            EcoHeroBanner(
+                userName: userName.isNotEmpty ? userName : 'أنت'),
+            const SizedBox(height: 16),
+          ],
+
+          // ── Achievement badges ────────────────────────────────────────────
+          _card(
+            child: EcoBadgesSection(
+              lifetimeKg: currentLifetimeKg,
+              completedOrders: completedOrders,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // ── Interactive Redemption Options ────────────────────────────────
           _buildRedemptionSection(context, points),
-          const SizedBox(height: 20),
-          Text(context.l10n.rewardsHistoryTitle,
-              textAlign: TextAlign.right,
-              style: GoogleFonts.cairo(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: context.dt.onSurface)),
+          const SizedBox(height: 16),
+
+          // ── Partner coupons ───────────────────────────────────────────────
+          _card(
+            child: DiscountCouponsSection(totalPoints: points),
+          ),
+          const SizedBox(height: 16),
+
+          // ── Neighborhood leaderboard ──────────────────────────────────────
+          _card(
+            child: const NeighborhoodLeaderboardPreview(),
+          ),
+          const SizedBox(height: 24),
+
+          // ── Transaction history ───────────────────────────────────────────
+          Text(
+            context.l10n.rewardsHistoryTitle,
+            textAlign: TextAlign.right,
+            style: GoogleFonts.cairo(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: context.dt.onSurface,
+            ),
+          ),
           const SizedBox(height: 12),
           if (transactions.isNotEmpty)
             ...transactions.map((t) => _TransactionTile(transaction: t))
           else
             Padding(
-              padding: const EdgeInsets.only(top: 24),
+              padding: const EdgeInsets.only(top: 16),
               child: Center(
                 child: Column(
                   children: [
@@ -154,13 +214,30 @@ class RewardsView extends StatelessWidget {
                 ),
               ),
             ),
-
           const SizedBox(height: 32),
         ],
       ),
     );
   }
 
+  Widget _card({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
   Widget _buildRedemptionSection(BuildContext context, int points) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -238,9 +315,14 @@ class RewardsView extends StatelessWidget {
 }
 
 class _BalanceCard extends StatelessWidget {
-  const _BalanceCard({required this.points, required this.level});
+  const _BalanceCard({
+    required this.points,
+    required this.level,
+    required this.lifetimeKg,
+  });
   final int points;
   final GreenLevel level;
+  final double lifetimeKg;
 
   @override
   Widget build(BuildContext context) {
@@ -265,6 +347,32 @@ class _BalanceCard extends StatelessWidget {
         children: [
           Row(
             children: [
+              // Lifetime kg stat
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.eco_rounded,
+                        color: Colors.white, size: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${lifetimeKg.toStringAsFixed(0)} كغ',
+                      style: GoogleFonts.cairo(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              // Tier/Level badge
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -280,7 +388,7 @@ class _BalanceCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: Colors.white)),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               const Icon(Icons.eco_rounded,
                   color: Color(0xFFB9F6CA), size: 28),
             ],

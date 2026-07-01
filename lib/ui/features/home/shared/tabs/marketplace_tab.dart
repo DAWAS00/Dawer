@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../../../features/chatbot/dawa_chat_widget.dart';
+import '../../../../features/chatbot/dawa_assistant_host.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/waste_type_icons.dart';
 import '../../../../../core/layout/app_layout.dart';
@@ -189,15 +189,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
   }
 
   void _openChatbot(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        fullscreenDialog: true,
-        builder: (_) => const Scaffold(
-          backgroundColor: Color(0xFF06402B),
-          body: DawaChatWidget(),
-        ),
-      ),
-    );
+    DawaAssistantSheet.show(context);
   }
 
   Widget _buildCategoryStrip(

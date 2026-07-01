@@ -13,6 +13,7 @@ import 'models/analytics_period.dart';
 import 'widgets/activity_statement_list.dart';
 import 'widgets/analytics_hero_card.dart';
 import 'widgets/cycle_time_breakdown.dart';
+import 'widgets/daily_impact_card.dart';
 import 'widgets/earnings_efficiency_card.dart';
 import 'widgets/kpi_card.dart';
 import 'widgets/kpi_grid.dart';
@@ -93,7 +94,16 @@ class AnalyticsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Keyed on order identity + status + completion time: `create` only runs
+    // once per element, so without this key the ViewModel freezes on
+    // whatever `allOrders` looked like at first build (often empty, before
+    // the order store finishes loading) and never updates again even as
+    // real data streams in.
+    final ordersKey = allOrders
+        .map((o) => '${o.id}#${o.status.name}#${o.completedAt}')
+        .join(',');
     return ChangeNotifierProvider(
+      key: ValueKey(ordersKey),
       create: (_) => AnalyticsViewModel(orders: allOrders),
       child: _AnalyticsTabBody(
         userId: userId,
@@ -252,6 +262,16 @@ class _AnalyticsTabBody extends StatelessWidget {
                   currentStreak: vm.currentStreak,
                 ),
               ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.05, end: 0),
+
+              const SizedBox(height: 24),
+
+              // ── Daily report (all roles, always today) ────────────────
+              DailyImpactCard(
+                impact: vm.todaysEcoImpact,
+                orderCount: vm.todaysOrderCount,
+                weightKg: vm.todaysWeightKg,
+                date: DateTime.now(),
+              ).animate().fadeIn(delay: 60.ms, duration: 300.ms),
 
               const SizedBox(height: 24),
 

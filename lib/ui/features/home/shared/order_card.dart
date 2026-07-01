@@ -59,14 +59,24 @@ class OrderCard extends StatelessWidget {
         OrderStatus.cancelled => l10n.orderStatusCancelled,
       };
 
+  bool get _isDriverMode =>
+      mode == OrderCardMode.driverAvailable ||
+      mode == OrderCardMode.driverHistory ||
+      mode == OrderCardMode.driverActive;
+
+  // Company and supplier views benefit from the status timeline; driver
+  // views have their own compact stepper inside OrderDetailsView.
+  bool get _hideStatusInDetails =>
+      mode != OrderCardMode.companyJob &&
+      mode != OrderCardMode.companyIncoming &&
+      mode != OrderCardMode.supplierActive;
+
   void _openDetails(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => OrderDetailsView(
         order: order,
-        hideStatus: true,
-        isDriverView: mode == OrderCardMode.driverAvailable ||
-            mode == OrderCardMode.driverHistory ||
-            mode == OrderCardMode.driverActive,
+        hideStatus: _hideStatusInDetails,
+        isDriverView: _isDriverMode,
       ),
     ));
   }
@@ -77,10 +87,7 @@ class OrderCard extends StatelessWidget {
     final accent = _accentColor();
 
     return GestureDetector(
-      onTap: (mode == OrderCardMode.driverAvailable ||
-              mode == OrderCardMode.driverHistory)
-          ? () => _openDetails(context)
-          : null,
+      onTap: () => _openDetails(context),
       child: Container(
         decoration: BoxDecoration(
           color: accent,
@@ -314,6 +321,7 @@ class OrderCard extends StatelessWidget {
 
     final bool hasAction = mode == OrderCardMode.driverAvailable ||
         mode == OrderCardMode.companyJob ||
+        mode == OrderCardMode.companyIncoming ||
         mode == OrderCardMode.driverActive ||
         mode == OrderCardMode.supplierActive ||
         mode == OrderCardMode.driverHistory;
@@ -383,17 +391,7 @@ class OrderCard extends StatelessWidget {
       filled = false;
     }
 
-    final VoidCallback tap = onAction ??
-        () => Navigator.of(context).push(MaterialPageRoute(
-              builder: (_) => OrderDetailsView(
-                order: order,
-                hideStatus: mode != OrderCardMode.companyJob &&
-                    mode != OrderCardMode.supplierActive,
-                isDriverView: mode == OrderCardMode.driverAvailable ||
-                    mode == OrderCardMode.driverHistory ||
-                    mode == OrderCardMode.driverActive,
-              ),
-            ));
+    final VoidCallback tap = onAction ?? () => _openDetails(context);
 
     if (filled) {
       return ElevatedButton(

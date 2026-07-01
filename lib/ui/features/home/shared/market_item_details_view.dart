@@ -17,6 +17,7 @@ import 'market_item_details/widgets/market_item_price_card.dart';
 import 'market_item_details/widgets/market_item_purchase_choice_sheet.dart';
 import 'market_item_details/widgets/market_item_rider_choice_sheet.dart';
 import 'market_item_details/widgets/market_item_invoice_sheet.dart';
+import 'market_item_details/widgets/market_item_reserve_sheet.dart';
 
 class MarketItemDetailsView extends StatelessWidget {
   final Order item;
@@ -167,6 +168,15 @@ class MarketItemDetailsView extends StatelessWidget {
         ),
     };
 
+    // Show the Reserve button only when item is still available for reservation
+    final canReserve = item.status == OrderStatus.pending &&
+        item.reservationStatus == null &&
+        item.itemPrice != null &&
+        item.itemPrice! > 0;
+
+    // Show reservation status badge when already reserved
+    final isReservedByOther = item.reservationStatus != null;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
       decoration: BoxDecoration(
@@ -180,30 +190,146 @@ class MarketItemDetailsView extends StatelessWidget {
         ],
       ),
       child: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          height: 48,
-          child: ElevatedButton(
-            onPressed: onTap,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: color,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  label,
-                  style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Reservation status notice
+            if (isReservedByOther) ...[
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                margin: const EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF3C7),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFFFCD34D)),
                 ),
-                const SizedBox(width: 8),
-                Icon(icon, color: Colors.white, size: 20),
-              ],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      item.reservationStatus?.label ?? 'محجوز',
+                      style: GoogleFonts.cairo(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF92400E),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Icon(Icons.lock_clock_rounded,
+                        color: Color(0xFFD97706), size: 16),
+                  ],
+                ),
+              ),
+            ],
+
+            // Primary action
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: isReservedByOther ? null : onTap,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: color,
+                  disabledBackgroundColor: const Color(0xFFD1D5DB),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      label,
+                      style: GoogleFonts.cairo(
+                          fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(icon, color: Colors.white, size: 20),
+                  ],
+                ),
+              ),
             ),
-          ),
+
+            // Reserve button (secondary)
+            if (canReserve) ...[
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                height: 44,
+                child: OutlinedButton(
+                  onPressed: () => _showReserveSheet(context),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Color(0xFF06402B), width: 1.5),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'احجز الآن بـ ١٠٪',
+                        style: GoogleFonts.cairo(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF06402B),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(Icons.bookmark_add_rounded,
+                          color: Color(0xFF06402B), size: 18),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
+      ),
+    );
+  }
+
+  void _showReserveSheet(BuildContext context) {
+    // Use a mock wallet balance of 50 JD for demo; wire to real wallet later
+    const mockWalletBalance = 50.0;
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => MarketItemReserveSheet(
+        item: item,
+        walletBalance: mockWalletBalance,
+        onConfirm: (pickupDate) {
+          final vm = context.read<MarketplaceViewModel>();
+          final err = vm.reserveItem(
+            orderId: item.id,
+            reserverName: 'المستخدم الحالي',
+            reserverId: 'CURRENT-USER',
+            pickupDate: pickupDate,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                err ?? 'تم إرسال طلب الحجز — بانتظار موافقة البائع',
+                style: GoogleFonts.cairo(),
+              ),
+              backgroundColor: err != null
+                  ? const Color(0xFFDC2626)
+                  : const Color(0xFF1E5C35),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+            ),
+          );
+          if (err == null) {
+            Navigator.pop(context);
+          }
+        },
       ),
     );
   }

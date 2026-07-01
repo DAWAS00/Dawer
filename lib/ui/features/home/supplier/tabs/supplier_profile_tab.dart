@@ -39,7 +39,11 @@ class SupplierProfileTab extends StatelessWidget {
 
   void _openRewards(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => RewardsView(userId: userId),
+      builder: (_) => RewardsView(
+        userId: userId,
+        userName: user.name,
+        completedOrders: totalOrders,
+      ),
     ));
   }
 

@@ -3,6 +3,23 @@ import 'package:flutter/material.dart';
 enum OrderType { pickup, collection, collectionSale }
 enum OrderMode { pickup, marketplace }
 
+/// Lifecycle of a marketplace reservation (10 % deposit escrow).
+///
+/// Transitions:
+///   pending → accepted (seller accepts; seller deposit locked)
+///   pending → rejected (seller rejects; buyer deposit released)
+///   accepted → completedByReservation (pickup confirmed; both deposits released)
+///   accepted → cancelledByBuyer   (buyer backs out → buyer deposit forfeited to seller)
+///   accepted → cancelledBySeller  (seller backs out → seller deposit forfeited to buyer)
+enum ReservationStatus {
+  pending,
+  accepted,
+  rejected,
+  cancelledByBuyer,
+  cancelledBySeller,
+  completedByReservation,
+}
+
 enum OrderStatus {
   pending, accepted, arrivedAtPickup, inTransit, arrivedAtDropoff, completed, cancelled
 }
@@ -142,6 +159,17 @@ extension OrderStatusLabel on OrderStatus {
         OrderStatus.completed => 'مكتمل',
         OrderStatus.cancelled => 'ملغي',
       };
+}
+
+extension ReservationStatusLabel on ReservationStatus {
+  String get label => switch (this) {
+    ReservationStatus.pending                => 'بانتظار موافقة البائع',
+    ReservationStatus.accepted               => 'محجوز ومؤكد',
+    ReservationStatus.rejected               => 'مرفوض من البائع',
+    ReservationStatus.cancelledByBuyer       => 'ألغاه المشتري',
+    ReservationStatus.cancelledBySeller      => 'ألغاه البائع',
+    ReservationStatus.completedByReservation => 'اكتمل',
+  };
 }
 
 extension WasteTypeColor on WasteType {

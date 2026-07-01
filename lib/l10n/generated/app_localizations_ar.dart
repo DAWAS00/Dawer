@@ -9,6 +9,40 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get chatbotTitle => 'مساعد دوّر الذكي';
+
+  @override
+  String get chatbotInputHint => 'اكتب سؤالك أو أرسل صورة...';
+
+  @override
+  String get chatbotThinking => 'داوة تفكر...';
+
+  @override
+  String get chatbotScanningImage => 'جاري تحليل الصورة...';
+
+  @override
+  String get chatbotAnalyzingOil =>
+      'جاري تحليل جودة الزيت بالذكاء الاصطناعي...';
+
+  @override
+  String get chatbotTakePhoto => 'التقاط صورة بالكاميرا';
+
+  @override
+  String get chatbotPickFromGallery => 'اختيار من المعرض';
+
+  @override
+  String get chatbotImageScanResult => 'نتيجة تحليل الصورة';
+
+  @override
+  String get chatbotOpenAssistant => 'افتح مساعد دوّر';
+
+  @override
+  String get chatbotOnlineNow => 'متصل الآن • يرد فوراً';
+
+  @override
+  String get chatbotSendImageTooltip => 'إرسال صورة للتحليل';
+
+  @override
   String get appTitle => 'دوّر';
 
   @override
@@ -2980,6 +3014,152 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get analyticsEfficiencyEmpty => 'لا توجد بيانات مسافة لحساب الكفاءة';
+
+  @override
+  String get aboutDwaarButtonLabel => 'تعرّف على دوّر';
+
+  @override
+  String get aboutDwaarSheetTitle => 'من نحن وماذا نقدّم';
+
+  @override
+  String get aboutDwaarIntroBody =>
+      'دوّر (Dwaar) منصة أردنية تربط بين ثلاثة أطراف: الموردين الذين لديهم نفايات قابلة لإعادة التدوير، السائقين الذين ينقلونها، وشركات إعادة التدوير التي تشتريها. هدفنا تحويل النفايات إلى مورد ذو قيمة، وتسهيل الاقتصاد الدائري في الأردن بخطوات بسيطة من هاتفك.';
+
+  @override
+  String get aboutDwaarServicesTitle => 'خدماتنا لكل طرف';
+
+  @override
+  String get aboutDwaarServiceSupplierTitle => 'للموردين (أفراد ومتاجر)';
+
+  @override
+  String get aboutDwaarServiceSupplierBody =>
+      'اطلب استلام نفاياتك القابلة لإعادة التدوير من موقعك، اختر بيعها لشركة تدوير أو عرضها في السوق لأقرب سائق، واربح نقاط ومكافآت مقابل كل عملية.';
+
+  @override
+  String get aboutDwaarServiceDriverTitle => 'للسائقين';
+
+  @override
+  String get aboutDwaarServiceDriverBody =>
+      'تصفّح طلبات الاستلام القريبة منك حسب نوع مركبتك، اقبل الطلب المناسب، وتتبّع أرباحك لحظة بلحظة مع كل رحلة تُنجزها.';
+
+  @override
+  String get aboutDwaarServiceRecyclingTitle => 'لشركات إعادة التدوير';
+
+  @override
+  String get aboutDwaarServiceRecyclingBody =>
+      'انشر طلبات تجميع بحسب نوع المادة والكمية والمنطقة، واستقبل تدفقًا منظّمًا وموثّقًا من المواد الخام مباشرة من الموردين والسائقين.';
+
+  @override
+  String get aboutDwaarHowItWorksTitle => 'كيف تعمل دورة الطلب؟';
+
+  @override
+  String get aboutDwaarHowItWorksStep1 =>
+      '١. المورد يطلب استلام النفايات ويحدّد النوع والوزن التقريبي والموقع';
+
+  @override
+  String get aboutDwaarHowItWorksStep2 =>
+      '٢. سائق مناسب يقبل الطلب، ويظهر موقعه المباشر على الخريطة حتى الوصول';
+
+  @override
+  String get aboutDwaarHowItWorksStep3 =>
+      '٣. عند التسليم، يتم توثيق الوزن الفعلي وتأكيد الاستلام من الطرفين';
+
+  @override
+  String get aboutDwaarHowItWorksStep4 =>
+      '٤. تُصرف المكافآت والأرباح تلقائيًا، وتنتقل المواد إلى شركة إعادة التدوير أو المركز الأقرب';
+
+  @override
+  String get aboutDwaarRewardsTitle => 'نظام المكافآت (نقاط خُضَر)';
+
+  @override
+  String get aboutDwaarRewardsBody =>
+      'كل عملية تدوير مكتملة تمنحك نقاط خُضَر بحسب نوع المادة ووزنها. اجمع النقاط لترتقي في مستويات البطاقة الخضراء، واستبدلها بخصومات على الطلبات القادمة أو قسائم شراء من شركائنا. السائقون أيضًا يحصلون على أجرة لكل رحلة تُحتسب من الأجرة الأساسية والمسافة ونوع المادة المنقولة.';
+
+  @override
+  String get aboutDwaarHubsTitle => 'مراكز التجميع (Hubs)';
+
+  @override
+  String get aboutDwaarHubsBody =>
+      'مراكز التجميع نقاط استلام فعلية تديرها فرق دوّر، يستخدمها السائقون كوجهة تسليم قريبة بدل التوجه مباشرة لكل شركة تدوير. إذا كانت لديك منشأة أو أرض مناسبة وتودّ استضافة مركز تجميع جديد في منطقتك، تواصل معنا عبر النموذج أدناه وسيقيّم فريقنا الطلب.';
+
+  @override
+  String get aboutDwaarImpactTitle => 'أثرنا حتى الآن';
+
+  @override
+  String get aboutDwaarImpactSubtitle => 'لمحة حيّة عمّا حققه مجتمعنا معًا';
+
+  @override
+  String get aboutDwaarImpactOrders => 'طلبات مكتملة';
+
+  @override
+  String get aboutDwaarImpactWeight => 'وزن معاد تدويره';
+
+  @override
+  String get aboutDwaarImpactCo2 => 'CO₂ وُفِّر';
+
+  @override
+  String get aboutDwaarImpactWater => 'مياه وُفِّرت';
+
+  @override
+  String get aboutDwaarImpactEnergy => 'طاقة وُفِّرت';
+
+  @override
+  String get aboutDwaarImpactDownloadButton => 'تنزيل شهادة CO₂ (PDF)';
+
+  @override
+  String get aboutDwaarImpactDownloadGenerating => 'جاري الإنشاء...';
+
+  @override
+  String get aboutDwaarImpactDownloadError =>
+      'تعذّر إنشاء الشهادة. حاول مرة أخرى.';
+
+  @override
+  String get aboutDwaarDataTitle => 'هل تريد شراء بياناتنا أو الشراكة معنا؟';
+
+  @override
+  String get aboutDwaarDataBody =>
+      'نوفّر لبعض الجهات (بلديات، جهات بحثية، شركات استدامة) بيانات مجمّعة وغير شخصية حول أنماط التدوير. إن كنت مهتمًا بشراء بيانات أو ببناء شراكة، اترك بياناتك وسيتواصل معك فريقنا عبر البريد الإلكتروني.';
+
+  @override
+  String get aboutDwaarDataFormCompanyLabel => 'اسم الجهة / الشركة';
+
+  @override
+  String get aboutDwaarDataFormContactNameLabel => 'اسم الشخص المسؤول';
+
+  @override
+  String get aboutDwaarDataFormEmailLabel => 'البريد الإلكتروني للتواصل';
+
+  @override
+  String get aboutDwaarDataFormPhoneLabel => 'رقم الهاتف (اختياري)';
+
+  @override
+  String get aboutDwaarDataFormMessageLabel => 'تفاصيل طلبك';
+
+  @override
+  String get aboutDwaarDataFormMessageHint =>
+      'ما نوع البيانات أو الشراكة التي تبحث عنها؟';
+
+  @override
+  String get aboutDwaarDataFormSubmit => 'إرسال الطلب';
+
+  @override
+  String get aboutDwaarDataFormSubmitting => 'جاري الإرسال...';
+
+  @override
+  String get aboutDwaarDataFormRequired => 'هذا الحقل مطلوب';
+
+  @override
+  String get aboutDwaarDataFormEmailInvalid => 'أدخل بريدًا إلكترونيًا صحيحًا';
+
+  @override
+  String get aboutDwaarDataFormSuccess =>
+      'تم استلام طلبك، سيتواصل معك فريقنا عبر بريدك الإلكتروني قريبًا.';
+
+  @override
+  String get aboutDwaarDataFormError => 'تعذّر إرسال الطلب، حاول مرة أخرى';
+
+  @override
+  String get aboutDwaarCloseButton => 'إغلاق';
 
   @override
   String get reservationBookButton => 'حجز الآن';

@@ -13,13 +13,10 @@ class EcoImpactResult {
 }
 
 class EcoImpactCalculator {
-  /// Estimates environmental savings based on waste type and weight.
-  /// Data based on general recycling industry averages.
+  /// Estimates environmental savings based on waste type and weight
+  /// category (used before the actual weight is known, e.g. in the
+  /// pickup-request wizard).
   static EcoImpactResult calculate(List<WasteType> types, WeightCategory? weight) {
-    if (types.isEmpty) {
-      return const EcoImpactResult(co2SavedKg: 0, waterSavedLiters: 0, energySavedKwh: 0);
-    }
-
     final approxWeight = switch (weight) {
       WeightCategory.light => 2.5,
       WeightCategory.medium => 12.5,
@@ -27,13 +24,23 @@ class EcoImpactCalculator {
       WeightCategory.veryHeavy => 150.0,
       null => 0.0,
     };
+    return calculateForWeight(types, approxWeight);
+  }
+
+  /// Estimates environmental savings from an actual measured weight (kg),
+  /// distributed evenly across [types]. Data based on general recycling
+  /// industry averages.
+  static EcoImpactResult calculateForWeight(List<WasteType> types, double totalWeightKg) {
+    if (types.isEmpty || totalWeightKg <= 0) {
+      return const EcoImpactResult(co2SavedKg: 0, waterSavedLiters: 0, energySavedKwh: 0);
+    }
 
     double totalCo2 = 0;
     double totalWater = 0;
     double totalEnergy = 0;
 
     // Distribute weight across selected types
-    final weightPerType = approxWeight / types.length;
+    final weightPerType = totalWeightKg / types.length;
 
     for (final type in types) {
       switch (type) {

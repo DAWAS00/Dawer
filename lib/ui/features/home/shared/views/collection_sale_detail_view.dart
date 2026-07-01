@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../data/models/order/order.dart';
-import 'package:dwaar/ui/common/map/route_map_placeholder.dart';
+import 'package:dwaar/ui/common/map/route_map_view.dart';
 import '../../../../../l10n/l10n.dart';
 
 /// Full-screen detail view for a [OrderType.collectionSale] commitment.
@@ -64,7 +64,7 @@ class CollectionSaleDetailView extends StatelessWidget {
   Widget _buildMapSection() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
-      child: RouteMapPlaceholder(
+      child: RouteMapView(
         pickupLat: sale.pickupLat!,
         pickupLng: sale.pickupLng!,
         dropoffLat: sale.dropoffLat!,
