@@ -69,10 +69,8 @@ class WasteAnalysisResultCard extends StatelessWidget {
                     result.explanation,
                     style: GoogleFonts.cairo(
                       fontSize: 12.5,
-                      color: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.color
+                      color:
+                          Theme.of(context).textTheme.bodyMedium?.color
                               ?.withValues(alpha: 0.75) ??
                           Colors.black54,
                       height: 1.65,
@@ -88,15 +86,15 @@ class WasteAnalysisResultCard extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('💡',
-                              style: TextStyle(fontSize: 12)),
+                          const Text('💡', style: TextStyle(fontSize: 12)),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
                               tip,
                               style: GoogleFonts.cairo(
                                 fontSize: 12,
-                                color: Theme.of(context)
+                                color:
+                                    Theme.of(context)
                                         .textTheme
                                         .bodyMedium
                                         ?.color
@@ -136,8 +134,7 @@ class _Header extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text(result.materialIcon,
-              style: const TextStyle(fontSize: 20)),
+          Text(result.materialIcon, style: const TextStyle(fontSize: 20)),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -154,8 +151,7 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: result.gradeColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(6),
@@ -223,9 +219,7 @@ class _GradeBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: result.gradeSurface,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: result.gradeColor.withValues(alpha: 0.25),
-        ),
+        border: Border.all(color: result.gradeColor.withValues(alpha: 0.25)),
       ),
       child: Column(
         children: [
@@ -278,11 +272,10 @@ class _MetricRow extends StatelessWidget {
           label,
           style: GoogleFonts.cairo(
             fontSize: 12.5,
-            color: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.color
-                    ?.withValues(alpha: 0.65) ??
+            color:
+                Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.color?.withValues(alpha: 0.65) ??
                 Colors.black54,
           ),
         ),

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../viewmodels/driver_earnings_viewmodel.dart';
@@ -47,7 +47,11 @@ class DriverEarningsTrendChart extends StatelessWidget {
                 borderData: FlBorderData(show: false),
                 lineBarsData: [
                   LineChartBarData(
-                    spots: trends.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.netJd)).toList(),
+                    spots: trends
+                        .asMap()
+                        .entries
+                        .map((e) => FlSpot(e.key.toDouble(), e.value.netJd))
+                        .toList(),
                     isCurved: true,
                     color: const Color(0xFF0A5E3E),
                     barWidth: 3,

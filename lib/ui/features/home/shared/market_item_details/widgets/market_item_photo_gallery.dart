@@ -13,8 +13,11 @@ class MarketItemPhotoGallery extends StatelessWidget {
       height: 96,
       child: ColoredBox(
         color: Color(0xFFE5E7EB),
-        child: Icon(Icons.image_not_supported_rounded,
-            color: Color(0xFFD1D5DB), size: 28),
+        child: Icon(
+          Icons.image_not_supported_rounded,
+          color: Color(0xFFD1D5DB),
+          size: 28,
+        ),
       ),
     );
 
@@ -35,7 +38,9 @@ class MarketItemPhotoGallery extends StatelessWidget {
                   color: Color(0xFFE5E7EB),
                   child: Center(
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Color(0xFF06402B)),
+                      strokeWidth: 2,
+                      color: Color(0xFF06402B),
+                    ),
                   ),
                 ),
               ),

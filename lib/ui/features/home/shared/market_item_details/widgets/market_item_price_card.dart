@@ -56,7 +56,11 @@ class MarketItemPriceCard extends StatelessWidget {
               color: const Color(0xFFC8860A).withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.sell_rounded, color: Color(0xFFC8860A), size: 24),
+            child: const Icon(
+              Icons.sell_rounded,
+              color: Color(0xFFC8860A),
+              size: 24,
+            ),
           ),
         ],
       ),

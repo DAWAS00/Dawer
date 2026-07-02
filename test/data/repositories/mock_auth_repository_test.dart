@@ -29,34 +29,52 @@ void main() {
       */
     });
 
-    test('verifyOtp returns PhoneNotRegistered failure for unknown phone', () async {
-      final result = await repo.verifyOtp('0799999999', MockAuthRepository.simulatedOtp);
-      
-      expect(result.isFailure, isTrue);
-      result.fold(
-        onSuccess: (_) => fail('Should have failed'),
-        onFailure: (f) {
-          expect(f, isA<NotFoundFailure>());
-          expect((f as NotFoundFailure).code, AuthErrorCodes.phoneNotRegistered);
-        },
-      );
-    });
+    test(
+      'verifyOtp returns PhoneNotRegistered failure for unknown phone',
+      () async {
+        final result = await repo.verifyOtp(
+          '0799999999',
+          MockAuthRepository.simulatedOtp,
+        );
 
-    test('verifyOtp returns success with correct session for magic driver number', () async {
-      final result = await repo.verifyOtp('0791234567', MockAuthRepository.simulatedOtp);
-      
-      expect(result.isSuccess, isTrue);
-      result.fold(
-        onSuccess: (session) {
-          expect(session.role, UserRole.driver);
-        },
-        onFailure: (_) => fail('Should have succeeded'),
-      );
-    });
+        expect(result.isFailure, isTrue);
+        result.fold(
+          onSuccess: (_) => fail('Should have failed'),
+          onFailure: (f) {
+            expect(f, isA<NotFoundFailure>());
+            expect(
+              (f as NotFoundFailure).code,
+              AuthErrorCodes.phoneNotRegistered,
+            );
+          },
+        );
+      },
+    );
+
+    test(
+      'verifyOtp returns success with correct session for magic driver number',
+      () async {
+        final result = await repo.verifyOtp(
+          '0791234567',
+          MockAuthRepository.simulatedOtp,
+        );
+
+        expect(result.isSuccess, isTrue);
+        result.fold(
+          onSuccess: (session) {
+            expect(session.role, UserRole.driver);
+          },
+          onFailure: (_) => fail('Should have succeeded'),
+        );
+      },
+    );
 
     test('verifyOtp normalizes phone number properly', () async {
-      final result = await repo.verifyOtp('0791234567', MockAuthRepository.simulatedOtp);
-      
+      final result = await repo.verifyOtp(
+        '0791234567',
+        MockAuthRepository.simulatedOtp,
+      );
+
       expect(result.isSuccess, isTrue);
       result.fold(
         onSuccess: (session) {
@@ -77,9 +95,12 @@ void main() {
       final signupResult = await repo.signUp(request);
       expect(signupResult.isSuccess, isTrue);
 
-      final verifyResult = await repo.verifyOtp('0777777777', MockAuthRepository.simulatedOtp);
+      final verifyResult = await repo.verifyOtp(
+        '0777777777',
+        MockAuthRepository.simulatedOtp,
+      );
       expect(verifyResult.isSuccess, isTrue);
-      
+
       verifyResult.fold(
         onSuccess: (session) {
           expect(session.userName, 'New User');

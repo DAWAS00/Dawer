@@ -56,13 +56,15 @@ class MockEarningsRepository implements IEarningsRepository {
       ),
     ];
 
-    return Success(EarningsSummary(
-      totalEarnings: 148.75,
-      totalDistance: 215.3,
-      totalTrips: 18,
-      earningsTrend: earningsTrend,
-      distanceTrend: distanceTrend,
-      recentTrips: recentTrips,
-    ));
+    return Success(
+      EarningsSummary(
+        totalEarnings: 148.75,
+        totalDistance: 215.3,
+        totalTrips: 18,
+        earningsTrend: earningsTrend,
+        distanceTrend: distanceTrend,
+        recentTrips: recentTrips,
+      ),
+    );
   }
 }

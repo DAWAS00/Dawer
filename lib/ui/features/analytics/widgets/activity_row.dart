@@ -13,8 +13,19 @@ class ActivityRow extends StatelessWidget {
 
   String _formatDate(DateTime dt) {
     const months = [
-      '', 'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+      '',
+      'يناير',
+      'فبراير',
+      'مارس',
+      'أبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
     ];
     return '${dt.day} ${months[dt.month]}';
   }
@@ -24,8 +35,9 @@ class ActivityRow extends StatelessWidget {
     final theme = Theme.of(context);
     final wasteType = order.wasteTypes.firstOrNull ?? WasteType.plastic;
     final color = wasteType.ganttColor;
-    final dateStr =
-        order.completedAt != null ? _formatDate(order.completedAt!) : '—';
+    final dateStr = order.completedAt != null
+        ? _formatDate(order.completedAt!)
+        : '—';
     final weightStr = order.weightKg != null
         ? '${order.weightKg!.toStringAsFixed(1)} كغ'
         : '—';
@@ -81,8 +93,10 @@ class ActivityRow extends StatelessWidget {
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 3),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 1,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.statusCompletedBg,
                     borderRadius: BorderRadius.circular(6),

@@ -29,43 +29,43 @@ class MilestoneGrid extends StatelessWidget {
   final double totalEarnings;
 
   List<_Milestone> _milestones() => [
-        _Milestone(
-          icon: Icons.recycling_rounded,
-          label: 'أول طلب',
-          description: 'أكملت طلبك الأول',
-          achieved: totalOrders >= 1,
-        ),
-        _Milestone(
-          icon: Icons.scale_rounded,
-          label: '100 كغ',
-          description: 'معالجة ١٠٠ كيلوغرام',
-          achieved: totalWeightKg >= 100,
-        ),
-        _Milestone(
-          icon: Icons.emoji_events_rounded,
-          label: '10 طلبات',
-          description: 'إتمام ١٠ طلبات',
-          achieved: totalOrders >= 10,
-        ),
-        _Milestone(
-          icon: Icons.local_atm_rounded,
-          label: '100 د.أ',
-          description: 'أرباح تتجاوز ١٠٠ دينار',
-          achieved: totalEarnings >= 100,
-        ),
-        _Milestone(
-          icon: Icons.star_rounded,
-          label: '500 كغ',
-          description: 'معالجة ٥٠٠ كيلوغرام',
-          achieved: totalWeightKg >= 500,
-        ),
-        _Milestone(
-          icon: Icons.workspace_premium_rounded,
-          label: '50 طلبات',
-          description: 'إتمام ٥٠ طلبًا',
-          achieved: totalOrders >= 50,
-        ),
-      ];
+    _Milestone(
+      icon: Icons.recycling_rounded,
+      label: 'أول طلب',
+      description: 'أكملت طلبك الأول',
+      achieved: totalOrders >= 1,
+    ),
+    _Milestone(
+      icon: Icons.scale_rounded,
+      label: '100 كغ',
+      description: 'معالجة ١٠٠ كيلوغرام',
+      achieved: totalWeightKg >= 100,
+    ),
+    _Milestone(
+      icon: Icons.emoji_events_rounded,
+      label: '10 طلبات',
+      description: 'إتمام ١٠ طلبات',
+      achieved: totalOrders >= 10,
+    ),
+    _Milestone(
+      icon: Icons.local_atm_rounded,
+      label: '100 د.أ',
+      description: 'أرباح تتجاوز ١٠٠ دينار',
+      achieved: totalEarnings >= 100,
+    ),
+    _Milestone(
+      icon: Icons.star_rounded,
+      label: '500 كغ',
+      description: 'معالجة ٥٠٠ كيلوغرام',
+      achieved: totalWeightKg >= 500,
+    ),
+    _Milestone(
+      icon: Icons.workspace_premium_rounded,
+      label: '50 طلبات',
+      description: 'إتمام ٥٠ طلبًا',
+      achieved: totalOrders >= 50,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -93,12 +93,14 @@ class MilestoneGrid extends StatelessWidget {
           mainAxisSpacing: 8,
           childAspectRatio: 0.85,
           children: milestones
-              .map((m) => MilestoneBadge(
-                    icon: m.icon,
-                    label: m.label,
-                    description: m.description,
-                    achieved: m.achieved,
-                  ))
+              .map(
+                (m) => MilestoneBadge(
+                  icon: m.icon,
+                  label: m.label,
+                  description: m.description,
+                  achieved: m.achieved,
+                ),
+              )
               .toList(),
         ),
       ],

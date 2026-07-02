@@ -29,5 +29,8 @@ class AiLicenseValidationResult extends AiValidationResult {
 }
 
 abstract class IAiLicenseValidationService {
-  Future<AiLicenseValidationResult> validateLicense(String filePath, UserRole role);
+  Future<AiLicenseValidationResult> validateLicense(
+    String filePath,
+    UserRole role,
+  );
 }

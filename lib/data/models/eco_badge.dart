@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 enum EcoBadgeType {
-  firstStep,        // 1st order completed
-  recycleChampion,  // 10 kg lifetime
-  oilSaver,         // 25 kg oil lifetime
-  ecoHero,          // 100 kg lifetime (Dr. Mansour milestone)
-  recycleLegend,    // 500 kg lifetime
+  firstStep, // 1st order completed
+  recycleChampion, // 10 kg lifetime
+  oilSaver, // 25 kg oil lifetime
+  ecoHero, // 100 kg lifetime (Dr. Mansour milestone)
+  recycleLegend, // 500 kg lifetime
 }
 
 /// A supplier achievement badge earned through real collection activity.

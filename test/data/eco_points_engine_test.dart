@@ -157,10 +157,7 @@ void main() {
         lifetimeKg: 100,
         completedOrders: 5,
       );
-      expect(
-        badges.any((b) => b.type == EcoBadgeType.ecoHero),
-        isTrue,
-      );
+      expect(badges.any((b) => b.type == EcoBadgeType.ecoHero), isTrue);
     });
 
     test('500 kg → all 5 badges earned', () {
@@ -176,10 +173,7 @@ void main() {
         lifetimeKg: 499,
         completedOrders: 10,
       );
-      expect(
-        badges.any((b) => b.type == EcoBadgeType.recycleLegend),
-        isFalse,
-      );
+      expect(badges.any((b) => b.type == EcoBadgeType.recycleLegend), isFalse);
     });
   });
 
@@ -204,7 +198,9 @@ void main() {
     });
 
     test('top entry has highest kg', () {
-      final maxKg = leaderboard.map((e) => e.kgCollected).reduce((a, b) => a > b ? a : b);
+      final maxKg = leaderboard
+          .map((e) => e.kgCollected)
+          .reduce((a, b) => a > b ? a : b);
       expect(leaderboard.first.kgCollected, maxKg);
     });
 
@@ -231,8 +227,11 @@ void main() {
     test('coupons are sorted ascending by pointsRequired', () {
       final pts = EcoPointsEngine.coupons.map((c) => c.pointsRequired).toList();
       for (int i = 0; i < pts.length - 1; i++) {
-        expect(pts[i] <= pts[i + 1], isTrue,
-            reason: 'coupons should be sorted by points ascending');
+        expect(
+          pts[i] <= pts[i + 1],
+          isTrue,
+          reason: 'coupons should be sorted by points ascending',
+        );
       }
     });
 
@@ -244,8 +243,9 @@ void main() {
     });
 
     test('FUEL5JD coupon requires 500 points', () {
-      final fuelCoupon =
-          EcoPointsEngine.coupons.firstWhere((c) => c.code == 'FUEL5JD');
+      final fuelCoupon = EcoPointsEngine.coupons.firstWhere(
+        (c) => c.code == 'FUEL5JD',
+      );
       expect(fuelCoupon.pointsRequired, 500);
     });
 
@@ -262,26 +262,30 @@ void main() {
   group('EcoBadge —', () {
     test('ecoHero badge has 100 kg threshold', () {
       final badge = EcoBadge.all.firstWhere(
-          (b) => b.type == EcoBadgeType.ecoHero);
+        (b) => b.type == EcoBadgeType.ecoHero,
+      );
       expect(badge.kgThreshold, 100.0);
     });
 
     test('firstStep badge has 1 order threshold', () {
       final badge = EcoBadge.all.firstWhere(
-          (b) => b.type == EcoBadgeType.firstStep);
+        (b) => b.type == EcoBadgeType.firstStep,
+      );
       expect(badge.ordersThreshold, 1);
       expect(badge.kgThreshold, 0.0);
     });
 
     test('requirementLabel uses kg for kg-based badges', () {
       final badge = EcoBadge.all.firstWhere(
-          (b) => b.type == EcoBadgeType.ecoHero);
+        (b) => b.type == EcoBadgeType.ecoHero,
+      );
       expect(badge.requirementLabel, contains('كغ'));
     });
 
     test('requirementLabel uses orders for order-based badges', () {
       final badge = EcoBadge.all.firstWhere(
-          (b) => b.type == EcoBadgeType.firstStep);
+        (b) => b.type == EcoBadgeType.firstStep,
+      );
       expect(badge.requirementLabel, contains('طلبات'));
     });
 

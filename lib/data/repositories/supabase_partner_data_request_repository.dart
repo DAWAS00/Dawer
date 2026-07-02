@@ -32,15 +32,17 @@ final class SupabasePartnerDataRequestRepository
         'message': message,
       };
       await _client.from('partner_data_requests').insert(payload);
-      return Success(PartnerDataRequest(
-        id: requestedAt.microsecondsSinceEpoch.toString(),
-        companyName: companyName,
-        contactName: contactName,
-        email: email,
-        phone: phone,
-        message: message,
-        requestedAt: requestedAt,
-      ));
+      return Success(
+        PartnerDataRequest(
+          id: requestedAt.microsecondsSinceEpoch.toString(),
+          companyName: companyName,
+          contactName: contactName,
+          email: email,
+          phone: phone,
+          message: message,
+          requestedAt: requestedAt,
+        ),
+      );
     } on PostgrestException catch (e) {
       return Failure(NetworkFailure(message: e.message));
     } catch (e) {

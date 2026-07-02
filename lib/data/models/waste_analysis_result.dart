@@ -48,16 +48,18 @@ class WasteAnalysisResult {
     return WasteAnalysisResult(
       isRecyclable: json['isRecyclable'] as bool? ?? false,
       materialType: json['materialType'] as String? ?? '',
-      materialTypeEn:
-          (json['materialTypeEn'] as String? ?? 'unknown').toLowerCase(),
+      materialTypeEn: (json['materialTypeEn'] as String? ?? 'unknown')
+          .toLowerCase(),
       grade: _parseGrade(json['grade'] as String? ?? 'rejected'),
-      estimatedQuantity:
-          (_coerceDouble(json['estimatedQuantity']) ?? 0).clamp(0.0, 99999.0),
+      estimatedQuantity: (_coerceDouble(json['estimatedQuantity']) ?? 0).clamp(
+        0.0,
+        99999.0,
+      ),
       quantityUnit: _parseUnit(json['quantityUnit'] as String? ?? 'كغ'),
-      estimatedPayoutMinJod:
-          (_coerceDouble(json['estimatedPayoutMinJod']) ?? 0).clamp(0.0, 9999.0),
-      estimatedPayoutMaxJod:
-          (_coerceDouble(json['estimatedPayoutMaxJod']) ?? 0).clamp(0.0, 9999.0),
+      estimatedPayoutMinJod: (_coerceDouble(json['estimatedPayoutMinJod']) ?? 0)
+          .clamp(0.0, 9999.0),
+      estimatedPayoutMaxJod: (_coerceDouble(json['estimatedPayoutMaxJod']) ?? 0)
+          .clamp(0.0, 9999.0),
       explanation: json['explanation'] as String? ?? '',
       recycleTips: _parseTips(json['recycleTips']),
     );
@@ -66,23 +68,27 @@ class WasteAnalysisResult {
   // ── Private parsers ────────────────────────────────────────────────────────
 
   static WasteGrade _parseGrade(String v) => switch (v.toUpperCase()) {
-        'A' => WasteGrade.a,
-        'B' => WasteGrade.b,
-        'C' => WasteGrade.c,
-        _ => WasteGrade.rejected,
-      };
+    'A' => WasteGrade.a,
+    'B' => WasteGrade.b,
+    'C' => WasteGrade.c,
+    _ => WasteGrade.rejected,
+  };
 
   /// Accepts Arabic units and English synonyms the model may emit.
   static String _parseUnit(String v) {
     final s = v.trim().toLowerCase();
     if (s == 'liter' || s == 'liters' || s == 'l' || s == 'لتر') return 'لتر';
-    if (s == 'piece' || s == 'pieces' || s == 'قطعة' || s == 'قطع') return 'قطعة';
+    if (s == 'piece' || s == 'pieces' || s == 'قطعة' || s == 'قطع')
+      return 'قطعة';
     return 'كغ'; // default for solids
   }
 
   static List<String> _parseTips(dynamic value) {
     if (value is List) {
-      return value.map((e) => e?.toString() ?? '').where((s) => s.isNotEmpty).toList();
+      return value
+          .map((e) => e?.toString() ?? '')
+          .where((s) => s.isNotEmpty)
+          .toList();
     }
     return const [];
   }
@@ -101,41 +107,46 @@ class WasteAnalysisResult {
   // ── Display helpers ────────────────────────────────────────────────────────
 
   String get gradeLabel => switch (grade) {
-        WasteGrade.a => 'A — ممتاز',
-        WasteGrade.b => 'B — جيد',
-        WasteGrade.c => 'C — مقبول',
-        WasteGrade.rejected => 'مرفوض',
-      };
+    WasteGrade.a => 'A — ممتاز',
+    WasteGrade.b => 'B — جيد',
+    WasteGrade.c => 'C — مقبول',
+    WasteGrade.rejected => 'مرفوض',
+  };
 
   Color get gradeColor => switch (grade) {
-        WasteGrade.a => const Color(0xFF1E5C35),
-        WasteGrade.b => const Color(0xFFC8860A),
-        WasteGrade.c => const Color(0xFFE53935),
-        WasteGrade.rejected => const Color(0xFF991B1B),
-      };
+    WasteGrade.a => const Color(0xFF1E5C35),
+    WasteGrade.b => const Color(0xFFC8860A),
+    WasteGrade.c => const Color(0xFFE53935),
+    WasteGrade.rejected => const Color(0xFF991B1B),
+  };
 
   Color get gradeSurface => switch (grade) {
-        WasteGrade.a => const Color(0xFFD1FAE5),
-        WasteGrade.b => const Color(0xFFFEF3C7),
-        WasteGrade.c || WasteGrade.rejected => const Color(0xFFFEE2E2),
-      };
+    WasteGrade.a => const Color(0xFFD1FAE5),
+    WasteGrade.b => const Color(0xFFFEF3C7),
+    WasteGrade.c || WasteGrade.rejected => const Color(0xFFFEE2E2),
+  };
 
   String get materialIcon => switch (materialTypeEn) {
-        'used_cooking_oil' || 'cooking_oil' || 'oil' => '🛢️',
-        'wood' || 'construction_wood' || 'lumber' || 'timber' => '🪵',
-        'plastic' || 'plastic_pet' || 'plastic_hdpe' || 'pvc' => '♻️',
-        'metal' || 'iron' || 'steel' || 'aluminum' || 'aluminium' || 'copper' => '⚙️',
-        'paper' || 'cardboard' => '📄',
-        'glass' => '🫙',
-        'electronics' || 'e_waste' || 'ewaste' => '📱',
-        'textile' || 'fabric' || 'clothes' || 'clothing' => '👕',
-        'rubber' || 'tires' || 'tyres' => '⭕',
-        'batteries' || 'battery' => '🔋',
-        'chemicals' || 'chemical' => '⚗️',
-        'furniture' => '🪑',
-        'organic' => '🌿',
-        _ => '♻️',
-      };
+    'used_cooking_oil' || 'cooking_oil' || 'oil' => '🛢️',
+    'wood' || 'construction_wood' || 'lumber' || 'timber' => '🪵',
+    'plastic' || 'plastic_pet' || 'plastic_hdpe' || 'pvc' => '♻️',
+    'metal' ||
+    'iron' ||
+    'steel' ||
+    'aluminum' ||
+    'aluminium' ||
+    'copper' => '⚙️',
+    'paper' || 'cardboard' => '📄',
+    'glass' => '🫙',
+    'electronics' || 'e_waste' || 'ewaste' => '📱',
+    'textile' || 'fabric' || 'clothes' || 'clothing' => '👕',
+    'rubber' || 'tires' || 'tyres' => '⭕',
+    'batteries' || 'battery' => '🔋',
+    'chemicals' || 'chemical' => '⚗️',
+    'furniture' => '🪑',
+    'organic' => '🌿',
+    _ => '♻️',
+  };
 
   bool get hasEstimatedPayout =>
       estimatedPayoutMinJod > 0 || estimatedPayoutMaxJod > 0;

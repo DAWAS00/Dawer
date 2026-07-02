@@ -8,19 +8,18 @@ void main() {
     OrderStatus status = OrderStatus.completed,
     double? weightKg = 10.0,
     List<WasteType> wasteTypes = const [WasteType.plastic],
-  }) =>
-      Order(
-        id: id,
-        type: OrderType.pickup,
-        wasteTypes: wasteTypes,
-        pickupAddress: 'عمّان',
-        dropoffAddress: 'المستودع',
-        status: status,
-        reward: 5,
-        createdAt: DateTime(2026, 6, 1),
-        completedAt: status == OrderStatus.completed ? DateTime(2026, 6, 2) : null,
-        weightKg: weightKg,
-      );
+  }) => Order(
+    id: id,
+    type: OrderType.pickup,
+    wasteTypes: wasteTypes,
+    pickupAddress: 'عمّان',
+    dropoffAddress: 'المستودع',
+    status: status,
+    reward: 5,
+    createdAt: DateTime(2026, 6, 1),
+    completedAt: status == OrderStatus.completed ? DateTime(2026, 6, 2) : null,
+    weightKg: weightKg,
+  );
 
   group('PlatformImpactStats.fromOrders', () {
     test('empty order list yields all-zero stats', () {
@@ -60,13 +59,16 @@ void main() {
       expect(stats.co2SavedKg, closeTo(48.0, 0.001));
     });
 
-    test('completed order with no weight counts toward totalOrders but contributes no impact', () {
-      final orders = [makeOrder(id: 'A', weightKg: null)];
-      final stats = PlatformImpactStats.fromOrders(orders);
-      expect(stats.totalOrders, 1);
-      expect(stats.totalWeightKg, 0);
-      expect(stats.co2SavedKg, 0);
-    });
+    test(
+      'completed order with no weight counts toward totalOrders but contributes no impact',
+      () {
+        final orders = [makeOrder(id: 'A', weightKg: null)];
+        final stats = PlatformImpactStats.fromOrders(orders);
+        expect(stats.totalOrders, 1);
+        expect(stats.totalWeightKg, 0);
+        expect(stats.co2SavedKg, 0);
+      },
+    );
 
     test('completed order with empty waste types contributes no impact', () {
       final orders = [makeOrder(id: 'A', wasteTypes: const [], weightKg: 15)];

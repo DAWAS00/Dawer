@@ -18,25 +18,28 @@ void main() {
       expect((result as Success).value, isEmpty);
     });
 
-    test('submitRequest creates a pending request and fetchRequests returns it',
-        () async {
-      final submitResult = await repo.submitRequest(
-        userId: 'user-1',
-        template: ReportTemplate.weeklySummary,
-        periodStart: DateTime(2026, 6, 1),
-        periodEnd: DateTime(2026, 6, 28),
-      );
-      expect(submitResult, isA<Success>());
-      final req = (submitResult as Success<ReportRequest, dynamic>).value;
-      expect(req.status, ReportStatus.pending);
-      expect(req.userId, 'user-1');
-      expect(req.template, ReportTemplate.weeklySummary);
+    test(
+      'submitRequest creates a pending request and fetchRequests returns it',
+      () async {
+        final submitResult = await repo.submitRequest(
+          userId: 'user-1',
+          template: ReportTemplate.weeklySummary,
+          periodStart: DateTime(2026, 6, 1),
+          periodEnd: DateTime(2026, 6, 28),
+        );
+        expect(submitResult, isA<Success>());
+        final req = (submitResult as Success<ReportRequest, dynamic>).value;
+        expect(req.status, ReportStatus.pending);
+        expect(req.userId, 'user-1');
+        expect(req.template, ReportTemplate.weeklySummary);
 
-      final fetchResult = await repo.fetchRequests('user-1');
-      final list = (fetchResult as Success<List<ReportRequest>, dynamic>).value;
-      expect(list.length, 1);
-      expect(list.first.id, req.id);
-    });
+        final fetchResult = await repo.fetchRequests('user-1');
+        final list =
+            (fetchResult as Success<List<ReportRequest>, dynamic>).value;
+        expect(list.length, 1);
+        expect(list.first.id, req.id);
+      },
+    );
 
     test('submitRequest returns unique IDs for multiple requests', () async {
       await repo.submitRequest(

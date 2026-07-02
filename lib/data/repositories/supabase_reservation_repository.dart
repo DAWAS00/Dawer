@@ -13,7 +13,10 @@ final class SupabaseReservationRepository implements IReservationRepository {
   @override
   Future<AppResult<String?>> findUserNameByPhone(String phone) async {
     try {
-      final rows = await _client.rpc('find_user_by_phone', params: {'p_phone': phone});
+      final rows = await _client.rpc(
+        'find_user_by_phone',
+        params: {'p_phone': phone},
+      );
       final list = rows as List;
       if (list.isEmpty) return const Success(null);
       return Success(list.first['name'] as String?);
@@ -32,12 +35,15 @@ final class SupabaseReservationRepository implements IReservationRepository {
     required int durationMinutes,
   }) async {
     try {
-      final id = await _client.rpc('create_reservation', params: {
-        'p_buyer_phone': buyerPhone,
-        'p_item_title': itemTitle,
-        'p_invoice_total': invoiceTotal,
-        'p_duration_minutes': durationMinutes,
-      });
+      final id = await _client.rpc(
+        'create_reservation',
+        params: {
+          'p_buyer_phone': buyerPhone,
+          'p_item_title': itemTitle,
+          'p_invoice_total': invoiceTotal,
+          'p_duration_minutes': durationMinutes,
+        },
+      );
       return Success(id as String);
     } on PostgrestException catch (e) {
       return Failure(UnknownFailure(message: e.message, code: e.code));
@@ -55,8 +61,13 @@ final class SupabaseReservationRepository implements IReservationRepository {
       _rpc('complete_reservation', {'p_reservation_id': reservationId});
 
   @override
-  Future<AppResult<void>> cancelReservation(String reservationId, String reason) =>
-      _rpc('cancel_reservation', {'p_reservation_id': reservationId, 'p_reason': reason});
+  Future<AppResult<void>> cancelReservation(
+    String reservationId,
+    String reason,
+  ) => _rpc('cancel_reservation', {
+    'p_reservation_id': reservationId,
+    'p_reason': reason,
+  });
 
   @override
   Future<AppResult<List<Reservation>>> fetchForCurrentUser() async {
@@ -70,9 +81,11 @@ final class SupabaseReservationRepository implements IReservationRepository {
           .or('seller_id.eq.$uid,buyer_id.eq.$uid')
           .order('created_at', ascending: false);
 
-      return Success((rows as List)
-          .map((row) => Reservation.fromJson(row as Map<String, dynamic>))
-          .toList());
+      return Success(
+        (rows as List)
+            .map((row) => Reservation.fromJson(row as Map<String, dynamic>))
+            .toList(),
+      );
     } on PostgrestException catch (e) {
       return Failure(UnknownFailure(message: e.message, code: e.code));
     } catch (e) {

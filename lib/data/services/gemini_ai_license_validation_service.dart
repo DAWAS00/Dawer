@@ -11,7 +11,8 @@ class GeminiAiLicenseValidationService implements IAiLicenseValidationService {
   static String _promptFor(UserRole role) {
     final ctx = switch (role) {
       UserRole.driver => 'a driver license or professional driving permit',
-      UserRole.supplier => 'a business license, trade permit, or commercial registration',
+      UserRole.supplier =>
+        'a business license, trade permit, or commercial registration',
       UserRole.recyclingCo =>
         'a recycling company permit, environmental license, or industrial facility permit',
     };
@@ -25,10 +26,15 @@ class GeminiAiLicenseValidationService implements IAiLicenseValidationService {
   }
 
   @override
-  Future<AiLicenseValidationResult> validateLicense(String filePath, UserRole role) async {
+  Future<AiLicenseValidationResult> validateLicense(
+    String filePath,
+    UserRole role,
+  ) async {
     try {
       final bytes = await File(filePath).readAsBytes();
-      final mime = filePath.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
+      final mime = filePath.toLowerCase().endsWith('.png')
+          ? 'image/png'
+          : 'image/jpeg';
       final response = await GeminiService.instance.model().generateContent([
         Content.multi([DataPart(mime, bytes), TextPart(_promptFor(role))]),
       ]);
@@ -44,11 +50,14 @@ class GeminiAiLicenseValidationService implements IAiLicenseValidationService {
       final isValid = parsed['isValid'] as bool? ?? true;
       final confidence = (parsed['confidence'] as num?)?.toDouble() ?? 0.8;
       final rawCats = parsed['categories'];
-      final categories =
-          rawCats is List ? rawCats.map((e) => e.toString()).toList() : _fallback(role);
+      final categories = rawCats is List
+          ? rawCats.map((e) => e.toString()).toList()
+          : _fallback(role);
       return AiLicenseValidationResult(
         isValid: isValid,
-        statusMessage: isValid ? 'aiValidationStatusSuccess' : 'aiValidationStatusInvalid',
+        statusMessage: isValid
+            ? 'aiValidationStatusSuccess'
+            : 'aiValidationStatusInvalid',
         confidenceScore: confidence,
         suggestedCategories: categories,
       );
@@ -63,10 +72,10 @@ class GeminiAiLicenseValidationService implements IAiLicenseValidationService {
   }
 
   static List<String> _fallback(UserRole role) => switch (role) {
-        UserRole.driver => ['مواد بناء', 'أجهزة كهربائية', 'معادن'],
-        UserRole.supplier => ['ورق وكرتون', 'زجاج', 'بلاستيك', 'مطاط'],
-        UserRole.recyclingCo => ['معادن', 'إلكترونيات', 'مواد خام', 'بطاريات'],
-      };
+    UserRole.driver => ['مواد بناء', 'أجهزة كهربائية', 'معادن'],
+    UserRole.supplier => ['ورق وكرتون', 'زجاج', 'بلاستيك', 'مطاط'],
+    UserRole.recyclingCo => ['معادن', 'إلكترونيات', 'مواد خام', 'بطاريات'],
+  };
 
   Map<String, dynamic>? _parseJson(String? text) {
     if (text == null || text.isEmpty) return null;

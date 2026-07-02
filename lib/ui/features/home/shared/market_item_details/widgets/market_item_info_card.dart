@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MarketItemInfoCard extends StatelessWidget {
@@ -39,7 +39,10 @@ class MarketItemInfoCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF9CA3AF)),
+                  style: GoogleFonts.cairo(
+                    fontSize: 11,
+                    color: const Color(0xFF9CA3AF),
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(

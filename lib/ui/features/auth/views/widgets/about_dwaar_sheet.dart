@@ -151,7 +151,10 @@ class _IntroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _BodyText(context.l10n.aboutDwaarIntroBody, color: AppColors.textMain);
+    return _BodyText(
+      context.l10n.aboutDwaarIntroBody,
+      color: AppColors.textMain,
+    );
   }
 }
 
@@ -196,7 +199,9 @@ class _OurImpactSectionState extends State<_OurImpactSection> {
       decoration: BoxDecoration(
         color: AppColors.primaryGreen.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primaryGreen.withValues(alpha: 0.18)),
+        border: Border.all(
+          color: AppColors.primaryGreen.withValues(alpha: 0.18),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,13 +260,18 @@ class _OurImpactSectionState extends State<_OurImpactSection> {
               padding: const EdgeInsets.only(bottom: 8),
               child: Text(
                 l10n.aboutDwaarImpactDownloadError,
-                style: GoogleFonts.cairo(fontSize: 12.5, color: Colors.red.shade700),
+                style: GoogleFonts.cairo(
+                  fontSize: 12.5,
+                  color: Colors.red.shade700,
+                ),
               ),
             ),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
-              onPressed: _isGenerating ? null : () => _downloadCertificate(stats),
+              onPressed: _isGenerating
+                  ? null
+                  : () => _downloadCertificate(stats),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.primaryGreen,
                 side: const BorderSide(color: AppColors.primaryGreen),
@@ -281,7 +291,10 @@ class _OurImpactSectionState extends State<_OurImpactSection> {
                 _isGenerating
                     ? l10n.aboutDwaarImpactDownloadGenerating
                     : l10n.aboutDwaarImpactDownloadButton,
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 13.5),
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13.5,
+                ),
               ),
             ),
           ),
@@ -292,7 +305,11 @@ class _OurImpactSectionState extends State<_OurImpactSection> {
 }
 
 class _ImpactStat extends StatelessWidget {
-  const _ImpactStat({required this.value, required this.label, required this.icon});
+  const _ImpactStat({
+    required this.value,
+    required this.label,
+    required this.icon,
+  });
   final String value;
   final String label;
   final IconData icon;
@@ -507,8 +524,14 @@ class _DataRequestSectionState extends State<_DataRequestSection> {
     final vm = context.watch<AboutDwaarViewModel>();
     final state = vm.state;
 
-    final isLoading = switch (state) { Loading() => true, _ => false };
-    final isSuccess = switch (state) { Loaded() => true, _ => false };
+    final isLoading = switch (state) {
+      Loading() => true,
+      _ => false,
+    };
+    final isSuccess = switch (state) {
+      Loaded() => true,
+      _ => false,
+    };
     final hasGeneralError = switch (state) {
       Failed(:final failure) => failure is! ValidationFailure,
       _ => false,
@@ -607,10 +630,16 @@ class _DataRequestSectionState extends State<_DataRequestSection> {
     );
   }
 
-  String? _errorFor(String field, Map<String, String> fieldErrors, AppLocalizations l10n) {
+  String? _errorFor(
+    String field,
+    Map<String, String> fieldErrors,
+    AppLocalizations l10n,
+  ) {
     final code = fieldErrors[field];
     if (code == null) return null;
-    return code == 'invalid' ? l10n.aboutDwaarDataFormEmailInvalid : l10n.aboutDwaarDataFormRequired;
+    return code == 'invalid'
+        ? l10n.aboutDwaarDataFormEmailInvalid
+        : l10n.aboutDwaarDataFormRequired;
   }
 
   void _submit(AboutDwaarViewModel vm) {
@@ -655,7 +684,10 @@ class _FormField extends StatelessWidget {
         filled: true,
         fillColor: AppColors.surface,
         labelStyle: GoogleFonts.cairo(fontSize: 13, color: AppColors.mutedText),
-        hintStyle: GoogleFonts.cairo(fontSize: 12.5, color: AppColors.mutedText),
+        hintStyle: GoogleFonts.cairo(
+          fontSize: 12.5,
+          color: AppColors.mutedText,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -664,7 +696,10 @@ class _FormField extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.primaryGreen, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 14,
+        ),
       ),
     );
   }
@@ -684,7 +719,10 @@ class _SuccessBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.check_circle_rounded, color: AppColors.statusActiveText),
+          const Icon(
+            Icons.check_circle_rounded,
+            color: AppColors.statusActiveText,
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(

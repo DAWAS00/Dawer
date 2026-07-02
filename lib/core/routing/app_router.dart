@@ -19,10 +19,7 @@ final appRouter = GoRouter(
   initialLocation: '/',
   debugLogDiagnostics: false,
   routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const SplashView(),
-    ),
+    GoRoute(path: '/', builder: (context, state) => const SplashView()),
     GoRoute(
       path: '/login',
       builder: (context, state) => const LoginView(),
@@ -46,18 +43,19 @@ final appRouter = GoRouter(
         final extra = state.extra as Map<String, dynamic>? ?? {};
         return HomeRouter(
           role: extra['role'] as UserRole? ?? UserRole.supplier,
-          supplierType: extra['supplierType'] as SupplierType? ?? SupplierType.individual,
+          supplierType:
+              extra['supplierType'] as SupplierType? ?? SupplierType.individual,
           userName: extra['userName'] as String? ?? '',
           aiSuggestedCategories:
-              (extra['aiSuggestedCategories'] as List?)?.cast<String>() ?? const [],
+              (extra['aiSuggestedCategories'] as List?)?.cast<String>() ??
+              const [],
         );
       },
     ),
     GoRoute(
       path: '/error',
-      builder: (context, state) => BackendErrorScreen(
-        detail: state.extra as String? ?? '',
-      ),
+      builder: (context, state) =>
+          BackendErrorScreen(detail: state.extra as String? ?? ''),
     ),
   ],
 );

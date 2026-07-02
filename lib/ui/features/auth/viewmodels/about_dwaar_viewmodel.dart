@@ -9,7 +9,7 @@ import '../../../../domain/repositories/i_partner_data_request_repository.dart';
 /// (reachable from the login screen, before the visitor has an account).
 class AboutDwaarViewModel extends ChangeNotifier {
   AboutDwaarViewModel({required IPartnerDataRequestRepository repository})
-      : _repository = repository;
+    : _repository = repository;
 
   final IPartnerDataRequestRepository _repository;
 
@@ -49,10 +49,9 @@ class AboutDwaarViewModel extends ChangeNotifier {
       email: email,
     );
     if (fieldErrors.isNotEmpty) {
-      _state = Failed(ValidationFailure(
-        message: 'validation',
-        fieldErrors: fieldErrors,
-      ));
+      _state = Failed(
+        ValidationFailure(message: 'validation', fieldErrors: fieldErrors),
+      );
       notifyListeners();
       return;
     }

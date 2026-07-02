@@ -9,26 +9,29 @@ enum ReservationStatus {
 
 extension ReservationStatusDb on ReservationStatus {
   static ReservationStatus fromDb(String value) => switch (value) {
-        'pending_approval' => ReservationStatus.pendingApproval,
-        'reserved' => ReservationStatus.reserved,
-        'completed' => ReservationStatus.completed,
-        'cancelled' => ReservationStatus.cancelled,
-        'expired_buyer_penalized' => ReservationStatus.expiredBuyerPenalized,
-        'cancelled_seller_penalized' => ReservationStatus.cancelledSellerPenalized,
-        _ => throw ArgumentError('Unknown reservation status: $value'),
-      };
+    'pending_approval' => ReservationStatus.pendingApproval,
+    'reserved' => ReservationStatus.reserved,
+    'completed' => ReservationStatus.completed,
+    'cancelled' => ReservationStatus.cancelled,
+    'expired_buyer_penalized' => ReservationStatus.expiredBuyerPenalized,
+    'cancelled_seller_penalized' => ReservationStatus.cancelledSellerPenalized,
+    _ => throw ArgumentError('Unknown reservation status: $value'),
+  };
 
   String get label => switch (this) {
-        ReservationStatus.pendingApproval => 'بانتظار موافقة المشتري',
-        ReservationStatus.reserved => 'محجوز',
-        ReservationStatus.completed => 'مكتمل',
-        ReservationStatus.cancelled => 'ملغى',
-        ReservationStatus.expiredBuyerPenalized => 'انتهى الوقت — غرامة على المشتري',
-        ReservationStatus.cancelledSellerPenalized => 'ألغاه البائع — غرامة على البائع',
-      };
+    ReservationStatus.pendingApproval => 'بانتظار موافقة المشتري',
+    ReservationStatus.reserved => 'محجوز',
+    ReservationStatus.completed => 'مكتمل',
+    ReservationStatus.cancelled => 'ملغى',
+    ReservationStatus.expiredBuyerPenalized =>
+      'انتهى الوقت — غرامة على المشتري',
+    ReservationStatus.cancelledSellerPenalized =>
+      'ألغاه البائع — غرامة على البائع',
+  };
 
   bool get isOpen =>
-      this == ReservationStatus.pendingApproval || this == ReservationStatus.reserved;
+      this == ReservationStatus.pendingApproval ||
+      this == ReservationStatus.reserved;
 }
 
 class Reservation {
@@ -64,7 +67,8 @@ class Reservation {
     this.resolvedAt,
   });
 
-  double get penaltyPreview => double.parse((invoiceTotal * 0.10).toStringAsFixed(2));
+  double get penaltyPreview =>
+      double.parse((invoiceTotal * 0.10).toStringAsFixed(2));
 
   Duration? get timeRemaining {
     if (deadline == null) return null;

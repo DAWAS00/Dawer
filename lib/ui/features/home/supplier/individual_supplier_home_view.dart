@@ -97,9 +97,11 @@ class _IndividualSupplierHomeBodyState
         onJobAccepted: (sale) {
           vm.setTab(2);
           if (sale != null) {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (_) => CollectionSaleDetailView(sale: sale),
-            ));
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => CollectionSaleDetailView(sale: sale),
+              ),
+            );
           }
         },
       ),
@@ -114,15 +116,17 @@ class _IndividualSupplierHomeBodyState
       ),
       AnalyticsTab(
         userId: context.read<IAuthRepository>().currentSession?.userId ?? '',
-        allOrders: context.read<AppOrderStore>().supplierCompletedOrdersFor(vm.user.name),
+        allOrders: context.read<AppOrderStore>().supplierCompletedOrdersFor(
+          vm.user.name,
+        ),
         reportRepository: context.read<IReportRequestRepository>(),
         showMilestones: true,
         showReportCenter: true,
         showProfitability: true,
         showGreenCredits: true,
         greenPoints: context.read<AppOrderStore>().greenPointsFor(
-              context.read<IAuthRepository>().currentSession?.userId ?? '',
-            ),
+          context.read<IAuthRepository>().currentSession?.userId ?? '',
+        ),
       ),
       SupplierProfileTab(
         user: vm.user,
@@ -140,27 +144,28 @@ class _IndividualSupplierHomeBodyState
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
-          IndexedStack(
-            index: vm.currentTab,
-            children: tabs,
-          ),
+          IndexedStack(index: vm.currentTab, children: tabs),
           if (kDebugMode) const DevTestingPanel(),
         ],
       ),
       floatingActionButton: vm.currentTab == 0
-          ? PickupFab(onPressed: () {
-              if (!marketVm.canAddListing(vm.user.name)) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                    'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
-                  ),
-                  backgroundColor: const Color(0xFFB91C1C),
-                  behavior: SnackBarBehavior.floating,
-                ));
-                return;
-              }
-              _showPostToMarketSheet(context, vm, marketVm);
-            })
+          ? PickupFab(
+              onPressed: () {
+                if (!marketVm.canAddListing(vm.user.name)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
+                      ),
+                      backgroundColor: const Color(0xFFB91C1C),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                  return;
+                }
+                _showPostToMarketSheet(context, vm, marketVm);
+              },
+            )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       bottomNavigationBar: SupplierBottomNav(
@@ -181,33 +186,33 @@ class _IndividualSupplierHomeBodyState
         builder: (_) => NewPickupRequestView(
           role: UserRole.supplier,
           initialMode: OrderMode.marketplace,
-          onSubmit: ({
-            required List<WasteType> wasteTypes,
-            required String pickupAddress,
-            List<String> images = const [],
-            String? notes,
-            WasteForm? wasteForm,
-            WeightCategory? weightCategory,
-            double? itemPrice,
-            double? pickupLat,
-            double? pickupLng,
-          }) {
-            final order = vm.createListing(
-              wasteTypes: wasteTypes,
-              pickupAddress: pickupAddress,
-              images: images,
-              notes: notes,
-              wasteForm: wasteForm,
-              weightCategory: weightCategory,
-              itemPrice: itemPrice,
-              pickupLat: pickupLat,
-              pickupLng: pickupLng,
-            );
-            marketVm.addListing(order);
-          },
+          onSubmit:
+              ({
+                required List<WasteType> wasteTypes,
+                required String pickupAddress,
+                List<String> images = const [],
+                String? notes,
+                WasteForm? wasteForm,
+                WeightCategory? weightCategory,
+                double? itemPrice,
+                double? pickupLat,
+                double? pickupLng,
+              }) {
+                final order = vm.createListing(
+                  wasteTypes: wasteTypes,
+                  pickupAddress: pickupAddress,
+                  images: images,
+                  notes: notes,
+                  wasteForm: wasteForm,
+                  weightCategory: weightCategory,
+                  itemPrice: itemPrice,
+                  pickupLat: pickupLat,
+                  pickupLng: pickupLng,
+                );
+                marketVm.addListing(order);
+              },
         ),
       ),
     );
   }
-
 }

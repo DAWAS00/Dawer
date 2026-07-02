@@ -4,10 +4,12 @@ import '../../domain/repositories/i_partner_data_request_repository.dart';
 
 /// In-memory implementation used when Supabase is unavailable (offline/mock
 /// mode) and in tests.
-class MockPartnerDataRequestRepository implements IPartnerDataRequestRepository {
+class MockPartnerDataRequestRepository
+    implements IPartnerDataRequestRepository {
   final List<PartnerDataRequest> _requests = [];
 
-  List<PartnerDataRequest> get submittedRequests => List.unmodifiable(_requests);
+  List<PartnerDataRequest> get submittedRequests =>
+      List.unmodifiable(_requests);
 
   @override
   Future<AppResult<PartnerDataRequest>> submitRequest({

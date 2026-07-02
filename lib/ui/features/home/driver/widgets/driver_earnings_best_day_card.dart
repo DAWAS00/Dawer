@@ -85,14 +85,22 @@ class DriverEarningsBestDayCard extends StatelessWidget {
 
   static String _weekdayName(int weekday, AppLocalizations l10n) {
     switch (weekday) {
-      case DateTime.monday: return l10n.weekdayMonday;
-      case DateTime.tuesday: return l10n.weekdayTuesday;
-      case DateTime.wednesday: return l10n.weekdayWednesday;
-      case DateTime.thursday: return l10n.weekdayThursday;
-      case DateTime.friday: return l10n.weekdayFriday;
-      case DateTime.saturday: return l10n.weekdaySaturday;
-      case DateTime.sunday: return l10n.weekdaySunday;
-      default: return '';
+      case DateTime.monday:
+        return l10n.weekdayMonday;
+      case DateTime.tuesday:
+        return l10n.weekdayTuesday;
+      case DateTime.wednesday:
+        return l10n.weekdayWednesday;
+      case DateTime.thursday:
+        return l10n.weekdayThursday;
+      case DateTime.friday:
+        return l10n.weekdayFriday;
+      case DateTime.saturday:
+        return l10n.weekdaySaturday;
+      case DateTime.sunday:
+        return l10n.weekdaySunday;
+      default:
+        return '';
     }
   }
 }

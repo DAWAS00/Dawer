@@ -42,7 +42,8 @@ class VerificationViewModel extends ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    final normalizedPhone = phoneNumber.startsWith('0') && phoneNumber.length == 10
+    final normalizedPhone =
+        phoneNumber.startsWith('0') && phoneNumber.length == 10
         ? '+962${phoneNumber.substring(1)}'
         : phoneNumber;
 
@@ -53,7 +54,8 @@ class VerificationViewModel extends ChangeNotifier {
         _verified = true;
       },
       onFailure: (f) {
-        if (f is NotFoundFailure && f.code == AuthErrorCodes.phoneNotRegistered) {
+        if (f is NotFoundFailure &&
+            f.code == AuthErrorCodes.phoneNotRegistered) {
           _needsSignup = true;
         } else {
           _error = f.message;
@@ -70,7 +72,8 @@ class VerificationViewModel extends ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    final normalizedPhone = phoneNumber.startsWith('0') && phoneNumber.length == 10
+    final normalizedPhone =
+        phoneNumber.startsWith('0') && phoneNumber.length == 10
         ? '+962${phoneNumber.substring(1)}'
         : phoneNumber;
 

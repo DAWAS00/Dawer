@@ -22,12 +22,14 @@ final class SupabaseAuthRepository implements IAuthRepository {
       // in the flow. Just insert the profile row with the current user's id.
       final user = _client.auth.currentUser;
       if (user == null) {
-        return const Failure(AuthFailure(message: 'انتهت الجلسة. أعد التحقق من رقم هاتفك.'));
+        return const Failure(
+          AuthFailure(message: 'انتهت الجلسة. أعد التحقق من رقم هاتفك.'),
+        );
       }
 
-      await _client.from('profiles').insert(
-        request.toInsertRow(authId: user.id),
-      );
+      await _client
+          .from('profiles')
+          .insert(request.toInsertRow(authId: user.id));
 
       final session = AuthSession(
         userId: user.id,
@@ -73,10 +75,12 @@ final class SupabaseAuthRepository implements IAuthRepository {
       final profile = await _fetchProfile();
       if (profile == null) {
         // New user — OTP verified but no profile yet. Caller should redirect to signup wizard.
-        return const Failure(NotFoundFailure(
-          message: 'لم يتم العثور على حساب. سيتم توجيهك لإنشاء حساب.',
-          code: AuthErrorCodes.phoneNotRegistered,
-        ));
+        return const Failure(
+          NotFoundFailure(
+            message: 'لم يتم العثور على حساب. سيتم توجيهك لإنشاء حساب.',
+            code: AuthErrorCodes.phoneNotRegistered,
+          ),
+        );
       }
 
       final authSession = _mapProfileToSession(profile);
@@ -216,8 +220,9 @@ final class SupabaseAuthRepository implements IAuthRepository {
     }
 
     final rawCats = profile['categories'];
-    final categories =
-        rawCats is List ? rawCats.cast<String>() : const <String>[];
+    final categories = rawCats is List
+        ? rawCats.cast<String>()
+        : const <String>[];
 
     return AuthSession(
       userId: profile['auth_id'] as String,

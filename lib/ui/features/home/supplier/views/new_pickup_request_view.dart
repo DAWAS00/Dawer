@@ -33,7 +33,8 @@ class NewPickupRequestView extends StatefulWidget {
     double? itemPrice,
     double? pickupLat,
     double? pickupLng,
-  })? onSubmit;
+  })?
+  onSubmit;
 
   const NewPickupRequestView({
     super.key,
@@ -85,9 +86,12 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
     if (widget.onSubmit != null) {
       widget.onSubmit!(
         wasteTypes: _controller.selectedTypes.toList(),
-        pickupAddress: _controller.pickedAddress ?? context.l10n.wizardLocationDefined,
+        pickupAddress:
+            _controller.pickedAddress ?? context.l10n.wizardLocationDefined,
         images: List.from(_controller.images),
-        notes: _controller.notesCtrl.text.trim().isNotEmpty ? _controller.notesCtrl.text.trim() : null,
+        notes: _controller.notesCtrl.text.trim().isNotEmpty
+            ? _controller.notesCtrl.text.trim()
+            : null,
         wasteForm: _controller.wasteForm,
         weightCategory: _controller.weightCategory,
         itemPrice: double.tryParse(_controller.priceCtrl.text.trim()),
@@ -104,9 +108,10 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
     final l10n = context.l10n;
     final vm = context.read<BaseSupplierViewModel>();
     final wasteTypes = _controller.selectedTypes.toList();
-    final pickupAddress = _controller.pickedAddress ?? l10n.wizardLocationDefined;
-    final notes = _controller.notesCtrl.text.trim().isNotEmpty 
-        ? _controller.notesCtrl.text.trim() 
+    final pickupAddress =
+        _controller.pickedAddress ?? l10n.wizardLocationDefined;
+    final notes = _controller.notesCtrl.text.trim().isNotEmpty
+        ? _controller.notesCtrl.text.trim()
         : null;
     final itemPrice = double.tryParse(_controller.priceCtrl.text.trim());
 
@@ -163,7 +168,9 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(vm.pickupSubmitError?.message ?? l10n.wizardPickupRequestFailed),
+              content: Text(
+                vm.pickupSubmitError?.message ?? l10n.wizardPickupRequestFailed,
+              ),
               backgroundColor: const Color(0xFFC62828),
               behavior: SnackBarBehavior.floating,
             ),
@@ -183,7 +190,9 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
             WizardTopBar(
               currentStep: _controller.currentStep,
               totalSteps: 3,
-              title: _controller.mode == OrderMode.marketplace ? context.l10n.wizardPublishToMarket : context.l10n.wizardNewPickupTitle,
+              title: _controller.mode == OrderMode.marketplace
+                  ? context.l10n.wizardPublishToMarket
+                  : context.l10n.wizardNewPickupTitle,
               onBack: () {
                 HapticUtil.light();
                 if (_controller.currentStep > 0) {
@@ -208,10 +217,7 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
                 ],
               ),
             ),
-            WizardBottomActions(
-              controller: _controller,
-              onPublish: _onPublish,
-            ),
+            WizardBottomActions(controller: _controller, onPublish: _onPublish),
           ],
         ),
       ),

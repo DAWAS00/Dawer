@@ -14,14 +14,15 @@ class UserSignUpService {
   UserSignUpService({
     required IAuthRepository authRepository,
     required IFileStorageRepository fileStorage,
-  })  : _authRepository = authRepository,
-        _fileStorage = fileStorage;
+  }) : _authRepository = authRepository,
+       _fileStorage = fileStorage;
 
   /// Global store reference for backward compatibility in tests
   static dynamic _globalStore;
   static void setGlobalStore(dynamic store) {
     _globalStore = store;
   }
+
   static get globalStore => _globalStore;
 
   Future<AppResult<Map<String, dynamic>>> signUp(
@@ -47,7 +48,9 @@ class UserSignUpService {
             onFailure: (failure) {},
           );
           if (profilePhotoUrl == null) {
-            return const Failure(StorageFailure(message: 'فشل رفع صورة الملف الشخصي'));
+            return const Failure(
+              StorageFailure(message: 'فشل رفع صورة الملف الشخصي'),
+            );
           }
         }
 
@@ -61,7 +64,9 @@ class UserSignUpService {
             onFailure: (failure) {},
           );
           if (identityDocPath == null) {
-            return const Failure(StorageFailure(message: 'فشل رفع وثيقة الهوية'));
+            return const Failure(
+              StorageFailure(message: 'فشل رفع وثيقة الهوية'),
+            );
           }
         }
 

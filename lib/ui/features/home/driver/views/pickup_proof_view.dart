@@ -9,10 +9,19 @@ import '../../../../../data/models/order/order.dart';
 import '../../../../../data/services/proof_builder.dart';
 import '../../../../../l10n/l10n.dart';
 
-enum _ProofState { initial, hasWeight, hasPhoto, hasBoth, uploading, error, success }
+enum _ProofState {
+  initial,
+  hasWeight,
+  hasPhoto,
+  hasBoth,
+  uploading,
+  error,
+  success,
+}
 
 class PickupProofView extends StatefulWidget {
   final Order order;
+
   /// Called with the finalized [OrderProof] once upload succeeds.
   /// Returns an error string on failure, or null on success.
   final Future<String?> Function(OrderProof proof) onConfirm;
@@ -43,7 +52,10 @@ class _PickupProofViewState extends State<PickupProofView>
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
-    _successScale = CurvedAnimation(parent: _successAnim, curve: Curves.elasticOut);
+    _successScale = CurvedAnimation(
+      parent: _successAnim,
+      curve: Curves.elasticOut,
+    );
     _weightController.addListener(_onInputChanged);
   }
 
@@ -60,7 +72,9 @@ class _PickupProofViewState extends State<PickupProofView>
     setState(() {
       if (_state == _ProofState.uploading ||
           _state == _ProofState.success ||
-          _state == _ProofState.error) { return; }
+          _state == _ProofState.error) {
+        return;
+      }
       if (hasWeight && hasPhoto) {
         _state = _ProofState.hasBoth;
       } else if (hasWeight) {
@@ -114,7 +128,10 @@ class _PickupProofViewState extends State<PickupProofView>
 
       // Build proof with the remote URL as imagePath.
       final urlFile = XFile(url);
-      final proof = await ProofBuilder.build(imageFile: urlFile, weightKg: weight);
+      final proof = await ProofBuilder.build(
+        imageFile: urlFile,
+        weightKg: weight,
+      );
       // Replace local path with the uploaded URL.
       final finalProof = OrderProof(
         imagePath: url,
@@ -212,9 +229,7 @@ class _PickupProofViewState extends State<PickupProofView>
           centerTitle: true,
         ),
         body: SafeArea(
-          child: _state == _ProofState.success
-              ? _buildSuccess()
-              : _buildForm(),
+          child: _state == _ProofState.success ? _buildSuccess() : _buildForm(),
         ),
       ),
     );
@@ -265,7 +280,8 @@ class _PickupProofViewState extends State<PickupProofView>
                 signed: false,
               ),
               textAlign: TextAlign.left,
-              enabled: _state != _ProofState.uploading &&
+              enabled:
+                  _state != _ProofState.uploading &&
                   _state != _ProofState.success,
               style: GoogleFonts.dmSans(fontSize: 16),
               decoration: InputDecoration(
@@ -317,14 +333,17 @@ class _PickupProofViewState extends State<PickupProofView>
                           ? _image!.path
                           : Uri.file(_image!.path).toString(),
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _buildPhotoPlaceholder(captured: true),
+                      errorBuilder: (_, __, ___) =>
+                          _buildPhotoPlaceholder(captured: true),
                     ),
                     Positioned(
                       bottom: 8,
                       right: 8,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.black54,
                           borderRadius: BorderRadius.circular(8),
@@ -332,7 +351,9 @@ class _PickupProofViewState extends State<PickupProofView>
                         child: Text(
                           context.l10n.proofChangePhoto,
                           style: GoogleFonts.cairo(
-                              fontSize: 12, color: Colors.white),
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -355,7 +376,9 @@ class _PickupProofViewState extends State<PickupProofView>
         ),
         const SizedBox(height: 12),
         Text(
-          captured ? context.l10n.proofPhotoCaptured : context.l10n.proofCapturePhoto,
+          captured
+              ? context.l10n.proofPhotoCaptured
+              : context.l10n.proofCapturePhoto,
           style: GoogleFonts.cairo(
             fontSize: 15,
             color: captured ? AppColors.primaryGreen : AppColors.mutedText,
@@ -381,7 +404,10 @@ class _PickupProofViewState extends State<PickupProofView>
           Expanded(
             child: Text(
               _errorMessage!,
-              style: GoogleFonts.cairo(fontSize: 13, color: Colors.red.shade800),
+              style: GoogleFonts.cairo(
+                fontSize: 13,
+                color: Colors.red.shade800,
+              ),
               textDirection: TextDirection.rtl,
             ),
           ),
@@ -391,7 +417,8 @@ class _PickupProofViewState extends State<PickupProofView>
   }
 
   Widget _buildSubmitButton() {
-    final canSubmit = _state == _ProofState.hasBoth ||
+    final canSubmit =
+        _state == _ProofState.hasBoth ||
         (_state == _ProofState.error &&
             _parsedWeight != null &&
             _image != null);
@@ -407,7 +434,9 @@ class _PickupProofViewState extends State<PickupProofView>
           foregroundColor: Colors.white,
           disabledBackgroundColor: AppColors.mutedText.withValues(alpha: 0.3),
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
           padding: const EdgeInsets.symmetric(vertical: 8),
         ),
         child: isLoading
@@ -420,7 +449,9 @@ class _PickupProofViewState extends State<PickupProofView>
                 ),
               )
             : Text(
-                isError ? context.l10n.proofRetry : context.l10n.proofConfirmPickup,
+                isError
+                    ? context.l10n.proofRetry
+                    : context.l10n.proofConfirmPickup,
                 style: GoogleFonts.cairo(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,

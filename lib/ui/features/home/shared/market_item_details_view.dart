@@ -50,7 +50,11 @@ class MarketItemDetailsView extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20),
+                child: const Icon(
+                  Icons.arrow_forward_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
               onPressed: () => Navigator.pop(context),
             ),
@@ -81,23 +85,57 @@ class MarketItemDetailsView extends StatelessWidget {
                     MarketItemPhotoGallery(images: item.images),
                   ],
                   const SizedBox(height: 16),
-                  MarketItemInfoCard(icon: Icons.person_rounded, title: l10n.marketItemSellerLabel, value: item.supplierName ?? l10n.marketItemUnknownSeller),
+                  MarketItemInfoCard(
+                    icon: Icons.person_rounded,
+                    title: l10n.marketItemSellerLabel,
+                    value: item.supplierName ?? l10n.marketItemUnknownSeller,
+                  ),
                   const SizedBox(height: 12),
-                  MarketItemInfoCard(icon: Icons.location_on_rounded, title: l10n.marketItemPickupAddressLabel, value: item.pickupAddress),
+                  MarketItemInfoCard(
+                    icon: Icons.location_on_rounded,
+                    title: l10n.marketItemPickupAddressLabel,
+                    value: item.pickupAddress,
+                  ),
                   const SizedBox(height: 12),
                   if (item.distanceKm != null) ...[
-                    MarketItemInfoCard(icon: Icons.straighten_rounded, title: l10n.marketItemDistanceLabel, value: l10n.marketItemDistanceValue(item.distanceKm!.toStringAsFixed(1))),
+                    MarketItemInfoCard(
+                      icon: Icons.straighten_rounded,
+                      title: l10n.marketItemDistanceLabel,
+                      value: l10n.marketItemDistanceValue(
+                        item.distanceKm!.toStringAsFixed(1),
+                      ),
+                    ),
                     const SizedBox(height: 12),
                   ],
                   Row(
                     children: [
-                      Expanded(child: MarketItemInfoCard(icon: Icons.category_rounded, title: l10n.marketItemConditionLabel, value: item.wasteForm?.labelFor(locale) ?? l10n.marketItemUnknown)),
+                      Expanded(
+                        child: MarketItemInfoCard(
+                          icon: Icons.category_rounded,
+                          title: l10n.marketItemConditionLabel,
+                          value:
+                              item.wasteForm?.labelFor(locale) ??
+                              l10n.marketItemUnknown,
+                        ),
+                      ),
                       const SizedBox(width: 12),
-                      Expanded(child: MarketItemInfoCard(icon: Icons.fitness_center_rounded, title: l10n.marketItemWeightLabel, value: item.weightCategory?.shortLabelFor(locale) ?? l10n.marketItemUnknown)),
+                      Expanded(
+                        child: MarketItemInfoCard(
+                          icon: Icons.fitness_center_rounded,
+                          title: l10n.marketItemWeightLabel,
+                          value:
+                              item.weightCategory?.shortLabelFor(locale) ??
+                              l10n.marketItemUnknown,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  MarketItemInfoCard(icon: Icons.access_time_rounded, title: l10n.marketItemPublishDateLabel, value: _formatTime(context, item.createdAt)),
+                  MarketItemInfoCard(
+                    icon: Icons.access_time_rounded,
+                    title: l10n.marketItemPublishDateLabel,
+                    value: _formatTime(context, item.createdAt),
+                  ),
                   const SizedBox(height: 100),
                 ],
               ),
@@ -138,7 +176,10 @@ class MarketItemDetailsView extends StatelessWidget {
     Navigator.pop(context); // close details
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(context.l10n.marketItemPurchasedPickup, style: GoogleFonts.cairo()),
+        content: Text(
+          context.l10n.marketItemPurchasedPickup,
+          style: GoogleFonts.cairo(),
+        ),
         backgroundColor: const Color(0xFF1E5C35),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -149,27 +190,28 @@ class MarketItemDetailsView extends StatelessWidget {
   Widget _buildActionBar(BuildContext context) {
     final (label, icon, color, onTap) = switch (role) {
       UserRole.driver => (
-          context.l10n.marketItemDriverReceive,
-          Icons.local_shipping_rounded,
-          const Color(0xFF06402B),
-          () => _showRiderChoiceSheet(context),
-        ),
+        context.l10n.marketItemDriverReceive,
+        Icons.local_shipping_rounded,
+        const Color(0xFF06402B),
+        () => _showRiderChoiceSheet(context),
+      ),
       UserRole.supplier => (
-          context.l10n.marketItemBuyNow,
-          Icons.shopping_cart_rounded,
-          const Color(0xFF06402B),
-          () => _showSupplierPurchaseChoiceSheet(context),
-        ),
+        context.l10n.marketItemBuyNow,
+        Icons.shopping_cart_rounded,
+        const Color(0xFF06402B),
+        () => _showSupplierPurchaseChoiceSheet(context),
+      ),
       UserRole.recyclingCo => (
-          context.l10n.marketItemCompanyReceive,
-          Icons.business_rounded,
-          const Color(0xFF1E40AF),
-          () => _handleCompanyReceive(context),
-        ),
+        context.l10n.marketItemCompanyReceive,
+        Icons.business_rounded,
+        const Color(0xFF1E40AF),
+        () => _handleCompanyReceive(context),
+      ),
     };
 
     // Show the Reserve button only when item is still available for reservation
-    final canReserve = item.status == OrderStatus.pending &&
+    final canReserve =
+        item.status == OrderStatus.pending &&
         item.reservationStatus == null &&
         item.itemPrice != null &&
         item.itemPrice! > 0;
@@ -197,7 +239,10 @@ class MarketItemDetailsView extends StatelessWidget {
             if (isReservedByOther) ...[
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 margin: const EdgeInsets.only(bottom: 8),
                 decoration: BoxDecoration(
                   color: const Color(0xFFFEF3C7),
@@ -216,8 +261,11 @@ class MarketItemDetailsView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 6),
-                    const Icon(Icons.lock_clock_rounded,
-                        color: Color(0xFFD97706), size: 16),
+                    const Icon(
+                      Icons.lock_clock_rounded,
+                      color: Color(0xFFD97706),
+                      size: 16,
+                    ),
                   ],
                 ),
               ),
@@ -233,7 +281,8 @@ class MarketItemDetailsView extends StatelessWidget {
                   backgroundColor: color,
                   disabledBackgroundColor: const Color(0xFFD1D5DB),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
@@ -243,7 +292,10 @@ class MarketItemDetailsView extends StatelessWidget {
                     Text(
                       label,
                       style: GoogleFonts.cairo(
-                          fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Icon(icon, color: Colors.white, size: 20),
@@ -261,9 +313,13 @@ class MarketItemDetailsView extends StatelessWidget {
                 child: OutlinedButton(
                   onPressed: () => _showReserveSheet(context),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Color(0xFF06402B), width: 1.5),
+                    side: const BorderSide(
+                      color: Color(0xFF06402B),
+                      width: 1.5,
+                    ),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                   ),
                   child: Row(
@@ -278,8 +334,11 @@ class MarketItemDetailsView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 6),
-                      const Icon(Icons.bookmark_add_rounded,
-                          color: Color(0xFF06402B), size: 18),
+                      const Icon(
+                        Icons.bookmark_add_rounded,
+                        color: Color(0xFF06402B),
+                        size: 18,
+                      ),
                     ],
                   ),
                 ),
@@ -323,7 +382,8 @@ class MarketItemDetailsView extends StatelessWidget {
                   : const Color(0xFF1E5C35),
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           );
           if (err == null) {
@@ -375,13 +435,16 @@ class MarketItemDetailsView extends StatelessWidget {
       mode: SupplierPurchaseMode.selfPickup,
     );
     if (purchased == null) return;
-    
+
     Navigator.pop(context); // close invoice sheet
     Navigator.pop(context); // close details
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(context.l10n.marketInvoicePickupSuccess, style: GoogleFonts.cairo()),
+        content: Text(
+          context.l10n.marketInvoicePickupSuccess,
+          style: GoogleFonts.cairo(),
+        ),
         backgroundColor: const Color(0xFF1E5C35),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 5),
@@ -392,15 +455,23 @@ class MarketItemDetailsView extends StatelessWidget {
 
   void _handleDriverClaim(BuildContext context) {
     final vm = context.read<MarketplaceViewModel>();
-    final claimed = vm.claimItem(item.id, const User(id: 'DRV-19842', name: 'سائق دوّر', role: 'سائق'));
+    final claimed = vm.claimItem(
+      item.id,
+      const User(id: 'DRV-19842', name: 'سائق دوّر', role: 'سائق'),
+    );
     if (claimed != null) {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(context.l10n.marketItemReceived, style: GoogleFonts.cairo()),
+          content: Text(
+            context.l10n.marketItemReceived,
+            style: GoogleFonts.cairo(),
+          ),
           backgroundColor: const Color(0xFF1E5C35),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
     }
@@ -430,10 +501,15 @@ class MarketItemDetailsView extends StatelessWidget {
           Navigator.pop(context); // close details
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(context.l10n.marketItemPurchasedDriver, style: GoogleFonts.cairo()),
+              content: Text(
+                context.l10n.marketItemPurchasedDriver,
+                style: GoogleFonts.cairo(),
+              ),
               backgroundColor: const Color(0xFF1E5C35),
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           );
         },
@@ -448,10 +524,15 @@ class MarketItemDetailsView extends StatelessWidget {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(context.l10n.marketItemFacilityReceived, style: GoogleFonts.cairo()),
+          content: Text(
+            context.l10n.marketItemFacilityReceived,
+            style: GoogleFonts.cairo(),
+          ),
           backgroundColor: const Color(0xFF1E40AF),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
     }

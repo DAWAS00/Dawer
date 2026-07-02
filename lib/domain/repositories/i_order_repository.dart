@@ -49,14 +49,20 @@ abstract interface class IOrderRepository {
 
   /// Driver entered the 200 m pickup geofence. Stamps `arrived_at_pickup_at`.
   /// [pickupProof] is persisted alongside the status update when provided.
-  Future<AppResult<void>> markArrivedAtPickup(String orderId, {OrderProof? pickupProof});
+  Future<AppResult<void>> markArrivedAtPickup(
+    String orderId, {
+    OrderProof? pickupProof,
+  });
 
   /// Driver entered the 200 m dropoff geofence. Stamps `arrived_at_dropoff_at`.
   Future<AppResult<void>> markArrivedAtDropoff(String orderId);
 
   /// Marks [orderId] as completed. Stamps `completed_at` server-side.
   /// [actualWeightKg] is optional, used for collectionSale final settlement.
-  Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg});
+  Future<AppResult<void>> markCompleted(
+    String orderId, {
+    double? actualWeightKg,
+  });
 
   /// Updates an existing collection job.
   Future<AppResult<void>> updateOrder(Order order);
@@ -90,12 +96,10 @@ final class NoOpOrderRepository implements IOrderRepository {
       const Stream<List<Order>>.empty();
 
   @override
-  Future<AppResult<void>> insertOrder(Order order) async =>
-      const Success(null);
+  Future<AppResult<void>> insertOrder(Order order) async => const Success(null);
 
   @override
-  Future<AppResult<void>> updateOrder(Order order) async =>
-      const Success(null);
+  Future<AppResult<void>> updateOrder(Order order) async => const Success(null);
 
   @override
   Future<AppResult<void>> deleteOrder(String orderId) async =>
@@ -117,24 +121,27 @@ final class NoOpOrderRepository implements IOrderRepository {
   Future<AppResult<void>> markPurchased(
     String orderId, {
     required bool requiresRider,
-  }) async =>
-      const Success(null);
+  }) async => const Success(null);
 
   @override
   Future<AppResult<void>> markInTransit(String orderId) async =>
       const Success(null);
 
   @override
-  Future<AppResult<void>> markArrivedAtPickup(String orderId, {OrderProof? pickupProof}) async =>
-      const Success(null);
+  Future<AppResult<void>> markArrivedAtPickup(
+    String orderId, {
+    OrderProof? pickupProof,
+  }) async => const Success(null);
 
   @override
   Future<AppResult<void>> markArrivedAtDropoff(String orderId) async =>
       const Success(null);
 
   @override
-  Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg}) async =>
-      const Success(null);
+  Future<AppResult<void>> markCompleted(
+    String orderId, {
+    double? actualWeightKg,
+  }) async => const Success(null);
 
   @override
   Future<AppResult<void>> recordTransaction({
@@ -144,6 +151,9 @@ final class NoOpOrderRepository implements IOrderRepository {
   }) async => const Success(null);
 
   @override
-  Future<AppResult<bool>> verifyArrival(String orderId, double lat, double lng) async =>
-      const Success(true);
+  Future<AppResult<bool>> verifyArrival(
+    String orderId,
+    double lat,
+    double lng,
+  ) async => const Success(true);
 }

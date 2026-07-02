@@ -25,15 +25,15 @@ class RiderProximityViewModel {
     required this.order,
     required IProximityService proximityService,
     required INotificationService notificationService,
-  })  : _proximityService = proximityService,
-        _notificationService = notificationService {
+  }) : _proximityService = proximityService,
+       _notificationService = notificationService {
     _sub = _proximityService.positions.listen(_onPosition);
   }
 
   // ── Signals ────────────────────────────────────────────────────────────────
 
   final _state = signal<RiderProximityState>(const ProximityIdle());
-  
+
   /// Reactive state for the proximity banner.
   RiderProximityState get proximityState => _state.value;
   Signal<RiderProximityState> get proximityStateSignal => _state;
@@ -62,14 +62,18 @@ class RiderProximityViewModel {
     if (_disposed) return;
 
     final distToPickup = _haversineMeters(
-      pos.lat, pos.lng,
-      order.pickupLat ?? 0, order.pickupLng ?? 0,
+      pos.lat,
+      pos.lng,
+      order.pickupLat ?? 0,
+      order.pickupLng ?? 0,
     );
 
     final distToDropoff = (order.dropoffLat != null && order.dropoffLng != null)
         ? _haversineMeters(
-            pos.lat, pos.lng,
-            order.dropoffLat!, order.dropoffLng!,
+            pos.lat,
+            pos.lng,
+            order.dropoffLat!,
+            order.dropoffLng!,
           )
         : double.infinity;
 
@@ -143,13 +147,16 @@ class RiderProximityViewModel {
   // ── Haversine distance (pure Dart, no package needed) ─────────────────────
 
   static double _haversineMeters(
-    double lat1, double lng1,
-    double lat2, double lng2,
+    double lat1,
+    double lng1,
+    double lat2,
+    double lng2,
   ) {
     const r = 6371000.0; // Earth radius in metres
     final dLat = _toRad(lat2 - lat1);
     final dLng = _toRad(lng2 - lng1);
-    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+    final a =
+        math.sin(dLat / 2) * math.sin(dLat / 2) +
         math.cos(_toRad(lat1)) *
             math.cos(_toRad(lat2)) *
             math.sin(dLng / 2) *

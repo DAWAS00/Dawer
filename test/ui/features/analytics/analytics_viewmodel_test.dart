@@ -16,23 +16,22 @@ void main() {
     DateTime? arrivedAtPickupAt,
     DateTime? arrivedAtDropoffAt,
     OrderStatus status = OrderStatus.completed,
-  }) =>
-      Order(
-        id: 'ORD-${createdAt.millisecondsSinceEpoch}-${reward.hashCode}',
-        type: OrderType.pickup,
-        wasteTypes: wasteTypes ?? [wasteType],
-        pickupAddress: 'عمّان',
-        dropoffAddress: 'المستودع',
-        status: status,
-        reward: reward,
-        createdAt: createdAt,
-        acceptedAt: acceptedAt,
-        arrivedAtPickupAt: arrivedAtPickupAt,
-        arrivedAtDropoffAt: arrivedAtDropoffAt,
-        completedAt: completedAt ?? createdAt.add(const Duration(hours: 2)),
-        weightKg: weightKg,
-        distanceKm: distanceKm,
-      );
+  }) => Order(
+    id: 'ORD-${createdAt.millisecondsSinceEpoch}-${reward.hashCode}',
+    type: OrderType.pickup,
+    wasteTypes: wasteTypes ?? [wasteType],
+    pickupAddress: 'عمّان',
+    dropoffAddress: 'المستودع',
+    status: status,
+    reward: reward,
+    createdAt: createdAt,
+    acceptedAt: acceptedAt,
+    arrivedAtPickupAt: arrivedAtPickupAt,
+    arrivedAtDropoffAt: arrivedAtDropoffAt,
+    completedAt: completedAt ?? createdAt.add(const Duration(hours: 2)),
+    weightKg: weightKg,
+    distanceKm: distanceKm,
+  );
 
   group('AnalyticsPeriod.dateRange', () {
     test('week range spans exactly 7 days', () {
@@ -46,7 +45,9 @@ void main() {
     });
 
     test('allTime range starts from epoch', () {
-      final range = AnalyticsPeriod.allTime.dateRange(now: DateTime(2026, 6, 28));
+      final range = AnalyticsPeriod.allTime.dateRange(
+        now: DateTime(2026, 6, 28),
+      );
       expect(range.start.year, 2000);
     });
 
@@ -121,20 +122,31 @@ void main() {
   });
 
   group('AnalyticsViewModel daily report (today snapshot)', () {
-    test('todaysCompletedOrders only includes orders completed today, ignoring period', () {
-      final now = DateTime(2026, 6, 28, 18);
-      final orders = [
-        makeOrder(reward: 10, createdAt: DateTime(2026, 6, 28, 8), weightKg: 20),
-        makeOrder(reward: 20, createdAt: DateTime(2026, 6, 27, 8), weightKg: 30),
-      ];
-      final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
-      // Even with allTime selected, "today" stats must stay pinned to today.
-      vm.setPeriod(AnalyticsPeriod.allTime);
-      expect(vm.todaysCompletedOrders.length, 1);
-      expect(vm.todaysOrderCount, 1);
-      expect(vm.todaysWeightKg, 20.0);
-      expect(vm.todaysEarnings, 10.0);
-    });
+    test(
+      'todaysCompletedOrders only includes orders completed today, ignoring period',
+      () {
+        final now = DateTime(2026, 6, 28, 18);
+        final orders = [
+          makeOrder(
+            reward: 10,
+            createdAt: DateTime(2026, 6, 28, 8),
+            weightKg: 20,
+          ),
+          makeOrder(
+            reward: 20,
+            createdAt: DateTime(2026, 6, 27, 8),
+            weightKg: 30,
+          ),
+        ];
+        final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
+        // Even with allTime selected, "today" stats must stay pinned to today.
+        vm.setPeriod(AnalyticsPeriod.allTime);
+        expect(vm.todaysCompletedOrders.length, 1);
+        expect(vm.todaysOrderCount, 1);
+        expect(vm.todaysWeightKg, 20.0);
+        expect(vm.todaysEarnings, 10.0);
+      },
+    );
 
     test('todaysCompletedOrders excludes non-completed orders', () {
       final now = DateTime(2026, 6, 28, 18);
@@ -175,11 +187,7 @@ void main() {
     test('todaysEcoImpact ignores orders with no weight or no waste types', () {
       final now = DateTime(2026, 6, 28, 18);
       final orders = [
-        makeOrder(
-          reward: 10,
-          createdAt: DateTime(2026, 6, 28, 8),
-          weightKg: 0,
-        ),
+        makeOrder(reward: 10, createdAt: DateTime(2026, 6, 28, 8), weightKg: 0),
       ];
       final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
       expect(vm.todaysEcoImpact.co2SavedKg, 0);
@@ -187,9 +195,7 @@ void main() {
 
     test('todaysCompletedOrders is empty when no orders completed today', () {
       final now = DateTime(2026, 6, 28);
-      final orders = [
-        makeOrder(reward: 10, createdAt: DateTime(2026, 6, 20)),
-      ];
+      final orders = [makeOrder(reward: 10, createdAt: DateTime(2026, 6, 20))];
       final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
       expect(vm.todaysOrderCount, 0);
       expect(vm.todaysEcoImpact.co2SavedKg, 0);
@@ -213,9 +219,7 @@ void main() {
 
     test('deltaEarningsPct null when previous period is empty', () {
       final now = DateTime(2026, 6, 28);
-      final orders = [
-        makeOrder(reward: 30, createdAt: DateTime(2026, 6, 25)),
-      ];
+      final orders = [makeOrder(reward: 30, createdAt: DateTime(2026, 6, 25))];
       final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
       vm.setPeriod(AnalyticsPeriod.week);
       expect(vm.deltaEarningsPct, isNull);
@@ -248,8 +252,11 @@ void main() {
       expect(series.length, greaterThanOrEqualTo(7));
       // Points sorted oldest-first
       for (var i = 1; i < series.length; i++) {
-        expect(series[i].day.isAfter(series[i - 1].day) ||
-            series[i].day.isAtSameMomentAs(series[i - 1].day), isTrue);
+        expect(
+          series[i].day.isAfter(series[i - 1].day) ||
+              series[i].day.isAtSameMomentAs(series[i - 1].day),
+          isTrue,
+        );
       }
     });
 
@@ -264,9 +271,11 @@ void main() {
       vm.setPeriod(AnalyticsPeriod.week);
       final series = vm.dailySeries(HeroMetric.earnings);
       final day25 = series.firstWhere(
-          (p) => p.day.day == 25 && p.day.month == 6);
+        (p) => p.day.day == 25 && p.day.month == 6,
+      );
       final day26 = series.firstWhere(
-          (p) => p.day.day == 26 && p.day.month == 6);
+        (p) => p.day.day == 26 && p.day.month == 6,
+      );
       expect(day25.value, 15.0);
       expect(day26.value, 20.0);
     });
@@ -281,7 +290,8 @@ void main() {
       vm.setPeriod(AnalyticsPeriod.week);
       final series = vm.dailySeries(HeroMetric.weight);
       final day25 = series.firstWhere(
-          (p) => p.day.day == 25 && p.day.month == 6);
+        (p) => p.day.day == 25 && p.day.month == 6,
+      );
       expect(day25.value, 80.0);
     });
   });
@@ -291,11 +301,17 @@ void main() {
       final now = DateTime(2026, 6, 28);
       final orders = [
         makeOrder(
-            reward: 1, wasteType: WasteType.plastic, weightKg: 60,
-            createdAt: DateTime(2026, 6, 25)),
+          reward: 1,
+          wasteType: WasteType.plastic,
+          weightKg: 60,
+          createdAt: DateTime(2026, 6, 25),
+        ),
         makeOrder(
-            reward: 1, wasteType: WasteType.paper, weightKg: 40,
-            createdAt: DateTime(2026, 6, 25)),
+          reward: 1,
+          wasteType: WasteType.paper,
+          weightKg: 40,
+          createdAt: DateTime(2026, 6, 25),
+        ),
       ];
       final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
       vm.setPeriod(AnalyticsPeriod.week);
@@ -311,8 +327,11 @@ void main() {
       final now = DateTime(2026, 6, 28);
       final orders = [
         makeOrder(
-            reward: 1, wasteType: WasteType.plastic, weightKg: 0,
-            createdAt: DateTime(2026, 6, 25)),
+          reward: 1,
+          wasteType: WasteType.plastic,
+          weightKg: 0,
+          createdAt: DateTime(2026, 6, 25),
+        ),
       ];
       final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
       vm.setPeriod(AnalyticsPeriod.week);
@@ -340,8 +359,10 @@ void main() {
 
   group('AnalyticsViewModel.currentStreak', () {
     test('0 when no completed orders', () {
-      final vm =
-          AnalyticsViewModel(orders: const [], nowOverride: DateTime(2026, 6, 28));
+      final vm = AnalyticsViewModel(
+        orders: const [],
+        nowOverride: DateTime(2026, 6, 28),
+      );
       expect(vm.currentStreak, 0);
     });
 
@@ -398,7 +419,10 @@ void main() {
         makeOrder(reward: 1, createdAt: DateTime(2026, 6, 28)),
         makeOrder(reward: 1, createdAt: DateTime(2026, 6, 28)),
         makeOrder(reward: 1, createdAt: DateTime(2026, 6, 27)),
-        makeOrder(reward: 1, createdAt: DateTime(2026, 3, 1)), // out of 35-day window
+        makeOrder(
+          reward: 1,
+          createdAt: DateTime(2026, 3, 1),
+        ), // out of 35-day window
       ];
       final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
       final counts = vm.activityByDay(35);
@@ -412,9 +436,7 @@ void main() {
   group('AnalyticsViewModel.cycleTime', () {
     test('all null when lifecycle timestamps missing', () {
       final now = DateTime(2026, 6, 28);
-      final orders = [
-        makeOrder(reward: 1, createdAt: DateTime(2026, 6, 25)),
-      ];
+      final orders = [makeOrder(reward: 1, createdAt: DateTime(2026, 6, 25))];
       final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
       vm.setPeriod(AnalyticsPeriod.week);
       final c = vm.cycleTime;
@@ -467,8 +489,10 @@ void main() {
     });
 
     test('isNotEmpty flags null total', () {
-      final vm =
-          AnalyticsViewModel(orders: const [], nowOverride: DateTime(2026, 6, 28));
+      final vm = AnalyticsViewModel(
+        orders: const [],
+        nowOverride: DateTime(2026, 6, 28),
+      );
       expect(vm.cycleTime.isEmpty, isTrue);
     });
   });
@@ -478,11 +502,17 @@ void main() {
       final now = DateTime(2026, 6, 28);
       final orders = [
         makeOrder(
-            reward: 60, wasteType: WasteType.plastic, weightKg: 10,
-            createdAt: DateTime(2026, 6, 25)), // 6.0 / kg
+          reward: 60,
+          wasteType: WasteType.plastic,
+          weightKg: 10,
+          createdAt: DateTime(2026, 6, 25),
+        ), // 6.0 / kg
         makeOrder(
-            reward: 20, wasteType: WasteType.paper, weightKg: 10,
-            createdAt: DateTime(2026, 6, 25)), // 2.0 / kg
+          reward: 20,
+          wasteType: WasteType.paper,
+          weightKg: 10,
+          createdAt: DateTime(2026, 6, 25),
+        ), // 2.0 / kg
       ];
       final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
       vm.setPeriod(AnalyticsPeriod.week);
@@ -540,9 +570,15 @@ void main() {
       final now = DateTime(2026, 6, 28);
       final orders = [
         makeOrder(
-            reward: 10, distanceKm: 5, createdAt: DateTime(2026, 6, 25)), // 2.0/km
+          reward: 10,
+          distanceKm: 5,
+          createdAt: DateTime(2026, 6, 25),
+        ), // 2.0/km
         makeOrder(
-            reward: 30, distanceKm: 10, createdAt: DateTime(2026, 6, 26)), // 3.0/km
+          reward: 30,
+          distanceKm: 10,
+          createdAt: DateTime(2026, 6, 26),
+        ), // 3.0/km
       ];
       final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
       vm.setPeriod(AnalyticsPeriod.week);
@@ -553,13 +589,25 @@ void main() {
       final now = DateTime(2026, 6, 28);
       final orders = [
         makeOrder(
-            reward: 10, distanceKm: 10, createdAt: DateTime(2026, 6, 25)), // 1.0
+          reward: 10,
+          distanceKm: 10,
+          createdAt: DateTime(2026, 6, 25),
+        ), // 1.0
         makeOrder(
-            reward: 30, distanceKm: 5, createdAt: DateTime(2026, 6, 26)), // 6.0
+          reward: 30,
+          distanceKm: 5,
+          createdAt: DateTime(2026, 6, 26),
+        ), // 6.0
         makeOrder(
-            reward: 20, distanceKm: 4, createdAt: DateTime(2026, 6, 24)), // 5.0
+          reward: 20,
+          distanceKm: 4,
+          createdAt: DateTime(2026, 6, 24),
+        ), // 5.0
         makeOrder(
-            reward: 5, distanceKm: 5, createdAt: DateTime(2026, 6, 23)), // 1.0
+          reward: 5,
+          distanceKm: 5,
+          createdAt: DateTime(2026, 6, 23),
+        ), // 1.0
       ];
       final vm = AnalyticsViewModel(orders: orders, nowOverride: now);
       vm.setPeriod(AnalyticsPeriod.week);

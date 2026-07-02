@@ -12,7 +12,7 @@ class OrderEarningsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final breakdown = order.rewardBreakdown;
-    
+
     // Only show if there's a reward, breakdown or item price
     if (order.reward <= 0 && breakdown == null && (order.itemPrice ?? 0) <= 0) {
       return const SizedBox.shrink();
@@ -39,7 +39,9 @@ class OrderEarningsSection extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: const Color(0xFF06402B).withValues(alpha: 0.03),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
             ),
             child: Row(
               children: [
@@ -49,7 +51,11 @@ class OrderEarningsSection extends StatelessWidget {
                     color: const Color(0xFF06402B).withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.account_balance_wallet_rounded, size: 18, color: Color(0xFF06402B)),
+                  child: const Icon(
+                    Icons.account_balance_wallet_rounded,
+                    size: 18,
+                    color: Color(0xFF06402B),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -57,7 +63,8 @@ class OrderEarningsSection extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        order.status == OrderStatus.pending || order.status == OrderStatus.accepted
+                        order.status == OrderStatus.pending ||
+                                order.status == OrderStatus.accepted
                             ? l10n.orderPotentialEarnings
                             : l10n.orderEarningsBreakdown,
                         style: GoogleFonts.cairo(
@@ -66,7 +73,8 @@ class OrderEarningsSection extends StatelessWidget {
                           color: const Color(0xFF1F2937),
                         ),
                       ),
-                      if (order.status == OrderStatus.pending || order.status == OrderStatus.accepted)
+                      if (order.status == OrderStatus.pending ||
+                          order.status == OrderStatus.accepted)
                         Text(
                           l10n.orderPayout,
                           style: GoogleFonts.cairo(
@@ -94,12 +102,24 @@ class OrderEarningsSection extends StatelessWidget {
             child: Column(
               children: [
                 if (breakdown != null) ...[
-                  _BreakdownRow(label: l10n.orderBaseFee, value: breakdown.base),
-                  _BreakdownRow(label: l10n.orderDistanceFee, value: breakdown.distance),
+                  _BreakdownRow(
+                    label: l10n.orderBaseFee,
+                    value: breakdown.base,
+                  ),
+                  _BreakdownRow(
+                    label: l10n.orderDistanceFee,
+                    value: breakdown.distance,
+                  ),
                   if (breakdown.material > 0)
-                    _BreakdownRow(label: l10n.orderMaterialFee, value: breakdown.material),
+                    _BreakdownRow(
+                      label: l10n.orderMaterialFee,
+                      value: breakdown.material,
+                    ),
                   if (breakdown.urgency > 0)
-                    _BreakdownRow(label: l10n.orderUrgencyFee, value: breakdown.urgency),
+                    _BreakdownRow(
+                      label: l10n.orderUrgencyFee,
+                      value: breakdown.urgency,
+                    ),
                 ],
 
                 // Invoices / Item Cost Section
@@ -110,7 +130,11 @@ class OrderEarningsSection extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      const Icon(Icons.receipt_long_rounded, size: 16, color: Color(0xFF4B5563)),
+                      const Icon(
+                        Icons.receipt_long_rounded,
+                        size: 16,
+                        color: Color(0xFF4B5563),
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         l10n.orderInvoices,
@@ -132,7 +156,7 @@ class OrderEarningsSection extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  
+
                   // Invoice Items with Receipt Style
                   if (order.invoices != null && order.invoices!.isNotEmpty)
                     Container(
@@ -144,42 +168,49 @@ class OrderEarningsSection extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          ...order.invoices!.map((item) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    item.name,
-                                    style: GoogleFonts.cairo(
-                                      fontSize: 13,
-                                      color: const Color(0xFF4B5563),
+                          ...order.invoices!.map(
+                            (item) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      item.name,
+                                      style: GoogleFonts.cairo(
+                                        fontSize: 13,
+                                        color: const Color(0xFF4B5563),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Text(
-                                  'x${item.quantity}',
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 12,
-                                    color: const Color(0xFF9CA3AF),
+                                  Text(
+                                    'x${item.quantity}',
+                                    style: GoogleFonts.dmSans(
+                                      fontSize: 12,
+                                      color: const Color(0xFF9CA3AF),
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 12),
-                                Text(
-                                  item.total.toStringAsFixed(2),
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 13,
-                                    color: const Color(0xFF1F2937),
-                                    fontWeight: FontWeight.w600,
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    item.total.toStringAsFixed(2),
+                                    style: GoogleFonts.dmSans(
+                                      fontSize: 13,
+                                      color: const Color(0xFF1F2937),
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          )),
+                          ),
                           const Padding(
                             padding: EdgeInsets.symmetric(vertical: 4),
-                            child: Divider(height: 1, color: Color(0xFFE5E7EB), thickness: 0.5),
+                            child: Divider(
+                              height: 1,
+                              color: Color(0xFFE5E7EB),
+                              thickness: 0.5,
+                            ),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -261,4 +292,3 @@ class _BreakdownRow extends StatelessWidget {
     );
   }
 }
-

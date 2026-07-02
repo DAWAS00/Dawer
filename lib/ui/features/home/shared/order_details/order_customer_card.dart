@@ -51,7 +51,9 @@ class OrderCustomerCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primaryGreen.withValues(alpha: 0.12)),
+        border: Border.all(
+          color: AppColors.primaryGreen.withValues(alpha: 0.12),
+        ),
         boxShadow: [
           BoxShadow(
             color: AppColors.primaryGreen.withValues(alpha: 0.06),
@@ -150,7 +152,11 @@ class OrderCustomerCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Icon(LucideIcons.phone, size: 14, color: AppColors.mutedText),
+                  const Icon(
+                    LucideIcons.phone,
+                    size: 14,
+                    color: AppColors.mutedText,
+                  ),
                 ],
               ),
             ],

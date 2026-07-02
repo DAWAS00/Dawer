@@ -121,10 +121,13 @@ class _BannerContent extends StatelessWidget {
                     onPressed: onShowAll,
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 7),
+                        horizontal: 14,
+                        vertical: 7,
+                      ),
                       side: BorderSide(
-                          color: AppColors.primaryGreen.withValues(alpha: 0.5),
-                          width: 1.5),
+                        color: AppColors.primaryGreen.withValues(alpha: 0.5),
+                        width: 1.5,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -141,13 +144,15 @@ class _BannerContent extends StatelessWidget {
                     ),
                   ),
                 ),
-                ...categories.map((cat) => Padding(
-                      padding: const EdgeInsetsDirectional.only(start: 8),
-                      child: _SuggestionChip(
-                        label: cat,
-                        onTap: () => onCategoryTap(cat),
-                      ),
-                    )),
+                ...categories.map(
+                  (cat) => Padding(
+                    padding: const EdgeInsetsDirectional.only(start: 8),
+                    child: _SuggestionChip(
+                      label: cat,
+                      onTap: () => onCategoryTap(cat),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -168,14 +173,11 @@ class _SuggestionChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: AppColors.surfaceAltBorder,
-          ),
+          border: Border.all(color: AppColors.surfaceAltBorder),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.03),

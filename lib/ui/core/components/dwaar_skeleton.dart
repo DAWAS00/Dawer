@@ -3,11 +3,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 import '../../../core/constants/app_colors.dart';
 
 class DwaarSkeleton extends StatelessWidget {
-  const DwaarSkeleton({
-    super.key,
-    required this.enabled,
-    required this.child,
-  });
+  const DwaarSkeleton({super.key, required this.enabled, required this.child});
 
   final bool enabled;
   final Widget child;

@@ -51,14 +51,15 @@ class OrderDetailsView extends StatelessWidget {
 
           // ── Map ──
           SliverToBoxAdapter(
-            child: OrderMapSection(order: order, hasDriver: order.driverName != null),
+            child: OrderMapSection(
+              order: order,
+              hasDriver: order.driverName != null,
+            ),
           ),
 
           // ── Status timeline (supplier view or when explicitly shown) ──
           if (!hideStatus && !isDriverView)
-            SliverToBoxAdapter(
-              child: OrderStatusTimeline(order: order),
-            ),
+            SliverToBoxAdapter(child: OrderStatusTimeline(order: order)),
 
           // ════════════════════════════════════════
           // DRIVER VIEW — customer-first layout
@@ -75,12 +76,12 @@ class OrderDetailsView extends StatelessWidget {
             // Earnings
             SliverToBoxAdapter(child: OrderEarningsSection(order: order)),
             // Proof photo (if completed)
-            if (order.status == OrderStatus.completed && order.proofImagePath != null)
+            if (order.status == OrderStatus.completed &&
+                order.proofImagePath != null)
               SliverToBoxAdapter(
                 child: OrderProofSection(imagePath: order.proofImagePath!),
               ),
           ]
-
           // ════════════════════════════════════════
           // SUPPLIER / GENERAL VIEW — original layout
           // ════════════════════════════════════════
@@ -89,7 +90,8 @@ class OrderDetailsView extends StatelessWidget {
               SliverToBoxAdapter(child: OrderDriverCard(order: order)),
             SliverToBoxAdapter(child: OrderInfoSection(order: order)),
             SliverToBoxAdapter(child: OrderEarningsSection(order: order)),
-            if (order.status == OrderStatus.completed && order.proofImagePath != null)
+            if (order.status == OrderStatus.completed &&
+                order.proofImagePath != null)
               SliverToBoxAdapter(
                 child: OrderProofSection(imagePath: order.proofImagePath!),
               ),
@@ -110,21 +112,26 @@ class OrderDetailsView extends StatelessWidget {
           onMarkArrivedAtPickup != null || onMarkArrivedAtDropoff != null;
 
       if (hasArrivalActions) {
-        bottomWidgets.add(OrderArrivalSection(
-          order: order,
-          onMarkArrivedAtPickup: onMarkArrivedAtPickup,
-          onMarkArrivedAtDropoff: onMarkArrivedAtDropoff,
-        ));
+        bottomWidgets.add(
+          OrderArrivalSection(
+            order: order,
+            onMarkArrivedAtPickup: onMarkArrivedAtPickup,
+            onMarkArrivedAtDropoff: onMarkArrivedAtDropoff,
+          ),
+        );
       }
 
-      if (order.status == OrderStatus.arrivedAtDropoff && onCompleteOrder != null) {
-        bottomWidgets.add(OrderCompletionSection(
-          order: order,
-          onComplete: (updatedOrder) {
-            onCompleteOrder?.call(updatedOrder);
-            Navigator.of(context).pop();
-          },
-        ));
+      if (order.status == OrderStatus.arrivedAtDropoff &&
+          onCompleteOrder != null) {
+        bottomWidgets.add(
+          OrderCompletionSection(
+            order: order,
+            onComplete: (updatedOrder) {
+              onCompleteOrder?.call(updatedOrder);
+              Navigator.of(context).pop();
+            },
+          ),
+        );
       }
     } else {
       // ── Supplier / general bottom bar ──
@@ -138,29 +145,37 @@ class OrderDetailsView extends StatelessWidget {
 
       // Arrival confirmation (supplier confirming driver arrived)
       if (onSupplierConfirmArrival != null) {
-        bottomWidgets.add(OrderArrivalSection(
-          order: order,
-          onSupplierConfirmArrival: onSupplierConfirmArrival,
-        ));
+        bottomWidgets.add(
+          OrderArrivalSection(
+            order: order,
+            onSupplierConfirmArrival: onSupplierConfirmArrival,
+          ),
+        );
       }
 
       // Completion
-      if (order.status == OrderStatus.arrivedAtDropoff && onCompleteOrder != null) {
-        bottomWidgets.add(OrderCompletionSection(
-          order: order,
-          onComplete: (updatedOrder) {
-            onCompleteOrder?.call(updatedOrder);
-            Navigator.of(context).pop();
-          },
-        ));
+      if (order.status == OrderStatus.arrivedAtDropoff &&
+          onCompleteOrder != null) {
+        bottomWidgets.add(
+          OrderCompletionSection(
+            order: order,
+            onComplete: (updatedOrder) {
+              onCompleteOrder?.call(updatedOrder);
+              Navigator.of(context).pop();
+            },
+          ),
+        );
       }
 
       // Rate driver
       if (order.status == OrderStatus.completed && order.driverName != null) {
-        bottomWidgets.add(_RateDriverButton(
-          order: order,
-          onRate: (r) => context.read<AppOrderStore>().submitDriverRating(order.id, r),
-        ));
+        bottomWidgets.add(
+          _RateDriverButton(
+            order: order,
+            onRate: (r) =>
+                context.read<AppOrderStore>().submitDriverRating(order.id, r),
+          ),
+        );
       }
     }
 
@@ -188,7 +203,12 @@ class OrderDetailsView extends StatelessWidget {
           ),
         ),
       ),
-    ).animate().slideY(begin: 1.0, end: 0.0, duration: 400.ms, curve: Curves.easeOutCubic);
+    ).animate().slideY(
+      begin: 1.0,
+      end: 0.0,
+      duration: 400.ms,
+      curve: Curves.easeOutCubic,
+    );
   }
 }
 
@@ -206,12 +226,12 @@ class _DriverStatusStepper extends StatelessWidget {
   ];
 
   int get _currentStep => switch (order.status) {
-        OrderStatus.accepted => 0,
-        OrderStatus.arrivedAtPickup => 1,
-        OrderStatus.inTransit => 2,
-        OrderStatus.arrivedAtDropoff || OrderStatus.completed => 3,
-        _ => 0,
-      };
+    OrderStatus.accepted => 0,
+    OrderStatus.arrivedAtPickup => 1,
+    OrderStatus.inTransit => 2,
+    OrderStatus.arrivedAtDropoff || OrderStatus.completed => 3,
+    _ => 0,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -298,7 +318,7 @@ class _StepDot extends StatelessWidget {
                       color: const Color(0xFF06402B).withValues(alpha: 0.3),
                       blurRadius: 8,
                       spreadRadius: 1,
-                    )
+                    ),
                   ]
                 : null,
           ),
@@ -317,8 +337,8 @@ class _StepDot extends StatelessWidget {
             color: current
                 ? const Color(0xFF06402B)
                 : done
-                    ? const Color(0xFF404943)
-                    : const Color(0xFF9EA89E),
+                ? const Color(0xFF404943)
+                : const Color(0xFF9EA89E),
           ),
         ),
       ],
@@ -339,15 +359,14 @@ class _RateDriverButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
       child: OutlinedButton.icon(
-        onPressed: () => RateDriverSheet.show(
-          context,
-          order: order,
-          onSubmit: onRate,
-        ),
+        onPressed: () =>
+            RateDriverSheet.show(context, order: order, onSubmit: onRate),
         style: OutlinedButton.styleFrom(
           foregroundColor: const Color(0xFF1E40AF),
           side: const BorderSide(color: Color(0xFFBFD3F5)),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
           padding: const EdgeInsets.symmetric(vertical: 14),
           minimumSize: const Size(double.infinity, 56),
         ),

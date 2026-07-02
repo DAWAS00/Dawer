@@ -14,7 +14,12 @@ void main() {
       tempFile = await File(
         '${Directory.systemTemp.path}/proof_test_${DateTime.now().millisecondsSinceEpoch}.jpg',
       ).create();
-      await tempFile.writeAsBytes([0xFF, 0xD8, 0xFF, 0xE0]); // minimal JPEG header
+      await tempFile.writeAsBytes([
+        0xFF,
+        0xD8,
+        0xFF,
+        0xE0,
+      ]); // minimal JPEG header
       xFile = XFile(tempFile.path);
     });
 

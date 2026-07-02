@@ -48,9 +48,9 @@ class GeminiBrandProfileAiService {
   }
 
   static BrandProfile _fallback(String name) => BrandProfile(
-        suggestedCategories: _defaultCategories,
-        companyHighlights: _defaultHighlights(name),
-      );
+    suggestedCategories: _defaultCategories,
+    companyHighlights: _defaultHighlights(name),
+  );
 
   static const _defaultCategories = [
     'ورق وكرتون',
@@ -64,11 +64,11 @@ class GeminiBrandProfileAiService {
   ];
 
   static List<String> _defaultHighlights(String name) => [
-        'ستظهر $name في نتائج بحث الموردين القريبين',
-        'استقبال طلبات التجميع مباشرة عبر التطبيق',
-        'لوحة تحكم لتتبع الكميات وتطور حجم الأعمال',
-        'الوصول لشبكة سائقين معتمدين لنقل المواد',
-      ];
+    'ستظهر $name في نتائج بحث الموردين القريبين',
+    'استقبال طلبات التجميع مباشرة عبر التطبيق',
+    'لوحة تحكم لتتبع الكميات وتطور حجم الأعمال',
+    'الوصول لشبكة سائقين معتمدين لنقل المواد',
+  ];
 
   Map<String, dynamic>? _parseJson(String? text) {
     if (text == null || text.isEmpty) return null;

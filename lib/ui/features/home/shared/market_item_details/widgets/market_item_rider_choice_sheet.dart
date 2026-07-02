@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dwaar/l10n/l10n.dart';
 
@@ -43,7 +43,10 @@ class MarketItemRiderChoiceSheet extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             l10n.marketRiderChoiceSubtitle,
-            style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF717973)),
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              color: const Color(0xFF717973),
+            ),
           ),
           const SizedBox(height: 16),
           _ChoiceOptionTile(
@@ -93,7 +96,11 @@ class _ChoiceOptionTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const Icon(Icons.chevron_left_rounded, color: Color(0xFF9CA3AF), size: 20),
+            const Icon(
+              Icons.chevron_left_rounded,
+              color: Color(0xFF9CA3AF),
+              size: 20,
+            ),
             const Spacer(),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -108,7 +115,10 @@ class _ChoiceOptionTile extends StatelessWidget {
                 ),
                 Text(
                   subtitle,
-                  style: GoogleFonts.cairo(fontSize: 12, color: const Color(0xFF717973)),
+                  style: GoogleFonts.cairo(
+                    fontSize: 12,
+                    color: const Color(0xFF717973),
+                  ),
                 ),
               ],
             ),

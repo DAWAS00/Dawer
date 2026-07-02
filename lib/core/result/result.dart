@@ -14,14 +14,14 @@ sealed class Result<T, E> {
   }
 
   T? get valueOrNull => switch (this) {
-        Success<T, E>(:final value) => value,
-        Failure<T, E>() => null,
-      };
+    Success<T, E>(:final value) => value,
+    Failure<T, E>() => null,
+  };
 
   E? get failureOrNull => switch (this) {
-        Success<T, E>() => null,
-        Failure<T, E>(:final failure) => failure,
-      };
+    Success<T, E>() => null,
+    Failure<T, E>(:final failure) => failure,
+  };
 
   bool get isSuccess => this is Success<T, E>;
   bool get isFailure => this is Failure<T, E>;

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -114,10 +114,7 @@ class _LocationPickerPanelState extends State<LocationPickerPanel> {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(sheetCtx).viewInsets.bottom,
         ),
-        child: _PasteCoordinatesForm(
-          initialLat: _lat,
-          initialLng: _lng,
-        ),
+        child: _PasteCoordinatesForm(initialLat: _lat, initialLng: _lng),
       ),
     );
   }
@@ -134,7 +131,9 @@ class _LocationPickerPanelState extends State<LocationPickerPanel> {
 
   void _showSnack(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   // ── Build ──────────────────────────────────────────────────────────────────
@@ -151,7 +150,11 @@ class _LocationPickerPanelState extends State<LocationPickerPanel> {
           children: [
             _IconHeader(),
             const SizedBox(height: 16),
-            _CoordinatesBadge(lat: _lat, lng: _lng, emptyLabel: l10n.locationNotSet),
+            _CoordinatesBadge(
+              lat: _lat,
+              lng: _lng,
+              emptyLabel: l10n.locationNotSet,
+            ),
             const SizedBox(height: 24),
             _PrimaryActionButton(
               icon: Icons.my_location_rounded,
@@ -257,7 +260,11 @@ class _CoordinatesLine extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _CoordCell(label: l10n.latitude, value: lat.toStringAsFixed(5)),
-        Container(width: 1, height: 24, color: AppColors.primaryGreen.withValues(alpha: 0.15)),
+        Container(
+          width: 1,
+          height: 24,
+          color: AppColors.primaryGreen.withValues(alpha: 0.15),
+        ),
         _CoordCell(label: l10n.longitude, value: lng.toStringAsFixed(5)),
       ],
     );
@@ -362,9 +369,7 @@ class _SecondaryActionButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primaryDark,
         padding: const EdgeInsets.symmetric(vertical: 14),
-        side: BorderSide(
-          color: AppColors.primaryGreen.withValues(alpha: 0.3),
-        ),
+        side: BorderSide(color: AppColors.primaryGreen.withValues(alpha: 0.3)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
@@ -497,17 +502,11 @@ class _PasteCoordinatesFormState extends State<_PasteCoordinatesForm> {
           Row(
             children: [
               Expanded(
-                child: _CoordField(
-                  controller: _latCtrl,
-                  label: l10n.latitude,
-                ),
+                child: _CoordField(controller: _latCtrl, label: l10n.latitude),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _CoordField(
-                  controller: _lngCtrl,
-                  label: l10n.longitude,
-                ),
+                child: _CoordField(controller: _lngCtrl, label: l10n.longitude),
               ),
             ],
           ),
@@ -563,9 +562,7 @@ class _CoordField extends StatelessWidget {
         signed: true,
         decimal: true,
       ),
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'[0-9.\-]')),
-      ],
+      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.\-]'))],
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),

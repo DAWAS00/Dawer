@@ -10,20 +10,22 @@ class GeminiLicenseValidationService implements IAiLicenseValidationService {
   final GenerativeModel _model;
 
   GeminiLicenseValidationService()
-      : _model = GenerativeModel(
-          model: 'gemini-2.5-flash',
-          apiKey: AiConfig.geminiApiKey,
-          generationConfig: GenerationConfig(
-            responseMimeType: 'application/json',
-            temperature: 0.1,
-          ),
-        );
+    : _model = GenerativeModel(
+        model: 'gemini-2.5-flash',
+        apiKey: AiConfig.geminiApiKey,
+        generationConfig: GenerationConfig(
+          responseMimeType: 'application/json',
+          temperature: 0.1,
+        ),
+      );
 
   GeminiLicenseValidationService.withModel(this._model);
 
   @override
   Future<AiLicenseValidationResult> validateLicense(
-      String filePath, UserRole role) async {
+    String filePath,
+    UserRole role,
+  ) async {
     if (!AiConfig.hasGeminiKey) {
       throw Exception('Gemini API key not configured');
     }
@@ -81,9 +83,10 @@ class GeminiLicenseValidationService implements IAiLicenseValidationService {
     );
   }
 
-
   AiLicenseValidationResult _parseResult(
-      Map<String, dynamic> json, UserRole role) {
+    Map<String, dynamic> json,
+    UserRole role,
+  ) {
     if (json['isValidDocument'] == false) {
       return const AiLicenseValidationResult(
         isValid: false,
@@ -112,7 +115,8 @@ class GeminiLicenseValidationService implements IAiLicenseValidationService {
       );
     }
 
-    final categories = (json['suggestedCategories'] as List?)
+    final categories =
+        (json['suggestedCategories'] as List?)
             ?.map((e) => e.toString())
             .toList() ??
         _fallbackCategories(role);
@@ -134,10 +138,10 @@ class GeminiLicenseValidationService implements IAiLicenseValidationService {
   }
 
   static List<String> _fallbackCategories(UserRole role) => switch (role) {
-        UserRole.driver => ['مواد بناء', 'أجهزة كهربائية', 'معادن'],
-        UserRole.supplier => ['ورق وكرتون', 'زجاج', 'بلاستيك', 'مطاط'],
-        UserRole.recyclingCo => ['معادن', 'إلكترونيات', 'مواد خام', 'بطاريات'],
-      };
+    UserRole.driver => ['مواد بناء', 'أجهزة كهربائية', 'معادن'],
+    UserRole.supplier => ['ورق وكرتون', 'زجاج', 'بلاستيك', 'مطاط'],
+    UserRole.recyclingCo => ['معادن', 'إلكترونيات', 'مواد خام', 'بطاريات'],
+  };
 
   static String _mimeType(File file) {
     final ext = file.path.split('.').last.toLowerCase();

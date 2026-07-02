@@ -24,7 +24,10 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
   bool _isActing = false;
   String? _error;
 
-  Future<void> _run(Future<String?> Function() action, {String? successMessage}) async {
+  Future<void> _run(
+    Future<String?> Function() action, {
+    String? successMessage,
+  }) async {
     setState(() {
       _isActing = true;
       _error = null;
@@ -36,7 +39,9 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
       _error = failure;
     });
     if (failure == null && successMessage != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(successMessage)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(successMessage)));
     }
   }
 
@@ -47,7 +52,10 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
       context: context,
       builder: (dialogCtx) => StatefulBuilder(
         builder: (dialogCtx, setDialogState) => AlertDialog(
-          title: Text(l10n.reservationCancelReasonTitle, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+          title: Text(
+            l10n.reservationCancelReasonTitle,
+            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+          ),
           content: RadioGroup<String>(
             groupValue: reason,
             onChanged: (v) => setDialogState(() => reason = v!),
@@ -57,33 +65,51 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
               children: [
                 RadioListTile<String>(
                   value: 'sold_elsewhere',
-                  title: Text(l10n.reservationCancelReasonSoldElsewhere, style: GoogleFonts.cairo(fontSize: 13)),
+                  title: Text(
+                    l10n.reservationCancelReasonSoldElsewhere,
+                    style: GoogleFonts.cairo(fontSize: 13),
+                  ),
                 ),
                 RadioListTile<String>(
                   value: 'other',
-                  title: Text(l10n.reservationCancelReasonOther, style: GoogleFonts.cairo(fontSize: 13)),
+                  title: Text(
+                    l10n.reservationCancelReasonOther,
+                    style: GoogleFonts.cairo(fontSize: 13),
+                  ),
                 ),
-                if (reason == 'sold_elsewhere' && r.status == ReservationStatus.reserved)
+                if (reason == 'sold_elsewhere' &&
+                    r.status == ReservationStatus.reserved)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
                       l10n.reservationCancelFraudWarning,
-                      style: GoogleFonts.cairo(color: AppColors.statusCancelledText, fontSize: 12),
+                      style: GoogleFonts.cairo(
+                        color: AppColors.statusCancelledText,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(dialogCtx, false), child: const Text('إلغاء')),
-            TextButton(onPressed: () => Navigator.pop(dialogCtx, true), child: Text(l10n.reservationCancelButton)),
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx, false),
+              child: const Text('إلغاء'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx, true),
+              child: Text(l10n.reservationCancelButton),
+            ),
           ],
         ),
       ),
     );
 
     if (confirmed == true) {
-      await _run(() => context.read<ReservationViewModel>().cancel(r.id, reason));
+      await _run(
+        () => context.read<ReservationViewModel>().cancel(r.id, reason),
+      );
     }
   }
 
@@ -93,7 +119,9 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
     final vm = context.watch<ReservationViewModel>();
     final userId = context.read<IAuthRepository>().currentSession?.userId ?? '';
 
-    final reservation = vm.reservations.where((r) => r.id == widget.reservationId).firstOrNull;
+    final reservation = vm.reservations
+        .where((r) => r.id == widget.reservationId)
+        .firstOrNull;
 
     if (reservation == null) {
       return Scaffold(
@@ -114,7 +142,10 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
         elevation: 0,
         title: Text(
           reservation.itemTitle,
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: AppColors.textMain),
+          style: GoogleFonts.cairo(
+            fontWeight: FontWeight.bold,
+            color: AppColors.textMain,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -131,18 +162,46 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
               ),
               child: Column(
                 children: [
-                  _row(l10n.reservationInvoiceTotalLabel, '${reservation.invoiceTotal.toStringAsFixed(2)} د.أ', bold: true),
-                  const Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Divider(height: 1)),
-                  _row(l10n.reservationDurationLabel, l10n.reservationDurationMinutes(reservation.durationMinutes)),
-                  const Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Divider(height: 1)),
+                  _row(
+                    l10n.reservationInvoiceTotalLabel,
+                    '${reservation.invoiceTotal.toStringAsFixed(2)} د.أ',
+                    bold: true,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Divider(height: 1),
+                  ),
+                  _row(
+                    l10n.reservationDurationLabel,
+                    l10n.reservationDurationMinutes(
+                      reservation.durationMinutes,
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Divider(height: 1),
+                  ),
                   _row('الحالة', reservation.status.label),
-                  if (remaining != null && reservation.status == ReservationStatus.reserved) ...[
-                    const Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Divider(height: 1)),
-                    _row(l10n.reservationTimeRemainingLabel, _formatDuration(remaining)),
+                  if (remaining != null &&
+                      reservation.status == ReservationStatus.reserved) ...[
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Divider(height: 1),
+                    ),
+                    _row(
+                      l10n.reservationTimeRemainingLabel,
+                      _formatDuration(remaining),
+                    ),
                   ],
                   if (reservation.penaltyAmount != null) ...[
-                    const Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Divider(height: 1)),
-                    _row('الغرامة', '${reservation.penaltyAmount!.toStringAsFixed(2)} د.أ'),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Divider(height: 1),
+                    ),
+                    _row(
+                      'الغرامة',
+                      '${reservation.penaltyAmount!.toStringAsFixed(2)} د.أ',
+                    ),
                   ],
                 ],
               ),
@@ -158,7 +217,9 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    l10n.reservationPenaltyBanner(reservation.penaltyPreview.toStringAsFixed(2)),
+                    l10n.reservationPenaltyBanner(
+                      reservation.penaltyPreview.toStringAsFixed(2),
+                    ),
                     style: GoogleFonts.cairo(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
@@ -170,17 +231,24 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
 
             if (_error != null) ...[
               const SizedBox(height: 12),
-              Text(_error!, style: GoogleFonts.cairo(color: AppColors.statusCancelledText), textAlign: TextAlign.center),
+              Text(
+                _error!,
+                style: GoogleFonts.cairo(color: AppColors.statusCancelledText),
+                textAlign: TextAlign.center,
+              ),
             ],
 
             const SizedBox(height: 24),
 
-            if (isBuyer && reservation.status == ReservationStatus.pendingApproval)
+            if (isBuyer &&
+                reservation.status == ReservationStatus.pendingApproval)
               GreenButton(
                 text: l10n.reservationApproveButton,
                 isLoading: _isActing,
                 onPressed: () => _run(
-                  () => context.read<ReservationViewModel>().approve(reservation.id),
+                  () => context.read<ReservationViewModel>().approve(
+                    reservation.id,
+                  ),
                   successMessage: l10n.reservationApproveSuccess,
                 ),
               ),
@@ -191,7 +259,11 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
               GreenButton(
                 text: l10n.reservationCompleteButton,
                 isLoading: _isActing,
-                onPressed: () => _run(() => context.read<ReservationViewModel>().complete(reservation.id)),
+                onPressed: () => _run(
+                  () => context.read<ReservationViewModel>().complete(
+                    reservation.id,
+                  ),
+                ),
               ),
               const SizedBox(height: 12),
             ],
@@ -201,7 +273,10 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
                 onPressed: _isActing ? null : () => _confirmCancel(reservation),
                 child: Text(
                   l10n.reservationCancelButton,
-                  style: GoogleFonts.cairo(color: AppColors.statusCancelledText, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.cairo(
+                    color: AppColors.statusCancelledText,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
           ],

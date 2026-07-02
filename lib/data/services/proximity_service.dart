@@ -17,7 +17,8 @@ class ProximityService {
     final phi2 = lat2 * pi / 180;
     final dPhi = (lat2 - lat1) * pi / 180;
     final dLambda = (lng2 - lng1) * pi / 180;
-    final a = sin(dPhi / 2) * sin(dPhi / 2) +
+    final a =
+        sin(dPhi / 2) * sin(dPhi / 2) +
         cos(phi1) * cos(phi2) * sin(dLambda / 2) * sin(dLambda / 2);
     final c = 2 * atan2(sqrt(a), sqrt(1 - a));
     return earthRadius * c;

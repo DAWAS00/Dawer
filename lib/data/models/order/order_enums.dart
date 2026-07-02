@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 enum OrderType { pickup, collection, collectionSale }
+
 enum OrderMode { pickup, marketplace }
 
 /// Lifecycle of a marketplace reservation (10 % deposit escrow).
@@ -21,15 +22,35 @@ enum ReservationStatus {
 }
 
 enum OrderStatus {
-  pending, accepted, arrivedAtPickup, inTransit, arrivedAtDropoff, completed, cancelled
+  pending,
+  accepted,
+  arrivedAtPickup,
+  inTransit,
+  arrivedAtDropoff,
+  completed,
+  cancelled,
 }
 
 enum ArrivalConfirmationStatus { awaiting, confirmed, unavailable, timedOut }
 
 enum PickupTarget { company, riderBuy }
+
 enum WasteType {
-  paper, plastic, metal, glass, electronics, organic,
-  textile, wood, rubber, oil, chemicals, batteries, furniture, tires, construction,
+  paper,
+  plastic,
+  metal,
+  glass,
+  electronics,
+  organic,
+  textile,
+  wood,
+  rubber,
+  oil,
+  chemicals,
+  batteries,
+  furniture,
+  tires,
+  construction,
   copperAluminium,
 }
 
@@ -44,27 +65,30 @@ enum PaymentModel { perKg, flatFee }
 enum WeightCategory { light, medium, heavy, veryHeavy }
 
 enum CollectionDeliveryMethod { selfDelivery, assignRider }
+
 enum CollectionTransactionType { donate, sell }
 
 extension CollectionDeliveryMethodLabel on CollectionDeliveryMethod {
   String get label => switch (this) {
     CollectionDeliveryMethod.selfDelivery => 'أوصّل بنفسي',
-    CollectionDeliveryMethod.assignRider  => 'أعيّن سائقاً',
+    CollectionDeliveryMethod.assignRider => 'أعيّن سائقاً',
   };
   String get description => switch (this) {
     CollectionDeliveryMethod.selfDelivery => 'ستوصل المواد بنفسك',
-    CollectionDeliveryMethod.assignRider  => 'سيتم تعيين سائق لك',
+    CollectionDeliveryMethod.assignRider => 'سيتم تعيين سائق لك',
   };
 }
 
 extension CollectionTransactionTypeLabel on CollectionTransactionType {
   String get label => switch (this) {
     CollectionTransactionType.donate => 'تبرع للشركة',
-    CollectionTransactionType.sell   => 'بيع للشركة',
+    CollectionTransactionType.sell => 'بيع للشركة',
   };
   String get description => switch (this) {
-    CollectionTransactionType.donate => 'رسوم التوصيل على الشركة، بدون مقابل مالي',
-    CollectionTransactionType.sell   => 'رسوم التوصيل عليك، وتحصل على المبلغ المتفق عليه',
+    CollectionTransactionType.donate =>
+      'رسوم التوصيل على الشركة، بدون مقابل مالي',
+    CollectionTransactionType.sell =>
+      'رسوم التوصيل عليك، وتحصل على المبلغ المتفق عليه',
   };
 }
 
@@ -92,10 +116,10 @@ extension WasteTypeLabel on WasteType {
 extension VehicleTypeLabel on VehicleType {
   String get label => switch (this) {
     VehicleType.motorcycle => 'دراجة نارية',
-    VehicleType.car       => 'سيارة خاصة',
-    VehicleType.pickup    => 'بيك آب',
-    VehicleType.van       => 'فان / ونيت',
-    VehicleType.truck     => 'شاحنة',
+    VehicleType.car => 'سيارة خاصة',
+    VehicleType.pickup => 'بيك آب',
+    VehicleType.van => 'فان / ونيت',
+    VehicleType.truck => 'شاحنة',
     VehicleType.heavyTruck => 'شاحنة ثقيلة',
   };
 }
@@ -151,44 +175,44 @@ extension WeightCategoryLabel on WeightCategory {
 
 extension OrderStatusLabel on OrderStatus {
   String get label => switch (this) {
-        OrderStatus.pending => 'قيد الانتظار',
-        OrderStatus.accepted => 'تم القبول',
-        OrderStatus.arrivedAtPickup => 'وصل للاستلام',
-        OrderStatus.inTransit => 'في الطريق',
-        OrderStatus.arrivedAtDropoff => 'وصل للتسليم',
-        OrderStatus.completed => 'مكتمل',
-        OrderStatus.cancelled => 'ملغي',
-      };
+    OrderStatus.pending => 'قيد الانتظار',
+    OrderStatus.accepted => 'تم القبول',
+    OrderStatus.arrivedAtPickup => 'وصل للاستلام',
+    OrderStatus.inTransit => 'في الطريق',
+    OrderStatus.arrivedAtDropoff => 'وصل للتسليم',
+    OrderStatus.completed => 'مكتمل',
+    OrderStatus.cancelled => 'ملغي',
+  };
 }
 
 extension ReservationStatusLabel on ReservationStatus {
   String get label => switch (this) {
-    ReservationStatus.pending                => 'بانتظار موافقة البائع',
-    ReservationStatus.accepted               => 'محجوز ومؤكد',
-    ReservationStatus.rejected               => 'مرفوض من البائع',
-    ReservationStatus.cancelledByBuyer       => 'ألغاه المشتري',
-    ReservationStatus.cancelledBySeller      => 'ألغاه البائع',
+    ReservationStatus.pending => 'بانتظار موافقة البائع',
+    ReservationStatus.accepted => 'محجوز ومؤكد',
+    ReservationStatus.rejected => 'مرفوض من البائع',
+    ReservationStatus.cancelledByBuyer => 'ألغاه المشتري',
+    ReservationStatus.cancelledBySeller => 'ألغاه البائع',
     ReservationStatus.completedByReservation => 'اكتمل',
   };
 }
 
 extension WasteTypeColor on WasteType {
   Color get ganttColor => switch (this) {
-        WasteType.oil => const Color(0xFFD97706),
-        WasteType.plastic => const Color(0xFF2563EB),
-        WasteType.paper => const Color(0xFF16A34A),
-        WasteType.electronics => const Color(0xFF7C3AED),
-        WasteType.batteries => const Color(0xFFDC2626),
-        WasteType.metal => const Color(0xFF64748B),
-        WasteType.glass => const Color(0xFF0891B2),
-        WasteType.organic => const Color(0xFF65A30D),
-        WasteType.chemicals => const Color(0xFFEA580C),
-        WasteType.textile => const Color(0xFFDB2777),
-        WasteType.wood => const Color(0xFF92400E),
-        WasteType.rubber => const Color(0xFF374151),
-        WasteType.furniture => const Color(0xFF6D28D9),
-        WasteType.tires => const Color(0xFF111827),
-        WasteType.construction => const Color(0xFF9CA3AF),
-        WasteType.copperAluminium => const Color(0xFFB45309),
-      };
+    WasteType.oil => const Color(0xFFD97706),
+    WasteType.plastic => const Color(0xFF2563EB),
+    WasteType.paper => const Color(0xFF16A34A),
+    WasteType.electronics => const Color(0xFF7C3AED),
+    WasteType.batteries => const Color(0xFFDC2626),
+    WasteType.metal => const Color(0xFF64748B),
+    WasteType.glass => const Color(0xFF0891B2),
+    WasteType.organic => const Color(0xFF65A30D),
+    WasteType.chemicals => const Color(0xFFEA580C),
+    WasteType.textile => const Color(0xFFDB2777),
+    WasteType.wood => const Color(0xFF92400E),
+    WasteType.rubber => const Color(0xFF374151),
+    WasteType.furniture => const Color(0xFF6D28D9),
+    WasteType.tires => const Color(0xFF111827),
+    WasteType.construction => const Color(0xFF9CA3AF),
+    WasteType.copperAluminium => const Color(0xFFB45309),
+  };
 }

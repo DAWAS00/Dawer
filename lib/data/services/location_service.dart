@@ -40,9 +40,13 @@ class LocationService {
         final pm = placemarks.first;
         // Build a readable address string
         final parts = [
-          if (pm.subLocality != null && pm.subLocality!.isNotEmpty) pm.subLocality,
+          if (pm.subLocality != null && pm.subLocality!.isNotEmpty)
+            pm.subLocality,
           if (pm.locality != null && pm.locality!.isNotEmpty) pm.locality,
-          if (pm.street != null && pm.street!.isNotEmpty && pm.street != pm.locality) pm.street,
+          if (pm.street != null &&
+              pm.street!.isNotEmpty &&
+              pm.street != pm.locality)
+            pm.street,
         ];
         if (parts.isEmpty) return 'موقع محدد ($lat, $lng)';
         return parts.join('، ');

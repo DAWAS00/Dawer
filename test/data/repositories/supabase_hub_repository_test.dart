@@ -9,6 +9,9 @@ class _FakeHubRepository implements IHubRepository {
 
   @override
   Future<AppResult<List<Hub>>> fetchActiveHubs() async => Success(_hubs);
+
+  @override
+  Stream<List<Hub>> watchActiveHubs() => Stream.value(_hubs);
 }
 
 void main() {
@@ -22,7 +25,12 @@ void main() {
         lng: 35.871,
         active: true,
         capacityKg: 1000,
-        currentLoad: {'cookingOil': 0, 'plastic': 0, 'paper': 0, 'electronics': 0},
+        currentLoad: {
+          'cookingOil': 0,
+          'plastic': 0,
+          'paper': 0,
+          'electronics': 0,
+        },
         schedule: 'weekly',
         nextShipmentDate: null,
         lastShipmentDate: null,

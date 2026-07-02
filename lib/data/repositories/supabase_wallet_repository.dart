@@ -22,7 +22,9 @@ final class SupabaseWalletRepository implements IWalletRepository {
           .eq('driver_id', uid)
           .maybeSingle();
 
-      return Success(row != null ? DriverWallet.fromJson(row) : DriverWallet.zero);
+      return Success(
+        row != null ? DriverWallet.fromJson(row) : DriverWallet.zero,
+      );
     } on PostgrestException catch (e) {
       return Failure(UnknownFailure(message: e.message, code: e.code));
     } catch (e) {
@@ -36,7 +38,10 @@ final class SupabaseWalletRepository implements IWalletRepository {
 
   @override
   Future<AppResult<void>> releaseForOrder(String orderId, double amount) =>
-      _rpc('driver_wallet_release', {'p_order_id': orderId, 'p_amount': amount});
+      _rpc('driver_wallet_release', {
+        'p_order_id': orderId,
+        'p_amount': amount,
+      });
 
   Future<AppResult<void>> _rpc(String fn, Map<String, dynamic> params) async {
     try {

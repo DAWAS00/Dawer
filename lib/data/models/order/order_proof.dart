@@ -14,5 +14,6 @@ class OrderProof with _$OrderProof {
     double? weightKg,
   }) = _OrderProof;
 
-  factory OrderProof.fromJson(Map<String, dynamic> json) => _$OrderProofFromJson(json);
+  factory OrderProof.fromJson(Map<String, dynamic> json) =>
+      _$OrderProofFromJson(json);
 }

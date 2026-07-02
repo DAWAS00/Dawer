@@ -17,10 +17,7 @@ import '../../../reservations/views/reservation_inbox_view.dart';
 class RestaurantHomeTab extends StatelessWidget {
   final String userName;
 
-  const RestaurantHomeTab({
-    super.key,
-    required this.userName,
-  });
+  const RestaurantHomeTab({super.key, required this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +30,7 @@ class RestaurantHomeTab extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: _buildHeader(context, vm),
-          ),
+          SliverToBoxAdapter(child: _buildHeader(context, vm)),
 
           if (tracked != null)
             SliverToBoxAdapter(
@@ -62,7 +57,10 @@ class RestaurantHomeTab extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.primaryGreen.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
@@ -86,25 +84,34 @@ class RestaurantHomeTab extends StatelessWidget {
                 delegate: SliverChildBuilderDelegate(
                   (context, i) => Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: OrderCard(
-                      order: active[i],
-                      mode: OrderCardMode.supplierActive,
-                      onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => OrderDetailsView(
-                            order: active[i],
-                            onSupplierConfirmArrival: (available) {
-                              final store = context.read<AppOrderStore>();
-                              if (available) {
-                                store.handleSupplierAvailable(active[i].id);
-                              } else {
-                                store.handleSupplierUnavailable(active[i].id);
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                    ).animate().fadeIn(delay: (i * 100).ms).slideY(begin: 0.1, end: 0),
+                    child:
+                        OrderCard(
+                              order: active[i],
+                              mode: OrderCardMode.supplierActive,
+                              onAction: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => OrderDetailsView(
+                                    order: active[i],
+                                    onSupplierConfirmArrival: (available) {
+                                      final store = context
+                                          .read<AppOrderStore>();
+                                      if (available) {
+                                        store.handleSupplierAvailable(
+                                          active[i].id,
+                                        );
+                                      } else {
+                                        store.handleSupplierUnavailable(
+                                          active[i].id,
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            )
+                            .animate()
+                            .fadeIn(delay: (i * 100).ms)
+                            .slideY(begin: 0.1, end: 0),
                   ),
                   childCount: active.length,
                 ),
@@ -123,8 +130,15 @@ class RestaurantHomeTab extends StatelessWidget {
                         color: AppColors.primaryGreen.withValues(alpha: 0.05),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(LucideIcons.store, size: 48, color: AppColors.primaryGreen),
-                    ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack),
+                      child: const Icon(
+                        LucideIcons.store,
+                        size: 48,
+                        color: AppColors.primaryGreen,
+                      ),
+                    ).animate().scale(
+                      duration: 500.ms,
+                      curve: Curves.easeOutBack,
+                    ),
                     const SizedBox(height: 24),
                     Text(
                       l10n.supplierNoActiveOrders,
@@ -188,7 +202,11 @@ class RestaurantHomeTab extends StatelessWidget {
                         width: 1,
                       ),
                     ),
-                    child: const Icon(LucideIcons.store, color: AppColors.surface, size: 24),
+                    child: const Icon(
+                      LucideIcons.store,
+                      color: AppColors.surface,
+                      size: 24,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Column(
@@ -217,9 +235,14 @@ class RestaurantHomeTab extends StatelessWidget {
               IconButton(
                 tooltip: l10n.reservationInboxTitle,
                 onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const ReservationInboxView()),
+                  MaterialPageRoute(
+                    builder: (_) => const ReservationInboxView(),
+                  ),
                 ),
-                icon: const Icon(LucideIcons.calendarClock, color: AppColors.surface),
+                icon: const Icon(
+                  LucideIcons.calendarClock,
+                  color: AppColors.surface,
+                ),
               ),
             ],
           ).animate().fadeIn(duration: 400.ms),
@@ -252,27 +275,50 @@ class RestaurantHomeTab extends StatelessWidget {
                 ),
               ],
             ),
-          ).animate().slideY(begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOutBack),
+          ).animate().slideY(
+            begin: 0.2,
+            end: 0,
+            duration: 400.ms,
+            curve: Curves.easeOutBack,
+          ),
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const CreateReservationView()),
+                MaterialPageRoute(
+                  builder: (_) => const CreateReservationView(),
+                ),
               ),
               style: OutlinedButton.styleFrom(
                 backgroundColor: AppColors.surface.withValues(alpha: 0.1),
-                side: BorderSide(color: AppColors.surface.withValues(alpha: 0.3)),
+                side: BorderSide(
+                  color: AppColors.surface.withValues(alpha: 0.3),
+                ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-              icon: const Icon(LucideIcons.calendarPlus2, color: AppColors.surface, size: 18),
+              icon: const Icon(
+                LucideIcons.calendarPlus2,
+                color: AppColors.surface,
+                size: 18,
+              ),
               label: Text(
                 l10n.reservationBookButton,
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: AppColors.surface),
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.surface,
+                ),
               ),
             ),
-          ).animate().slideY(begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOutBack),
+          ).animate().slideY(
+            begin: 0.2,
+            end: 0,
+            duration: 400.ms,
+            curve: Curves.easeOutBack,
+          ),
         ],
       ),
     );
@@ -339,7 +385,10 @@ class RestaurantHomeTab extends StatelessWidget {
                 color: AppColors.statusInTransitBg,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(LucideIcons.truck, color: AppColors.statusInTransitText),
+              child: const Icon(
+                LucideIcons.truck,
+                color: AppColors.statusInTransitText,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -361,7 +410,10 @@ class RestaurantHomeTab extends StatelessWidget {
                       const SizedBox(width: 8),
                       if (order.eta != null)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.statusInTransitBg,
                             borderRadius: BorderRadius.circular(6),
@@ -388,7 +440,11 @@ class RestaurantHomeTab extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios_rounded, color: AppColors.borderSubtle, size: 16),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: AppColors.borderSubtle,
+              size: 16,
+            ),
           ],
         ),
       ),

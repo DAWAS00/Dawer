@@ -24,11 +24,13 @@ class _SplashViewState extends State<SplashView> {
     if (!mounted) return;
     if (_bypassLogin) {
       Navigator.of(context).pushReplacement(
-        _fadeRoute(const HomeRouter(
-          role: _bypassRole,
-          supplierType: _bypassSupplierType,
-          userName: _bypassUserName,
-        )),
+        _fadeRoute(
+          const HomeRouter(
+            role: _bypassRole,
+            supplierType: _bypassSupplierType,
+            userName: _bypassUserName,
+          ),
+        ),
       );
     } else {
       _resolveNavigation();
@@ -43,12 +45,14 @@ class _SplashViewState extends State<SplashView> {
 
       if (session != null && mounted) {
         Navigator.of(context).pushReplacement(
-          _fadeRoute(HomeRouter(
-            role: session.role,
-            supplierType: session.supplierType ?? SupplierType.individual,
-            userName: session.userName,
-            aiSuggestedCategories: session.categories,
-          )),
+          _fadeRoute(
+            HomeRouter(
+              role: session.role,
+              supplierType: session.supplierType ?? SupplierType.individual,
+              userName: session.userName,
+              aiSuggestedCategories: session.categories,
+            ),
+          ),
         );
         return;
       }

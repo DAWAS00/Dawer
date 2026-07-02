@@ -36,18 +36,29 @@ class _OrderPreviewViewState extends State<OrderPreviewView> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text(context.l10n.alert,
-              textAlign: TextAlign.right,
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-          content: Text(error, textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Text(
+            context.l10n.alert,
+            textAlign: TextAlign.right,
+            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            error,
+            textAlign: TextAlign.right,
+            style: GoogleFonts.cairo(),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(context.l10n.ok,
-                  style: GoogleFonts.cairo(
-                      color: AppColors.primaryGreen,
-                      fontWeight: FontWeight.bold)),
+              child: Text(
+                context.l10n.ok,
+                style: GoogleFonts.cairo(
+                  color: AppColors.primaryGreen,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
@@ -83,7 +94,9 @@ class _OrderPreviewViewState extends State<OrderPreviewView> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryGreen,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 elevation: 0,
               ),
               child: _accepting
@@ -105,15 +118,9 @@ class _OrderPreviewViewState extends State<OrderPreviewView> {
           SliverToBoxAdapter(
             child: OrderMapSection(order: widget.order, hasDriver: false),
           ),
-          SliverToBoxAdapter(
-            child: OrderRouteCard(order: widget.order),
-          ),
-          SliverToBoxAdapter(
-            child: OrderContentsSection(order: widget.order),
-          ),
-          SliverToBoxAdapter(
-            child: OrderEarningsSection(order: widget.order),
-          ),
+          SliverToBoxAdapter(child: OrderRouteCard(order: widget.order)),
+          SliverToBoxAdapter(child: OrderContentsSection(order: widget.order)),
+          SliverToBoxAdapter(child: OrderEarningsSection(order: widget.order)),
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
       ),

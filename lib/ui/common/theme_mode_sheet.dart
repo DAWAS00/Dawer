@@ -15,10 +15,17 @@ class ThemeModeSheet extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).bottomSheetTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
+        color:
+            Theme.of(context).bottomSheetTheme.backgroundColor ??
+            Theme.of(context).scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(context).padding.bottom + 24),
+      padding: EdgeInsets.fromLTRB(
+        24,
+        24,
+        24,
+        MediaQuery.of(context).padding.bottom + 24,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -27,7 +34,7 @@ class ThemeModeSheet extends StatelessWidget {
             height: 4,
             decoration: BoxDecoration(
               color: Theme.of(context).dividerColor,
-              borderRadius: BorderRadius.circular(2)
+              borderRadius: BorderRadius.circular(2),
             ),
           ),
           const SizedBox(height: 24),
@@ -80,7 +87,9 @@ class ThemeModeSheet extends StatelessWidget {
     required AppThemeNotifier notifier,
   }) {
     final isSelected = mode == currentMode;
-    final color = isSelected ? Theme.of(context).primaryColor : Theme.of(context).textTheme.bodyMedium?.color;
+    final color = isSelected
+        ? Theme.of(context).primaryColor
+        : Theme.of(context).textTheme.bodyMedium?.color;
 
     return InkWell(
       onTap: () {
@@ -104,7 +113,11 @@ class ThemeModeSheet extends StatelessWidget {
               ),
             ),
             if (isSelected)
-              Icon(Icons.check_circle_rounded, color: Theme.of(context).primaryColor, size: 24),
+              Icon(
+                Icons.check_circle_rounded,
+                color: Theme.of(context).primaryColor,
+                size: 24,
+              ),
           ],
         ),
       ),

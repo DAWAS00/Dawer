@@ -38,11 +38,13 @@ class _OrderArrivalSectionState extends State<OrderArrivalSection> {
     try {
       final error = await cb(widget.order);
       if (error != null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(error, style: GoogleFonts.cairo(color: Colors.white)),
-          backgroundColor: const Color(0xFF991B1B),
-          behavior: SnackBarBehavior.floating,
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error, style: GoogleFonts.cairo(color: Colors.white)),
+            backgroundColor: const Color(0xFF991B1B),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -147,7 +149,10 @@ class _ArrivalCard extends StatelessWidget {
               const SizedBox(width: 10),
               Container(
                 padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  shape: BoxShape.circle,
+                ),
                 child: Icon(icon, color: iconColor, size: 20),
               ),
             ],
@@ -156,7 +161,10 @@ class _ArrivalCard extends StatelessWidget {
           Text(
             subtitle,
             textAlign: TextAlign.right,
-            style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF717973)),
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              color: const Color(0xFF717973),
+            ),
           ),
           const SizedBox(height: 16),
           SizedBox(
@@ -178,7 +186,9 @@ class _ArrivalCard extends StatelessWidget {
                       height: 30,
                       width: 30,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white),
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
                   : Text(
                       buttonLabel,

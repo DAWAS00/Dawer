@@ -31,11 +31,11 @@ class AppOrderStore extends ChangeNotifier {
     IWalletRepository? wallet,
     RewardService? rewardService,
     bool skipMockSeed = false,
-  })  : _store = store,
-        _remote = remote ?? const NoOpOrderRepository(),
-        _wallet = wallet ?? const NoOpWalletRepository(),
-        _rewardService = rewardService ?? RewardService(),
-        _skipMockSeed = skipMockSeed {
+  }) : _store = store,
+       _remote = remote ?? const NoOpOrderRepository(),
+       _wallet = wallet ?? const NoOpWalletRepository(),
+       _rewardService = rewardService ?? RewardService(),
+       _skipMockSeed = skipMockSeed {
     _bootstrap();
   }
 
@@ -70,7 +70,6 @@ class AppOrderStore extends ChangeNotifier {
   late List<Order> _orders;
   List<Order> get orders => List.unmodifiable(_orders);
 
-
   /// ID of the order currently active for our mock driver session.
   String? _activeOrderId;
 
@@ -99,12 +98,18 @@ class AppOrderStore extends ChangeNotifier {
       // Live Supabase: start empty; realtime subscription fills _orders.
       _orders = [];
     } else if (store == null || store.isFirstLaunch) {
-      _orders = [...OrderMockData.seedOrders(), ...OrderMockData.seedMarketItems()];
+      _orders = [
+        ...OrderMockData.seedOrders(),
+        ...OrderMockData.seedMarketItems(),
+      ];
       store?.writeOrders(_orders.map((o) => o.toJson()).toList());
       store?.markFirstLaunchDone();
     } else {
       _orders = store.readOrders().map((e) => Order.fromJson(e)).toList();
-      final oldMarket = store.readMarket().map((e) => Order.fromJson(e)).toList();
+      final oldMarket = store
+          .readMarket()
+          .map((e) => Order.fromJson(e))
+          .toList();
       for (final m in oldMarket) {
         if (!_orders.any((o) => o.id == m.id)) {
           _orders.add(m.copyWith(isMarketplaceShared: true));
@@ -120,22 +125,18 @@ class AppOrderStore extends ChangeNotifier {
 
     // Subscribe to remote order updates. The default NoOpOrderRepository
     // emits nothing, so seed-only / test paths are unaffected.
-    _remoteSub = _remote.watchOrders().listen(
-      (remoteOrders) {
-        if (remoteOrders.isEmpty) return;
-        for (final o in remoteOrders) {
-          final idx = _orders.indexWhere((existing) => existing.id == o.id);
-          if (idx >= 0) {
-            _orders[idx] = o;
-          } else {
-            _orders.insert(0, o);
-          }
+    _remoteSub = _remote.watchOrders().listen((remoteOrders) {
+      if (remoteOrders.isEmpty) return;
+      for (final o in remoteOrders) {
+        final idx = _orders.indexWhere((existing) => existing.id == o.id);
+        if (idx >= 0) {
+          _orders[idx] = o;
+        } else {
+          _orders.insert(0, o);
         }
-        notifyListeners();
-      },
-      onError: (Object e) =>
-          debugPrint('Remote order stream error: $e'),
-    );
+      }
+      notifyListeners();
+    }, onError: (Object e) => debugPrint('Remote order stream error: $e'));
   }
 
   @override
@@ -150,21 +151,20 @@ class AppOrderStore extends ChangeNotifier {
     _remoteSub?.cancel();
     _currentUserId = userId;
     _seedGreenCreditsFor(userId);
-    _remoteSub = _remote.watchOrdersForUser(userId, role).listen(
-      (remoteOrders) {
-        if (remoteOrders.isEmpty) return;
-        for (final o in remoteOrders) {
-          final idx = _orders.indexWhere((existing) => existing.id == o.id);
-          if (idx >= 0) {
-            _orders[idx] = o;
-          } else {
-            _orders.insert(0, o);
-          }
+    _remoteSub = _remote.watchOrdersForUser(userId, role).listen((
+      remoteOrders,
+    ) {
+      if (remoteOrders.isEmpty) return;
+      for (final o in remoteOrders) {
+        final idx = _orders.indexWhere((existing) => existing.id == o.id);
+        if (idx >= 0) {
+          _orders[idx] = o;
+        } else {
+          _orders.insert(0, o);
         }
-        notifyListeners();
-      },
-      onError: (Object e) => debugPrint('Remote order stream error: $e'),
-    );
+      }
+      notifyListeners();
+    }, onError: (Object e) => debugPrint('Remote order stream error: $e'));
   }
 
   Future<void> _persistOrders() async {
@@ -173,10 +173,9 @@ class AppOrderStore extends ChangeNotifier {
     await store.writeOrders(_orders.map((o) => o.toJson()).toList());
   }
 
-
   @override
   void notifyListeners() {
-      // Auto-persist on every mutation. Fire-and-forget — a write failure does
+    // Auto-persist on every mutation. Fire-and-forget — a write failure does
     // not block UI updates.
     // ignore: discarded_futures
     _persistOrders();
@@ -205,10 +204,7 @@ class AppOrderStore extends ChangeNotifier {
         return false;
       }
       if (vehicleType == null) return true;
-      return vehicleType.canTakeOrder(
-        o,
-        hasChemicalPermit: hasChemicalPermit,
-      );
+      return vehicleType.canTakeOrder(o, hasChemicalPermit: hasChemicalPermit);
     }).toList();
   }
 
@@ -218,9 +214,8 @@ class AppOrderStore extends ChangeNotifier {
       : _orders.where((o) => o.id == _activeOrderId).firstOrNull;
 
   /// Orders the driver has completed in this session (+ seed history).
-  List<Order> get driverHistory => _orders
-      .where((o) => _driverCompletedIds.contains(o.id))
-      .toList();
+  List<Order> get driverHistory =>
+      _orders.where((o) => _driverCompletedIds.contains(o.id)).toList();
 
   bool get driverHasActiveOrder => _activeOrderId != null;
 
@@ -238,7 +233,8 @@ class AppOrderStore extends ChangeNotifier {
   /// most recent first.
   List<RewardTransaction> greenTransactionsFor(String userId) {
     final list = _rewardLedger[userId] ?? const [];
-    final sorted = [...list]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final sorted = [...list]
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return List.unmodifiable(sorted);
   }
 
@@ -269,16 +265,19 @@ class AppOrderStore extends ChangeNotifier {
 
     _greenPointsMap[userId] = balance - cost;
     unawaited(
-        _store?.writeGreenPoints(userId, _greenPointsMap[userId]!) ??
-            Future.value());
+      _store?.writeGreenPoints(userId, _greenPointsMap[userId]!) ??
+          Future.value(),
+    );
 
-    (_rewardLedger[userId] ??= []).add(RewardTransaction(
-      id: 'redeem-${DateTime.now().microsecondsSinceEpoch}',
-      type: RewardTransactionType.redeemed,
-      points: cost,
-      description: description,
-      createdAt: DateTime.now(),
-    ));
+    (_rewardLedger[userId] ??= []).add(
+      RewardTransaction(
+        id: 'redeem-${DateTime.now().microsecondsSinceEpoch}',
+        type: RewardTransactionType.redeemed,
+        points: cost,
+        description: description,
+        createdAt: DateTime.now(),
+      ),
+    );
 
     notifyListeners();
     return true;
@@ -294,17 +293,21 @@ class AppOrderStore extends ChangeNotifier {
 
     // Compute week streak from orders the current driver has completed.
     final driverCompleted = _orders
-        .where((o) =>
-            _driverCompletedIds.contains(o.id) && o.completedAt != null)
+        .where(
+          (o) => _driverCompletedIds.contains(o.id) && o.completedAt != null,
+        )
         .toList();
     final streak = GreenCreditsService.weekStreakFrom(driverCompleted);
 
     // Award credits to the driver (current user)
-    final driverEarned =
-        _greenCreditsService.creditsForOrder(order, weekStreak: streak);
+    final driverEarned = _greenCreditsService.creditsForOrder(
+      order,
+      weekStreak: streak,
+    );
     _greenPointsMap[uid] = (_greenPointsMap[uid] ?? 0) + driverEarned;
-    unawaited(_store?.writeGreenPoints(uid, _greenPointsMap[uid]!) ??
-        Future.value());
+    unawaited(
+      _store?.writeGreenPoints(uid, _greenPointsMap[uid]!) ?? Future.value(),
+    );
     _recordRewardTxn(
       uid,
       RewardTransaction(
@@ -321,16 +324,16 @@ class AppOrderStore extends ChangeNotifier {
     final supplierId = order.supplierId;
     if (supplierId != null && supplierId.isNotEmpty && supplierId != uid) {
       if (!_greenPointsMap.containsKey(supplierId)) {
-        _greenPointsMap[supplierId] =
-            _store?.readGreenPoints(supplierId) ?? 0;
+        _greenPointsMap[supplierId] = _store?.readGreenPoints(supplierId) ?? 0;
       }
       // Supplier earns base credits (no streak bonus — streak is driver-side)
       final supplierEarned = _greenCreditsService.creditsForOrder(order);
       _greenPointsMap[supplierId] =
           _greenPointsMap[supplierId]! + supplierEarned;
       unawaited(
-          _store?.writeGreenPoints(supplierId, _greenPointsMap[supplierId]!) ??
-              Future.value());
+        _store?.writeGreenPoints(supplierId, _greenPointsMap[supplierId]!) ??
+            Future.value(),
+      );
       _recordRewardTxn(
         supplierId,
         RewardTransaction(
@@ -353,8 +356,9 @@ class AppOrderStore extends ChangeNotifier {
 
   /// All orders submitted by a specific supplier (by name, mock/offline only).
   List<Order> supplierOrdersFor(String supplierName) => _orders
-      .where((o) =>
-          o.supplierName == supplierName && o.type == OrderType.pickup)
+      .where(
+        (o) => o.supplierName == supplierName && o.type == OrderType.pickup,
+      )
       .toList();
 
   /// All orders submitted by a supplier identified by their auth ID (live mode).
@@ -364,11 +368,14 @@ class AppOrderStore extends ChangeNotifier {
 
   /// Completed pickup orders submitted by this supplier (by name, mock mode).
   /// Used by the Analytics tab to compute earnings and history.
-  List<Order> supplierCompletedOrdersFor(String supplierName) =>
-      _orders.where((o) =>
-          o.type == OrderType.pickup &&
-          o.supplierName == supplierName &&
-          o.status == OrderStatus.completed).toList();
+  List<Order> supplierCompletedOrdersFor(String supplierName) => _orders
+      .where(
+        (o) =>
+            o.type == OrderType.pickup &&
+            o.supplierName == supplierName &&
+            o.status == OrderStatus.completed,
+      )
+      .toList();
 
   // ─────────────────────────────────────────────────────────────────────────
   // Recycling Company views
@@ -376,12 +383,14 @@ class AppOrderStore extends ChangeNotifier {
 
   /// Pickup orders heading to the company (any active delivery state).
   List<Order> get companyIncoming => _orders
-      .where((o) =>
-          o.type == OrderType.pickup &&
-          (o.status == OrderStatus.accepted ||
-              o.status == OrderStatus.arrivedAtPickup ||
-              o.status == OrderStatus.inTransit ||
-              o.status == OrderStatus.arrivedAtDropoff))
+      .where(
+        (o) =>
+            o.type == OrderType.pickup &&
+            (o.status == OrderStatus.accepted ||
+                o.status == OrderStatus.arrivedAtPickup ||
+                o.status == OrderStatus.inTransit ||
+                o.status == OrderStatus.arrivedAtDropoff),
+      )
       .toList();
 
   /// Collection jobs posted by the company.
@@ -394,9 +403,12 @@ class AppOrderStore extends ChangeNotifier {
   /// never reaches the company's Analytics tab (it would only ever see
   /// completed collection-job postings via [companyJobs]).
   List<Order> get companyCompletedDeliveries => _orders
-      .where((o) =>
-          (o.type == OrderType.pickup || o.type == OrderType.collectionSale) &&
-          o.status == OrderStatus.completed)
+      .where(
+        (o) =>
+            (o.type == OrderType.pickup ||
+                o.type == OrderType.collectionSale) &&
+            o.status == OrderStatus.completed,
+      )
       .toList();
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -405,11 +417,15 @@ class AppOrderStore extends ChangeNotifier {
 
   List<Order> get marketItems {
     final now = DateTime.now();
-    return List.unmodifiable(_orders.where((o) =>
-        o.isMarketplaceShared &&
-        (o.expiresAt == null || o.expiresAt!.isAfter(now)) &&
-        o.adminApprovalStatus != AdminApprovalStatus.pendingApproval &&
-        o.adminApprovalStatus != AdminApprovalStatus.rejected));
+    return List.unmodifiable(
+      _orders.where(
+        (o) =>
+            o.isMarketplaceShared &&
+            (o.expiresAt == null || o.expiresAt!.isAfter(now)) &&
+            o.adminApprovalStatus != AdminApprovalStatus.pendingApproval &&
+            o.adminApprovalStatus != AdminApprovalStatus.rejected,
+      ),
+    );
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -424,9 +440,12 @@ class AppOrderStore extends ChangeNotifier {
     final idx = _orders.indexWhere((o) => o.id == orderId);
     if (idx == -1) return 'الطلب غير موجود';
     final order = _orders[idx];
-    
-    final canAccept = order.status == OrderStatus.pending ||
-        (order.status == OrderStatus.accepted && order.requiresRider && order.driverName == null);
+
+    final canAccept =
+        order.status == OrderStatus.pending ||
+        (order.status == OrderStatus.accepted &&
+            order.requiresRider &&
+            order.driverName == null);
     if (!canAccept) return 'هذا الطلب لم يعد متاحاً';
 
     _orders[idx] = order.copyWith(
@@ -498,7 +517,11 @@ class AppOrderStore extends ChangeNotifier {
       pickupProof: pickupProof,
     );
     notifyListeners();
-    unawaited(_pushRemote(_remote.markArrivedAtPickup(orderId, pickupProof: pickupProof)));
+    unawaited(
+      _pushRemote(
+        _remote.markArrivedAtPickup(orderId, pickupProof: pickupProof),
+      ),
+    );
   }
 
   /// Supplier confirmed they are available. Advance order to inTransit.
@@ -582,7 +605,11 @@ class AppOrderStore extends ChangeNotifier {
   }
 
   /// Verify driver arrival at destination.
-  Future<AppResult<bool>> verifyArrival(String orderId, double lat, double lng) async {
+  Future<AppResult<bool>> verifyArrival(
+    String orderId,
+    double lat,
+    double lng,
+  ) async {
     return _remote.verifyArrival(orderId, lat, lng);
   }
 
@@ -600,11 +627,20 @@ class AppOrderStore extends ChangeNotifier {
     }
     notifyListeners();
 
-    unawaited(_pushRemote(_remote.markCompleted(completedOrder.id, actualWeightKg: completedOrder.weightKg)));
+    unawaited(
+      _pushRemote(
+        _remote.markCompleted(
+          completedOrder.id,
+          actualWeightKg: completedOrder.weightKg,
+        ),
+      ),
+    );
     unawaited(_recordTransactionFor(completedOrder));
     unawaited(_awardGreenCredits(completedOrder));
     if (completedOrder.reward > 0) {
-      unawaited(_wallet.releaseForOrder(completedOrder.id, completedOrder.reward));
+      unawaited(
+        _wallet.releaseForOrder(completedOrder.id, completedOrder.reward),
+      );
     }
   }
 
@@ -620,11 +656,15 @@ class AppOrderStore extends ChangeNotifier {
     );
 
     result.fold(
-      onSuccess: (breakdown) => unawaited(_pushRemote(_remote.recordTransaction(
-        orderId: order.id,
-        breakdown: breakdown,
-        vehicleType: order.requiredVehicleType?.name,
-      ))),
+      onSuccess: (breakdown) => unawaited(
+        _pushRemote(
+          _remote.recordTransaction(
+            orderId: order.id,
+            breakdown: breakdown,
+            vehicleType: order.requiredVehicleType?.name,
+          ),
+        ),
+      ),
       onFailure: (_) {},
     );
   }
@@ -800,16 +840,21 @@ class AppOrderStore extends ChangeNotifier {
 
   /// Pending collection jobs — for marketplace display (all roles).
   List<Order> get pendingCollectionJobs => _orders
-      .where((o) =>
-          o.type == OrderType.collection && o.status == OrderStatus.pending)
+      .where(
+        (o) =>
+            o.type == OrderType.collection && o.status == OrderStatus.pending,
+      )
       .toList();
 
   /// Active collection jobs posted by a specific company.
   List<Order> myCollectionJobs(String companyName) => _orders
-      .where((o) =>
-          o.type == OrderType.collection &&
-          o.supplierName == companyName &&
-          (o.status == OrderStatus.pending || o.status == OrderStatus.accepted))
+      .where(
+        (o) =>
+            o.type == OrderType.collection &&
+            o.supplierName == companyName &&
+            (o.status == OrderStatus.pending ||
+                o.status == OrderStatus.accepted),
+      )
       .toList();
 
   /// Driver claims a collection job (does NOT set _activeOrderId — different flow).
@@ -888,17 +933,19 @@ class AppOrderStore extends ChangeNotifier {
 
   /// True if [acceptorName] already committed to [jobId].
   bool hasAcceptedJob(String jobId, String acceptorName) => _orders.any(
-        (o) =>
-            o.type == OrderType.collectionSale &&
-            o.linkedJobId == jobId &&
-            o.supplierName == acceptorName,
-      );
+    (o) =>
+        o.type == OrderType.collectionSale &&
+        o.linkedJobId == jobId &&
+        o.supplierName == acceptorName,
+  );
 
   /// All collection-sale commitments created by [acceptorName].
   List<Order> collectionSalesFor(String acceptorName) => _orders
-      .where((o) =>
-          o.type == OrderType.collectionSale &&
-          o.supplierName == acceptorName)
+      .where(
+        (o) =>
+            o.type == OrderType.collectionSale &&
+            o.supplierName == acceptorName,
+      )
       .toList();
 
   /// Driver or supplier commits to sell waste to the recycling company.
@@ -990,7 +1037,11 @@ class AppOrderStore extends ChangeNotifier {
     );
     notifyListeners();
 
-    unawaited(_pushRemote(_remote.markCompleted(saleId, actualWeightKg: actualWeightKg)));
+    unawaited(
+      _pushRemote(
+        _remote.markCompleted(saleId, actualWeightKg: actualWeightKg),
+      ),
+    );
     return null;
   }
 
@@ -1019,7 +1070,8 @@ class AppOrderStore extends ChangeNotifier {
   List<Order> salesForCompanyJobs(String companyName) {
     final companyJobIds = _orders
         .where(
-          (o) => o.type == OrderType.collection && o.supplierName == companyName,
+          (o) =>
+              o.type == OrderType.collection && o.supplierName == companyName,
         )
         .map((o) => o.id)
         .toSet();
@@ -1056,12 +1108,14 @@ class AppOrderStore extends ChangeNotifier {
   }
 
   List<Order> myMarketListings(String publisherName) => _orders
-      .where((o) =>
-          o.isMarketplaceShared &&
-          o.supplierName == publisherName &&
-          (o.status == OrderStatus.pending ||
-              o.status == OrderStatus.accepted ||
-              o.status == OrderStatus.inTransit))
+      .where(
+        (o) =>
+            o.isMarketplaceShared &&
+            o.supplierName == publisherName &&
+            (o.status == OrderStatus.pending ||
+                o.status == OrderStatus.accepted ||
+                o.status == OrderStatus.inTransit),
+      )
       .toList();
 
   Order? claimMarketItem(String orderId, User driver) {
@@ -1101,16 +1155,18 @@ class AppOrderStore extends ChangeNotifier {
     final purchased = _orders[idx].copyWith(
       status: OrderStatus.accepted,
       acceptedAt: DateTime.now(),
-      dropoffAddress: selfPickup ? 'استلام من السوق' : (dropoffAddress ?? 'عنوان مجهول'),
+      dropoffAddress: selfPickup
+          ? 'استلام من السوق'
+          : (dropoffAddress ?? 'عنوان مجهول'),
       deliveryFee: selfPickup ? 0 : deliveryFee,
       requiresRider: !selfPickup,
     );
     _orders[idx] = purchased;
     notifyListeners();
 
-    unawaited(_pushRemote(
-      _remote.markPurchased(orderId, requiresRider: !selfPickup),
-    ));
+    unawaited(
+      _pushRemote(_remote.markPurchased(orderId, requiresRider: !selfPickup)),
+    );
     return purchased;
   }
 
@@ -1127,9 +1183,9 @@ class AppOrderStore extends ChangeNotifier {
     notifyListeners();
 
     // Marketplace receive-at-facility doesn't require a rider.
-    unawaited(_pushRemote(
-      _remote.markPurchased(orderId, requiresRider: false),
-    ));
+    unawaited(
+      _pushRemote(_remote.markPurchased(orderId, requiresRider: false)),
+    );
     return received;
   }
 
@@ -1142,10 +1198,12 @@ class AppOrderStore extends ChangeNotifier {
   /// All marketplace items that have a pending reservation for [sellerName]
   /// (i.e. items the seller listed that someone wants to reserve).
   List<Order> pendingReservationsForSeller(String sellerName) => _orders
-      .where((o) =>
-          o.isMarketplaceShared &&
-          o.supplierName == sellerName &&
-          o.reservationStatus == ReservationStatus.pending)
+      .where(
+        (o) =>
+            o.isMarketplaceShared &&
+            o.supplierName == sellerName &&
+            o.reservationStatus == ReservationStatus.pending,
+      )
       .toList();
 
   /// Buyer reserves a marketplace item.
@@ -1158,7 +1216,8 @@ class AppOrderStore extends ChangeNotifier {
     required DateTime pickupDate,
   }) {
     final idx = _orders.indexWhere((o) => o.id == orderId);
-    if (idx == -1 || !_orders[idx].isMarketplaceShared) return 'العنصر غير موجود';
+    if (idx == -1 || !_orders[idx].isMarketplaceShared)
+      return 'العنصر غير موجود';
     final order = _orders[idx];
     if (order.status != OrderStatus.pending) return 'هذا العنصر لم يعد متاحاً';
     if (order.reservationStatus != null) return 'هذا العنصر محجوز بالفعل';
@@ -1189,8 +1248,10 @@ class AppOrderStore extends ChangeNotifier {
     final idx = _orders.indexWhere((o) => o.id == orderId);
     if (idx == -1) return 'العنصر غير موجود';
     final order = _orders[idx];
-    if (order.supplierName != sellerName) return 'ليس لديك صلاحية للرد على هذا الحجز';
-    if (order.reservationStatus != ReservationStatus.pending) return 'لا يوجد حجز بانتظار ردّك';
+    if (order.supplierName != sellerName)
+      return 'ليس لديك صلاحية للرد على هذا الحجز';
+    if (order.reservationStatus != ReservationStatus.pending)
+      return 'لا يوجد حجز بانتظار ردّك';
 
     if (accept) {
       final price = order.itemPrice ?? 0;
@@ -1226,7 +1287,8 @@ class AppOrderStore extends ChangeNotifier {
     if (idx == -1) return 'العنصر غير موجود';
     final order = _orders[idx];
 
-    final isReserved = order.reservationStatus == ReservationStatus.pending ||
+    final isReserved =
+        order.reservationStatus == ReservationStatus.pending ||
         order.reservationStatus == ReservationStatus.accepted;
     if (!isReserved) return 'لا يوجد حجز نشط على هذا العنصر';
 

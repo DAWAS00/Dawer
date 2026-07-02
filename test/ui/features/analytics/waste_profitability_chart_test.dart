@@ -7,16 +7,18 @@ import 'package:dwaar/ui/features/analytics/widgets/waste_profitability_chart.da
 import '../../../helpers/test_app.dart';
 
 void main() {
-  testWidgets('WasteProfitabilityChart shows empty state when data empty',
-      (tester) async {
+  testWidgets('WasteProfitabilityChart shows empty state when data empty', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       wrapWithL10n(const WasteProfitabilityChart(data: [])),
     );
     expect(find.byType(LinearProgressIndicator), findsNothing);
   });
 
-  testWidgets('WasteProfitabilityChart renders rows and top badge',
-      (tester) async {
+  testWidgets('WasteProfitabilityChart renders rows and top badge', (
+    tester,
+  ) async {
     final data = [
       const WasteProfitability(
         type: WasteType.plastic,
@@ -33,9 +35,7 @@ void main() {
         sampleCount: 1,
       ),
     ];
-    await tester.pumpWidget(
-      wrapWithL10n(WasteProfitabilityChart(data: data)),
-    );
+    await tester.pumpWidget(wrapWithL10n(WasteProfitabilityChart(data: data)));
     expect(find.byType(LinearProgressIndicator), findsNWidgets(2));
   });
 }

@@ -4,11 +4,7 @@ import 'package:dwaar/core/constants/app_colors.dart';
 import 'package:dwaar/data/models/order/order.dart';
 
 class HomeOrderCard extends StatelessWidget {
-  const HomeOrderCard({
-    super.key,
-    required this.order,
-    this.onTap,
-  });
+  const HomeOrderCard({super.key, required this.order, this.onTap});
 
   final Order order;
   final VoidCallback? onTap;
@@ -16,7 +12,9 @@ class HomeOrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dt = context.dt;
-    final (statusLabel, statusBg, statusFg, progressColor) = _resolveStatus(order.status);
+    final (statusLabel, statusBg, statusFg, progressColor) = _resolveStatus(
+      order.status,
+    );
 
     return GestureDetector(
       onTap: onTap,
@@ -48,10 +46,7 @@ class HomeOrderCard extends StatelessWidget {
               thickness: 0.5,
               color: dt.border.withValues(alpha: 0.5),
             ),
-            _OrderCardBottom(
-              order: order,
-              progressColor: progressColor,
-            ),
+            _OrderCardBottom(order: order, progressColor: progressColor),
           ],
         ),
       ),
@@ -60,30 +55,33 @@ class HomeOrderCard extends StatelessWidget {
 
   (String, Color, Color, Color) _resolveStatus(OrderStatus status) =>
       switch (status) {
-        OrderStatus.inTransit || OrderStatus.arrivedAtPickup || OrderStatus.arrivedAtDropoff || OrderStatus.accepted => (
-            status.label,
-            const Color(0xFFE8F5E9),
-            AppColors.primaryGreen,
-            const Color(0xFF4CAF50),
-          ),
+        OrderStatus.inTransit ||
+        OrderStatus.arrivedAtPickup ||
+        OrderStatus.arrivedAtDropoff ||
+        OrderStatus.accepted => (
+          status.label,
+          const Color(0xFFE8F5E9),
+          AppColors.primaryGreen,
+          const Color(0xFF4CAF50),
+        ),
         OrderStatus.pending => (
-            status.label,
-            AppColors.amberContainer,
-            AppColors.accentAmber,
-            AppColors.accentAmber,
-          ),
+          status.label,
+          AppColors.amberContainer,
+          AppColors.accentAmber,
+          AppColors.accentAmber,
+        ),
         OrderStatus.completed => (
-            status.label,
-            const Color(0xFFE8F5E9),
-            AppColors.primaryGreen,
-            const Color(0xFF4CAF50),
-          ),
+          status.label,
+          const Color(0xFFE8F5E9),
+          AppColors.primaryGreen,
+          const Color(0xFF4CAF50),
+        ),
         OrderStatus.cancelled => (
-            status.label,
-            const Color(0xFFFFEBEE),
-            const Color(0xFFD32F2F),
-            const Color(0xFFD32F2F),
-          ),
+          status.label,
+          const Color(0xFFFFEBEE),
+          const Color(0xFFD32F2F),
+          const Color(0xFFD32F2F),
+        ),
       };
 }
 
@@ -103,7 +101,8 @@ class _OrderCardTop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dt = context.dt;
-    final dateString = '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}';
+    final dateString =
+        '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}';
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
@@ -123,10 +122,7 @@ class _OrderCardTop extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 '· $dateString',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: dt.onSurfaceMuted,
-                ),
+                style: TextStyle(fontSize: 10, color: dt.onSurfaceMuted),
               ),
               const Spacer(),
               Container(
@@ -162,10 +158,7 @@ class _OrderCardTop extends StatelessWidget {
 }
 
 class _OrderCardBottom extends StatelessWidget {
-  const _OrderCardBottom({
-    required this.order,
-    required this.progressColor,
-  });
+  const _OrderCardBottom({required this.order, required this.progressColor});
 
   final Order order;
   final Color progressColor;
@@ -202,19 +195,29 @@ class _OrderCardBottom extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  color: order.itemPrice != null ? dt.onSurface : dt.onSurfaceMuted,
+                  color: order.itemPrice != null
+                      ? dt.onSurface
+                      : dt.onSurfaceMuted,
                 ),
               ),
               const Spacer(),
               if (order.status == OrderStatus.inTransit) ...[
-                const Icon(Icons.access_time_rounded, size: 11, color: AppColors.mutedText),
+                const Icon(
+                  Icons.access_time_rounded,
+                  size: 11,
+                  color: AppColors.mutedText,
+                ),
                 const SizedBox(width: 3),
                 const Text(
                   'في الطريق',
                   style: TextStyle(fontSize: 9, color: AppColors.mutedText),
                 ),
               ] else if (order.status == OrderStatus.pending) ...[
-                const Icon(Icons.hourglass_empty_rounded, size: 11, color: AppColors.accentAmber),
+                const Icon(
+                  Icons.hourglass_empty_rounded,
+                  size: 11,
+                  color: AppColors.accentAmber,
+                ),
                 const SizedBox(width: 3),
                 const Text(
                   'في الانتظار',

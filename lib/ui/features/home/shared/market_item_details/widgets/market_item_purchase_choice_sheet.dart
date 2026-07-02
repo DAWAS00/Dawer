@@ -43,7 +43,10 @@ class MarketItemPurchaseChoiceSheet extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             l10n.marketPurchaseChoiceSubtitle,
-            style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF717973)),
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              color: const Color(0xFF717973),
+            ),
           ),
           const SizedBox(height: 16),
           _PurchaseOptionTile(
@@ -93,7 +96,11 @@ class _PurchaseOptionTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const Icon(Icons.chevron_left_rounded, color: Color(0xFF9CA3AF), size: 20),
+            const Icon(
+              Icons.chevron_left_rounded,
+              color: Color(0xFF9CA3AF),
+              size: 20,
+            ),
             const Spacer(),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -108,7 +115,10 @@ class _PurchaseOptionTile extends StatelessWidget {
                 ),
                 Text(
                   subtitle,
-                  style: GoogleFonts.cairo(fontSize: 12, color: const Color(0xFF717973)),
+                  style: GoogleFonts.cairo(
+                    fontSize: 12,
+                    color: const Color(0xFF717973),
+                  ),
                 ),
               ],
             ),

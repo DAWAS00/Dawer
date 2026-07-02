@@ -16,9 +16,17 @@ class OrderStatusTimeline extends StatelessWidget {
     final steps = [
       (OrderStatus.pending, l10n.orderStatusStepPending, order.createdAt),
       (OrderStatus.accepted, l10n.orderStatusStepAccepted, order.acceptedAt),
-      (OrderStatus.arrivedAtPickup, l10n.orderStatusStepArrivedAtPickup, order.arrivedAtPickupAt),
+      (
+        OrderStatus.arrivedAtPickup,
+        l10n.orderStatusStepArrivedAtPickup,
+        order.arrivedAtPickupAt,
+      ),
       (OrderStatus.inTransit, l10n.orderStatusStepInTransit, order.inTransitAt),
-      (OrderStatus.arrivedAtDropoff, l10n.orderStatusStepArrivedAtDropoff, order.arrivedAtDropoffAt),
+      (
+        OrderStatus.arrivedAtDropoff,
+        l10n.orderStatusStepArrivedAtDropoff,
+        order.arrivedAtDropoffAt,
+      ),
       (OrderStatus.completed, l10n.orderStatusStepCompleted, order.completedAt),
     ];
 
@@ -117,7 +125,7 @@ class _TimelineStep extends StatelessWidget {
                       color: const Color(0xFF06402B).withValues(alpha: 0.2),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
-                    )
+                    ),
                   ]
                 : null,
           ),

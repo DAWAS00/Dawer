@@ -3,15 +3,16 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order/order.dart';
 import 'post_job_form.dart';
 
-typedef EditJobCallback = void Function({
-  required List<WasteType> wasteTypes,
-  required PaymentModel paymentModel,
-  required double price,
-  required String collectionArea,
-  required String jobDescription,
-  double? minQuantityKg,
-  String? editNote,
-});
+typedef EditJobCallback =
+    void Function({
+      required List<WasteType> wasteTypes,
+      required PaymentModel paymentModel,
+      required double price,
+      required String collectionArea,
+      required String jobDescription,
+      double? minQuantityKg,
+      String? editNote,
+    });
 
 /// Pre-filled edit sheet — reuses [PostJobFormBody] with existing job values.
 class EditCollectionJobSheet extends StatefulWidget {
@@ -25,8 +26,7 @@ class EditCollectionJobSheet extends StatefulWidget {
   });
 
   @override
-  State<EditCollectionJobSheet> createState() =>
-      _EditCollectionJobSheetState();
+  State<EditCollectionJobSheet> createState() => _EditCollectionJobSheetState();
 }
 
 class _EditCollectionJobSheetState extends State<EditCollectionJobSheet> {
@@ -46,15 +46,14 @@ class _EditCollectionJobSheetState extends State<EditCollectionJobSheet> {
     _selected = Set.from(job.wasteTypes);
     _paymentModel = job.paymentModel ?? PaymentModel.perKg;
     final price = job.pricePerKg ?? job.itemPrice;
-    _priceCtrl =
-        TextEditingController(text: price != null ? '$price' : '');
+    _priceCtrl = TextEditingController(text: price != null ? '$price' : '');
     _minQtyCtrl = TextEditingController(
-        text: job.minQuantityKg != null
-            ? job.minQuantityKg!.toStringAsFixed(0)
-            : '');
+      text: job.minQuantityKg != null
+          ? job.minQuantityKg!.toStringAsFixed(0)
+          : '',
+    );
     _areaCtrl = TextEditingController(text: job.pickupAddress);
-    _descCtrl =
-        TextEditingController(text: job.jobDescription ?? '');
+    _descCtrl = TextEditingController(text: job.jobDescription ?? '');
     _editNoteCtrl = TextEditingController();
   }
 
@@ -84,7 +83,8 @@ class _EditCollectionJobSheetState extends State<EditCollectionJobSheet> {
       price: double.parse(_priceCtrl.text.trim()),
       collectionArea: _areaCtrl.text.trim(),
       jobDescription: _descCtrl.text.trim(),
-      minQuantityKg: _paymentModel == PaymentModel.perKg &&
+      minQuantityKg:
+          _paymentModel == PaymentModel.perKg &&
               _minQtyCtrl.text.trim().isNotEmpty
           ? double.tryParse(_minQtyCtrl.text.trim())
           : null,
@@ -98,8 +98,9 @@ class _EditCollectionJobSheetState extends State<EditCollectionJobSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
         child: Column(
@@ -110,8 +111,9 @@ class _EditCollectionJobSheetState extends State<EditCollectionJobSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                    color: const Color(0xFFD1D5DB),
-                    borderRadius: BorderRadius.circular(9999)),
+                  color: const Color(0xFFD1D5DB),
+                  borderRadius: BorderRadius.circular(9999),
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -119,7 +121,9 @@ class _EditCollectionJobSheetState extends State<EditCollectionJobSheet> {
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 4),
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFFEF3C7),
                     borderRadius: BorderRadius.circular(8),
@@ -127,30 +131,33 @@ class _EditCollectionJobSheetState extends State<EditCollectionJobSheet> {
                   child: Text(
                     'تعديل',
                     style: GoogleFonts.cairo(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFFC8860A)),
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFFC8860A),
+                    ),
                   ),
                 ),
                 const Spacer(),
                 Text(
                   'تعديل وظيفة التجميع',
                   style: GoogleFonts.cairo(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF002819)),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF002819),
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 20),
             PostJobFormBody(
               selectedTypes: _selected,
-              onToggleType: (t) => setState(() => _selected.contains(t)
-                  ? _selected.remove(t)
-                  : _selected.add(t)),
+              onToggleType: (t) => setState(
+                () => _selected.contains(t)
+                    ? _selected.remove(t)
+                    : _selected.add(t),
+              ),
               paymentModel: _paymentModel,
-              onPaymentModelChanged: (m) =>
-                  setState(() => _paymentModel = m),
+              onPaymentModelChanged: (m) => setState(() => _paymentModel = m),
               priceCtrl: _priceCtrl,
               minQtyCtrl: _minQtyCtrl,
               areaCtrl: _areaCtrl,
@@ -162,9 +169,10 @@ class _EditCollectionJobSheetState extends State<EditCollectionJobSheet> {
               child: Text(
                 'سبب التعديل (اختياري)',
                 style: GoogleFonts.cairo(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF404943)),
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF404943),
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -179,12 +187,15 @@ class _EditCollectionJobSheetState extends State<EditCollectionJobSheet> {
                 textAlign: TextAlign.right,
                 textDirection: TextDirection.rtl,
                 style: GoogleFonts.cairo(
-                    fontSize: 13, color: const Color(0xFF191C1B)),
+                  fontSize: 13,
+                  color: const Color(0xFF191C1B),
+                ),
                 decoration: InputDecoration(
                   hintText: 'مثال: تم تغيير التسعيرة بسبب ارتفاع الطلب...',
                   hintStyle: GoogleFonts.cairo(
-                      fontSize: 12,
-                      color: const Color(0xFFC8860A).withValues(alpha: 0.6)),
+                    fontSize: 12,
+                    color: const Color(0xFFC8860A).withValues(alpha: 0.6),
+                  ),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.all(14),
                 ),
@@ -192,8 +203,7 @@ class _EditCollectionJobSheetState extends State<EditCollectionJobSheet> {
             ),
             const SizedBox(height: 28),
             ListenableBuilder(
-              listenable:
-                  Listenable.merge([_priceCtrl, _areaCtrl, _descCtrl]),
+              listenable: Listenable.merge([_priceCtrl, _areaCtrl, _descCtrl]),
               builder: (context, _) => SizedBox(
                 width: double.infinity,
                 height: 54,
@@ -201,17 +211,22 @@ class _EditCollectionJobSheetState extends State<EditCollectionJobSheet> {
                   onPressed: _isValid ? _submit : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF14401F),
-                    disabledBackgroundColor:
-                        const Color(0xFF14401F).withValues(alpha: 0.35),
+                    disabledBackgroundColor: const Color(
+                      0xFF14401F,
+                    ).withValues(alpha: 0.35),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                     elevation: 0,
                   ),
-                  child: Text('حفظ التعديلات',
-                      style: GoogleFonts.cairo(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white)),
+                  child: Text(
+                    'حفظ التعديلات',
+                    style: GoogleFonts.cairo(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
             ),

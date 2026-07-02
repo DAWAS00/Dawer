@@ -37,15 +37,17 @@ class _FakeChatRepository implements IChatRepository {
     required UserRole senderRole,
     required String content,
   }) async {
-    _sent.add(ChatMessage(
-      id: 'test-${_sent.length}',
-      roomId: orderId,
-      senderId: senderId,
-      senderName: senderName,
-      senderRole: senderRole,
-      content: content,
-      sentAt: DateTime.now(),
-    ));
+    _sent.add(
+      ChatMessage(
+        id: 'test-${_sent.length}',
+        roomId: orderId,
+        senderId: senderId,
+        senderName: senderName,
+        senderRole: senderRole,
+        content: content,
+        sentAt: DateTime.now(),
+      ),
+    );
     return const Success(null);
   }
 
@@ -93,14 +95,14 @@ class _FakeChatRepository implements IChatRepository {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 ChatMessage _msg(String id, String senderId) => ChatMessage(
-      id: id,
-      roomId: 'ORD-TEST',
-      senderId: senderId,
-      senderName: 'اختبار',
-      senderRole: UserRole.supplier,
-      content: 'رسالة $id',
-      sentAt: DateTime.now(),
-    );
+  id: id,
+  roomId: 'ORD-TEST',
+  senderId: senderId,
+  senderName: 'اختبار',
+  senderRole: UserRole.supplier,
+  content: 'رسالة $id',
+  sentAt: DateTime.now(),
+);
 
 /// Pump the event loop enough to let microtasks + async listeners settle.
 Future<void> _settle() => Future.delayed(Duration.zero);
@@ -168,14 +170,17 @@ void main() {
   // ── markRead ──────────────────────────────────────────────────────────────────
 
   group('ChatViewModel – markRead on receive', () {
-    test('markRead is called with correct orderId after stream emits', () async {
-      vm.init();
-      await _settle();
-      fakeRepo.emit([_msg('m1', 'other-user')]);
-      await _settle();
+    test(
+      'markRead is called with correct orderId after stream emits',
+      () async {
+        vm.init();
+        await _settle();
+        fakeRepo.emit([_msg('m1', 'other-user')]);
+        await _settle();
 
-      expect(fakeRepo.lastMarkReadOrderId, 'ORD-TEST');
-    });
+        expect(fakeRepo.lastMarkReadOrderId, 'ORD-TEST');
+      },
+    );
 
     test('markRead is called with currentUserId', () async {
       vm.init();

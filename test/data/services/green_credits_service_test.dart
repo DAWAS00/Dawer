@@ -11,42 +11,51 @@ Order _makeOrder({
   double? estimatedWeightKg = 10.0,
   OrderStatus status = OrderStatus.completed,
   DateTime? completedAt,
-}) =>
-    Order(
-      id: 'test-${DateTime.now().microsecondsSinceEpoch}',
-      status: status,
-      type: OrderType.pickup,
-      wasteTypes: wasteTypes,
-      pickupAddress: 'شارع الجامعة، عمّان',
-      dropoffAddress: 'شركة الخضراء للتدوير',
-      reward: 0,
-      weightKg: weightKg,
-      estimatedWeightKg: estimatedWeightKg,
-      createdAt: completedAt?.subtract(const Duration(hours: 2)) ??
-          DateTime(2026, 1, 6, 10), // Monday
-      completedAt: completedAt ?? DateTime(2026, 1, 6, 12),
-      supplierName: 'مطعم الوطن',
-    );
+}) => Order(
+  id: 'test-${DateTime.now().microsecondsSinceEpoch}',
+  status: status,
+  type: OrderType.pickup,
+  wasteTypes: wasteTypes,
+  pickupAddress: 'شارع الجامعة، عمّان',
+  dropoffAddress: 'شركة الخضراء للتدوير',
+  reward: 0,
+  weightKg: weightKg,
+  estimatedWeightKg: estimatedWeightKg,
+  createdAt:
+      completedAt?.subtract(const Duration(hours: 2)) ??
+      DateTime(2026, 1, 6, 10), // Monday
+  completedAt: completedAt ?? DateTime(2026, 1, 6, 12),
+  supplierName: 'مطعم الوطن',
+);
 
 void main() {
   const service = GreenCreditsService();
 
   group('GreenCreditsService.creditsForOrder', () {
-    test('base order with 10 kg plastic earns base + weight × 1.0 multiplier', () {
-      final order = _makeOrder(wasteTypes: [WasteType.plastic], weightKg: 10.0);
-      // (10 base + 10 kg × 1.0 perKg) × 1.0 material × 1.0 streak = 20
-      expect(service.creditsForOrder(order), equals(20));
-    });
+    test(
+      'base order with 10 kg plastic earns base + weight × 1.0 multiplier',
+      () {
+        final order = _makeOrder(
+          wasteTypes: [WasteType.plastic],
+          weightKg: 10.0,
+        );
+        // (10 base + 10 kg × 1.0 perKg) × 1.0 material × 1.0 streak = 20
+        expect(service.creditsForOrder(order), equals(20));
+      },
+    );
 
-    test('uses highest material multiplier when multiple waste types present', () {
-      final order = _makeOrder(
-        wasteTypes: [WasteType.plastic, WasteType.electronics],
-        weightKg: 10.0,
-      );
-      // electronics = 5×, plastic = 1× → highest is 5×
-      // (10 + 10) × 5.0 = 100
-      expect(service.creditsForOrder(order), equals(100));
-    });
+    test(
+      'uses highest material multiplier when multiple waste types present',
+      () {
+        final order = _makeOrder(
+          wasteTypes: [WasteType.plastic, WasteType.electronics],
+          weightKg: 10.0,
+        );
+        // electronics = 5×, plastic = 1× → highest is 5×
+        // (10 + 10) × 5.0 = 100
+        expect(service.creditsForOrder(order), equals(100));
+      },
+    );
 
     test('oil pickup earns 3× multiplier', () {
       final order = _makeOrder(wasteTypes: [WasteType.oil], weightKg: 0.0);
@@ -55,7 +64,10 @@ void main() {
     });
 
     test('electronics earns 5× multiplier', () {
-      final order = _makeOrder(wasteTypes: [WasteType.electronics], weightKg: 0.0);
+      final order = _makeOrder(
+        wasteTypes: [WasteType.electronics],
+        weightKg: 0.0,
+      );
       // (10 + 0) × 5.0 × 1.0 = 50
       expect(service.creditsForOrder(order), equals(50));
     });
@@ -88,15 +100,18 @@ void main() {
       expect(service.creditsForOrder(order, weekStreak: 8), equals(40));
     });
 
-    test('zero weight with empty wasteTypes returns base credits (clamped to 1 minimum)', () {
-      final order = _makeOrder(
-        wasteTypes: [],
-        weightKg: 0.0,
-        estimatedWeightKg: 0.0,
-      );
-      // (10 + 0) × 1.0 × 1.0 = 10
-      expect(service.creditsForOrder(order), equals(10));
-    });
+    test(
+      'zero weight with empty wasteTypes returns base credits (clamped to 1 minimum)',
+      () {
+        final order = _makeOrder(
+          wasteTypes: [],
+          weightKg: 0.0,
+          estimatedWeightKg: 0.0,
+        );
+        // (10 + 0) × 1.0 × 1.0 = 10
+        expect(service.creditsForOrder(order), equals(10));
+      },
+    );
 
     test('result is always at least 1', () {
       final order = _makeOrder(
@@ -135,7 +150,7 @@ void main() {
 
     test('returns 2 for orders in two consecutive weeks', () {
       final orders = [
-        _makeOrder(completedAt: DateTime(2026, 1, 6, 10)),  // Week 1
+        _makeOrder(completedAt: DateTime(2026, 1, 6, 10)), // Week 1
         _makeOrder(completedAt: DateTime(2026, 1, 13, 10)), // Week 2
       ];
       expect(GreenCreditsService.weekStreakFrom(orders), equals(2));
@@ -143,7 +158,7 @@ void main() {
 
     test('returns 3 for three consecutive weeks', () {
       final orders = [
-        _makeOrder(completedAt: DateTime(2026, 1, 6, 10)),  // Week 1
+        _makeOrder(completedAt: DateTime(2026, 1, 6, 10)), // Week 1
         _makeOrder(completedAt: DateTime(2026, 1, 13, 10)), // Week 2
         _makeOrder(completedAt: DateTime(2026, 1, 20, 10)), // Week 3
       ];
@@ -152,7 +167,7 @@ void main() {
 
     test('resets streak when a week is skipped', () {
       final orders = [
-        _makeOrder(completedAt: DateTime(2026, 1, 6, 10)),  // Week 1
+        _makeOrder(completedAt: DateTime(2026, 1, 6, 10)), // Week 1
         // Week 2 skipped
         _makeOrder(completedAt: DateTime(2026, 1, 20, 10)), // Week 3
       ];
@@ -162,8 +177,8 @@ void main() {
 
     test('multiple orders in same week count as 1 week', () {
       final orders = [
-        _makeOrder(completedAt: DateTime(2026, 1, 6, 10)),  // Week 1, Monday
-        _makeOrder(completedAt: DateTime(2026, 1, 8, 14)),  // Week 1, Wednesday
+        _makeOrder(completedAt: DateTime(2026, 1, 6, 10)), // Week 1, Monday
+        _makeOrder(completedAt: DateTime(2026, 1, 8, 14)), // Week 1, Wednesday
         _makeOrder(completedAt: DateTime(2026, 1, 13, 10)), // Week 2
       ];
       expect(GreenCreditsService.weekStreakFrom(orders), equals(2));

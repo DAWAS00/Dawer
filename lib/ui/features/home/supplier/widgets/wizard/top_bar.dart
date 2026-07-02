@@ -28,10 +28,7 @@ class WizardTopBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
       child: Row(
         children: [
-          _CircleIconBtn(
-            icon: Icons.arrow_forward_ios_rounded,
-            onTap: onBack,
-          ),
+          _CircleIconBtn(icon: Icons.arrow_forward_ios_rounded, onTap: onBack),
           Expanded(
             child: Column(
               children: [
@@ -79,10 +76,7 @@ class _CircleIconBtn extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
 
-  const _CircleIconBtn({
-    required this.icon,
-    required this.onTap,
-  });
+  const _CircleIconBtn({required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

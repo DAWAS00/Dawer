@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dwaar/l10n/l10n.dart';
 import '../viewmodels/driver_earnings_viewmodel.dart';
@@ -30,13 +30,7 @@ class DriverEarningsFeeRow extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          Text(
-            label,
-            style: GoogleFonts.cairo(
-              fontSize: 13,
-              color: color,
-            ),
-          ),
+          Text(label, style: GoogleFonts.cairo(fontSize: 13, color: color)),
         ],
       ),
     );
@@ -77,10 +71,22 @@ class DriverEarningsFinancialsCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          DriverEarningsFeeRow(label: l10n.orderBaseFee, amount: financials.baseFee),
-          DriverEarningsFeeRow(label: l10n.earningsDistanceFees, amount: financials.distanceFee),
-          DriverEarningsFeeRow(label: l10n.orderMaterialFee, amount: financials.materialFee),
-          DriverEarningsFeeRow(label: l10n.orderUrgencyFee, amount: financials.urgencyFee),
+          DriverEarningsFeeRow(
+            label: l10n.orderBaseFee,
+            amount: financials.baseFee,
+          ),
+          DriverEarningsFeeRow(
+            label: l10n.earningsDistanceFees,
+            amount: financials.distanceFee,
+          ),
+          DriverEarningsFeeRow(
+            label: l10n.orderMaterialFee,
+            amount: financials.materialFee,
+          ),
+          DriverEarningsFeeRow(
+            label: l10n.orderUrgencyFee,
+            amount: financials.urgencyFee,
+          ),
           const Divider(height: 24, thickness: 1, color: Color(0xFFE6E9E7)),
           Row(
             children: [

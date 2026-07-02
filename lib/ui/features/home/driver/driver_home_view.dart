@@ -61,27 +61,38 @@ class _DriverHomeBody extends StatelessWidget {
   const _DriverHomeBody({required this.userName});
 
   Future<String?> _handleAcceptOrder(
-      BuildContext context, DriverHomeViewModel vm, order) async {
+    BuildContext context,
+    DriverHomeViewModel vm,
+    order,
+  ) async {
     final error = await vm.acceptOrder(order, context.l10n);
     if (error != null && context.mounted) {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16)),
-          title: Text(context.l10n.alert,
-              textAlign: TextAlign.right,
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-          content: Text(error,
-              textAlign: TextAlign.right,
-              style: GoogleFonts.cairo()),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Text(
+            context.l10n.alert,
+            textAlign: TextAlign.right,
+            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            error,
+            textAlign: TextAlign.right,
+            style: GoogleFonts.cairo(),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(context.l10n.ok,
-                  style: GoogleFonts.cairo(
-                      color: AppColors.primaryGreen,
-                      fontWeight: FontWeight.bold)),
+              child: Text(
+                context.l10n.ok,
+                style: GoogleFonts.cairo(
+                  color: AppColors.primaryGreen,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
@@ -91,7 +102,10 @@ class _DriverHomeBody extends StatelessWidget {
   }
 
   void _handleToggleAvailability(
-      BuildContext context, DriverHomeViewModel vm, bool value) {
+    BuildContext context,
+    DriverHomeViewModel vm,
+    bool value,
+  ) {
     final error = vm.toggleAvailability(value, context.l10n);
     if (error != null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -132,7 +146,8 @@ class _DriverHomeBody extends StatelessWidget {
           );
           return null;
         },
-        onMarkArrivedAtDropoff: (order) => vm.markArrivedAtDropoff(order, context.l10n),
+        onMarkArrivedAtDropoff: (order) =>
+            vm.markArrivedAtDropoff(order, context.l10n),
       ),
       MarketplaceTab(
         role: UserRole.driver,
@@ -140,9 +155,11 @@ class _DriverHomeBody extends StatelessWidget {
         onJobAccepted: (sale) {
           vm.setTab(2);
           if (sale != null) {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (_) => CollectionSaleDetailView(sale: sale),
-            ));
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => CollectionSaleDetailView(sale: sale),
+              ),
+            );
           }
         },
       ),
@@ -167,7 +184,8 @@ class _DriverHomeBody extends StatelessWidget {
           );
           return null;
         },
-        onMarkArrivedAtDropoff: (order) => vm.markArrivedAtDropoff(order, context.l10n),
+        onMarkArrivedAtDropoff: (order) =>
+            vm.markArrivedAtDropoff(order, context.l10n),
       ),
       AnalyticsTab(
         userId: context.read<IAuthRepository>().currentSession?.userId ?? '',
@@ -179,8 +197,8 @@ class _DriverHomeBody extends StatelessWidget {
         showEarningsEfficiency: true,
         showGreenCredits: true,
         greenPoints: context.read<AppOrderStore>().greenPointsFor(
-              context.read<IAuthRepository>().currentSession?.userId ?? '',
-            ),
+          context.read<IAuthRepository>().currentSession?.userId ?? '',
+        ),
       ),
       const DriverProfileTab(),
     ];
@@ -191,10 +209,7 @@ class _DriverHomeBody extends StatelessWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
-          IndexedStack(
-            index: vm.currentTab,
-            children: tabs,
-          ),
+          IndexedStack(index: vm.currentTab, children: tabs),
           if (kDebugMode) const DevTestingPanel(),
         ],
       ),
@@ -202,14 +217,16 @@ class _DriverHomeBody extends StatelessWidget {
           ? FloatingActionButton.extended(
               onPressed: () {
                 if (!marketVm.canAddListing(vm.user.name)) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(
-                      'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
-                      style: GoogleFonts.cairo(),
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
+                        style: GoogleFonts.cairo(),
+                      ),
+                      backgroundColor: const Color(0xFFB91C1C),
+                      behavior: SnackBarBehavior.floating,
                     ),
-                    backgroundColor: const Color(0xFFB91C1C),
-                    behavior: SnackBarBehavior.floating,
-                  ));
+                  );
                   return;
                 }
                 _showPostToMarketSheet(context, vm, marketVm);
@@ -219,7 +236,9 @@ class _DriverHomeBody extends StatelessWidget {
               label: Text(
                 context.l10n.driverPublishToMarket,
                 style: GoogleFonts.cairo(
-                    fontWeight: FontWeight.bold, color: Colors.white),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             )
           : null,
@@ -239,30 +258,31 @@ class _DriverHomeBody extends StatelessWidget {
         builder: (_) => NewPickupRequestView(
           role: UserRole.driver,
           initialMode: OrderMode.marketplace,
-          onSubmit: ({
-            required List<WasteType> wasteTypes,
-            required String pickupAddress,
-            List<String> images = const [],
-            String? notes,
-            WasteForm? wasteForm,
-            WeightCategory? weightCategory,
-            double? itemPrice,
-            double? pickupLat,
-            double? pickupLng,
-          }) {
-            final order = vm.createListing(
-              wasteTypes: wasteTypes,
-              pickupAddress: pickupAddress,
-              images: images,
-              notes: notes,
-              wasteForm: wasteForm,
-              weightCategory: weightCategory,
-              itemPrice: itemPrice,
-              pickupLat: pickupLat,
-              pickupLng: pickupLng,
-            );
-            marketVm.addListing(order);
-          },
+          onSubmit:
+              ({
+                required List<WasteType> wasteTypes,
+                required String pickupAddress,
+                List<String> images = const [],
+                String? notes,
+                WasteForm? wasteForm,
+                WeightCategory? weightCategory,
+                double? itemPrice,
+                double? pickupLat,
+                double? pickupLng,
+              }) {
+                final order = vm.createListing(
+                  wasteTypes: wasteTypes,
+                  pickupAddress: pickupAddress,
+                  images: images,
+                  notes: notes,
+                  wasteForm: wasteForm,
+                  weightCategory: weightCategory,
+                  itemPrice: itemPrice,
+                  pickupLat: pickupLat,
+                  pickupLng: pickupLng,
+                );
+                marketVm.addListing(order);
+              },
         ),
       ),
     );
@@ -278,12 +298,18 @@ class _DriverHomeBody extends StatelessWidget {
       destinations: [
         NavigationDestination(
           icon: const Icon(Icons.home_outlined),
-          selectedIcon: const Icon(Icons.home_rounded, color: AppColors.primaryGreen),
+          selectedIcon: const Icon(
+            Icons.home_rounded,
+            color: AppColors.primaryGreen,
+          ),
           label: context.l10n.navHome,
         ),
         NavigationDestination(
           icon: const Icon(LucideIcons.store),
-          selectedIcon: const Icon(LucideIcons.store, color: AppColors.primaryGreen),
+          selectedIcon: const Icon(
+            LucideIcons.store,
+            color: AppColors.primaryGreen,
+          ),
           label: context.l10n.navMarket,
         ),
         NavigationDestination(
@@ -295,18 +321,27 @@ class _DriverHomeBody extends StatelessWidget {
           selectedIcon: Badge(
             isLabelVisible: vm.active != null,
             backgroundColor: Colors.red,
-            child: const Icon(Icons.receipt_long_rounded, color: AppColors.primaryGreen),
+            child: const Icon(
+              Icons.receipt_long_rounded,
+              color: AppColors.primaryGreen,
+            ),
           ),
           label: context.l10n.navMyOrders,
         ),
         NavigationDestination(
           icon: const Icon(Icons.bar_chart_outlined),
-          selectedIcon: const Icon(Icons.bar_chart_rounded, color: AppColors.primaryGreen),
+          selectedIcon: const Icon(
+            Icons.bar_chart_rounded,
+            color: AppColors.primaryGreen,
+          ),
           label: 'تقاريري',
         ),
         NavigationDestination(
           icon: const Icon(LucideIcons.user),
-          selectedIcon: const Icon(LucideIcons.user, color: AppColors.primaryGreen),
+          selectedIcon: const Icon(
+            LucideIcons.user,
+            color: AppColors.primaryGreen,
+          ),
           label: context.l10n.navProfile,
         ),
       ],

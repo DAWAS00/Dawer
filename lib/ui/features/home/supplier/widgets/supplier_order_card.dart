@@ -23,12 +23,13 @@ class SupplierOrderCard extends StatelessWidget {
   });
 
   Color get _accent => switch (order.status) {
-        OrderStatus.pending => AppColors.accentAmber,
-        OrderStatus.accepted || OrderStatus.arrivedAtPickup => AppColors.statusActiveText,
-        OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => AppColors.jobBlue,
-        OrderStatus.completed => AppColors.statusCompletedText,
-        OrderStatus.cancelled => AppColors.statusCancelledText,
-      };
+    OrderStatus.pending => AppColors.accentAmber,
+    OrderStatus.accepted ||
+    OrderStatus.arrivedAtPickup => AppColors.statusActiveText,
+    OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => AppColors.jobBlue,
+    OrderStatus.completed => AppColors.statusCompletedText,
+    OrderStatus.cancelled => AppColors.statusCancelledText,
+  };
 
   /// Whether the order is currently being fulfilled (between acceptance and
   /// delivery) — the window where live tracking matters most.
@@ -40,81 +41,105 @@ class SupplierOrderCard extends StatelessWidget {
 
   /// Plain-language "what's happening right now" line + matching icon, shown
   /// in the live tracking banner so the customer doesn't have to decode chips.
-  (IconData, String) statusLine(AppLocalizations l10n) => switch (order.status) {
+  (IconData, String) statusLine(AppLocalizations l10n) =>
+      switch (order.status) {
         OrderStatus.pending => (
-            Icons.hourglass_top_rounded,
-            l10n.supplierOrderPendingDriver,
-          ),
+          Icons.hourglass_top_rounded,
+          l10n.supplierOrderPendingDriver,
+        ),
         OrderStatus.accepted => (
-            Icons.directions_car_rounded,
-            l10n.supplierOrderAcceptedOnWay,
-          ),
+          Icons.directions_car_rounded,
+          l10n.supplierOrderAcceptedOnWay,
+        ),
         OrderStatus.arrivedAtPickup => (
-            Icons.pin_drop_rounded,
-            l10n.supplierOrderDriverArrivedPickup,
-          ),
+          Icons.pin_drop_rounded,
+          l10n.supplierOrderDriverArrivedPickup,
+        ),
         OrderStatus.inTransit => (
-            Icons.local_shipping_rounded,
-            l10n.supplierOrderInTransitToDest,
-          ),
+          Icons.local_shipping_rounded,
+          l10n.supplierOrderInTransitToDest,
+        ),
         OrderStatus.arrivedAtDropoff => (
-            Icons.flag_rounded,
-            l10n.supplierOrderDriverArrivedDropoff,
-          ),
+          Icons.flag_rounded,
+          l10n.supplierOrderDriverArrivedDropoff,
+        ),
         OrderStatus.completed => (
-            Icons.check_circle_rounded,
-            l10n.supplierOrderDeliveredSuccess,
-          ),
+          Icons.check_circle_rounded,
+          l10n.supplierOrderDeliveredSuccess,
+        ),
         OrderStatus.cancelled => (
-            Icons.cancel_rounded,
-            l10n.supplierOrderCancelledDone,
-          ),
+          Icons.cancel_rounded,
+          l10n.supplierOrderCancelledDone,
+        ),
       };
 
   (Color bg, Color text) get _chip => switch (order.status) {
-        OrderStatus.pending => (AppColors.statusPendingBg, AppColors.statusPendingText),
-        OrderStatus.accepted ||
-        OrderStatus.arrivedAtPickup =>
-          (AppColors.statusActiveBg, AppColors.statusActiveText),
-        OrderStatus.inTransit ||
-        OrderStatus.arrivedAtDropoff =>
-          (AppColors.statusInTransitBg, AppColors.statusInTransitText),
-        OrderStatus.completed => (AppColors.statusCompletedBg, AppColors.statusCompletedText),
-        OrderStatus.cancelled => (AppColors.statusCancelledBg, AppColors.statusCancelledText),
-      };
+    OrderStatus.pending => (
+      AppColors.statusPendingBg,
+      AppColors.statusPendingText,
+    ),
+    OrderStatus.accepted || OrderStatus.arrivedAtPickup => (
+      AppColors.statusActiveBg,
+      AppColors.statusActiveText,
+    ),
+    OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => (
+      AppColors.statusInTransitBg,
+      AppColors.statusInTransitText,
+    ),
+    OrderStatus.completed => (
+      AppColors.statusCompletedBg,
+      AppColors.statusCompletedText,
+    ),
+    OrderStatus.cancelled => (
+      AppColors.statusCancelledBg,
+      AppColors.statusCancelledText,
+    ),
+  };
 
   void _showCancelDialog(BuildContext context) {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(ctx.l10n.cancelOrderTitle,
-            textAlign: TextAlign.right,
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        content: Text(ctx.l10n.cancelOrderConfirm,
-            textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+        title: Text(
+          ctx.l10n.cancelOrderTitle,
+          textAlign: TextAlign.right,
+          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          ctx.l10n.cancelOrderConfirm,
+          textAlign: TextAlign.right,
+          style: GoogleFonts.cairo(),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(ctx.l10n.no,
-                style: GoogleFonts.cairo(color: AppColors.mutedText)),
+            child: Text(
+              ctx.l10n.no,
+              style: GoogleFonts.cairo(color: AppColors.mutedText),
+            ),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               final error = onCancelOrder(order.id);
               if (error != null) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(error, style: GoogleFonts.cairo()),
-                  backgroundColor: Colors.orange.shade700,
-                  behavior: SnackBarBehavior.floating,
-                ));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(error, style: GoogleFonts.cairo()),
+                    backgroundColor: Colors.orange.shade700,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
               }
             },
-            child: Text(ctx.l10n.yesCancelOrder,
-                style: GoogleFonts.cairo(
-                    color: AppColors.statusCancelledText,
-                    fontWeight: FontWeight.bold)),
+            child: Text(
+              ctx.l10n.yesCancelOrder,
+              style: GoogleFonts.cairo(
+                color: AppColors.statusCancelledText,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -122,19 +147,21 @@ class SupplierOrderCard extends StatelessWidget {
   }
 
   void _openTracking(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => OrderDetailsView(
-        order: order,
-        onSupplierConfirmArrival: (available) {
-          final store = context.read<AppOrderStore>();
-          if (available) {
-            store.handleSupplierAvailable(order.id);
-          } else {
-            store.handleSupplierUnavailable(order.id);
-          }
-        },
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => OrderDetailsView(
+          order: order,
+          onSupplierConfirmArrival: (available) {
+            final store = context.read<AppOrderStore>();
+            if (available) {
+              store.handleSupplierAvailable(order.id);
+            } else {
+              store.handleSupplierUnavailable(order.id);
+            }
+          },
+        ),
       ),
-    ));
+    );
   }
 
   @override
@@ -182,11 +209,18 @@ class SupplierOrderCard extends StatelessWidget {
                       color: accent.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(Icons.recycling_rounded, size: 17, color: accent),
+                    child: Icon(
+                      Icons.recycling_rounded,
+                      size: 17,
+                      color: accent,
+                    ),
                   ),
                   const SizedBox(width: 10),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: chipBg,
                       borderRadius: BorderRadius.circular(20),
@@ -234,23 +268,27 @@ class SupplierOrderCard extends StatelessWidget {
                 runSpacing: 4,
                 alignment: WrapAlignment.end,
                 children: order.wasteTypes
-                    .map((t) => Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: AppColors.surfaceAlt,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: AppColors.surfaceAltBorder),
+                    .map(
+                      (t) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceAlt,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: AppColors.surfaceAltBorder),
+                        ),
+                        child: Text(
+                          t.labelFor(locale),
+                          style: GoogleFonts.cairo(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textMain,
                           ),
-                          child: Text(
-                            t.labelFor(locale),
-                            style: GoogleFonts.cairo(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textMain,
-                            ),
-                          ),
-                        ))
+                        ),
+                      ),
+                    )
                     .toList(),
               ),
 
@@ -263,11 +301,16 @@ class SupplierOrderCard extends StatelessWidget {
                     Text(
                       '${context.l10n.orderScheduledAt}: ${DateFormatter.date(order.scheduledAt!)} ${DateFormatter.time(order.scheduledAt!)}',
                       style: GoogleFonts.cairo(
-                          fontSize: 11, color: AppColors.jobBlue),
+                        fontSize: 11,
+                        color: AppColors.jobBlue,
+                      ),
                     ),
                     const SizedBox(width: 4),
-                    const Icon(Icons.schedule_rounded,
-                        size: 13, color: AppColors.jobBlue),
+                    const Icon(
+                      Icons.schedule_rounded,
+                      size: 13,
+                      color: AppColors.jobBlue,
+                    ),
                   ],
                 ),
               ],
@@ -277,7 +320,9 @@ class SupplierOrderCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 10),
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.background,
                     borderRadius: BorderRadius.circular(12),
@@ -288,7 +333,9 @@ class SupplierOrderCard extends StatelessWidget {
                       if (order.eta != null) ...[
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.statusInTransitBg,
                             borderRadius: BorderRadius.circular(8),
@@ -328,8 +375,11 @@ class SupplierOrderCard extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 2),
-                                const Icon(Icons.star_rounded,
-                                    color: Color(0xFFFFC107), size: 13),
+                                const Icon(
+                                  Icons.star_rounded,
+                                  color: Color(0xFFFFC107),
+                                  size: 13,
+                                ),
                               ],
                             ),
                         ],
@@ -337,10 +387,14 @@ class SupplierOrderCard extends StatelessWidget {
                       const SizedBox(width: 10),
                       CircleAvatar(
                         radius: 18,
-                        backgroundColor:
-                            AppColors.primaryGreen.withValues(alpha: 0.12),
-                        child: const Icon(Icons.person_rounded,
-                            color: AppColors.primaryGreen, size: 18),
+                        backgroundColor: AppColors.primaryGreen.withValues(
+                          alpha: 0.12,
+                        ),
+                        child: const Icon(
+                          Icons.person_rounded,
+                          color: AppColors.primaryGreen,
+                          size: 18,
+                        ),
                       ),
                     ],
                   ),
@@ -379,13 +433,19 @@ class SupplierOrderCard extends StatelessWidget {
                       foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    icon: const Icon(Icons.location_searching_rounded, size: 17),
+                    icon: const Icon(
+                      Icons.location_searching_rounded,
+                      size: 17,
+                    ),
                     label: Text(
                       context.l10n.orderTrackButton,
                       style: GoogleFonts.cairo(
-                          fontWeight: FontWeight.bold, fontSize: 14),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ),
@@ -402,16 +462,21 @@ class SupplierOrderCard extends StatelessWidget {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.statusCancelledText,
                       side: BorderSide(
-                          color: AppColors.statusCancelledText
-                              .withValues(alpha: 0.4)),
+                        color: AppColors.statusCancelledText.withValues(
+                          alpha: 0.4,
+                        ),
+                      ),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     icon: const Icon(Icons.cancel_outlined, size: 16),
                     label: Text(
                       context.l10n.cancelOrderTitle,
                       style: GoogleFonts.cairo(
-                          fontWeight: FontWeight.bold, fontSize: 13),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                 ),
@@ -483,8 +548,11 @@ class _LiveStatusBanner extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.schedule_rounded,
-                      size: 11, color: Colors.white),
+                  const Icon(
+                    Icons.schedule_rounded,
+                    size: 11,
+                    color: Colors.white,
+                  ),
                   const SizedBox(width: 3),
                   Text(
                     eta!,

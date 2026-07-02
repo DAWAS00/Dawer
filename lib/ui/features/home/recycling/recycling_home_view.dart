@@ -67,7 +67,11 @@ class _RecyclingHomeBody extends StatelessWidget {
         jobs: vm.jobs,
       ),
       MarketplaceTab(role: UserRole.recyclingCo, currentUserName: userName),
-      RecyclingOrdersTab(incoming: vm.incoming, jobs: vm.jobs, salesForJob: vm.salesForJob),
+      RecyclingOrdersTab(
+        incoming: vm.incoming,
+        jobs: vm.jobs,
+        salesForJob: vm.salesForJob,
+      ),
       AnalyticsTab(
         userId: context.read<IAuthRepository>().currentSession?.userId ?? '',
         allOrders: [...vm.incoming, ...vm.jobs, ...vm.completedDeliveries],
@@ -84,8 +88,8 @@ class _RecyclingHomeBody extends StatelessWidget {
         showProfitability: true,
         showGreenCredits: true,
         greenPoints: context.read<AppOrderStore>().greenPointsFor(
-              context.read<IAuthRepository>().currentSession?.userId ?? '',
-            ),
+          context.read<IAuthRepository>().currentSession?.userId ?? '',
+        ),
       ),
       RecyclingProfileTab(userName: userName),
     ];
@@ -96,10 +100,7 @@ class _RecyclingHomeBody extends StatelessWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
-          IndexedStack(
-            index: vm.currentTab,
-            children: tabs,
-          ),
+          IndexedStack(index: vm.currentTab, children: tabs),
           if (kDebugMode) const DevTestingPanel(),
         ],
       ),
@@ -107,14 +108,16 @@ class _RecyclingHomeBody extends StatelessWidget {
           ? FloatingActionButton.extended(
               onPressed: () {
                 if (!marketVm.canAddListing(vm.companyName)) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(
-                      l10n.recyclingMaxListingsReached(marketVm.maxListings),
-                      style: GoogleFonts.cairo(),
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        l10n.recyclingMaxListingsReached(marketVm.maxListings),
+                        style: GoogleFonts.cairo(),
+                      ),
+                      backgroundColor: const Color(0xFFB91C1C),
+                      behavior: SnackBarBehavior.floating,
                     ),
-                    backgroundColor: const Color(0xFFB91C1C),
-                    behavior: SnackBarBehavior.floating,
-                  ));
+                  );
                   return;
                 }
                 _showPostToMarketSheet(context, vm, marketVm);
@@ -146,30 +149,31 @@ class _RecyclingHomeBody extends StatelessWidget {
         builder: (_) => NewPickupRequestView(
           role: UserRole.recyclingCo,
           initialMode: OrderMode.marketplace,
-          onSubmit: ({
-            required List<WasteType> wasteTypes,
-            required String pickupAddress,
-            List<String> images = const [],
-            String? notes,
-            WasteForm? wasteForm,
-            WeightCategory? weightCategory,
-            double? itemPrice,
-            double? pickupLat,
-            double? pickupLng,
-          }) {
-            final order = recyclingVm.createListing(
-              wasteTypes: wasteTypes,
-              pickupAddress: pickupAddress,
-              images: images,
-              notes: notes,
-              wasteForm: wasteForm,
-              weightCategory: weightCategory,
-              itemPrice: itemPrice,
-              pickupLat: pickupLat,
-              pickupLng: pickupLng,
-            );
-            marketVm.addListing(order);
-          },
+          onSubmit:
+              ({
+                required List<WasteType> wasteTypes,
+                required String pickupAddress,
+                List<String> images = const [],
+                String? notes,
+                WasteForm? wasteForm,
+                WeightCategory? weightCategory,
+                double? itemPrice,
+                double? pickupLat,
+                double? pickupLng,
+              }) {
+                final order = recyclingVm.createListing(
+                  wasteTypes: wasteTypes,
+                  pickupAddress: pickupAddress,
+                  images: images,
+                  notes: notes,
+                  wasteForm: wasteForm,
+                  weightCategory: weightCategory,
+                  itemPrice: itemPrice,
+                  pickupLat: pickupLat,
+                  pickupLng: pickupLng,
+                );
+                marketVm.addListing(order);
+              },
         ),
       ),
     );
@@ -194,11 +198,36 @@ class _RecyclingHomeBody extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              AppNavItem(icon: Icons.home_rounded, label: l10n.navHome, isSelected: vm.currentTab == 0, onTap: () => vm.setTab(0)),
-              AppNavItem(icon: Icons.storefront_rounded, label: l10n.navMarket, isSelected: vm.currentTab == 1, onTap: () => vm.setTab(1)),
-              AppNavItem(icon: Icons.receipt_long_rounded, label: l10n.navOrders, isSelected: vm.currentTab == 2, onTap: () => vm.setTab(2)),
-              AppNavItem(icon: Icons.bar_chart_rounded, label: 'تقاريري', isSelected: vm.currentTab == 3, onTap: () => vm.setTab(3)),
-              AppNavItem(icon: Icons.business_rounded, label: l10n.navAccount, isSelected: vm.currentTab == 4, onTap: () => vm.setTab(4)),
+              AppNavItem(
+                icon: Icons.home_rounded,
+                label: l10n.navHome,
+                isSelected: vm.currentTab == 0,
+                onTap: () => vm.setTab(0),
+              ),
+              AppNavItem(
+                icon: Icons.storefront_rounded,
+                label: l10n.navMarket,
+                isSelected: vm.currentTab == 1,
+                onTap: () => vm.setTab(1),
+              ),
+              AppNavItem(
+                icon: Icons.receipt_long_rounded,
+                label: l10n.navOrders,
+                isSelected: vm.currentTab == 2,
+                onTap: () => vm.setTab(2),
+              ),
+              AppNavItem(
+                icon: Icons.bar_chart_rounded,
+                label: 'تقاريري',
+                isSelected: vm.currentTab == 3,
+                onTap: () => vm.setTab(3),
+              ),
+              AppNavItem(
+                icon: Icons.business_rounded,
+                label: l10n.navAccount,
+                isSelected: vm.currentTab == 4,
+                onTap: () => vm.setTab(4),
+              ),
             ],
           ),
         ),
@@ -206,4 +235,3 @@ class _RecyclingHomeBody extends StatelessWidget {
     );
   }
 }
-

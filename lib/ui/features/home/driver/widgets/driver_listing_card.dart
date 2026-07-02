@@ -18,11 +18,11 @@ class DriverListingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dt = context.dt;
-    
+
     // Calculate time ago (simplified)
     final diff = DateTime.now().difference(order.createdAt);
-    final postedAgo = diff.inHours > 0 
-        ? 'منذ ${diff.inHours} ساعة' 
+    final postedAgo = diff.inHours > 0
+        ? 'منذ ${diff.inHours} ساعة'
         : 'منذ ${diff.inMinutes} دقيقة';
 
     return GestureDetector(
@@ -35,7 +35,10 @@ class DriverListingCard extends StatelessWidget {
           border: Border.all(color: dt.border, width: 0.5),
           boxShadow: [
             BoxShadow(
-              color: dt.shadow.withValues(alpha: 0.04), blurRadius: 4, offset: const Offset(0, 1)),
+              color: dt.shadow.withValues(alpha: 0.04),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
+            ),
           ],
         ),
         child: Padding(
@@ -71,7 +74,9 @@ class DriverListingCard extends StatelessWidget {
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 7, vertical: 3),
+                      horizontal: 7,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: order.status == OrderStatus.pending
                           ? AppColors.amberContainer
@@ -79,7 +84,9 @@ class DriverListingCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      order.status == OrderStatus.pending ? 'بانتظار مشتري' : 'نشط',
+                      order.status == OrderStatus.pending
+                          ? 'بانتظار مشتري'
+                          : 'نشط',
                       style: TextStyle(
                         fontSize: 8,
                         fontWeight: FontWeight.w700,
@@ -123,10 +130,7 @@ class DriverListingCard extends StatelessWidget {
                   const Spacer(),
                   Text(
                     order.weightCategory?.shortLabel ?? 'غير محدد',
-                    style: TextStyle(
-                      fontSize: 9,
-                      color: dt.onSurfaceMuted,
-                    ),
+                    style: TextStyle(fontSize: 9, color: dt.onSurfaceMuted),
                   ),
                 ],
               ),

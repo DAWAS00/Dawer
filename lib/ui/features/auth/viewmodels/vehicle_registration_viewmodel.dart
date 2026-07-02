@@ -14,10 +14,11 @@ class VehicleRegistrationViewModel extends ChangeNotifier {
   final IAiVehicleRegistrationService _service;
 
   VehicleRegistrationViewModel({IAiVehicleRegistrationService? service})
-      : _service = service ??
-            (AiConfig.hasGeminiKey
-                ? GeminiVehicleRegistrationService()
-                : MockAiVehicleRegistrationService());
+    : _service =
+          service ??
+          (AiConfig.hasGeminiKey
+              ? GeminiVehicleRegistrationService()
+              : MockAiVehicleRegistrationService());
 
   LicenseValidationState _state = LicenseValidationState.idle;
   LicenseValidationState get state => _state;

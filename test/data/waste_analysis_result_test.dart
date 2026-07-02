@@ -24,15 +24,24 @@ void main() {
     });
 
     test('isRecyclable true', () => expect(result.isRecyclable, isTrue));
-    test('materialType Arabic', () => expect(result.materialType, 'زيت طبخ مستعمل'));
-    test('materialTypeEn slug', () => expect(result.materialTypeEn, 'used_cooking_oil'));
+    test(
+      'materialType Arabic',
+      () => expect(result.materialType, 'زيت طبخ مستعمل'),
+    );
+    test(
+      'materialTypeEn slug',
+      () => expect(result.materialTypeEn, 'used_cooking_oil'),
+    );
     test('grade A parsed', () => expect(result.grade, WasteGrade.a));
     test('quantity 5.0', () => expect(result.estimatedQuantity, 5.0));
     test('quantityUnit لتر', () => expect(result.quantityUnit, 'لتر'));
     test('payoutMin 2.0', () => expect(result.estimatedPayoutMinJod, 2.0));
     test('payoutMax 2.5', () => expect(result.estimatedPayoutMaxJod, 2.5));
     test('explanation non-empty', () => expect(result.explanation, isNotEmpty));
-    test('recycleTips list has 2 items', () => expect(result.recycleTips.length, 2));
+    test(
+      'recycleTips list has 2 items',
+      () => expect(result.recycleTips.length, 2),
+    );
   });
 
   group('WasteAnalysisResult.fromJson — wood', () {
@@ -191,7 +200,9 @@ void main() {
     });
 
     test('payout clamps at 9999', () {
-      final r = WasteAnalysisResult.fromJson({'estimatedPayoutMaxJod': 99999.0});
+      final r = WasteAnalysisResult.fromJson({
+        'estimatedPayoutMaxJod': 99999.0,
+      });
       expect(r.estimatedPayoutMaxJod, 9999.0);
     });
 
@@ -237,33 +248,51 @@ void main() {
 
     test('isRecyclable defaults false', () => expect(r.isRecyclable, isFalse));
     test('materialType defaults empty', () => expect(r.materialType, ''));
-    test('materialTypeEn defaults unknown', () => expect(r.materialTypeEn, 'unknown'));
+    test(
+      'materialTypeEn defaults unknown',
+      () => expect(r.materialTypeEn, 'unknown'),
+    );
     test('grade defaults rejected', () => expect(r.grade, WasteGrade.rejected));
     test('quantity defaults 0', () => expect(r.estimatedQuantity, 0.0));
     test('quantityUnit defaults كغ', () => expect(r.quantityUnit, 'كغ'));
     test('payoutMin defaults 0', () => expect(r.estimatedPayoutMinJod, 0.0));
     test('payoutMax defaults 0', () => expect(r.estimatedPayoutMaxJod, 0.0));
     test('explanation defaults empty', () => expect(r.explanation, ''));
-    test('recycleTips defaults empty list', () => expect(r.recycleTips, isEmpty));
+    test(
+      'recycleTips defaults empty list',
+      () => expect(r.recycleTips, isEmpty),
+    );
   });
 
   // ── display helpers ───────────────────────────────────────────────────────
 
   group('gradeLabel', () {
     test('A → A — ممتاز', () {
-      expect(WasteAnalysisResult.fromJson({'grade': 'A'}).gradeLabel, 'A — ممتاز');
+      expect(
+        WasteAnalysisResult.fromJson({'grade': 'A'}).gradeLabel,
+        'A — ممتاز',
+      );
     });
 
     test('B → B — جيد', () {
-      expect(WasteAnalysisResult.fromJson({'grade': 'B'}).gradeLabel, 'B — جيد');
+      expect(
+        WasteAnalysisResult.fromJson({'grade': 'B'}).gradeLabel,
+        'B — جيد',
+      );
     });
 
     test('C → C — مقبول', () {
-      expect(WasteAnalysisResult.fromJson({'grade': 'C'}).gradeLabel, 'C — مقبول');
+      expect(
+        WasteAnalysisResult.fromJson({'grade': 'C'}).gradeLabel,
+        'C — مقبول',
+      );
     });
 
     test('rejected → مرفوض', () {
-      expect(WasteAnalysisResult.fromJson({'grade': 'rejected'}).gradeLabel, 'مرفوض');
+      expect(
+        WasteAnalysisResult.fromJson({'grade': 'rejected'}).gradeLabel,
+        'مرفوض',
+      );
     });
   });
 
@@ -294,9 +323,15 @@ void main() {
     String icon(String en) =>
         WasteAnalysisResult.fromJson({'materialTypeEn': en}).materialIcon;
 
-    test('used_cooking_oil → 🛢️', () => expect(icon('used_cooking_oil'), '🛢️'));
+    test(
+      'used_cooking_oil → 🛢️',
+      () => expect(icon('used_cooking_oil'), '🛢️'),
+    );
     test('wood → 🪵', () => expect(icon('wood'), '🪵'));
-    test('construction_wood → 🪵', () => expect(icon('construction_wood'), '🪵'));
+    test(
+      'construction_wood → 🪵',
+      () => expect(icon('construction_wood'), '🪵'),
+    );
     test('plastic → ♻️', () => expect(icon('plastic'), '♻️'));
     test('metal → ⚙️', () => expect(icon('metal'), '⚙️'));
     test('aluminum → ⚙️', () => expect(icon('aluminum'), '⚙️'));

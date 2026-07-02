@@ -34,13 +34,14 @@ class OrderDriverCard extends StatelessWidget {
         .take(2)
         .join();
     final rating = order.driverRating ?? 5.0;
-    
+
     final vehicleType = order.driverVehicle;
     final vehicleModel = order.driverVehicleModel;
     final vehicleColor = order.driverVehicleColor;
     final licensePlate = order.driverLicensePlate;
-    
-    final hasVehicleInfo = vehicleType != null || vehicleModel != null || licensePlate != null;
+
+    final hasVehicleInfo =
+        vehicleType != null || vehicleModel != null || licensePlate != null;
 
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 16, 20, 0),
@@ -70,9 +71,14 @@ class OrderDriverCard extends StatelessWidget {
                   color: const Color(0xFF002819),
                 ),
               ),
-              if (order.eta != null && (order.status == OrderStatus.accepted || order.status == OrderStatus.inTransit))
+              if (order.eta != null &&
+                  (order.status == OrderStatus.accepted ||
+                      order.status == OrderStatus.inTransit))
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF06402B).withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
@@ -80,7 +86,11 @@ class OrderDriverCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.access_time_rounded, size: 12, color: Color(0xFF06402B)),
+                      const Icon(
+                        Icons.access_time_rounded,
+                        size: 12,
+                        color: Color(0xFF06402B),
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         l10n.orderDriverArrives(order.eta!),
@@ -100,7 +110,9 @@ class OrderDriverCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 28,
-                backgroundColor: const Color(0xFF06402B).withValues(alpha: 0.12),
+                backgroundColor: const Color(
+                  0xFF06402B,
+                ).withValues(alpha: 0.12),
                 child: Text(
                   initials,
                   style: GoogleFonts.cairo(
@@ -126,7 +138,11 @@ class OrderDriverCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.star_rounded, size: 15, color: AppColors.accentAmber),
+                        Icon(
+                          Icons.star_rounded,
+                          size: 15,
+                          color: AppColors.accentAmber,
+                        ),
                         const SizedBox(width: 3),
                         Text(
                           rating.toStringAsFixed(1),
@@ -144,22 +160,34 @@ class OrderDriverCard extends StatelessWidget {
               if (order.driverPhone != null) ...[
                 IconButton(
                   onPressed: () => _openChat(context),
-                  icon: const Icon(Icons.chat_bubble_outline_rounded, color: Color(0xFF06402B), size: 22),
+                  icon: const Icon(
+                    Icons.chat_bubble_outline_rounded,
+                    color: Color(0xFF06402B),
+                    size: 22,
+                  ),
                   style: IconButton.styleFrom(
-                    backgroundColor: const Color(0xFF06402B).withValues(alpha: 0.1),
+                    backgroundColor: const Color(
+                      0xFF06402B,
+                    ).withValues(alpha: 0.1),
                     padding: const EdgeInsets.all(8),
                   ),
                 ),
                 const SizedBox(width: 8),
                 IconButton(
                   onPressed: () => _makeCall(order.driverPhone!),
-                  icon: const Icon(Icons.phone_rounded, color: Color(0xFF06402B), size: 22),
+                  icon: const Icon(
+                    Icons.phone_rounded,
+                    color: Color(0xFF06402B),
+                    size: 22,
+                  ),
                   style: IconButton.styleFrom(
-                    backgroundColor: const Color(0xFF06402B).withValues(alpha: 0.1),
+                    backgroundColor: const Color(
+                      0xFF06402B,
+                    ).withValues(alpha: 0.1),
                     padding: const EdgeInsets.all(8),
                   ),
                 ),
-              ]
+              ],
             ],
           ),
           if (hasVehicleInfo) ...[
@@ -174,12 +202,19 @@ class OrderDriverCard extends StatelessWidget {
                     children: [
                       Text(
                         l10n.profileVehicle,
-                        style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF717973)),
+                        style: GoogleFonts.cairo(
+                          fontSize: 11,
+                          color: const Color(0xFF717973),
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Row(
                         children: [
-                          const Icon(Icons.directions_car_rounded, size: 14, color: Color(0xFF404943)),
+                          const Icon(
+                            Icons.directions_car_rounded,
+                            size: 14,
+                            color: Color(0xFF404943),
+                          ),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
@@ -198,7 +233,11 @@ class OrderDriverCard extends StatelessWidget {
                   ),
                 ),
                 if (licensePlate != null) ...[
-                  Container(width: 1, height: 30, color: const Color(0xFFE6E9E7)),
+                  Container(
+                    width: 1,
+                    height: 30,
+                    color: const Color(0xFFE6E9E7),
+                  ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(right: 16.0),
@@ -207,7 +246,10 @@ class OrderDriverCard extends StatelessWidget {
                         children: [
                           Text(
                             l10n.profileLicensePlate,
-                            style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF717973)),
+                            style: GoogleFonts.cairo(
+                              fontSize: 11,
+                              color: const Color(0xFF717973),
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(

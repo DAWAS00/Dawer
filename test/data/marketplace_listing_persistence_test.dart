@@ -14,22 +14,30 @@ void main() {
   });
 
   group('Marketplace Listing Persistence (Phase 0 Fix)', () {
-    test('addOrder successfully persists marketplace listing to AppOrderStore', () {
-      final listing = viewModel.createListing(
-        wasteTypes: [WasteType.plastic],
-        pickupAddress: 'شارع الجامعة، عمان',
-        itemPrice: 15.0,
-      );
+    test(
+      'addOrder successfully persists marketplace listing to AppOrderStore',
+      () {
+        final listing = viewModel.createListing(
+          wasteTypes: [WasteType.plastic],
+          pickupAddress: 'شارع الجامعة، عمان',
+          itemPrice: 15.0,
+        );
 
-      // Verify listing is not yet in the store
-      expect(store.marketItems.contains(listing), isFalse);
+        // Verify listing is not yet in the store
+        expect(store.marketItems.contains(listing), isFalse);
 
-      // Call addOrder on the viewmodel (simulates wizard submission)
-      viewModel.addOrder(listing);
+        // Call addOrder on the viewmodel (simulates wizard submission)
+        viewModel.addOrder(listing);
 
-      // Verify that after the fix, the listing is successfully added to the store
-      expect(store.marketItems.any((item) => item.id == listing.id), isTrue);
-      expect(store.marketItems.firstWhere((item) => item.id == listing.id).itemPrice, 15.0);
-    });
+        // Verify that after the fix, the listing is successfully added to the store
+        expect(store.marketItems.any((item) => item.id == listing.id), isTrue);
+        expect(
+          store.marketItems
+              .firstWhere((item) => item.id == listing.id)
+              .itemPrice,
+          15.0,
+        );
+      },
+    );
   });
 }

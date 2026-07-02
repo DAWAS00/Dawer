@@ -50,7 +50,10 @@ class DriverHomeHeader extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _EarningsChip(totalEarnings: totalEarnings, label: l10n.driverEarningsLabel),
+              _EarningsChip(
+                totalEarnings: totalEarnings,
+                label: l10n.driverEarningsLabel,
+              ),
 
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -84,7 +87,11 @@ class DriverHomeHeader extends StatelessWidget {
                     width: 1.5,
                   ),
                 ),
-                child: const Icon(LucideIcons.user, color: AppColors.surface, size: 22),
+                child: const Icon(
+                  LucideIcons.user,
+                  color: AppColors.surface,
+                  size: 22,
+                ),
               ),
             ],
           ).animate().fadeIn(duration: 400.ms),
@@ -102,7 +109,9 @@ class DriverHomeHeader extends StatelessWidget {
                 iconOpacity: 0.2,
                 indicatorSize: const Size.fromWidth(110),
                 customIconBuilder: (context, local, global) => Text(
-                  local.value ? l10n.driverToggleOnline : l10n.driverToggleOffline,
+                  local.value
+                      ? l10n.driverToggleOnline
+                      : l10n.driverToggleOffline,
                   style: GoogleFonts.cairo(
                     color: Color.lerp(
                       AppColors.mutedText,
@@ -116,20 +125,29 @@ class DriverHomeHeader extends StatelessWidget {
                 borderWidth: 2.0,
                 iconAnimationType: AnimationType.onHover,
                 style: ToggleStyle(
-                  indicatorColor: isOnline ? AppColors.shamrock500 : AppColors.statusCancelledText,
+                  indicatorColor: isOnline
+                      ? AppColors.shamrock500
+                      : AppColors.statusCancelledText,
                   backgroundColor: AppColors.surface.withValues(alpha: 0.1),
                   borderColor: Colors.transparent,
                   borderRadius: BorderRadius.circular(100),
                 ),
                 selectedIconScale: 1.0,
                 onChanged: (b) => onStatusToggle(b),
-              ).animate().slideY(begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOutBack),
+              ).animate().slideY(
+                begin: 0.2,
+                end: 0,
+                duration: 400.ms,
+                curve: Curves.easeOutBack,
+              ),
 
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    isOnline ? l10n.driverStatusOnline : l10n.driverStatusOffline,
+                    isOnline
+                        ? l10n.driverStatusOnline
+                        : l10n.driverStatusOffline,
                     style: GoogleFonts.cairo(
                       fontSize: 13,
                       color: AppColors.surface.withValues(alpha: 0.8),
@@ -156,10 +174,10 @@ class _PulseDot extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = isOnline ? AppColors.shamrock400 : AppColors.mutedText;
     return Container(
-      width: 10,
-      height: 10,
-      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-    )
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        )
         .animate(onPlay: (c) => c.repeat(reverse: true))
         .fade(duration: 900.ms, begin: 0.35, end: 1.0);
   }
@@ -182,7 +200,11 @@ class _EarningsChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(LucideIcons.coins, size: 13, color: AppColors.amberContainer),
+          const Icon(
+            LucideIcons.coins,
+            size: 13,
+            color: AppColors.amberContainer,
+          ),
           const SizedBox(width: 5),
           Text(
             '${totalEarnings.toStringAsFixed(1)} د.أ',

@@ -18,9 +18,10 @@ class ReservationInboxView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (ctx) => ReservationViewModel(repository: ctx.read<IReservationRepository>())
-        ..refresh()
-        ..startCountdownTicker(),
+      create: (ctx) =>
+          ReservationViewModel(repository: ctx.read<IReservationRepository>())
+            ..refresh()
+            ..startCountdownTicker(),
       child: const _ReservationInboxBody(),
     );
   }
@@ -47,7 +48,10 @@ class _ReservationInboxBody extends StatelessWidget {
           elevation: 0,
           title: Text(
             l10n.reservationInboxTitle,
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: AppColors.textMain),
+            style: GoogleFonts.cairo(
+              fontWeight: FontWeight.bold,
+              color: AppColors.textMain,
+            ),
           ),
           bottom: TabBar(
             labelColor: AppColors.primaryGreen,
@@ -64,8 +68,16 @@ class _ReservationInboxBody extends StatelessWidget {
             ? const Center(child: CircularProgressIndicator())
             : TabBarView(
                 children: [
-                  _ReservationList(items: incoming, userId: userId, emptyText: l10n.reservationEmptyInbox),
-                  _ReservationList(items: mine, userId: userId, emptyText: l10n.reservationEmptyInbox),
+                  _ReservationList(
+                    items: incoming,
+                    userId: userId,
+                    emptyText: l10n.reservationEmptyInbox,
+                  ),
+                  _ReservationList(
+                    items: mine,
+                    userId: userId,
+                    emptyText: l10n.reservationEmptyInbox,
+                  ),
                 ],
               ),
       ),
@@ -74,7 +86,11 @@ class _ReservationInboxBody extends StatelessWidget {
 }
 
 class _ReservationList extends StatelessWidget {
-  const _ReservationList({required this.items, required this.userId, required this.emptyText});
+  const _ReservationList({
+    required this.items,
+    required this.userId,
+    required this.emptyText,
+  });
 
   final List<Reservation> items;
   final String userId;
@@ -136,19 +152,29 @@ class _ReservationCard extends StatelessWidget {
                 children: [
                   Text(
                     reservation.itemTitle,
-                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: AppColors.textMain),
+                    style: GoogleFonts.cairo(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textMain,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '${reservation.invoiceTotal.toStringAsFixed(2)} د.أ',
-                    style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, color: AppColors.primaryGreen),
+                    style: GoogleFonts.dmSans(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryGreen,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     reservation.status.label,
-                    style: GoogleFonts.cairo(fontSize: 12, color: AppColors.mutedText),
+                    style: GoogleFonts.cairo(
+                      fontSize: 12,
+                      color: AppColors.mutedText,
+                    ),
                   ),
-                  if (remaining != null && reservation.status == ReservationStatus.reserved)
+                  if (remaining != null &&
+                      reservation.status == ReservationStatus.reserved)
                     Text(
                       _formatDuration(remaining),
                       style: GoogleFonts.dmSans(
@@ -162,7 +188,11 @@ class _ReservationCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppColors.borderSubtle),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 16,
+              color: AppColors.borderSubtle,
+            ),
           ],
         ),
       ),
@@ -172,6 +202,8 @@ class _ReservationCard extends StatelessWidget {
   String _formatDuration(Duration d) {
     final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
     final h = d.inHours;
-    return h > 0 ? '$h:$m' : '${d.inMinutes}:${d.inSeconds.remainder(60).toString().padLeft(2, '0')}';
+    return h > 0
+        ? '$h:$m'
+        : '${d.inMinutes}:${d.inSeconds.remainder(60).toString().padLeft(2, '0')}';
   }
 }

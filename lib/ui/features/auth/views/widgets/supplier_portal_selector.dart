@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -23,8 +23,10 @@ class SupplierPortalSelector extends StatelessWidget {
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 250),
-      transitionBuilder: (child, anim) =>
-          FadeTransition(opacity: anim, child: SizeTransition(sizeFactor: anim, child: child)),
+      transitionBuilder: (child, anim) => FadeTransition(
+        opacity: anim,
+        child: SizeTransition(sizeFactor: anim, child: child),
+      ),
       child: chosen == null
           ? _PortalCardRow(key: const ValueKey('cards'))
           : _SelectionBanner(key: ValueKey(chosen), chosen: chosen),
@@ -107,10 +109,7 @@ class _PortalCard extends StatelessWidget {
         height: 130,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              accentColor,
-              Color.lerp(accentColor, Colors.black, 0.16)!,
-            ],
+            colors: [accentColor, Color.lerp(accentColor, Colors.black, 0.16)!],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -198,11 +197,9 @@ class _SelectionBanner extends StatelessWidget {
         children: [
           // Reset chip
           GestureDetector(
-            onTap: () =>
-                context.read<LoginViewModel>().clearSupplierType(),
+            onTap: () => context.read<LoginViewModel>().clearSupplierType(),
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
                 color: meta.color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(20),
@@ -210,9 +207,10 @@ class _SelectionBanner extends StatelessWidget {
               child: Text(
                 'تغيير',
                 style: GoogleFonts.cairo(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: meta.color),
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: meta.color,
+                ),
               ),
             ),
           ),
@@ -220,9 +218,10 @@ class _SelectionBanner extends StatelessWidget {
           Text(
             meta.label,
             style: GoogleFonts.cairo(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: meta.color),
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: meta.color,
+            ),
           ),
           const SizedBox(width: 8),
           Icon(meta.icon, size: 18, color: meta.color),

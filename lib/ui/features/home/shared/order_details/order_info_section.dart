@@ -47,10 +47,11 @@ class OrderInfoSection extends StatelessWidget {
                 .map(
                   (w) => Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
-                      color:
-                          const Color(0xFF06402B).withValues(alpha: 0.08),
+                      color: const Color(0xFF06402B).withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -75,7 +76,10 @@ class OrderInfoSection extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 7, top: 2, bottom: 2),
             child: Container(
-                width: 1, height: 14, color: const Color(0xFFC0C9C1)),
+              width: 1,
+              height: 14,
+              color: const Color(0xFFC0C9C1),
+            ),
           ),
           _InfoRow(
             icon: Icons.location_on_rounded,
@@ -96,7 +100,9 @@ class OrderInfoSection extends StatelessWidget {
               if (order.weightKg != null) ...[
                 _MetaChip(
                   icon: Icons.scale_rounded,
-                  value: l10n.orderWeightKgLabel(order.weightKg!.toStringAsFixed(0)),
+                  value: l10n.orderWeightKgLabel(
+                    order.weightKg!.toStringAsFixed(0),
+                  ),
                 ),
                 const SizedBox(width: 8),
               ],
@@ -110,7 +116,8 @@ class OrderInfoSection extends StatelessWidget {
                 const SizedBox(width: 8),
                 _MetaChip(
                   icon: Icons.receipt_long_rounded,
-                  value: '${order.itemPrice!.toStringAsFixed(1)} ${l10n.orderCurrencyJD}',
+                  value:
+                      '${order.itemPrice!.toStringAsFixed(1)} ${l10n.orderCurrencyJD}',
                 ),
               ],
             ],
@@ -180,10 +187,10 @@ class _MetaChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color =
-        highlight ? AppColors.statusActiveText : const Color(0xFF717973);
-    final bg =
-        highlight ? AppColors.statusActiveBg : const Color(0xFFF2F4F2);
+    final color = highlight
+        ? AppColors.statusActiveText
+        : const Color(0xFF717973);
+    final bg = highlight ? AppColors.statusActiveBg : const Color(0xFFF2F4F2);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(

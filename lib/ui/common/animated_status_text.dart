@@ -52,7 +52,9 @@ class _AnimatedStatusTextState extends State<AnimatedStatusText> {
       child: Text(
         widget.phrases[_currentIndex],
         key: ValueKey<int>(_currentIndex),
-        style: widget.style ?? const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        style:
+            widget.style ??
+            const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         textAlign: TextAlign.center,
       ),
     );

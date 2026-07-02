@@ -86,10 +86,7 @@ class DawaChatbotService {
 
   /// Look up an entry by its [id]. Returns the fallback entry if not found.
   static DawaEntry entryById(String id) {
-    return _entries.firstWhere(
-      (e) => e.id == id,
-      orElse: () => _fallbackEntry,
-    );
+    return _entries.firstWhere((e) => e.id == id, orElse: () => _fallbackEntry);
   }
 
   /// The greeting entry shown when the chat first opens.
@@ -102,7 +99,7 @@ class DawaChatbotService {
   static DawaEntry matchFromMlLabel(String mlLabel) {
     final normalised = mlLabel.toLowerCase().trim();
     // Preferred: detailed recycling entries for the two supported materials
-    if (normalised == 'oil')  return entryById('recycle_oil');
+    if (normalised == 'oil') return entryById('recycle_oil');
     if (normalised == 'wood') return entryById('recycle_wood');
     // Fall back to mlLabel-tagged entries (plastic, metal, glass…)
     final byLabel = _entries.where((e) => e.mlLabel == normalised).toList();
@@ -192,13 +189,56 @@ class DawaChatbotService {
 
   /// Common Arabic + English words that carry no domain meaning.
   static const _stopWords = {
-    'في', 'من', 'على', 'عن', 'إلى', 'الى', 'ان', 'أن',
-    'هل', 'كيف', 'ما', 'ماذا', 'لماذا', 'متى',
-    'هذا', 'هذه', 'ذلك', 'تلك', 'هو', 'هي', 'هم',
-    'و', 'أو', 'او', 'لكن', 'لا', 'لم', 'لن', 'قد',
-    'يمكن', 'اريد', 'أريد', 'ابغى', 'ابي', 'أبي',
-    'the', 'a', 'an', 'is', 'in', 'on', 'at', 'to',
-    'of', 'for', 'and', 'or', 'how', 'what', 'where',
+    'في',
+    'من',
+    'على',
+    'عن',
+    'إلى',
+    'الى',
+    'ان',
+    'أن',
+    'هل',
+    'كيف',
+    'ما',
+    'ماذا',
+    'لماذا',
+    'متى',
+    'هذا',
+    'هذه',
+    'ذلك',
+    'تلك',
+    'هو',
+    'هي',
+    'هم',
+    'و',
+    'أو',
+    'او',
+    'لكن',
+    'لا',
+    'لم',
+    'لن',
+    'قد',
+    'يمكن',
+    'اريد',
+    'أريد',
+    'ابغى',
+    'ابي',
+    'أبي',
+    'the',
+    'a',
+    'an',
+    'is',
+    'in',
+    'on',
+    'at',
+    'to',
+    'of',
+    'for',
+    'and',
+    'or',
+    'how',
+    'what',
+    'where',
   };
 
   // ──────────────────────────────────────────────
@@ -240,11 +280,19 @@ class DawaChatbotService {
   // ──────────────────────────────────────────────
 
   static final List<DawaEntry> _entries = [
-
     // ── General ───────────────────────────────────────────────────
     const DawaEntry(
       id: 'greeting',
-      keywords: ['مرحبا', 'أهلا', 'السلام', 'هلا', 'هاي', 'hello', 'hi', 'مرحبً'],
+      keywords: [
+        'مرحبا',
+        'أهلا',
+        'السلام',
+        'هلا',
+        'هاي',
+        'hello',
+        'hi',
+        'مرحبً',
+      ],
       response:
           'أهلاً بك في سوق دوّر! �\n'
           'أنا مساعدك الذكي للتنقل في السوق وإدارة العروض والوظائف.\n\n'
@@ -261,8 +309,14 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'what_is_dawer',
       keywords: [
-        'ما هو دوّر', 'شو دوّر', 'دوّر', 'المنصة', 'عن التطبيق',
-        'what is dawer', 'about', 'platform',
+        'ما هو دوّر',
+        'شو دوّر',
+        'دوّر',
+        'المنصة',
+        'عن التطبيق',
+        'what is dawer',
+        'about',
+        'platform',
       ],
       response:
           'دوّر (Dawer) منصة أردنية للاقتصاد الدائري 🇯🇴\n\n'
@@ -282,8 +336,16 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'user_roles',
       keywords: [
-        'أدوار', 'دور', 'نوع المستخدم', 'مورد', 'سائق', 'شركة',
-        'roles', 'supplier', 'driver', 'company',
+        'أدوار',
+        'دور',
+        'نوع المستخدم',
+        'مورد',
+        'سائق',
+        'شركة',
+        'roles',
+        'supplier',
+        'driver',
+        'company',
       ],
       response:
           'أنواع المستخدمين في دوّر:\n\n'
@@ -303,8 +365,15 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'how_to_register',
       keywords: [
-        'تسجيل', 'حساب جديد', 'كيف أسجل', 'انضمام', 'اشتراك',
-        'register', 'sign up', 'create account', 'new account',
+        'تسجيل',
+        'حساب جديد',
+        'كيف أسجل',
+        'انضمام',
+        'اشتراك',
+        'register',
+        'sign up',
+        'create account',
+        'new account',
       ],
       response:
           'للتسجيل في دوّر:\n'
@@ -313,18 +382,18 @@ class DawaChatbotService {
           '3. اضغط "سجّل الآن"\n'
           '4. أدخل بياناتك ورفع المستندات المطلوبة\n'
           '5. سيتم إنشاء حسابك وتحويلك للصفحة الرئيسية مباشرة',
-      followUpIds: [
-        'driver_signup',
-        'supplier_signup',
-        'company_signup',
-      ],
+      followUpIds: ['driver_signup', 'supplier_signup', 'company_signup'],
     ),
 
     const DawaEntry(
       id: 'driver_signup',
       keywords: [
-        'تسجيل سائق', 'اشتراك كسائق', 'ماذا يحتاج السائق', 'وثائق السائق',
-        'driver register', 'driver signup',
+        'تسجيل سائق',
+        'اشتراك كسائق',
+        'ماذا يحتاج السائق',
+        'وثائق السائق',
+        'driver register',
+        'driver signup',
       ],
       response:
           'للتسجيل كسائق تحتاج:\n'
@@ -334,33 +403,34 @@ class DawaChatbotService {
           '• صورة الهوية الوطنية\n'
           '• رقم هاتف أو بريد إلكتروني\n\n'
           'الوثائق تُستخدم للتحقق فقط ولا تُشارك مع أحد.',
-      followUpIds: [
-        'driver_earnings',
-        'how_to_accept_order',
-      ],
+      followUpIds: ['driver_earnings', 'how_to_accept_order'],
     ),
 
     const DawaEntry(
       id: 'supplier_signup',
       keywords: [
-        'تسجيل مورد', 'اشتراك مورد', 'مورد فردي', 'مورد متجر',
-        'supplier register', 'supplier signup',
+        'تسجيل مورد',
+        'اشتراك مورد',
+        'مورد فردي',
+        'مورد متجر',
+        'supplier register',
+        'supplier signup',
       ],
       response:
           'للتسجيل كمورد:\n\n'
           '🏠 مورد فردي: الاسم، الجنسية، صورة شخصية، هوية وطنية\n\n'
           '🏪 مورد متجر/مطعم: اسم الجهة، اسم المالك/المدير، منطقة التغطية، شعار، سجل تجاري',
-      followUpIds: [
-        'how_to_post_request',
-        'points_system',
-      ],
+      followUpIds: ['how_to_post_request', 'points_system'],
     ),
 
     const DawaEntry(
       id: 'company_signup',
       keywords: [
-        'تسجيل شركة', 'شركة إعادة تدوير', 'اشتراك شركة',
-        'company register', 'recycling company signup',
+        'تسجيل شركة',
+        'شركة إعادة تدوير',
+        'اشتراك شركة',
+        'company register',
+        'recycling company signup',
       ],
       response:
           'للتسجيل كشركة إعادة تدوير تحتاج:\n'
@@ -370,17 +440,19 @@ class DawaChatbotService {
           '• شعار الشركة\n'
           '• صورة الترخيص التجاري\n'
           '• هاتف أو بريد إلكتروني',
-      followUpIds: [
-        'company_overview',
-        'post_collection_job',
-      ],
+      followUpIds: ['company_overview', 'post_collection_job'],
     ),
 
     const DawaEntry(
       id: 'login_help',
       keywords: [
-        'تسجيل دخول', 'دخول', 'لوجن', 'لا أستطيع الدخول',
-        'login', 'sign in', 'cant login',
+        'تسجيل دخول',
+        'دخول',
+        'لوجن',
+        'لا أستطيع الدخول',
+        'login',
+        'sign in',
+        'cant login',
       ],
       response:
           'لتسجيل الدخول:\n'
@@ -389,17 +461,21 @@ class DawaChatbotService {
           '3. أدخل كلمة المرور\n'
           '4. اضغط "تسجيل الدخول"\n\n'
           '⚠️ يجب اختيار الدور أولاً قبل تفعيل زر الدخول.',
-      followUpIds: [
-        'how_to_register',
-      ],
+      followUpIds: ['how_to_register'],
     ),
 
     // ── Supplier ──────────────────────────────────────────────────
     const DawaEntry(
       id: 'how_to_post_request',
       keywords: [
-        'كيف أرسل طلب', 'طلب استلام', 'تخلص من النفايات', 'إرسال طلب',
-        'post request', 'pickup request', 'new order', 'طلب جديد',
+        'كيف أرسل طلب',
+        'طلب استلام',
+        'تخلص من النفايات',
+        'إرسال طلب',
+        'post request',
+        'pickup request',
+        'new order',
+        'طلب جديد',
       ],
       response:
           'لإرسال طلب استلام نفايات:\n'
@@ -420,8 +496,15 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'track_order',
       keywords: [
-        'تتبع طلب', 'أين سائقي', 'متى يصل', 'حالة الطلب', 'وصل السائق',
-        'track order', 'order status', 'where is driver', 'eta',
+        'تتبع طلب',
+        'أين سائقي',
+        'متى يصل',
+        'حالة الطلب',
+        'وصل السائق',
+        'track order',
+        'order status',
+        'where is driver',
+        'eta',
       ],
       response:
           'لتتبع طلبك:\n'
@@ -429,35 +512,38 @@ class DawaChatbotService {
           '• البطاقة تعرض: اسم السائق، المسافة، وقت الوصول المتوقع\n'
           '• حالات الطلب: قيد الانتظار ← تم القبول ← في الطريق ← مكتمل\n\n'
           'اذهب إلى "طلباتي" لعرض تفاصيل أي طلب.',
-      followUpIds: [
-        'order_status_meanings',
-        'cancel_order',
-        'rate_driver',
-      ],
+      followUpIds: ['order_status_meanings', 'cancel_order', 'rate_driver'],
     ),
 
     const DawaEntry(
       id: 'cancel_order',
       keywords: [
-        'إلغاء طلب', 'الغاء', 'تراجع عن الطلب', 'cancel order', 'cancel request',
+        'إلغاء طلب',
+        'الغاء',
+        'تراجع عن الطلب',
+        'cancel order',
+        'cancel request',
       ],
       response:
           'لإلغاء طلب:\n'
           '• يمكنك الإلغاء في أي وقت قبل أن يبدأ السائق بالتحرك ("في الطريق")\n'
           '• اذهب إلى "طلباتي" ← افتح الطلب ← اضغط "إلغاء"\n\n'
           '⚠️ بعد دخول الطلب مرحلة "في الطريق" لا يمكن الإلغاء إلا بالتواصل مع الدعم.',
-      followUpIds: [
-        'track_order',
-        'how_to_post_request',
-        'support',
-      ],
+      followUpIds: ['track_order', 'how_to_post_request', 'support'],
     ),
 
     const DawaEntry(
       id: 'points_system',
       keywords: [
-        'نقاط', 'مكافآت', 'كيف أكسب نقاطاً', 'استبدال نقاط', 'نقطة',
-        'points', 'rewards', 'earn points', 'redeem',
+        'نقاط',
+        'مكافآت',
+        'كيف أكسب نقاطاً',
+        'استبدال نقاط',
+        'نقطة',
+        'points',
+        'rewards',
+        'earn points',
+        'redeem',
       ],
       response:
           'نظام نقاط إعادة التدوير 🌟\n\n'
@@ -472,18 +558,24 @@ class DawaChatbotService {
           '• تبرع لجمعيات خيرية\n'
           '• رصيد خدمات المنصة\n\n'
           'نقاطك تظهر في الشريط الأصفر بأعلى صفحتك الرئيسية.',
-      followUpIds: [
-        'how_to_post_request',
-        'waste_types',
-      ],
+      followUpIds: ['how_to_post_request', 'waste_types'],
     ),
 
     // ── Driver ────────────────────────────────────────────────────
     const DawaEntry(
       id: 'driver_earnings',
       keywords: [
-        'أرباح', 'دخل', 'كيف أكسب', 'كم أربح', 'أجر', 'مكافأة',
-        'earnings', 'income', 'how much earn', 'reward', 'salary',
+        'أرباح',
+        'دخل',
+        'كيف أكسب',
+        'كم أربح',
+        'أجر',
+        'مكافأة',
+        'earnings',
+        'income',
+        'how much earn',
+        'reward',
+        'salary',
       ],
       response:
           'كيف يكسب السائق:\n\n'
@@ -507,8 +599,13 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'how_to_accept_order',
       keywords: [
-        'كيف أقبل طلب', 'قبول طلب', 'اقبل الطلب', 'طلبات متاحة',
-        'accept order', 'available jobs', 'how to accept',
+        'كيف أقبل طلب',
+        'قبول طلب',
+        'اقبل الطلب',
+        'طلبات متاحة',
+        'accept order',
+        'available jobs',
+        'how to accept',
       ],
       response:
           'لقبول طلب:\n'
@@ -527,8 +624,15 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'driver_availability',
       keywords: [
-        'حالة السائق', 'متاح', 'غير متاح', 'تشغيل التوفر', 'أوفلاين',
-        'availability', 'go online', 'go offline', 'toggle',
+        'حالة السائق',
+        'متاح',
+        'غير متاح',
+        'تشغيل التوفر',
+        'أوفلاين',
+        'availability',
+        'go online',
+        'go offline',
+        'toggle',
       ],
       response:
           'زر الحالة (متاح / غير متاح):\n'
@@ -546,8 +650,14 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'driver_complete_order',
       keywords: [
-        'إتمام الطلب', 'اكتمال', 'تسليم', 'صورة إثبات', 'تأكيد التسليم',
-        'complete order', 'proof photo', 'finish delivery',
+        'إتمام الطلب',
+        'اكتمال',
+        'تسليم',
+        'صورة إثبات',
+        'تأكيد التسليم',
+        'complete order',
+        'proof photo',
+        'finish delivery',
       ],
       response:
           'لإتمام طلب:\n'
@@ -567,26 +677,32 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'driver_single_order_rule',
       keywords: [
-        'طلبان', 'أكثر من طلب', 'طلب ثانٍ', 'لديك طلب نشط',
-        'two orders', 'multiple orders', 'already have order',
+        'طلبان',
+        'أكثر من طلب',
+        'طلب ثانٍ',
+        'لديك طلب نشط',
+        'two orders',
+        'multiple orders',
+        'already have order',
       ],
       response:
           'السائق يستطيع العمل على طلب واحد في نفس الوقت فقط.\n\n'
           'إذا حاولت قبول طلب جديد وعندك طلب نشط:\n'
           'ستظهر رسالة: "لديك طلب نشط بالفعل. أكمل طلبك الحالي أولاً."\n\n'
           'هذا يضمن أن كل مورد يحصل على خدمة موثوقة.',
-      followUpIds: [
-        'driver_complete_order',
-        'how_to_accept_order',
-      ],
+      followUpIds: ['driver_complete_order', 'how_to_accept_order'],
     ),
 
     // ── Order Status ──────────────────────────────────────────────
     const DawaEntry(
       id: 'order_status',
       keywords: [
-        'حالة الطلب', 'ماذا تعني', 'معنى الحالة', 'status',
-        'order state', 'what does status mean',
+        'حالة الطلب',
+        'ماذا تعني',
+        'معنى الحالة',
+        'status',
+        'order state',
+        'what does status mean',
       ],
       response:
           'حالات الطلب في دوّر:\n\n'
@@ -595,18 +711,22 @@ class DawaChatbotService {
           '🔵 في الطريق — السائق متحرك\n'
           '✅ مكتمل — تم التسليم بنجاح\n'
           '❌ ملغي — تم الإلغاء',
-      followUpIds: [
-        'track_order',
-        'cancel_order',
-        'how_to_post_request',
-      ],
+      followUpIds: ['track_order', 'cancel_order', 'how_to_post_request'],
     ),
 
     const DawaEntry(
       id: 'order_status_meanings',
       keywords: [
-        'قيد الانتظار', 'في الطريق', 'تم القبول', 'مكتمل', 'ملغي',
-        'pending', 'in transit', 'accepted', 'completed', 'cancelled',
+        'قيد الانتظار',
+        'في الطريق',
+        'تم القبول',
+        'مكتمل',
+        'ملغي',
+        'pending',
+        'in transit',
+        'accepted',
+        'completed',
+        'cancelled',
       ],
       response:
           'معنى كل حالة:\n'
@@ -615,18 +735,22 @@ class DawaChatbotService {
           '• في الطريق: السائق في طريقه إليك\n'
           '• مكتمل: تم تسليم النفايات لشركة التدوير\n'
           '• ملغي: تم إلغاء الطلب (يظهر في السجل)',
-      followUpIds: [
-        'track_order',
-        'cancel_order',
-      ],
+      followUpIds: ['track_order', 'cancel_order'],
     ),
 
     // ── Pricing ───────────────────────────────────────────────────
     const DawaEntry(
       id: 'pricing_overview',
       keywords: [
-        'التسعير', 'الأسعار', 'كم يكلف', 'كيف يُحسب', 'تسعير',
-        'pricing', 'how much cost', 'price formula', 'cost',
+        'التسعير',
+        'الأسعار',
+        'كم يكلف',
+        'كيف يُحسب',
+        'تسعير',
+        'pricing',
+        'how much cost',
+        'price formula',
+        'cost',
       ],
       response:
           'نموذج التسعير في دوّر:\n\n'
@@ -637,18 +761,20 @@ class DawaChatbotService {
           '  + وزن × سعر المادة\n'
           '  + 0.50 د.أ (إذا كان الطلب عاجلاً)\n\n'
           'شركة التدوير تدفع للسائق ومصاريف المنصة.',
-      followUpIds: [
-        'material_rates',
-        'urgency_pricing',
-        'driver_earnings',
-      ],
+      followUpIds: ['material_rates', 'urgency_pricing', 'driver_earnings'],
     ),
 
     const DawaEntry(
       id: 'material_rates',
       keywords: [
-        'سعر المادة', 'أسعار المواد', 'كم يساوي', 'تسعير النفايات',
-        'material rate', 'waste price', 'oil price', 'metal rate',
+        'سعر المادة',
+        'أسعار المواد',
+        'كم يساوي',
+        'تسعير النفايات',
+        'material rate',
+        'waste price',
+        'oil price',
+        'metal rate',
       ],
       response:
           'أسعار المواد (للسائق):\n\n'
@@ -660,18 +786,12 @@ class DawaChatbotService {
           '• عضوي: 0.01 د.أ/كغ\n'
           '• أثاث: يُحدد يدوياً\n'
           '• أخرى: مخصص',
-      followUpIds: [
-        'pricing_overview',
-        'waste_types',
-        'driver_earnings',
-      ],
+      followUpIds: ['pricing_overview', 'waste_types', 'driver_earnings'],
     ),
 
     const DawaEntry(
       id: 'urgency_pricing',
-      keywords: [
-        'عاجل', 'أولوية', 'طلب عاجل', 'urgent', 'priority',
-      ],
+      keywords: ['عاجل', 'أولوية', 'طلب عاجل', 'urgent', 'priority'],
       response:
           'الطلب العاجل (عاجل):\n\n'
           '• المورد يُحدده عند إرسال الطلب\n'
@@ -690,8 +810,14 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'waste_types',
       keywords: [
-        'أنواع النفايات', 'ماذا تقبل', 'أي نوع', 'فئات',
-        'waste types', 'what types', 'categories', 'recyclables',
+        'أنواع النفايات',
+        'ماذا تقبل',
+        'أي نوع',
+        'فئات',
+        'waste types',
+        'what types',
+        'categories',
+        'recyclables',
       ],
       response:
           'أنواع النفايات المقبولة في دوّر (15 فئة):\n\n'
@@ -699,19 +825,18 @@ class DawaChatbotService {
           'عضوي | أقمشة | خشب | مطاط | زيوت\n'
           'كيميائيات | بطاريات | أثاث | إطارات | مخلفات بناء\n\n'
           'يمكنك اختيار أكثر من فئة في نفس الطلب.',
-      followUpIds: [
-        'how_to_post_request',
-        'material_rates',
-        'ml_waste_scan',
-      ],
+      followUpIds: ['how_to_post_request', 'material_rates', 'ml_waste_scan'],
     ),
 
     // ── Recycling Company ─────────────────────────────────────────
     const DawaEntry(
       id: 'company_overview',
       keywords: [
-        'شركة إعادة تدوير', 'مهام الشركة', 'ماذا تفعل الشركة',
-        'recycling company', 'company features',
+        'شركة إعادة تدوير',
+        'مهام الشركة',
+        'ماذا تفعل الشركة',
+        'recycling company',
+        'company features',
       ],
       response:
           'ميزات شركة إعادة التدوير:\n\n'
@@ -720,18 +845,18 @@ class DawaChatbotService {
           '• إحصاءات: الشحنات الواردة، الوزن الكلي، الوظائف النشطة\n'
           '• تتبع السائقين المتحركين\n'
           '• فتح/إغلاق الشركة (toggle)',
-      followUpIds: [
-        'post_collection_job',
-        'company_stats',
-        'company_signup',
-      ],
+      followUpIds: ['post_collection_job', 'company_stats', 'company_signup'],
     ),
 
     const DawaEntry(
       id: 'post_collection_job',
       keywords: [
-        'نشر وظيفة', 'وظيفة تجميع', 'نشر عمل للسائقين',
-        'post job', 'collection job', 'post collection',
+        'نشر وظيفة',
+        'وظيفة تجميع',
+        'نشر عمل للسائقين',
+        'post job',
+        'collection job',
+        'post collection',
       ],
       response:
           'لنشر وظيفة تجميع:\n'
@@ -741,17 +866,19 @@ class DawaChatbotService {
           '4. أضف ملاحظات اختيارية\n'
           '5. اضغط "نشر الوظيفة"\n\n'
           'ستظهر الوظيفة للسائقين المتاحين في منطقتك.',
-      followUpIds: [
-        'company_overview',
-        'company_stats',
-      ],
+      followUpIds: ['company_overview', 'company_stats'],
     ),
 
     const DawaEntry(
       id: 'company_stats',
       keywords: [
-        'إحصاءات الشركة', 'الوزن المعالج', 'عدد الشحنات', 'نشاط الشركة',
-        'company stats', 'total weight', 'shipments',
+        'إحصاءات الشركة',
+        'الوزن المعالج',
+        'عدد الشحنات',
+        'نشاط الشركة',
+        'company stats',
+        'total weight',
+        'shipments',
       ],
       response:
           'إحصاءات شركة التدوير:\n\n'
@@ -759,18 +886,24 @@ class DawaChatbotService {
           '⚖️ الوزن الكلي — إجمالي الكيلوغرامات المعالجة\n'
           '💼 الوظائف النشطة — وظائف التجميع المنشورة\n'
           '🚚 سائقون في التنفيذ — عدد السائقين في الطريق حالياً',
-      followUpIds: [
-        'company_overview',
-        'post_collection_job',
-      ],
+      followUpIds: ['company_overview', 'post_collection_job'],
     ),
 
     // ── Marketplace ───────────────────────────────────────────────
     const DawaEntry(
       id: 'marketplace',
       keywords: [
-        'السوق', 'ماركت', 'عروض', 'شراء', 'بيع نفايات', 'قائمة السوق',
-        'marketplace', 'market', 'buy', 'sell', 'listings',
+        'السوق',
+        'ماركت',
+        'عروض',
+        'شراء',
+        'بيع نفايات',
+        'قائمة السوق',
+        'marketplace',
+        'market',
+        'buy',
+        'sell',
+        'listings',
       ],
       response:
           'السوق (Marketplace) في دوّر 🏪\n\n'
@@ -791,8 +924,11 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'market_roles',
       keywords: [
-        'دور في السوق', 'صلاحيات السوق', 'ماذا يفعل السائق في السوق',
-        'ماذا يفعل المورد في السوق', 'ماذا تفعل الشركة في السوق',
+        'دور في السوق',
+        'صلاحيات السوق',
+        'ماذا يفعل السائق في السوق',
+        'ماذا يفعل المورد في السوق',
+        'ماذا تفعل الشركة في السوق',
       ],
       response:
           'صلاحيات كل دور في السوق:\n\n'
@@ -815,8 +951,13 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'market_listings',
       keywords: [
-        'عروض السوق', 'المواد المعروضة', 'قائمة المواد', 'ما المعروض',
-        'تصفح السوق', 'market listings', 'browse market',
+        'عروض السوق',
+        'المواد المعروضة',
+        'قائمة المواد',
+        'ما المعروض',
+        'تصفح السوق',
+        'market listings',
+        'browse market',
       ],
       response:
           'قسم العروض في السوق:\n\n'
@@ -836,8 +977,13 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'market_search',
       keywords: [
-        'بحث في السوق', 'ابحث عن مادة', 'فلترة السوق', 'تصفية المواد',
-        'search market', 'filter market', 'ابحث بالمنطقة',
+        'بحث في السوق',
+        'ابحث عن مادة',
+        'فلترة السوق',
+        'تصفية المواد',
+        'search market',
+        'filter market',
+        'ابحث بالمنطقة',
       ],
       response:
           'البحث والتصفية في السوق:\n\n'
@@ -850,17 +996,17 @@ class DawaChatbotService {
           '  • مرر أفقياً واختر فئة\n'
           '  • اضغط مرة ثانية لإلغاء التصفية\n\n'
           'النتائج تتحدث فورياً أثناء الكتابة.',
-      followUpIds: [
-        'market_categories',
-        'market_listings',
-      ],
+      followUpIds: ['market_categories', 'market_listings'],
     ),
 
     const DawaEntry(
       id: 'market_categories',
       keywords: [
-        'فئات السوق', 'أنواع مواد السوق', 'تصنيفات السوق',
-        'ورق بلاستيك معادن زجاج إلكترونيات', 'waste categories market',
+        'فئات السوق',
+        'أنواع مواد السوق',
+        'تصنيفات السوق',
+        'ورق بلاستيك معادن زجاج إلكترونيات',
+        'waste categories market',
       ],
       response:
           'فئات المواد في السوق (15 فئة):\n\n'
@@ -879,8 +1025,12 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'market_item_details',
       keywords: [
-        'تفاصيل العرض', 'صفحة العرض', 'معلومات المادة', 'عرض تفاصيل',
-        'item details', 'listing details',
+        'تفاصيل العرض',
+        'صفحة العرض',
+        'معلومات المادة',
+        'عرض تفاصيل',
+        'item details',
+        'listing details',
       ],
       response:
           'صفحة تفاصيل العرض تعرض:\n\n'
@@ -903,8 +1053,13 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'market_buy_item',
       keywords: [
-        'شراء مادة', 'اشترِ من السوق', 'كيف أشتري', 'شراء عرض',
-        'buy listing', 'purchase item', 'مورد يشتري',
+        'شراء مادة',
+        'اشترِ من السوق',
+        'كيف أشتري',
+        'شراء عرض',
+        'buy listing',
+        'purchase item',
+        'مورد يشتري',
       ],
       response:
           'كمورّد: كيف تشتري مادة من السوق\n\n'
@@ -926,8 +1081,12 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'market_claim_item',
       keywords: [
-        'مطالبة بعرض', 'يستلم السائق', 'السائق يشتري', 'claim item',
-        'driver claim', 'استلام مباشر من السوق',
+        'مطالبة بعرض',
+        'يستلم السائق',
+        'السائق يشتري',
+        'claim item',
+        'driver claim',
+        'استلام مباشر من السوق',
       ],
       response:
           'كسائق: كيف تطالب بمادة من السوق\n\n'
@@ -947,8 +1106,12 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'market_collection_jobs',
       keywords: [
-        'وظائف التجميع', 'collection jobs', 'وظيفة من شركة',
-        'طلب شركة تدوير', 'وظائف السوق', 'jobs marketplace',
+        'وظائف التجميع',
+        'collection jobs',
+        'وظيفة من شركة',
+        'طلب شركة تدوير',
+        'وظائف السوق',
+        'jobs marketplace',
       ],
       response:
           'وظائف التجميع في السوق:\n\n'
@@ -969,8 +1132,12 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'market_accept_job',
       keywords: [
-        'قبول وظيفة تجميع', 'كيف أقبل وظيفة', 'قبول جوب',
-        'accept collection job', 'commit to job', 'تأكيد وظيفة',
+        'قبول وظيفة تجميع',
+        'كيف أقبل وظيفة',
+        'قبول جوب',
+        'accept collection job',
+        'commit to job',
+        'تأكيد وظيفة',
       ],
       response:
           'لقبول وظيفة تجميع:\n\n'
@@ -994,8 +1161,13 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'market_payment_model',
       keywords: [
-        'نموذج الدفع', 'دفع بالكيلو', 'أجر ثابت', 'per kg', 'flat fee',
-        'سعر الكيلو', 'تسعير الوظيفة',
+        'نموذج الدفع',
+        'دفع بالكيلو',
+        'أجر ثابت',
+        'per kg',
+        'flat fee',
+        'سعر الكيلو',
+        'تسعير الوظيفة',
       ],
       response:
           'نماذج الدفع في وظائف التجميع:\n\n'
@@ -1016,8 +1188,12 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'market_delivery_method',
       keywords: [
-        'طريقة التوصيل', 'أوصل بنفسي', 'سائق للتوصيل', 'self delivery',
-        'assign rider', 'كيف أوصل المواد',
+        'طريقة التوصيل',
+        'أوصل بنفسي',
+        'سائق للتوصيل',
+        'self delivery',
+        'assign rider',
+        'كيف أوصل المواد',
       ],
       response:
           'طرق التوصيل عند قبول وظيفة تجميع:\n\n'
@@ -1027,17 +1203,19 @@ class DawaChatbotService {
           '🚚 أعيّن سائقاً (assignRider):\n'
           '  يتم تعيين سائق من دوّر لنقل المواد عنك.\n'
           '  مفيد إذا لم يكن لديك مركبة مناسبة.',
-      followUpIds: [
-        'market_transaction_type',
-        'market_accept_job',
-      ],
+      followUpIds: ['market_transaction_type', 'market_accept_job'],
     ),
 
     const DawaEntry(
       id: 'market_transaction_type',
       keywords: [
-        'بيع أو تبرع', 'نوع المعاملة', 'donate sell', 'transaction type',
-        'تبرع بالمواد', 'بيع للشركة', 'مجاناً للشركة',
+        'بيع أو تبرع',
+        'نوع المعاملة',
+        'donate sell',
+        'transaction type',
+        'تبرع بالمواد',
+        'بيع للشركة',
+        'مجاناً للشركة',
       ],
       response:
           'نوعا المعاملة في وظائف التجميع:\n\n'
@@ -1059,8 +1237,11 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'market_post_job',
       keywords: [
-        'نشر وظيفة تجميع', 'كيف تنشر الشركة وظيفة', 'إنشاء وظيفة',
-        'post collection job marketplace', 'add job market',
+        'نشر وظيفة تجميع',
+        'كيف تنشر الشركة وظيفة',
+        'إنشاء وظيفة',
+        'post collection job marketplace',
+        'add job market',
       ],
       response:
           'كشركة تدوير: كيف تنشر وظيفة تجميع\n\n'
@@ -1085,8 +1266,13 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'market_edit_delete_job',
       keywords: [
-        'تعديل وظيفة', 'حذف وظيفة', 'تغيير شروط وظيفة',
-        'edit job', 'delete job', 'تحديث وظيفة', 'وظيفة معدّلة',
+        'تعديل وظيفة',
+        'حذف وظيفة',
+        'تغيير شروط وظيفة',
+        'edit job',
+        'delete job',
+        'تحديث وظيفة',
+        'وظيفة معدّلة',
       ],
       response:
           'تعديل وحذف وظائف التجميع:\n\n'
@@ -1098,17 +1284,17 @@ class DawaChatbotService {
           '  • فقط إذا كانت الوظيفة بحالة "قيد الانتظار"\n'
           '  • الوظائف المقبولة لا يمكن حذفها\n\n'
           '⚠️ التعديل والحذف متاحان لصاحب الوظيفة فقط.',
-      followUpIds: [
-        'market_post_job',
-        'market_collection_jobs',
-      ],
+      followUpIds: ['market_post_job', 'market_collection_jobs'],
     ),
 
     const DawaEntry(
       id: 'market_weight_category',
       keywords: [
-        'فئة الوزن', 'خفيف ثقيل متوسط', 'وزن المادة',
-        'weight category', 'light heavy medium',
+        'فئة الوزن',
+        'خفيف ثقيل متوسط',
+        'وزن المادة',
+        'weight category',
+        'light heavy medium',
       ],
       response:
           'فئات الوزن في عروض السوق:\n\n'
@@ -1117,17 +1303,17 @@ class DawaChatbotService {
           '🏋️ ثقيل — 20 إلى 100 كغ\n'
           '🪨 ثقيل جداً — أكثر من 100 كغ\n\n'
           'تُساعد هذه الفئات السائق في اختيار المركبة المناسبة.',
-      followUpIds: [
-        'market_item_details',
-        'market_waste_form',
-      ],
+      followUpIds: ['market_item_details', 'market_waste_form'],
     ),
 
     const DawaEntry(
       id: 'market_waste_form',
       keywords: [
-        'شكل النفايات', 'صلب سائل مختلط', 'حالة المادة',
-        'waste form', 'solid liquid mixed',
+        'شكل النفايات',
+        'صلب سائل مختلط',
+        'حالة المادة',
+        'waste form',
+        'solid liquid mixed',
       ],
       response:
           'أشكال النفايات في عروض السوق:\n\n'
@@ -1135,17 +1321,18 @@ class DawaChatbotService {
           '💧 سائل — مواد سائلة (زيوت، كيميائيات...)\n'
           '🔀 مختلط — مزيج من الأشكال\n\n'
           'الشكل يظهر في تفاصيل العرض ويساعد في تحديد طريقة النقل.',
-      followUpIds: [
-        'market_weight_category',
-        'market_item_details',
-      ],
+      followUpIds: ['market_weight_category', 'market_item_details'],
     ),
 
     const DawaEntry(
       id: 'market_min_quantity',
       keywords: [
-        'الحد الأدنى للكمية', 'حد أدنى كيلو', 'minimum quantity',
-        'min kg', 'أقل كمية', 'كمية مطلوبة',
+        'الحد الأدنى للكمية',
+        'حد أدنى كيلو',
+        'minimum quantity',
+        'min kg',
+        'أقل كمية',
+        'كمية مطلوبة',
       ],
       response:
           'الحد الأدنى للكمية في وظائف التجميع:\n\n'
@@ -1154,17 +1341,19 @@ class DawaChatbotService {
           '• يظهر في تفاصيل الوظيفة كـ "الحد الأدنى"\n'
           '• إذا لم يُحدد فلا يوجد شرط للكمية\n\n'
           'تحقق من كميتك قبل قبول الوظيفة لتجنب الرفض.',
-      followUpIds: [
-        'market_collection_jobs',
-        'market_payment_model',
-      ],
+      followUpIds: ['market_collection_jobs', 'market_payment_model'],
     ),
 
     const DawaEntry(
       id: 'market_linked_sale',
       keywords: [
-        'التزام بوظيفة', 'collectionSale', 'ارتباط بوظيفة', 'وظيفة مقبولة',
-        'accepted job', 'commit collection', 'collection commitment',
+        'التزام بوظيفة',
+        'collectionSale',
+        'ارتباط بوظيفة',
+        'وظيفة مقبولة',
+        'accepted job',
+        'commit collection',
+        'collection commitment',
       ],
       response:
           'بعد قبول وظيفة تجميع:\n\n'
@@ -1173,17 +1362,17 @@ class DawaChatbotService {
           '• يمر بنفس مراحل الطلب العادي: قيد الانتظار ← في الطريق ← مكتمل\n'
           '• لا يمكن قبول نفس الوظيفة مرتين\n\n'
           'يمكن رؤية آخر التزام لك في قسم وظائف التجميع بصفحتك.',
-      followUpIds: [
-        'market_accept_job',
-        'order_status_meanings',
-      ],
+      followUpIds: ['market_accept_job', 'order_status_meanings'],
     ),
 
     const DawaEntry(
       id: 'market_delivery_fee',
       keywords: [
-        'رسوم توصيل السوق', 'تكلفة التوصيل', 'delivery fee market',
-        'سعر التوصيل', 'كم رسوم التوصيل',
+        'رسوم توصيل السوق',
+        'تكلفة التوصيل',
+        'delivery fee market',
+        'سعر التوصيل',
+        'كم رسوم التوصيل',
       ],
       response:
           'رسوم التوصيل في السوق:\n\n'
@@ -1193,17 +1382,18 @@ class DawaChatbotService {
           '📦 عند قبول وظيفة تجميع:\n'
           '  • بيع للشركة: رسوم التوصيل على المورد/السائق\n'
           '  • تبرع للشركة: رسوم التوصيل على الشركة (مجاناً للمورد)',
-      followUpIds: [
-        'market_buy_item',
-        'market_transaction_type',
-      ],
+      followUpIds: ['market_buy_item', 'market_transaction_type'],
     ),
 
     const DawaEntry(
       id: 'market_item_price',
       keywords: [
-        'سعر المادة في السوق', 'كم سعر العرض', 'itemPrice', 'price per kg',
-        'تسعير السوق', 'سعر الكيلو في السوق',
+        'سعر المادة في السوق',
+        'كم سعر العرض',
+        'itemPrice',
+        'price per kg',
+        'تسعير السوق',
+        'سعر الكيلو في السوق',
       ],
       response:
           'تسعير عروض السوق:\n\n'
@@ -1212,14 +1402,10 @@ class DawaChatbotService {
           '⚖️ سعر لكل كيلوغرام (pricePerKg):\n'
           '  المبلغ = السعر × الوزن الفعلي بالكيلوغرام\n\n'
           'كلا النوعين يظهران في تفاصيل العرض أو الوظيفة.',
-      followUpIds: [
-        'market_payment_model',
-        'market_item_details',
-      ],
+      followUpIds: ['market_payment_model', 'market_item_details'],
     ),
 
     // ── Bundled sample scan chips ────────────────────────────────
-
     const DawaEntry(
       id: 'scan_oil_sample',
       keywords: ['عينة الزيت', 'اختبار زيت', 'مسح زيت', 'sample oil'],
@@ -1235,12 +1421,15 @@ class DawaChatbotService {
     ),
 
     // ── Image-scan recycling knowledge ────────────────────────────
-
     const DawaEntry(
       id: 'recycle_oil',
       keywords: [
-        'تدوير الزيت', 'ماذا يحدث بالزيت', 'فائدة تدوير الزيت',
-        'زيت مستعمل تدوير', 'oil recycling', 'used oil recycle',
+        'تدوير الزيت',
+        'ماذا يحدث بالزيت',
+        'فائدة تدوير الزيت',
+        'زيت مستعمل تدوير',
+        'oil recycling',
+        'used oil recycle',
       ],
       response:
           '♻️ تدوير الزيت المستعمل 🛢️\n\n'
@@ -1275,8 +1464,12 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'recycle_wood',
       keywords: [
-        'تدوير الخشب', 'خشب بناء', 'ماذا يحدث بالخشب',
-        'فائدة تدوير الخشب', 'wood recycling', 'construction wood recycle',
+        'تدوير الخشب',
+        'خشب بناء',
+        'ماذا يحدث بالخشب',
+        'فائدة تدوير الخشب',
+        'wood recycling',
+        'construction wood recycle',
       ],
       response:
           '♻️ تدوير خشب البناء 🪵\n\n'
@@ -1313,8 +1506,14 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'ml_waste_scan',
       keywords: [
-        'مسح صورة', 'تحديد النوع', 'صورة النفايات', 'الذكاء الاصطناعي',
-        'scan waste', 'image recognition', 'ml kit', 'photo classify',
+        'مسح صورة',
+        'تحديد النوع',
+        'صورة النفايات',
+        'الذكاء الاصطناعي',
+        'scan waste',
+        'image recognition',
+        'ml kit',
+        'photo classify',
       ],
       response:
           'ميزة مسح النفايات بالكاميرا 📸\n\n'
@@ -1334,8 +1533,12 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'ml_proof_validation',
       keywords: [
-        'التحقق من الصورة', 'صورة إثبات', 'تحقق صورة', 'proof validation',
-        'verify photo', 'image check',
+        'التحقق من الصورة',
+        'صورة إثبات',
+        'تحقق صورة',
+        'proof validation',
+        'verify photo',
+        'image check',
       ],
       response:
           'التحقق من صورة الإثبات 🔍\n\n'
@@ -1344,17 +1547,19 @@ class DawaChatbotService {
           '• يمنع رفع صور لا علاقة لها بالتسليم\n'
           '• يحمي الموردين وشركات التدوير من إتمام وهمي\n\n'
           'إذا رُفضت الصورة: التقط صورة واضحة للنفايات في موقع الشركة.',
-      followUpIds: [
-        'driver_complete_order',
-        'ml_waste_scan',
-      ],
+      followUpIds: ['driver_complete_order', 'ml_waste_scan'],
     ),
 
     const DawaEntry(
       id: 'ml_kyc_scan',
       keywords: [
-        'مسح الهوية', 'التحقق من الهوية', 'قراءة الوثائق', 'kyc',
-        'id scan', 'document scan', 'identity verification',
+        'مسح الهوية',
+        'التحقق من الهوية',
+        'قراءة الوثائق',
+        'kyc',
+        'id scan',
+        'document scan',
+        'identity verification',
       ],
       response:
           'مسح وثائق التسجيل (KYC) 🪪\n\n'
@@ -1363,17 +1568,20 @@ class DawaChatbotService {
           '• يستخرج النظام البيانات تلقائياً (الاسم، الرقم، تاريخ الانتهاء)\n'
           '• يملأ حقول التسجيل لك تلقائياً\n\n'
           'الوثائق تُستخدم للتحقق فقط ولا تُشارك.',
-      followUpIds: [
-        'how_to_register',
-        'driver_signup',
-      ],
+      followUpIds: ['how_to_register', 'driver_signup'],
     ),
 
     const DawaEntry(
       id: 'ml_face_verify',
       keywords: [
-        'التعرف على الوجه', 'تحقق الوجه', 'صورة السائق', 'مطابقة هوية',
-        'face recognition', 'face verify', 'selfie', 'identity match',
+        'التعرف على الوجه',
+        'تحقق الوجه',
+        'صورة السائق',
+        'مطابقة هوية',
+        'face recognition',
+        'face verify',
+        'selfie',
+        'identity match',
       ],
       response:
           'التحقق بالوجه للسائقين 🤳\n\n'
@@ -1383,10 +1591,7 @@ class DawaChatbotService {
           '• إذا تطابقا: يُفعّل الحساب\n'
           '• إذا لم يتطابقا: يُطلب إعادة التحقق\n\n'
           'هذا يحمي الموردين ويضمن موثوقية السائقين.',
-      followUpIds: [
-        'driver_signup',
-        'how_to_register',
-      ],
+      followUpIds: ['driver_signup', 'how_to_register'],
     ),
 
     // ── Waste type ML entries ─────────────────────────────────────
@@ -1452,24 +1657,34 @@ class DawaChatbotService {
     const DawaEntry(
       id: 'rate_driver',
       keywords: [
-        'تقييم السائق', 'نجوم', 'تقييم', 'rate driver', 'review', 'stars',
+        'تقييم السائق',
+        'نجوم',
+        'تقييم',
+        'rate driver',
+        'review',
+        'stars',
       ],
       response:
           'تقييم السائق:\n\n'
           'بعد إتمام الطلب يمكنك تقييم السائق من 1 إلى 5 نجوم.\n'
           'التقييمات تؤثر على ترتيب السائق في قائمة الطلبات المتاحة.\n'
           'سائقو التقييم العالي يُفضَّلون في الطلبات العاجلة.',
-      followUpIds: [
-        'track_order',
-        'driver_complete_order',
-      ],
+      followUpIds: ['track_order', 'driver_complete_order'],
     ),
 
     const DawaEntry(
       id: 'support',
       keywords: [
-        'دعم', 'مساعدة', 'مشكلة', 'تواصل', 'شكوى',
-        'support', 'help', 'problem', 'contact', 'complaint',
+        'دعم',
+        'مساعدة',
+        'مشكلة',
+        'تواصل',
+        'شكوى',
+        'support',
+        'help',
+        'problem',
+        'contact',
+        'complaint',
       ],
       response:
           'للتواصل مع الدعم:\n\n'
@@ -1477,16 +1692,21 @@ class DawaChatbotService {
           '• البريد: support@dawer.jo\n'
           '• ساعات العمل: 8ص – 8م (بتوقيت عمّان)\n\n'
           'يرجى ذكر رقم الطلب عند التواصل.',
-      followUpIds: [
-        'cancel_order',
-      ],
+      followUpIds: ['cancel_order'],
     ),
 
     const DawaEntry(
       id: 'coverage_area',
       keywords: [
-        'المناطق', 'خدمة', 'المدن', 'أين يعمل', 'التغطية',
-        'coverage', 'cities', 'where available', 'areas',
+        'المناطق',
+        'خدمة',
+        'المدن',
+        'أين يعمل',
+        'التغطية',
+        'coverage',
+        'cities',
+        'where available',
+        'areas',
       ],
       response:
           'مناطق تغطية دوّر حالياً:\n\n'
@@ -1495,17 +1715,21 @@ class DawaChatbotService {
           '📍 إربد\n'
           '📍 العقبة\n\n'
           'يتم التوسع لمناطق جديدة تدريجياً.',
-      followUpIds: [
-        'what_is_dawer',
-        'how_to_register',
-      ],
+      followUpIds: ['what_is_dawer', 'how_to_register'],
     ),
 
     const DawaEntry(
       id: 'environmental_impact',
       keywords: [
-        'البيئة', 'كربون', 'CO2', 'أثر بيئي', 'نفايات مُعادة',
-        'environment', 'carbon', 'impact', 'co2 saved',
+        'البيئة',
+        'كربون',
+        'CO2',
+        'أثر بيئي',
+        'نفايات مُعادة',
+        'environment',
+        'carbon',
+        'impact',
+        'co2 saved',
       ],
       response:
           'الأثر البيئي لدوّر 🌍\n\n'
@@ -1516,11 +1740,7 @@ class DawaChatbotService {
           '• 300+ طن/شهر تُحوّل عن المكبات\n'
           '• ~120 طن CO₂ موفرة شهرياً\n\n'
           'كل طلب مكتمل يُسجَّل ضمن الأثر البيئي الكلي للمنصة.',
-      followUpIds: [
-        'what_is_dawer',
-        'points_system',
-        'waste_types',
-      ],
+      followUpIds: ['what_is_dawer', 'points_system', 'waste_types'],
     ),
   ];
 }

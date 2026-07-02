@@ -60,24 +60,27 @@ class _RecordingOrderRepository implements IOrderRepository {
   Future<AppResult<void>> markPurchased(
     String orderId, {
     required bool requiresRider,
-  }) async =>
-      _record('markPurchased');
+  }) async => _record('markPurchased');
 
   @override
   Future<AppResult<void>> markInTransit(String orderId) async =>
       _record('markInTransit');
 
   @override
-  Future<AppResult<void>> markArrivedAtPickup(String orderId, {OrderProof? pickupProof}) async =>
-      _record('markArrivedAtPickup');
+  Future<AppResult<void>> markArrivedAtPickup(
+    String orderId, {
+    OrderProof? pickupProof,
+  }) async => _record('markArrivedAtPickup');
 
   @override
   Future<AppResult<void>> markArrivedAtDropoff(String orderId) async =>
       _record('markArrivedAtDropoff');
 
   @override
-  Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg}) async =>
-      _record('markCompleted');
+  Future<AppResult<void>> markCompleted(
+    String orderId, {
+    double? actualWeightKg,
+  }) async => _record('markCompleted');
 
   @override
   Future<AppResult<void>> recordTransaction({
@@ -87,7 +90,11 @@ class _RecordingOrderRepository implements IOrderRepository {
   }) async => _record('recordTransaction');
 
   @override
-  Future<AppResult<bool>> verifyArrival(String orderId, double lat, double lng) async {
+  Future<AppResult<bool>> verifyArrival(
+    String orderId,
+    double lat,
+    double lng,
+  ) async {
     _record('verifyArrival');
     return const Success(true);
   }
@@ -137,15 +144,17 @@ void main() {
       // complete
       store.completeOrder(store.driverActiveOrder!);
       expect(store.driverHasActiveOrder, isFalse);
-      final completed =
-          store.driverHistory.firstWhere((o) => o.id == orderId);
+      final completed = store.driverHistory.firstWhere((o) => o.id == orderId);
       expect(completed.status, OrderStatus.completed);
       expect(completed.completedAt, isNotNull);
 
       // let the fire-and-forget futures resolve
       await Future<void>.delayed(Duration.zero);
 
-      expect(repo.calls, containsAll(['markAccepted', 'markInTransit', 'markCompleted']));
+      expect(
+        repo.calls,
+        containsAll(['markAccepted', 'markInTransit', 'markCompleted']),
+      );
     });
 
     test('each transition fires notifyListeners exactly once', () async {
@@ -166,52 +175,61 @@ void main() {
       expect(afterComplete, greaterThan(afterTransit));
     });
 
-    test('race condition: second acceptOrder on already-accepted order returns error', () {
-      final orderId = store.driverFeedFor().first.id;
+    test(
+      'race condition: second acceptOrder on already-accepted order returns error',
+      () {
+        final orderId = store.driverFeedFor().first.id;
 
-      const secondDriver = User(
-        id: 'DRV-LIFECYCLE-02',
-        name: 'سائق ثانٍ',
-        role: 'سائق',
-        address: '',
-        points: 0,
-        totalOrders: 0,
-        isVerified: true,
-      );
+        const secondDriver = User(
+          id: 'DRV-LIFECYCLE-02',
+          name: 'سائق ثانٍ',
+          role: 'سائق',
+          address: '',
+          points: 0,
+          totalOrders: 0,
+          isVerified: true,
+        );
 
-      // First driver accepts
-      expect(store.acceptOrder(orderId, _driver), isNull);
-      expect(store.driverActiveOrder?.id, orderId);
+        // First driver accepts
+        expect(store.acceptOrder(orderId, _driver), isNull);
+        expect(store.driverActiveOrder?.id, orderId);
 
-      // Second driver on same store (simulates concurrent check on shared state)
-      final secondError = store.acceptOrder(orderId, secondDriver);
-      expect(secondError, isNotNull);
+        // Second driver on same store (simulates concurrent check on shared state)
+        final secondError = store.acceptOrder(orderId, secondDriver);
+        expect(secondError, isNotNull);
 
-      // Order is still owned by first driver
-      final order = store.driverActiveOrder;
-      expect(order?.driverName, _driver.name);
-      expect(order?.status, OrderStatus.accepted);
-    });
+        // Order is still owned by first driver
+        final order = store.driverActiveOrder;
+        expect(order?.driverName, _driver.name);
+        expect(order?.status, OrderStatus.accepted);
+      },
+    );
 
-    test('acceptOrder on already-accepted (non-assignRider) order returns "no longer available"', () {
-      final orderId = store.driverFeedFor().first.id;
-      store.acceptOrder(orderId, _driver);
+    test(
+      'acceptOrder on already-accepted (non-assignRider) order returns "no longer available"',
+      () {
+        final orderId = store.driverFeedFor().first.id;
+        store.acceptOrder(orderId, _driver);
 
-      // Try to accept the same order again with first driver (should also fail)
-      final error = store.acceptOrder(orderId, _driver);
-      expect(error, isNotNull);
-    });
+        // Try to accept the same order again with first driver (should also fail)
+        final error = store.acceptOrder(orderId, _driver);
+        expect(error, isNotNull);
+      },
+    );
 
-    test('repository failure on acceptOrder propagates to store.lastError', () async {
-      repo.failNextWith(const NetworkFailure());
-      final orderId = store.driverFeedFor().first.id;
-      store.acceptOrder(orderId, _driver);
+    test(
+      'repository failure on acceptOrder propagates to store.lastError',
+      () async {
+        repo.failNextWith(const NetworkFailure());
+        final orderId = store.driverFeedFor().first.id;
+        store.acceptOrder(orderId, _driver);
 
-      // Wait for unawaited future to resolve
-      await Future<void>.delayed(Duration.zero);
+        // Wait for unawaited future to resolve
+        await Future<void>.delayed(Duration.zero);
 
-      expect(store.lastError, isA<NetworkFailure>());
-    });
+        expect(store.lastError, isA<NetworkFailure>());
+      },
+    );
 
     test('cancelOrder pushes markCancelled to repository', () async {
       final order = store.createPickupRequest(

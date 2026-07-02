@@ -18,8 +18,13 @@ class PdfReportService {
             children: [
               pw.Header(
                 level: 0,
-                child: pw.Text('Rider Earnings Report',
-                    style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
+                child: pw.Text(
+                  'Rider Earnings Report',
+                  style: pw.TextStyle(
+                    fontSize: 24,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
               ),
               pw.SizedBox(height: 20),
               pw.Text('Performance Summary'),
@@ -51,9 +56,11 @@ class PdfReportService {
               pw.Divider(),
               pw.SizedBox(height: 10),
               pw.Text(
-                  'Average Earnings per Trip: ${summary.averageEarningsPerTrip.toStringAsFixed(2)} JD'),
+                'Average Earnings per Trip: ${summary.averageEarningsPerTrip.toStringAsFixed(2)} JD',
+              ),
               pw.Text(
-                  'Average Earnings per KM: ${summary.averageEarningsPerKm.toStringAsFixed(2)} JD'),
+                'Average Earnings per KM: ${summary.averageEarningsPerKm.toStringAsFixed(2)} JD',
+              ),
               pw.SizedBox(height: 30),
               pw.Text('Recent Activity'),
               pw.TableHelper.fromTextArray(
@@ -65,7 +72,7 @@ class PdfReportService {
                       t.orderId,
                       t.date.toString().split(' ')[0],
                       '${t.amount} JD',
-                      '${t.distanceKm} KM'
+                      '${t.distanceKm} KM',
                     ],
                   ),
                 ],

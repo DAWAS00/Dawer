@@ -69,9 +69,7 @@ class _ChatScaffold extends StatelessWidget {
       body: Column(
         children: [
           _frontendOnlyBanner(context),
-          Expanded(
-            child: _MessageList(vm: vm),
-          ),
+          Expanded(child: _MessageList(vm: vm)),
           _TypingIndicator(isVisible: vm.isOtherTyping),
           ChatInputBar(
             onSend: vm.send,
@@ -90,39 +88,43 @@ class _ChatScaffold extends StatelessWidget {
   }
 
   // State-aware quick replies — chips change at each order stage.
-  List<String> _quickRepliesForStatus(
-    OrderStatus? status,
-    UserRole role,
-  ) {
+  List<String> _quickRepliesForStatus(OrderStatus? status, UserRole role) {
     final isDriver = role == UserRole.driver;
     return switch (status) {
-      OrderStatus.pending => isDriver
-          ? ['في الطريق إليك', 'سأكون هناك قريباً']
-          : ['المواد جاهزة', 'بانتظارك'],
-      OrderStatus.accepted => isDriver
-          ? ['في الطريق إليك', 'أنا على بعد 5 دقائق']
-          : ['المواد جاهزة', 'أين أنت الآن؟'],
-      OrderStatus.arrivedAtPickup => isDriver
-          ? ['وصلت، أين الحاوية؟', 'ما رمز الباب؟', 'لا أرى العنوان']
-          : ['أنا قادم', 'الحاوية في الخارج', 'رمز الباب معك'],
-      OrderStatus.inTransit => isDriver
-          ? ['تم التحميل، في الطريق']
-          : ['متى تصل؟', 'شكراً على الاستلام'],
-      OrderStatus.arrivedAtDropoff => isDriver
-          ? ['وصلت لنقطة التسليم', 'بانتظار الاستلام']
-          : ['جاهزون للاستلام', 'تفضّل للداخل'],
-      OrderStatus.completed || OrderStatus.cancelled => isDriver
-          ? ['شكراً على التعاون']
-          : ['شكراً، خدمة ممتازة'],
-      null => isDriver
-          ? ['في الطريق إليك', 'لقد وصلت']
-          : ['المواد جاهزة', 'بانتظارك'],
+      OrderStatus.pending =>
+        isDriver
+            ? ['في الطريق إليك', 'سأكون هناك قريباً']
+            : ['المواد جاهزة', 'بانتظارك'],
+      OrderStatus.accepted =>
+        isDriver
+            ? ['في الطريق إليك', 'أنا على بعد 5 دقائق']
+            : ['المواد جاهزة', 'أين أنت الآن؟'],
+      OrderStatus.arrivedAtPickup =>
+        isDriver
+            ? ['وصلت، أين الحاوية؟', 'ما رمز الباب؟', 'لا أرى العنوان']
+            : ['أنا قادم', 'الحاوية في الخارج', 'رمز الباب معك'],
+      OrderStatus.inTransit =>
+        isDriver
+            ? ['تم التحميل، في الطريق']
+            : ['متى تصل؟', 'شكراً على الاستلام'],
+      OrderStatus.arrivedAtDropoff =>
+        isDriver
+            ? ['وصلت لنقطة التسليم', 'بانتظار الاستلام']
+            : ['جاهزون للاستلام', 'تفضّل للداخل'],
+      OrderStatus.completed || OrderStatus.cancelled =>
+        isDriver ? ['شكراً على التعاون'] : ['شكراً، خدمة ممتازة'],
+      null =>
+        isDriver
+            ? ['في الطريق إليك', 'لقد وصلت']
+            : ['المواد جاهزة', 'بانتظارك'],
     };
   }
 
   // Dev-only banner — hidden in release builds and when live repo is wired.
   Widget _frontendOnlyBanner(BuildContext context) {
-    final isMock = context.read<IChatRepository>().runtimeType.toString() != 'SupabaseChatRepository';
+    final isMock =
+        context.read<IChatRepository>().runtimeType.toString() !=
+        'SupabaseChatRepository';
     if (!kDebugMode || !isMock) return const SizedBox.shrink();
     return Container(
       width: double.infinity,
@@ -141,8 +143,11 @@ class _ChatScaffold extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 6),
-          const Icon(Icons.construction_rounded,
-              size: 14, color: AppColors.accentAmber),
+          const Icon(
+            Icons.construction_rounded,
+            size: 14,
+            color: AppColors.accentAmber,
+          ),
         ],
       ),
     );
@@ -248,21 +253,26 @@ class _MessageListState extends State<_MessageList> {
     final items = <Widget>[];
     DateTime? lastDate;
     for (final msg in msgs) {
-      final msgDate =
-          DateTime(msg.sentAt.year, msg.sentAt.month, msg.sentAt.day);
+      final msgDate = DateTime(
+        msg.sentAt.year,
+        msg.sentAt.month,
+        msg.sentAt.day,
+      );
       if (lastDate == null || msgDate != lastDate) {
         items.add(_DateSeparator(date: msgDate));
         lastDate = msgDate;
       }
       final isOptimistic = msg.id.startsWith('opt_');
       final isFailed = failedIds.contains(msg.id);
-      items.add(ChatBubble(
-        message: msg,
-        isMine: msg.senderId == currentUserId,
-        isSending: isOptimistic && !isFailed,
-        isFailed: isFailed,
-        onRetry: isFailed ? () => onRetry(msg) : null,
-      ));
+      items.add(
+        ChatBubble(
+          message: msg,
+          isMine: msg.senderId == currentUserId,
+          isSending: isOptimistic && !isFailed,
+          isFailed: isFailed,
+          onRetry: isFailed ? () => onRetry(msg) : null,
+        ),
+      );
     }
     return items;
   }
@@ -297,9 +307,7 @@ class _MessageListState extends State<_MessageList> {
         slivers: [
           // Pinned order-context card at the top.
           if (order != null)
-            SliverToBoxAdapter(
-              child: _OrderContextCard(order: order),
-            ),
+            SliverToBoxAdapter(child: _OrderContextCard(order: order)),
           if (msgs.isEmpty)
             SliverFillRemaining(child: _EmptyState())
           else ...[
@@ -314,8 +322,7 @@ class _MessageListState extends State<_MessageList> {
         ],
       );
     }
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => _scrollToBottom());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     return const SizedBox.shrink();
   }
 }
@@ -339,8 +346,9 @@ class _OrderContextCardState extends State<_OrderContextCard> {
     final wasteLabel = o.wasteTypes.isNotEmpty
         ? o.wasteTypes.map((w) => w.label).join('، ')
         : null;
-    final weight =
-        o.weightKg != null ? '${o.weightKg!.toStringAsFixed(0)} كجم' : null;
+    final weight = o.weightKg != null
+        ? '${o.weightKg!.toStringAsFixed(0)} كجم'
+        : null;
 
     return AnimatedSize(
       duration: const Duration(milliseconds: 200),
@@ -386,18 +394,18 @@ class _OrderContextCardState extends State<_OrderContextCard> {
                       ),
                     ),
                   const SizedBox(width: 6),
-                  const Icon(Icons.inventory_2_rounded,
-                      size: 15, color: Color(0xFF06402B)),
+                  const Icon(
+                    Icons.inventory_2_rounded,
+                    size: 15,
+                    color: Color(0xFF06402B),
+                  ),
                 ],
               ),
               // Expanded details.
               if (_expanded) ...[
                 const SizedBox(height: 8),
                 if (weight != null)
-                  _ContextRow(
-                    icon: Icons.scale_rounded,
-                    text: weight,
-                  ),
+                  _ContextRow(icon: Icons.scale_rounded, text: weight),
                 _ContextRow(
                   icon: Icons.location_on_rounded,
                   text: o.pickupAddress,
@@ -430,9 +438,7 @@ class _ContextRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = highlight
-        ? const Color(0xFFC8860A)
-        : const Color(0xFF404943);
+    final color = highlight ? const Color(0xFFC8860A) : const Color(0xFF404943);
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: Row(
@@ -445,8 +451,7 @@ class _ContextRow extends StatelessWidget {
               style: GoogleFonts.cairo(
                 fontSize: 12,
                 color: color,
-                fontWeight:
-                    highlight ? FontWeight.bold : FontWeight.normal,
+                fontWeight: highlight ? FontWeight.bold : FontWeight.normal,
               ),
             ),
           ),
@@ -522,15 +527,18 @@ class _TypingIndicatorState extends State<_TypingIndicator>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     )..repeat();
-    _dot1 = Tween(begin: 0.3, end: 1.0).animate(
-      CurvedAnimation(parent: _ctrl, curve: const Interval(0.0, 0.5)),
-    );
-    _dot2 = Tween(begin: 0.3, end: 1.0).animate(
-      CurvedAnimation(parent: _ctrl, curve: const Interval(0.2, 0.7)),
-    );
-    _dot3 = Tween(begin: 0.3, end: 1.0).animate(
-      CurvedAnimation(parent: _ctrl, curve: const Interval(0.4, 0.9)),
-    );
+    _dot1 = Tween(
+      begin: 0.3,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: const Interval(0.0, 0.5)));
+    _dot2 = Tween(
+      begin: 0.3,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: const Interval(0.2, 0.7)));
+    _dot3 = Tween(
+      begin: 0.3,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: const Interval(0.4, 0.9)));
   }
 
   @override
@@ -611,14 +619,15 @@ class _EmptyState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.chat_bubble_outline_rounded,
-              size: 48,
-              color: AppColors.mutedText.withValues(alpha: 0.4)),
+          Icon(
+            Icons.chat_bubble_outline_rounded,
+            size: 48,
+            color: AppColors.mutedText.withValues(alpha: 0.4),
+          ),
           const SizedBox(height: 12),
           Text(
             context.l10n.chatEmpty,
-            style:
-                GoogleFonts.cairo(fontSize: 14, color: AppColors.mutedText),
+            style: GoogleFonts.cairo(fontSize: 14, color: AppColors.mutedText),
           ),
         ],
       ),

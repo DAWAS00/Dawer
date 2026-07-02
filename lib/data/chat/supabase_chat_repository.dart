@@ -83,11 +83,13 @@ class SupabaseChatRepository implements IChatRepository {
     final objectPath = '$orderId/${DateTime.now().millisecondsSinceEpoch}.$ext';
     String attachmentPath;
     try {
-      await _client.storage.from('chat-attachments').upload(
-        objectPath,
-        image,
-        fileOptions: FileOptions(contentType: _mimeFor(ext)),
-      );
+      await _client.storage
+          .from('chat-attachments')
+          .upload(
+            objectPath,
+            image,
+            fileOptions: FileOptions(contentType: _mimeFor(ext)),
+          );
       // Private bucket: store the object path; the UI mints a signed URL on
       // demand via SupabaseFileStorageRepository.signedIdentityUrl-style flow.
       attachmentPath = objectPath;
@@ -171,12 +173,14 @@ class SupabaseChatRepository implements IChatRepository {
     // the list, but the second pass finds nothing left to flip, so it converges
     // in one cycle (not infinite). The mock avoided re-emitting; here the DB is
     // the source of truth so a single reconciliation render is correct.
-    return _run(() => _client
-        .from('chat_messages')
-        .update({'is_read': true})
-        .eq('room_id', orderId)
-        .neq('sender_id', userId)
-        .eq('is_read', false));
+    return _run(
+      () => _client
+          .from('chat_messages')
+          .update({'is_read': true})
+          .eq('room_id', orderId)
+          .neq('sender_id', userId)
+          .eq('is_read', false),
+    );
   }
 
   @override

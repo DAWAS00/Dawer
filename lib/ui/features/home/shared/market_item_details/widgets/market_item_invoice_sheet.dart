@@ -95,7 +95,11 @@ class MarketItemInvoiceSheet extends StatelessWidget {
           const SizedBox(height: 4),
           Row(
             children: [
-              const Icon(Icons.location_on_rounded, size: 16, color: Color(0xFF06402B)),
+              const Icon(
+                Icons.location_on_rounded,
+                size: 16,
+                color: Color(0xFF06402B),
+              ),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
@@ -117,7 +121,9 @@ class MarketItemInvoiceSheet extends StatelessWidget {
               onPressed: onConfirm,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF06402B),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 elevation: 0,
               ),
               child: Text(

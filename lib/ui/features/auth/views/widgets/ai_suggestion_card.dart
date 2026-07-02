@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AiSuggestionCard extends StatelessWidget {
@@ -15,7 +15,9 @@ class AiSuggestionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (marketplaceLookupPrompt == null && appDiscoverySuggestion == null && !isLoading) {
+    if (marketplaceLookupPrompt == null &&
+        appDiscoverySuggestion == null &&
+        !isLoading) {
       return const SizedBox.shrink();
     }
 
@@ -56,9 +58,7 @@ class AiSuggestionCard extends StatelessWidget {
             const Center(
               child: Padding(
                 padding: EdgeInsets.all(16.0),
-                child: CircularProgressIndicator(
-                  color: Color(0xFF166534),
-                ),
+                child: CircularProgressIndicator(color: Color(0xFF166534)),
               ),
             )
           else ...[

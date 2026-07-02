@@ -12,14 +12,14 @@ class InvoiceItem {
   double get total => quantity * price;
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'quantity': quantity,
-        'price': price,
-      };
+    'name': name,
+    'quantity': quantity,
+    'price': price,
+  };
 
   factory InvoiceItem.fromJson(Map<String, dynamic> json) => InvoiceItem(
-        name: json['name'] as String,
-        quantity: (json['quantity'] as num).toInt(),
-        price: (json['price'] as num).toDouble(),
-      );
+    name: json['name'] as String,
+    quantity: (json['quantity'] as num).toInt(),
+    price: (json['price'] as num).toDouble(),
+  );
 }

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:dwaar/core/theme/app_tokens.dart';
 import 'package:dwaar/core/constants/app_colors.dart';
 
@@ -99,8 +99,11 @@ class HomeDriverBar extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.access_time_rounded,
-                    size: 11, color: Color(0xFF1565C0)),
+                const Icon(
+                  Icons.access_time_rounded,
+                  size: 11,
+                  color: Color(0xFF1565C0),
+                ),
                 const SizedBox(width: 3),
                 Text(
                   '$etaMinutes دقيقة',

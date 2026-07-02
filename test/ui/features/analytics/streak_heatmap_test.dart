@@ -20,10 +20,7 @@ void main() {
   testWidgets('StreakHeatmap shows empty state when no counts', (tester) async {
     await tester.pumpWidget(
       wrapWithL10n(
-        StreakHeatmap(
-          counts: const {},
-          today: DateTime(2026, 6, 28),
-        ),
+        StreakHeatmap(counts: const {}, today: DateTime(2026, 6, 28)),
       ),
     );
     expect(find.byType(AspectRatio), findsNothing);

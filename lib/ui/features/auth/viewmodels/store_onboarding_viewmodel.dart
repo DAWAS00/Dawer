@@ -12,7 +12,7 @@ import 'license_validation_viewmodel.dart';
 
 class StoreOnboardingViewModel extends ChangeNotifier {
   StoreOnboardingViewModel({required UserSignUpService service})
-      : _service = service;
+    : _service = service;
 
   final UserSignUpService _service;
   final ImagePicker _picker = ImagePicker();
@@ -30,7 +30,10 @@ class StoreOnboardingViewModel extends ChangeNotifier {
 
   Future<void> pickProfilePhoto(ImageSource source) async {
     final xf = await _picker.pickImage(
-        source: source, imageQuality: 80, maxWidth: 800);
+      source: source,
+      imageQuality: 80,
+      maxWidth: 800,
+    );
     if (xf != null) {
       profilePhoto = File(xf.path);
       notifyListeners();
@@ -76,7 +79,10 @@ class StoreOnboardingViewModel extends ChangeNotifier {
 
   Future<void> pickIdentityDocument(ImageSource source) async {
     final xf = await _picker.pickImage(
-        source: source, imageQuality: 85, maxWidth: 1200);
+      source: source,
+      imageQuality: 85,
+      maxWidth: 1200,
+    );
     if (xf != null) {
       identityDocument = File(xf.path);
       notifyListeners();
@@ -152,7 +158,8 @@ class StoreOnboardingViewModel extends ChangeNotifier {
     }
     if (password.length < 8) {
       errors['password'] = 'كلمة المرور 8 أحرف على الأقل';
-    } else if (!_hasLetter.hasMatch(password) || !_hasDigit.hasMatch(password)) {
+    } else if (!_hasLetter.hasMatch(password) ||
+        !_hasDigit.hasMatch(password)) {
       errors['password'] = 'يجب أن تحتوي على حرف ورقم';
     }
     if (passwordConfirm != password) {
@@ -177,7 +184,8 @@ class StoreOnboardingViewModel extends ChangeNotifier {
   SignUpRequest _buildRequest() {
     String? finalAddress;
     if (isAddressSet) {
-      final coords = '${_addressLat!.toStringAsFixed(5)}, ${_addressLng!.toStringAsFixed(5)}';
+      final coords =
+          '${_addressLat!.toStringAsFixed(5)}, ${_addressLng!.toStringAsFixed(5)}';
       finalAddress = preciseAddress.trim().isNotEmpty
           ? '$coords (${preciseAddress.trim()})'
           : coords;

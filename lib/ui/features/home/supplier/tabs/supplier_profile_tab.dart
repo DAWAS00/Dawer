@@ -21,7 +21,8 @@ class SupplierProfileTab extends StatelessWidget {
   final int totalPoints;
   final int totalOrders;
   final SupplierType supplierType;
-  final void Function({String? name, String? phone, String? address}) onUpdateProfile;
+  final void Function({String? name, String? phone, String? address})
+  onUpdateProfile;
 
   /// Auth session user id — used to look up خُضَر green credits and open the
   /// rewards screen. Defaults to empty for callers that don't have it wired.
@@ -38,13 +39,15 @@ class SupplierProfileTab extends StatelessWidget {
   });
 
   void _openRewards(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => RewardsView(
-        userId: userId,
-        userName: user.name,
-        completedOrders: totalOrders,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => RewardsView(
+          userId: userId,
+          userName: user.name,
+          completedOrders: totalOrders,
+        ),
       ),
-    ));
+    );
   }
 
   void _showEditProfileSheet(BuildContext context) {
@@ -52,10 +55,8 @@ class SupplierProfileTab extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => _EditProfileSheet(
-        user: user,
-        onUpdateProfile: onUpdateProfile,
-      ),
+      builder: (ctx) =>
+          _EditProfileSheet(user: user, onUpdateProfile: onUpdateProfile),
     );
   }
 
@@ -74,14 +75,24 @@ class SupplierProfileTab extends StatelessWidget {
             children: [
               ProfileHeader(
                 name: user.name,
-                badgeLabel: isStore ? context.l10n.supplierStoreType : context.l10n.supplierIndividualType,
-                avatarIcon: isStore ? Icons.storefront_rounded : Icons.person_rounded,
+                badgeLabel: isStore
+                    ? context.l10n.supplierStoreType
+                    : context.l10n.supplierIndividualType,
+                avatarIcon: isStore
+                    ? Icons.storefront_rounded
+                    : Icons.person_rounded,
                 isVerified: user.isVerified,
               ),
               ProfileStatCard(
                 stats: [
-                  ProfileStat(value: greenPoints.toString(), label: context.l10n.supplierRecyclingPoints),
-                  ProfileStat(value: totalOrders.toString(), label: context.l10n.supplierTotalOrders),
+                  ProfileStat(
+                    value: greenPoints.toString(),
+                    label: context.l10n.supplierRecyclingPoints,
+                  ),
+                  ProfileStat(
+                    value: totalOrders.toString(),
+                    label: context.l10n.supplierTotalOrders,
+                  ),
                 ],
               ),
 
@@ -96,13 +107,26 @@ class SupplierProfileTab extends StatelessWidget {
                 title: context.l10n.supplierPersonalInfo,
                 onEdit: () => _showEditProfileSheet(context),
               ),
-              ProfileTile(icon: Icons.phone_rounded, label: context.l10n.profilePhone, value: user.phone, valueLtr: true),
-              ProfileTile(icon: Icons.location_on_rounded, label: context.l10n.supplierAddressLabel, value: user.address ?? context.l10n.supplierAddAddress),
+              ProfileTile(
+                icon: Icons.phone_rounded,
+                label: context.l10n.profilePhone,
+                value: user.phone,
+                valueLtr: true,
+              ),
+              ProfileTile(
+                icon: Icons.location_on_rounded,
+                label: context.l10n.supplierAddressLabel,
+                value: user.address ?? context.l10n.supplierAddAddress,
+              ),
               ProfileTile(
                 icon: Icons.badge_rounded,
                 label: context.l10n.supplierIdentity,
-                value: user.isVerified ? context.l10n.supplierVerified : context.l10n.supplierNotVerified,
-                valueColor: user.isVerified ? const Color(0xFF166534) : const Color(0xFFC8860A),
+                value: user.isVerified
+                    ? context.l10n.supplierVerified
+                    : context.l10n.supplierNotVerified,
+                valueColor: user.isVerified
+                    ? const Color(0xFF166534)
+                    : const Color(0xFFC8860A),
               ),
 
               const SizedBox(height: 24),
@@ -110,13 +134,17 @@ class SupplierProfileTab extends StatelessWidget {
               ProfileTile(
                 icon: Icons.language_rounded,
                 label: context.l10n.profileLanguage,
-                value: Localizations.localeOf(context).languageCode == 'ar' ? context.l10n.languageArabic : context.l10n.languageEnglish,
+                value: Localizations.localeOf(context).languageCode == 'ar'
+                    ? context.l10n.languageArabic
+                    : context.l10n.languageEnglish,
               ),
               Consumer<AppThemeNotifier>(
                 builder: (context, themeNotifier, _) {
                   String modeLabel = context.l10n.themeAutoShort;
-                  if (themeNotifier.mode == ThemeMode.light) modeLabel = context.l10n.themeLight;
-                  if (themeNotifier.mode == ThemeMode.dark) modeLabel = context.l10n.themeDark;
+                  if (themeNotifier.mode == ThemeMode.light)
+                    modeLabel = context.l10n.themeLight;
+                  if (themeNotifier.mode == ThemeMode.dark)
+                    modeLabel = context.l10n.themeDark;
                   return ProfileTile(
                     icon: Icons.dark_mode_rounded,
                     label: context.l10n.profileTheme,
@@ -126,12 +154,31 @@ class SupplierProfileTab extends StatelessWidget {
                   );
                 },
               ),
-              ProfileTile(icon: Icons.notifications_active_rounded, label: context.l10n.profileNotifications, value: context.l10n.profileNotificationsEnabled),
+              ProfileTile(
+                icon: Icons.notifications_active_rounded,
+                label: context.l10n.profileNotifications,
+                value: context.l10n.profileNotificationsEnabled,
+              ),
 
               const SizedBox(height: 32),
-              ProfileActionTile(icon: Icons.emoji_events_rounded, title: context.l10n.supplierMyRewards, color: const Color(0xFFD97706), onTap: () => _openRewards(context)),
-              ProfileActionTile(icon: Icons.logout_rounded, title: context.l10n.logout, color: Colors.red.shade700, onTap: () => showLogoutDialog(context)),
-              ProfileActionTile(icon: Icons.person_remove_rounded, title: context.l10n.profileDeleteAccount, color: Colors.red.shade700, onTap: () {}),
+              ProfileActionTile(
+                icon: Icons.emoji_events_rounded,
+                title: context.l10n.supplierMyRewards,
+                color: const Color(0xFFD97706),
+                onTap: () => _openRewards(context),
+              ),
+              ProfileActionTile(
+                icon: Icons.logout_rounded,
+                title: context.l10n.logout,
+                color: Colors.red.shade700,
+                onTap: () => showLogoutDialog(context),
+              ),
+              ProfileActionTile(
+                icon: Icons.person_remove_rounded,
+                title: context.l10n.profileDeleteAccount,
+                color: Colors.red.shade700,
+                onTap: () {},
+              ),
 
               const SizedBox(height: 100),
             ],
@@ -146,7 +193,8 @@ class SupplierProfileTab extends StatelessWidget {
 
 class _EditProfileSheet extends StatefulWidget {
   final User user;
-  final void Function({String? name, String? phone, String? address}) onUpdateProfile;
+  final void Function({String? name, String? phone, String? address})
+  onUpdateProfile;
   const _EditProfileSheet({required this.user, required this.onUpdateProfile});
 
   @override
@@ -178,7 +226,9 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
     widget.onUpdateProfile(
       name: _nameCtrl.text.trim().isNotEmpty ? _nameCtrl.text.trim() : null,
       phone: _phoneCtrl.text.trim().isNotEmpty ? _phoneCtrl.text.trim() : null,
-      address: _addressCtrl.text.trim().isNotEmpty ? _addressCtrl.text.trim() : null,
+      address: _addressCtrl.text.trim().isNotEmpty
+          ? _addressCtrl.text.trim()
+          : null,
     );
     Navigator.pop(context);
   }
@@ -190,20 +240,52 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+      padding: EdgeInsets.fromLTRB(
+        24,
+        24,
+        24,
+        MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 40, height: 4, decoration: BoxDecoration(color: const Color(0xFFE6E9E7), borderRadius: BorderRadius.circular(2))),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE6E9E7),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
             const SizedBox(height: 24),
-            Text(context.l10n.profileEditProfile, style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF002819))),
+            Text(
+              context.l10n.profileEditProfile,
+              style: GoogleFonts.cairo(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF002819),
+              ),
+            ),
             const SizedBox(height: 24),
-            _buildField(label: context.l10n.supplierNameLabel, controller: _nameCtrl, hint: context.l10n.supplierNameHint),
+            _buildField(
+              label: context.l10n.supplierNameLabel,
+              controller: _nameCtrl,
+              hint: context.l10n.supplierNameHint,
+            ),
             const SizedBox(height: 16),
-            _buildField(label: context.l10n.profilePhone, controller: _phoneCtrl, hint: context.l10n.supplierPhoneHint, textDirection: TextDirection.ltr),
+            _buildField(
+              label: context.l10n.profilePhone,
+              controller: _phoneCtrl,
+              hint: context.l10n.supplierPhoneHint,
+              textDirection: TextDirection.ltr,
+            ),
             const SizedBox(height: 16),
-            _buildField(label: context.l10n.supplierAddressLabel, controller: _addressCtrl, hint: context.l10n.supplierAddressHint),
+            _buildField(
+              label: context.l10n.supplierAddressLabel,
+              controller: _addressCtrl,
+              hint: context.l10n.supplierAddressHint,
+            ),
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
@@ -212,10 +294,19 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                 onPressed: _save,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1E5C35),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   elevation: 0,
                 ),
-                child: Text(context.l10n.saveChanges, style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                child: Text(
+                  context.l10n.saveChanges,
+                  style: GoogleFonts.cairo(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ],
@@ -233,21 +324,39 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text(label, style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF404943))),
+        Text(
+          label,
+          style: GoogleFonts.cairo(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF404943),
+          ),
+        ),
         const SizedBox(height: 8),
         Container(
-          decoration: BoxDecoration(color: const Color(0xFFF2F4F2), borderRadius: BorderRadius.circular(12)),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF2F4F2),
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: TextField(
             controller: controller,
             textDirection: textDirection,
-            textAlign: textDirection == TextDirection.rtl ? TextAlign.right : TextAlign.left,
+            textAlign: textDirection == TextDirection.rtl
+                ? TextAlign.right
+                : TextAlign.left,
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: GoogleFonts.cairo(color: const Color(0xFF9099A2)),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
+              ),
             ),
-            style: GoogleFonts.cairo(fontSize: 16, color: const Color(0xFF002819)),
+            style: GoogleFonts.cairo(
+              fontSize: 16,
+              color: const Color(0xFF002819),
+            ),
           ),
         ),
       ],

@@ -39,43 +39,60 @@ void main() {
         'confidence': 0.88,
       });
 
-      expect(result.wasteTypes, [WasteType.metal, WasteType.plastic, WasteType.paper]);
+      expect(result.wasteTypes, [
+        WasteType.metal,
+        WasteType.plastic,
+        WasteType.paper,
+      ]);
       expect(result.wasteTypes.length, 3);
     });
 
     // ── Synonym mappings ──────────────────────────────────────────────────
 
     test('maps cardboard synonym → paper', () {
-      final result = MarketAiResult.fromJson({'wasteTypes': ['cardboard']});
+      final result = MarketAiResult.fromJson({
+        'wasteTypes': ['cardboard'],
+      });
       expect(result.wasteTypes, [WasteType.paper]);
     });
 
     test('maps iron synonym → metal', () {
-      final result = MarketAiResult.fromJson({'wasteTypes': ['iron']});
+      final result = MarketAiResult.fromJson({
+        'wasteTypes': ['iron'],
+      });
       expect(result.wasteTypes, [WasteType.metal]);
     });
 
     test('maps aluminium synonym → metal', () {
-      final result = MarketAiResult.fromJson({'wasteTypes': ['aluminium']});
+      final result = MarketAiResult.fromJson({
+        'wasteTypes': ['aluminium'],
+      });
       expect(result.wasteTypes, [WasteType.metal]);
     });
 
     test('maps timber synonym → wood', () {
-      final result = MarketAiResult.fromJson({'wasteTypes': ['timber']});
+      final result = MarketAiResult.fromJson({
+        'wasteTypes': ['timber'],
+      });
       expect(result.wasteTypes, [WasteType.wood]);
     });
 
     test('maps pvc synonym → plastic', () {
-      final result = MarketAiResult.fromJson({'wasteTypes': ['pvc']});
+      final result = MarketAiResult.fromJson({
+        'wasteTypes': ['pvc'],
+      });
       expect(result.wasteTypes, [WasteType.plastic]);
     });
 
     // ── Legacy single-key fallback ────────────────────────────────────────
 
-    test('falls back to legacy wasteType single-key when wasteTypes absent', () {
-      final result = MarketAiResult.fromJson({'wasteType': 'plastic'});
-      expect(result.wasteTypes, [WasteType.plastic]);
-    });
+    test(
+      'falls back to legacy wasteType single-key when wasteTypes absent',
+      () {
+        final result = MarketAiResult.fromJson({'wasteType': 'plastic'});
+        expect(result.wasteTypes, [WasteType.plastic]);
+      },
+    );
 
     test('legacy cardboard single-key maps to paper', () {
       final result = MarketAiResult.fromJson({'wasteType': 'cardboard'});
@@ -170,7 +187,9 @@ void main() {
     });
 
     test('confidence defaults to 0.0 when absent', () {
-      final result = MarketAiResult.fromJson({'wasteTypes': ['wood']});
+      final result = MarketAiResult.fromJson({
+        'wasteTypes': ['wood'],
+      });
       expect(result.confidence, 0.0);
     });
   });

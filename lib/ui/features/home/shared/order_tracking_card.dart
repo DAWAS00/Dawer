@@ -121,8 +121,10 @@ class OrderTrackingCard extends StatelessWidget {
               right: 0,
               child: Center(
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.85),
                     borderRadius: BorderRadius.circular(20),
@@ -130,8 +132,11 @@ class OrderTrackingCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.map_outlined,
-                          size: 12, color: Color(0xFF06402B)),
+                      const Icon(
+                        Icons.map_outlined,
+                        size: 12,
+                        color: Color(0xFF06402B),
+                      ),
                       const SizedBox(width: 5),
                       Text(
                         context.l10n.mapsComingSoon,
@@ -161,8 +166,7 @@ class OrderTrackingCard extends StatelessWidget {
         children: [
           // ETA chip
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: const Color(0xFF06402B).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(20),
@@ -170,8 +174,11 @@ class OrderTrackingCard extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.access_time_rounded,
-                    size: 13, color: Color(0xFF06402B)),
+                const Icon(
+                  Icons.access_time_rounded,
+                  size: 13,
+                  color: Color(0xFF06402B),
+                ),
                 const SizedBox(width: 5),
                 Text(
                   order.eta ?? '--',
@@ -211,7 +218,12 @@ class OrderTrackingCard extends StatelessWidget {
   Widget _buildDriverRow(BuildContext context) {
     final l10n = context.l10n;
     final name = order.driverName ?? l10n.orderDriverSection;
-    final initials = name.trim().split(' ').map((w) => w.isNotEmpty ? w[0] : '').take(2).join();
+    final initials = name
+        .trim()
+        .split(' ')
+        .map((w) => w.isNotEmpty ? w[0] : '')
+        .take(2)
+        .join();
     final rating = order.driverRating ?? 5.0;
     final vehicle = order.driverVehicle ?? l10n.profileVehicle;
 
@@ -238,8 +250,11 @@ class OrderTrackingCard extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.local_shipping_rounded,
-                    size: 12, color: Color(0xFF717973)),
+                const Icon(
+                  Icons.local_shipping_rounded,
+                  size: 12,
+                  color: Color(0xFF717973),
+                ),
                 const SizedBox(width: 4),
                 Text(
                   vehicle,
@@ -267,8 +282,7 @@ class OrderTrackingCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 3),
-              Icon(Icons.star_rounded,
-                  size: 14, color: AppColors.accentAmber),
+              Icon(Icons.star_rounded, size: 14, color: AppColors.accentAmber),
             ],
           ),
           const SizedBox(width: 10),
@@ -314,8 +328,11 @@ class OrderTrackingCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.radio_button_checked,
-                  size: 14, color: const Color(0xFF06402B)),
+              Icon(
+                Icons.radio_button_checked,
+                size: 14,
+                color: const Color(0xFF06402B),
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -331,12 +348,19 @@ class OrderTrackingCard extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(right: 6, top: 2, bottom: 2),
-            child: Container(width: 1, height: 12, color: const Color(0xFFC0C9C1)),
+            child: Container(
+              width: 1,
+              height: 12,
+              color: const Color(0xFFC0C9C1),
+            ),
           ),
           Row(
             children: [
-              Icon(Icons.location_on_rounded,
-                  size: 14, color: Colors.red.shade400),
+              Icon(
+                Icons.location_on_rounded,
+                size: 14,
+                color: Colors.red.shade400,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -372,10 +396,10 @@ class OrderTrackingCard extends StatelessWidget {
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
   Widget _buildDivider() => Container(
-        height: 1,
-        color: const Color(0xFFF0F2F1),
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-      );
+    height: 1,
+    color: const Color(0xFFF0F2F1),
+    margin: const EdgeInsets.symmetric(horizontal: 16),
+  );
 }
 
 // ── Sub-widgets ───────────────────────────────────────────────────────────────
@@ -511,8 +535,10 @@ class _RoutePainter extends CustomPainter {
     final path = Path()
       ..moveTo(size.width - 50, 52)
       ..cubicTo(
-        size.width - 100, 52,
-        size.width - 130, size.height - 52,
+        size.width - 100,
+        52,
+        size.width - 130,
+        size.height - 52,
         50,
         size.height - 52,
       );
@@ -526,10 +552,7 @@ class _RoutePainter extends CustomPainter {
     while (distance < metrics.length) {
       final len = drawing ? dashLen : gapLen;
       if (drawing) {
-        canvas.drawPath(
-          metrics.extractPath(distance, distance + len),
-          paint,
-        );
+        canvas.drawPath(metrics.extractPath(distance, distance + len), paint);
       }
       distance += len;
       drawing = !drawing;
@@ -540,8 +563,10 @@ class _RoutePainter extends CustomPainter {
       Path()
         ..moveTo(size.width - 50, 52)
         ..cubicTo(
-          size.width - 100, 52,
-          size.width - 130, size.height - 52,
+          size.width - 100,
+          52,
+          size.width - 130,
+          size.height - 52,
           50,
           size.height - 52,
         ),

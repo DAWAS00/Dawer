@@ -21,6 +21,8 @@ class MapsConfig {
 
   static void init(String key) {
     _key = key;
-    debugPrint('[MapsConfig] Directions API key loaded (length=${key.length}).');
+    debugPrint(
+      '[MapsConfig] Directions API key loaded (length=${key.length}).',
+    );
   }
 }

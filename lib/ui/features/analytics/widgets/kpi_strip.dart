@@ -8,11 +8,7 @@ import 'kpi_card.dart';
 /// This replaces the legacy inline `_StatCard`-in-`Expanded` pattern that
 /// caused `BOTTOM OVERFLOWED` on narrow screens.
 class KpiStrip extends StatelessWidget {
-  const KpiStrip({
-    super.key,
-    required this.items,
-    this.itemWidth = 148,
-  });
+  const KpiStrip({super.key, required this.items, this.itemWidth = 148});
 
   final List<KpiItem> items;
   final double itemWidth;

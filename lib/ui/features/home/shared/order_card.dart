@@ -30,34 +30,46 @@ class OrderCard extends StatelessWidget {
   });
 
   Color _accentColor() => switch (order.status) {
-        OrderStatus.pending => AppColors.accentAmber,
-        OrderStatus.accepted || OrderStatus.arrivedAtPickup => AppColors.statusActiveText,
-        OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => AppColors.jobBlue,
-        OrderStatus.completed => AppColors.statusCompletedText,
-        OrderStatus.cancelled => AppColors.statusCancelledText,
-      };
+    OrderStatus.pending => AppColors.accentAmber,
+    OrderStatus.accepted ||
+    OrderStatus.arrivedAtPickup => AppColors.statusActiveText,
+    OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => AppColors.jobBlue,
+    OrderStatus.completed => AppColors.statusCompletedText,
+    OrderStatus.cancelled => AppColors.statusCancelledText,
+  };
 
   (Color bg, Color text) _statusChip() => switch (order.status) {
-        OrderStatus.pending => (AppColors.statusPendingBg, AppColors.statusPendingText),
-        OrderStatus.accepted ||
-        OrderStatus.arrivedAtPickup =>
-          (AppColors.statusActiveBg, AppColors.statusActiveText),
-        OrderStatus.inTransit ||
-        OrderStatus.arrivedAtDropoff =>
-          (AppColors.statusInTransitBg, AppColors.statusInTransitText),
-        OrderStatus.completed => (AppColors.statusCompletedBg, AppColors.statusCompletedText),
-        OrderStatus.cancelled => (AppColors.statusCancelledBg, AppColors.statusCancelledText),
-      };
+    OrderStatus.pending => (
+      AppColors.statusPendingBg,
+      AppColors.statusPendingText,
+    ),
+    OrderStatus.accepted || OrderStatus.arrivedAtPickup => (
+      AppColors.statusActiveBg,
+      AppColors.statusActiveText,
+    ),
+    OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => (
+      AppColors.statusInTransitBg,
+      AppColors.statusInTransitText,
+    ),
+    OrderStatus.completed => (
+      AppColors.statusCompletedBg,
+      AppColors.statusCompletedText,
+    ),
+    OrderStatus.cancelled => (
+      AppColors.statusCancelledBg,
+      AppColors.statusCancelledText,
+    ),
+  };
 
   String _statusLabel(AppLocalizations l10n) => switch (order.status) {
-        OrderStatus.pending => l10n.orderStatusPending,
-        OrderStatus.accepted => l10n.orderStatusAccepted,
-        OrderStatus.arrivedAtPickup => l10n.orderStatusArrivedAtPickup,
-        OrderStatus.inTransit => l10n.orderStatusInTransit,
-        OrderStatus.arrivedAtDropoff => l10n.orderStatusArrivedAtDropoff,
-        OrderStatus.completed => l10n.orderStatusCompleted,
-        OrderStatus.cancelled => l10n.orderStatusCancelled,
-      };
+    OrderStatus.pending => l10n.orderStatusPending,
+    OrderStatus.accepted => l10n.orderStatusAccepted,
+    OrderStatus.arrivedAtPickup => l10n.orderStatusArrivedAtPickup,
+    OrderStatus.inTransit => l10n.orderStatusInTransit,
+    OrderStatus.arrivedAtDropoff => l10n.orderStatusArrivedAtDropoff,
+    OrderStatus.completed => l10n.orderStatusCompleted,
+    OrderStatus.cancelled => l10n.orderStatusCancelled,
+  };
 
   bool get _isDriverMode =>
       mode == OrderCardMode.driverAvailable ||
@@ -72,13 +84,15 @@ class OrderCard extends StatelessWidget {
       mode != OrderCardMode.supplierActive;
 
   void _openDetails(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => OrderDetailsView(
-        order: order,
-        hideStatus: _hideStatusInDetails,
-        isDriverView: _isDriverMode,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => OrderDetailsView(
+          order: order,
+          hideStatus: _hideStatusInDetails,
+          isDriverView: _isDriverMode,
+        ),
       ),
-    ));
+    );
   }
 
   @override
@@ -134,7 +148,11 @@ class OrderCard extends StatelessWidget {
               ],
               const Padding(
                 padding: EdgeInsets.fromLTRB(14, 12, 14, 0),
-                child: Divider(height: 1, thickness: 1, color: Color(0xFFF1F5F3)),
+                child: Divider(
+                  height: 1,
+                  thickness: 1,
+                  color: Color(0xFFF1F5F3),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
@@ -147,13 +165,18 @@ class OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, AppLocalizations l10n, Color accent) {
+  Widget _buildHeader(
+    BuildContext context,
+    AppLocalizations l10n,
+    Color accent,
+  ) {
     final (chipBg, chipText) = _statusChip();
     final d = order.createdAt;
     final dateStr =
         '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
-    final typeIcon =
-        order.type == OrderType.pickup ? Icons.upload_rounded : Icons.download_rounded;
+    final typeIcon = order.type == OrderType.pickup
+        ? Icons.upload_rounded
+        : Icons.download_rounded;
     final shortId = order.id.length > 6 ? order.id.substring(0, 6) : order.id;
 
     return Padding(
@@ -271,7 +294,10 @@ class OrderCard extends StatelessWidget {
                 order.dropoffAddress,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-                style: GoogleFonts.cairo(fontSize: 13, color: AppColors.mutedText),
+                style: GoogleFonts.cairo(
+                  fontSize: 13,
+                  color: AppColors.mutedText,
+                ),
               ),
             ],
           ),
@@ -315,11 +341,17 @@ class OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildFooter(BuildContext context, AppLocalizations l10n, Color accent) {
+  Widget _buildFooter(
+    BuildContext context,
+    AppLocalizations l10n,
+    Color accent,
+  ) {
     final isDriverAccepted =
-        mode == OrderCardMode.driverActive && order.status == OrderStatus.accepted;
+        mode == OrderCardMode.driverActive &&
+        order.status == OrderStatus.accepted;
 
-    final bool hasAction = mode == OrderCardMode.driverAvailable ||
+    final bool hasAction =
+        mode == OrderCardMode.driverAvailable ||
         mode == OrderCardMode.companyJob ||
         mode == OrderCardMode.companyIncoming ||
         mode == OrderCardMode.driverActive ||
@@ -339,13 +371,19 @@ class OrderCard extends StatelessWidget {
   }
 
   Widget _buildMetrics(
-      BuildContext context, AppLocalizations l10n, bool isDriverAccepted) {
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDriverAccepted,
+  ) {
     return Wrap(
       spacing: 16,
       runSpacing: 4,
       children: [
         if (isDriverAccepted && order.acceptedAt != null)
-          _TimerMetric(acceptedAt: order.acceptedAt!, label: l10n.orderWaitingTime)
+          _TimerMetric(
+            acceptedAt: order.acceptedAt!,
+            label: l10n.orderWaitingTime,
+          )
         else if (order.eta != null)
           _MetricPill(
             icon: Icons.timer_rounded,
@@ -366,7 +404,8 @@ class OrderCard extends StatelessWidget {
         if ((order.itemPrice ?? 0) > 0)
           _MetricPill(
             icon: Icons.receipt_long_rounded,
-            value: '${order.itemPrice!.toStringAsFixed(1)} ${l10n.orderCurrencyJD}',
+            value:
+                '${order.itemPrice!.toStringAsFixed(1)} ${l10n.orderCurrencyJD}',
             label: l10n.orderTotalCost,
             color: AppColors.textMain,
             bold: true,
@@ -376,7 +415,11 @@ class OrderCard extends StatelessWidget {
   }
 
   Widget _buildActionButton(
-      BuildContext context, AppLocalizations l10n, Color accent, bool isDriverAccepted) {
+    BuildContext context,
+    AppLocalizations l10n,
+    Color accent,
+    bool isDriverAccepted,
+  ) {
     final String label;
     final bool filled;
 
@@ -401,8 +444,13 @@ class OrderCard extends StatelessWidget {
           foregroundColor: Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          textStyle: GoogleFonts.cairo(fontSize: 13, fontWeight: FontWeight.w700),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          textStyle: GoogleFonts.cairo(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         child: Text(label),
       );
@@ -445,7 +493,10 @@ class _MetricPill extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(label, style: GoogleFonts.cairo(fontSize: 10, color: AppColors.mutedText)),
+        Text(
+          label,
+          style: GoogleFonts.cairo(fontSize: 10, color: AppColors.mutedText),
+        ),
         const SizedBox(height: 2),
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -481,7 +532,10 @@ class _TimerMetric extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(label, style: GoogleFonts.cairo(fontSize: 10, color: AppColors.mutedText)),
+        Text(
+          label,
+          style: GoogleFonts.cairo(fontSize: 10, color: AppColors.mutedText),
+        ),
         const SizedBox(height: 2),
         StreamBuilder<void>(
           stream: Stream.periodic(const Duration(seconds: 1)),
@@ -492,7 +546,11 @@ class _TimerMetric extends StatelessWidget {
             return Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.timer_rounded, size: 13, color: AppColors.accentAmber),
+                const Icon(
+                  Icons.timer_rounded,
+                  size: 13,
+                  color: AppColors.accentAmber,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   '$m:$s',

@@ -18,9 +18,7 @@ final class SupabaseReportRequestRepository
           .select()
           .eq('user_id', userId)
           .order('requested_at', ascending: false);
-      final requests = rows
-          .map((row) => ReportRequest.fromJson(row))
-          .toList();
+      final requests = rows.map((row) => ReportRequest.fromJson(row)).toList();
       return Success(requests);
     } on PostgrestException catch (e) {
       return Failure(NetworkFailure(message: e.message));

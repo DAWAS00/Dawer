@@ -184,8 +184,7 @@ class _SignupPhoneScreenState extends State<SignupPhoneScreen> {
                   setState(() => _touched = true);
                   final raw = _phoneController.text.trim();
                   // Normalize to the 07XXXXXXXX format the viewmodel expects.
-                  final normalized =
-                      raw.startsWith('0') ? raw : '0$raw';
+                  final normalized = raw.startsWith('0') ? raw : '0$raw';
                   vm.setPhone(normalized);
                   vm.requestOtp(normalized);
                 },

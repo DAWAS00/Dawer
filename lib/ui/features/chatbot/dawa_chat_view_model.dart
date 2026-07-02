@@ -74,10 +74,10 @@ class DawaChatViewModel extends ChangeNotifier {
   // Standard follow-up chips offered after every Gemini reply so the
   // guided-navigation UX is preserved even for open-ended AI answers.
   static List<DawaEntry> _geminiFollowUps() => [
-        DawaChatbotService.entryById('how_to_post_request'),
-        DawaChatbotService.entryById('waste_types'),
-        DawaChatbotService.entryById('support'),
-      ];
+    DawaChatbotService.entryById('how_to_post_request'),
+    DawaChatbotService.entryById('waste_types'),
+    DawaChatbotService.entryById('support'),
+  ];
 
   Future<void> handleUserMessage(String text) async {
     final trimmed = text.trim();
@@ -90,11 +90,13 @@ class DawaChatViewModel extends ChangeNotifier {
     try {
       final reply = await GeminiChatService.instance.sendMessage(trimmed);
       if (!_disposed) {
-        _messages.add(DawaMessage(
-          text: reply,
-          isUser: false,
-          followUps: _geminiFollowUps(),
-        ));
+        _messages.add(
+          DawaMessage(
+            text: reply,
+            isUser: false,
+            followUps: _geminiFollowUps(),
+          ),
+        );
       }
     } catch (e, st) {
       debugPrint('[DawaChatVM] Gemini error: $e\n$st');
@@ -126,10 +128,9 @@ class DawaChatViewModel extends ChangeNotifier {
       return;
     }
     final entry = DawaChatbotService.entryById(entryId);
-    _messages.add(DawaMessage(
-      text: entry.response.split('\n').first,
-      isUser: true,
-    ));
+    _messages.add(
+      DawaMessage(text: entry.response.split('\n').first, isUser: true),
+    );
     notifyListeners();
     _addBotMessage(entry);
   }
@@ -146,11 +147,13 @@ class DawaChatViewModel extends ChangeNotifier {
           '${Directory.systemTemp.path}/dawer_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final tempFile = File(tempPath);
       await tempFile.writeAsBytes(bytes);
-      _messages.add(DawaMessage(
-        text: 'تحليل عينة: $displayName',
-        isUser: true,
-        imagePath: tempPath,
-      ));
+      _messages.add(
+        DawaMessage(
+          text: 'تحليل عينة: $displayName',
+          isUser: true,
+          imagePath: tempPath,
+        ),
+      );
       notifyListeners();
       final result = await DawaImageScanService.classify(tempFile);
       _isScanning = false;
@@ -161,7 +164,8 @@ class DawaChatViewModel extends ChangeNotifier {
           DawaEntry(
             id: 'ml_not_recognized',
             keywords: const [],
-            response: 'لم أتعرف على المادة في الصورة النموذجية.\n'
+            response:
+                'لم أتعرف على المادة في الصورة النموذجية.\n'
                 'أعلى تسمية رُصدت: "${result.topLabel}" ($confPct%)\n\n'
                 'اختر مادتك يدوياً:',
             followUpIds: const ['recycle_oil', 'recycle_wood'],
@@ -216,11 +220,13 @@ class DawaChatViewModel extends ChangeNotifier {
         ? ' (دقة: ${confidencePercent.toStringAsFixed(0)}%)'
         : '';
 
-    _messages.add(DawaMessage(
-      text: '📸 جاري تحليل صورة النفايات...$confidenceText',
-      isUser: true,
-      mlSource: mlLabel,
-    ));
+    _messages.add(
+      DawaMessage(
+        text: '📸 جاري تحليل صورة النفايات...$confidenceText',
+        isUser: true,
+        mlSource: mlLabel,
+      ),
+    );
     notifyListeners();
 
     final entry = DawaChatbotService.matchFromMlLabel(mlLabel);
@@ -240,11 +246,9 @@ class DawaChatViewModel extends ChangeNotifier {
     if (picked == null) return;
 
     final imagePath = picked.path;
-    _messages.add(DawaMessage(
-      text: '📸 صورة للتحليل',
-      isUser: true,
-      imagePath: imagePath,
-    ));
+    _messages.add(
+      DawaMessage(text: '📸 صورة للتحليل', isUser: true, imagePath: imagePath),
+    );
     _isScanning = true;
     _safeNotify();
 
@@ -286,24 +290,27 @@ class DawaChatViewModel extends ChangeNotifier {
     _isAnalyzing = true;
     _safeNotify();
 
-    final wasteResult =
-        await GeminiWasteAnalysisService.instance.analyze(imagePath);
+    final wasteResult = await GeminiWasteAnalysisService.instance.analyze(
+      imagePath,
+    );
 
     if (_disposed) return;
     _isAnalyzing = false;
 
     if (wasteResult != null && wasteResult.isRecyclable) {
-      _messages.add(DawaMessage(
-        text: wasteResult.explanation,
-        isUser: false,
-        wasteAnalysis: wasteResult,
-        followUps: [
-          DawaChatbotService.entryById('how_to_post_request'),
-          DawaChatbotService.entryById('waste_types'),
-          DawaChatbotService.entryById('support'),
-        ],
-        mlSource: mlResult.category,
-      ));
+      _messages.add(
+        DawaMessage(
+          text: wasteResult.explanation,
+          isUser: false,
+          wasteAnalysis: wasteResult,
+          followUps: [
+            DawaChatbotService.entryById('how_to_post_request'),
+            DawaChatbotService.entryById('waste_types'),
+            DawaChatbotService.entryById('support'),
+          ],
+          mlSource: mlResult.category,
+        ),
+      );
       _safeNotify();
     } else if (wasteResult != null && !wasteResult.isRecyclable) {
       // AI confirmed this material is not recyclable.
@@ -390,12 +397,14 @@ class DawaChatViewModel extends ChangeNotifier {
         .map(DawaChatbotService.entryById)
         .toList();
 
-    _messages.add(DawaMessage(
-      text: entry.response,
-      isUser: false,
-      followUps: followUps,
-      mlSource: mlSource,
-    ));
+    _messages.add(
+      DawaMessage(
+        text: entry.response,
+        isUser: false,
+        followUps: followUps,
+        mlSource: mlSource,
+      ),
+    );
     notifyListeners();
   }
 

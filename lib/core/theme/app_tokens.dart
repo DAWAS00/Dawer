@@ -133,7 +133,10 @@ class AppTokens extends ThemeExtension<AppTokens> {
   }
 
   @override
-  ThemeExtension<AppTokens> lerp(covariant ThemeExtension<AppTokens>? other, double t) {
+  ThemeExtension<AppTokens> lerp(
+    covariant ThemeExtension<AppTokens>? other,
+    double t,
+  ) {
     if (other is! AppTokens) return this;
     return AppTokens(
       isDark: t < 0.5 ? isDark : other.isDark,
@@ -141,7 +144,11 @@ class AppTokens extends ThemeExtension<AppTokens> {
       surfaceVariant: Color.lerp(surfaceVariant, other.surfaceVariant, t)!,
       scaffold: Color.lerp(scaffold, other.scaffold, t)!,
       onSurface: Color.lerp(onSurface, other.onSurface, t)!,
-      onSurfaceVariant: Color.lerp(onSurfaceVariant, other.onSurfaceVariant, t)!,
+      onSurfaceVariant: Color.lerp(
+        onSurfaceVariant,
+        other.onSurfaceVariant,
+        t,
+      )!,
       onSurfaceMuted: Color.lerp(onSurfaceMuted, other.onSurfaceMuted, t)!,
       border: Color.lerp(border, other.border, t)!,
       shadow: Color.lerp(shadow, other.shadow, t)!,
@@ -152,7 +159,8 @@ class AppTokens extends ThemeExtension<AppTokens> {
 
   /// Returns the correct [AppTokens] for the current [BuildContext] theme.
   static AppTokens of(BuildContext context) {
-    return Theme.of(context).extension<AppTokens>() ?? (Theme.of(context).brightness == Brightness.dark ? dark : light);
+    return Theme.of(context).extension<AppTokens>() ??
+        (Theme.of(context).brightness == Brightness.dark ? dark : light);
   }
 }
 
@@ -167,4 +175,3 @@ extension AppTokensX on BuildContext {
   /// ```
   AppTokens get dt => AppTokens.of(this);
 }
-

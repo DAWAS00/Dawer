@@ -49,7 +49,11 @@ class VehicleRegistrationScanSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Icon(Icons.directions_car_rounded, size: 16, color: Color(0xFF06402B)),
+            const Icon(
+              Icons.directions_car_rounded,
+              size: 16,
+              color: Color(0xFF06402B),
+            ),
             const SizedBox(width: 6),
             Text(
               l10n.vehicleScanTitle,
@@ -69,7 +73,10 @@ class VehicleRegistrationScanSection extends StatelessWidget {
               ),
               child: Text(
                 l10n.vehicleScanOptional,
-                style: GoogleFonts.cairo(fontSize: 10, color: const Color(0xFF166534)),
+                style: GoogleFonts.cairo(
+                  fontSize: 10,
+                  color: const Color(0xFF166534),
+                ),
               ),
             ),
           ],
@@ -79,24 +86,24 @@ class VehicleRegistrationScanSection extends StatelessWidget {
           duration: const Duration(milliseconds: 300),
           child: switch (vm.state) {
             LicenseValidationState.idle => _IdleZone(
-                key: const ValueKey('idle'),
-                onTap: () => _showSourceSheet(context),
-              ),
+              key: const ValueKey('idle'),
+              onTap: () => _showSourceSheet(context),
+            ),
             LicenseValidationState.analyzing => const _AnalyzingZone(
-                key: ValueKey('analyzing'),
-              ),
+              key: ValueKey('analyzing'),
+            ),
             LicenseValidationState.valid => _ValidZone(
-                key: const ValueKey('valid'),
-                file: vm.registrationFile,
-                data: vm.extractedData!,
-                onReset: onReset,
-                onConfirm: () => onConfirm(vm.extractedData!),
-              ),
+              key: const ValueKey('valid'),
+              file: vm.registrationFile,
+              data: vm.extractedData!,
+              onReset: onReset,
+              onConfirm: () => onConfirm(vm.extractedData!),
+            ),
             LicenseValidationState.invalid => _InvalidZone(
-                key: const ValueKey('invalid'),
-                reason: vm.failReason,
-                onRetry: () => _showSourceSheet(context),
-              ),
+              key: const ValueKey('invalid'),
+              reason: vm.failReason,
+              onRetry: () => _showSourceSheet(context),
+            ),
           },
         ),
       ],
@@ -130,12 +137,17 @@ class _IdleZone extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 40, height: 40,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 color: const Color(0xFF06402B).withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.document_scanner_rounded, size: 22, color: Color(0xFF06402B)),
+              child: const Icon(
+                Icons.document_scanner_rounded,
+                size: 22,
+                color: Color(0xFF06402B),
+              ),
             ),
             const SizedBox(width: 12),
             Column(
@@ -145,13 +157,17 @@ class _IdleZone extends StatelessWidget {
                 Text(
                   l10n.vehicleScanPrompt,
                   style: GoogleFonts.cairo(
-                    fontSize: 13, fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
                     color: const Color(0xFF404943),
                   ),
                 ),
                 Text(
                   l10n.vehicleScanTypeHint,
-                  style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF717973)),
+                  style: GoogleFonts.cairo(
+                    fontSize: 11,
+                    color: const Color(0xFF717973),
+                  ),
                 ),
               ],
             ),
@@ -235,30 +251,36 @@ class _VehicleScanOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: animation,
-      builder: (_, __) => Stack(children: [
-        Positioned(
-          top: 140 * animation.value,
-          left: 0, right: 0,
-          child: Container(
-            height: 2,
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF60A5FA).withValues(alpha: 0.8),
-                  blurRadius: 12, spreadRadius: 2,
+      builder: (_, __) => Stack(
+        children: [
+          Positioned(
+            top: 140 * animation.value,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 2,
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF60A5FA).withValues(alpha: 0.8),
+                    blurRadius: 12,
+                    spreadRadius: 2,
+                  ),
+                ],
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.transparent,
+                    const Color(0xFF60A5FA).withValues(alpha: 0.6),
+                    const Color(0xFF60A5FA),
+                    const Color(0xFF60A5FA).withValues(alpha: 0.6),
+                    Colors.transparent,
+                  ],
                 ),
-              ],
-              gradient: LinearGradient(colors: [
-                Colors.transparent,
-                const Color(0xFF60A5FA).withValues(alpha: 0.6),
-                const Color(0xFF60A5FA),
-                const Color(0xFF60A5FA).withValues(alpha: 0.6),
-                Colors.transparent,
-              ]),
+              ),
             ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }
@@ -281,9 +303,12 @@ class _VehiclePulseOverlayState extends State<_VehiclePulseOverlay> {
       if (!mounted) return;
       final phrase = _phrases[t.tick % _phrases.length];
       final aligns = [
-        Alignment.topLeft, Alignment.topRight,
-        Alignment.bottomLeft, Alignment.bottomRight,
-        Alignment.centerLeft, Alignment.centerRight,
+        Alignment.topLeft,
+        Alignment.topRight,
+        Alignment.bottomLeft,
+        Alignment.bottomRight,
+        Alignment.centerLeft,
+        Alignment.centerRight,
       ];
       final align = aligns[t.tick % aligns.length];
       setState(() => _pulses.add((phrase, align, t.tick)));
@@ -308,38 +333,50 @@ class _VehiclePulseOverlayState extends State<_VehiclePulseOverlay> {
   }
 
   @override
-  void dispose() { _timer?.cancel(); super.dispose(); }
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: _pulses.map((p) => Align(
-        alignment: p.$2,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0.0, end: 1.0),
-            duration: const Duration(milliseconds: 400),
-            builder: (_, v, child) => Opacity(
-              opacity: v * (1.0 - (v > 0.8 ? (v - 0.8) * 5 : 0)),
-              child: Transform.scale(scale: 0.8 + v * 0.2, child: child),
-            ),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(p.$1,
-                style: GoogleFonts.dmSans(
-                  fontSize: 9, fontWeight: FontWeight.bold,
-                  color: const Color(0xFF60A5FA),
+      children: _pulses
+          .map(
+            (p) => Align(
+              alignment: p.$2,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  duration: const Duration(milliseconds: 400),
+                  builder: (_, v, child) => Opacity(
+                    opacity: v * (1.0 - (v > 0.8 ? (v - 0.8) * 5 : 0)),
+                    child: Transform.scale(scale: 0.8 + v * 0.2, child: child),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      p.$1,
+                      style: GoogleFonts.dmSans(
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF60A5FA),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-      )).toList(),
+          )
+          .toList(),
     );
   }
 }
@@ -378,25 +415,41 @@ class _ValidZone extends StatelessWidget {
               if (file != null)
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.file(file!, width: 56, height: 56, fit: BoxFit.cover),
+                  child: Image.file(
+                    file!,
+                    width: 56,
+                    height: 56,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(l10n.vehicleScanReadSuccess,
+                    Text(
+                      l10n.vehicleScanReadSuccess,
                       style: GoogleFonts.cairo(
-                        fontSize: 15, fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
                         color: const Color(0xFF166534),
-                      )),
-                    Text(l10n.vehicleScanReviewPrompt,
-                      style: GoogleFonts.cairo(fontSize: 12, color: const Color(0xFF4ADE80))),
+                      ),
+                    ),
+                    Text(
+                      l10n.vehicleScanReviewPrompt,
+                      style: GoogleFonts.cairo(
+                        fontSize: 12,
+                        color: const Color(0xFF4ADE80),
+                      ),
+                    ),
                   ],
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.refresh_rounded, color: Color(0xFF166534)),
+                icon: const Icon(
+                  Icons.refresh_rounded,
+                  color: Color(0xFF166534),
+                ),
                 onPressed: onReset,
                 tooltip: l10n.vehicleScanRescanTooltip,
               ),
@@ -411,13 +464,20 @@ class _ValidZone extends StatelessWidget {
           child: ElevatedButton.icon(
             onPressed: onConfirm,
             icon: const Icon(Icons.check_circle_outline_rounded, size: 20),
-            label: Text(l10n.vehicleScanConfirmAutoFill,
-              style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold)),
+            label: Text(
+              l10n.vehicleScanConfirmAutoFill,
+              style: GoogleFonts.cairo(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF06402B),
               foregroundColor: Colors.white,
               elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),
@@ -441,7 +501,11 @@ class _ExtractedVehicleCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
@@ -449,11 +513,21 @@ class _ExtractedVehicleCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.analytics_outlined, size: 18, color: Color(0xFF06402B)),
+              const Icon(
+                Icons.analytics_outlined,
+                size: 18,
+                color: Color(0xFF06402B),
+              ),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(l10n.vehicleScanExtractedData,
-                  style: GoogleFonts.cairo(fontSize: 13, fontWeight: FontWeight.bold, color: const Color(0xFF191C1B))),
+                child: Text(
+                  l10n.vehicleScanExtractedData,
+                  style: GoogleFonts.cairo(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF191C1B),
+                  ),
+                ),
               ),
               _ConfidenceBadge(score: data.confidenceScore),
             ],
@@ -465,52 +539,83 @@ class _ExtractedVehicleCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFF06402B).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: const Color(0xFF06402B).withValues(alpha: 0.2)),
+              border: Border.all(
+                color: const Color(0xFF06402B).withValues(alpha: 0.2),
+              ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.local_shipping_rounded, size: 14, color: Color(0xFF06402B)),
+                const Icon(
+                  Icons.local_shipping_rounded,
+                  size: 14,
+                  color: Color(0xFF06402B),
+                ),
                 const SizedBox(width: 6),
                 Text(
                   '${data.vehicleClass}  ·  ${data.vehicleType.label}',
                   style: GoogleFonts.cairo(
-                    fontSize: 13, fontWeight: FontWeight.bold, color: const Color(0xFF06402B)),
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF06402B),
+                  ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 12),
           if (data.make != null || data.model != null)
-            _Row(l10n.vehicleScanRowModel, '${data.make ?? ''} ${data.model ?? ''}'.trim()),
-          if (data.color != null)
-            _Row(l10n.vehicleScanRowColor, data.color!),
+            _Row(
+              l10n.vehicleScanRowModel,
+              '${data.make ?? ''} ${data.model ?? ''}'.trim(),
+            ),
+          if (data.color != null) _Row(l10n.vehicleScanRowColor, data.color!),
           if (data.plateNumber != null)
             _Row(l10n.vehicleScanRowPlate, data.plateNumber!),
           if (expiry != null)
-            _Row(l10n.vehicleScanRowExpiry,
-              '${expiry.day}/${expiry.month}/${expiry.year}'),
+            _Row(
+              l10n.vehicleScanRowExpiry,
+              '${expiry.day}/${expiry.month}/${expiry.year}',
+            ),
           if (data.hasChemicalPermit) ...[
             const Divider(height: 20),
             Row(
               children: [
-                const Icon(Icons.verified_rounded, size: 14, color: Color(0xFF059669)),
+                const Icon(
+                  Icons.verified_rounded,
+                  size: 14,
+                  color: Color(0xFF059669),
+                ),
                 const SizedBox(width: 6),
-                Text(l10n.vehicleScanChemicalPermit,
+                Text(
+                  l10n.vehicleScanChemicalPermit,
                   style: GoogleFonts.cairo(
-                    fontSize: 11, color: const Color(0xFF059669), fontWeight: FontWeight.w600)),
+                    fontSize: 11,
+                    color: const Color(0xFF059669),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ],
             ),
           ],
           const Divider(height: 20),
           Row(
             children: [
-              const Icon(Icons.auto_awesome_outlined, size: 14, color: Color(0xFF059669)),
+              const Icon(
+                Icons.auto_awesome_outlined,
+                size: 14,
+                color: Color(0xFF059669),
+              ),
               const SizedBox(width: 6),
               Expanded(
-                child: Text(l10n.vehicleScanChemicalPermitHint,
+                child: Text(
+                  l10n.vehicleScanChemicalPermitHint,
                   style: GoogleFonts.cairo(
-                    fontSize: 10, color: const Color(0xFF059669), fontWeight: FontWeight.w600)),
+                    fontSize: 10,
+                    color: const Color(0xFF059669),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ],
           ),
@@ -532,14 +637,26 @@ class _Row extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-            style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF717973), fontWeight: FontWeight.w500)),
+          Text(
+            label,
+            style: GoogleFonts.cairo(
+              fontSize: 11,
+              color: const Color(0xFF717973),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(value,
+            child: Text(
+              value,
               textAlign: TextAlign.end,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: const Color(0xFF191C1B))),
+              style: GoogleFonts.dmSans(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF191C1B),
+              ),
+            ),
           ),
         ],
       ),
@@ -559,15 +676,30 @@ class _ConfidenceBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFECFDF5),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: const Color(0xFF059669).withValues(alpha: 0.3)),
+        border: Border.all(
+          color: const Color(0xFF059669).withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(l10n.vehicleScanAccuracy, style: GoogleFonts.cairo(fontSize: 9, fontWeight: FontWeight.bold, color: const Color(0xFF065F46))),
+          Text(
+            l10n.vehicleScanAccuracy,
+            style: GoogleFonts.cairo(
+              fontSize: 9,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF065F46),
+            ),
+          ),
           const SizedBox(width: 4),
-          Text('${(score * 100).toStringAsFixed(1)}%',
-            style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.w900, color: const Color(0xFF059669))),
+          Text(
+            '${(score * 100).toStringAsFixed(1)}%',
+            style: GoogleFonts.dmSans(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              color: const Color(0xFF059669),
+            ),
+          ),
         ],
       ),
     );
@@ -602,11 +734,22 @@ class _InvalidZone extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(l10n.vehicleScanReadFailed,
-                      style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.red.shade800)),
+                    Text(
+                      l10n.vehicleScanReadFailed,
+                      style: GoogleFonts.cairo(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red.shade800,
+                      ),
+                    ),
                     if (reason != null)
-                      Text(reason!,
-                        style: GoogleFonts.cairo(fontSize: 12, color: Colors.red.shade700)),
+                      Text(
+                        reason!,
+                        style: GoogleFonts.cairo(
+                          fontSize: 12,
+                          color: Colors.red.shade700,
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -617,10 +760,15 @@ class _InvalidZone extends StatelessWidget {
         OutlinedButton.icon(
           onPressed: onRetry,
           icon: const Icon(Icons.upload_file_rounded),
-          label: Text(l10n.aiValidationRetryButton, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+          label: Text(
+            l10n.aiValidationRetryButton,
+            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+          ),
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         ),
       ],
@@ -631,7 +779,8 @@ class _InvalidZone extends StatelessWidget {
 // ── Shared helpers ────────────────────────────────────────────────────────────
 
 Widget _sparkle() => Container(
-  width: 20, height: 20,
+  width: 20,
+  height: 20,
   decoration: BoxDecoration(
     color: const Color(0xFF06402B).withValues(alpha: 0.1),
     shape: BoxShape.circle,

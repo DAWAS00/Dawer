@@ -3,22 +3,22 @@ import '../models/order/order_enums.dart' show WasteType;
 
 /// Configurable points-per-kg rates by waste type.
 const Map<WasteType, double> _pointRates = {
-  WasteType.oil:             10.0, // premium — cooking oil
+  WasteType.oil: 10.0, // premium — cooking oil
   WasteType.copperAluminium: 8.0,
-  WasteType.electronics:     7.0,
-  WasteType.batteries:       7.0,
-  WasteType.chemicals:       6.0,
-  WasteType.metal:           5.0,
-  WasteType.plastic:         4.0,
-  WasteType.glass:           3.0,
-  WasteType.paper:           3.0,
-  WasteType.wood:            3.0,
-  WasteType.rubber:          2.0,
-  WasteType.tires:           2.0,
-  WasteType.textile:         2.0,
-  WasteType.construction:    2.0,
-  WasteType.furniture:       2.0,
-  WasteType.organic:         1.0,
+  WasteType.electronics: 7.0,
+  WasteType.batteries: 7.0,
+  WasteType.chemicals: 6.0,
+  WasteType.metal: 5.0,
+  WasteType.plastic: 4.0,
+  WasteType.glass: 3.0,
+  WasteType.paper: 3.0,
+  WasteType.wood: 3.0,
+  WasteType.rubber: 2.0,
+  WasteType.tires: 2.0,
+  WasteType.textile: 2.0,
+  WasteType.construction: 2.0,
+  WasteType.furniture: 2.0,
+  WasteType.organic: 1.0,
 };
 
 const double _defaultPointsPerKg = 5.0;
@@ -54,11 +54,14 @@ class EcoPointsEngine {
   static List<EcoBadge> earnedBadges({
     required double lifetimeKg,
     required int completedOrders,
-  }) =>
-      EcoBadge.all
-          .where((b) => b.isEarned(
-              lifetimeKg: lifetimeKg, completedOrders: completedOrders))
-          .toList();
+  }) => EcoBadge.all
+      .where(
+        (b) => b.isEarned(
+          lifetimeKg: lifetimeKg,
+          completedOrders: completedOrders,
+        ),
+      )
+      .toList();
 
   /// Returns true when the user has earned the Eco Hero badge (100 kg).
   static bool isEcoHero(double lifetimeKg) => lifetimeKg >= 100;
@@ -78,17 +81,17 @@ class EcoPointsEngine {
   ///
   /// For the demo, seeded with realistic Amman data.
   static List<LeaderboardEntry> neighborhoodLeaderboard() => const [
-        LeaderboardEntry('الصويفية',   '🏆', 482),
-        LeaderboardEntry('عبدون',      '🥈', 391),
-        LeaderboardEntry('الرابية',    '🥉', 347),
-        LeaderboardEntry('شميساني',    '4️⃣',  298),
-        LeaderboardEntry('دابوق',      '5️⃣',  261),
-        LeaderboardEntry('الجاردنز',   '6️⃣',  233),
-        LeaderboardEntry('جبل عمان',   '7️⃣',  198),
-        LeaderboardEntry('خلدا',       '8️⃣',  175),
-        LeaderboardEntry('ام الحيران', '9️⃣',  142),
-        LeaderboardEntry('الميدان',    '🔟', 118),
-      ];
+    LeaderboardEntry('الصويفية', '🏆', 482),
+    LeaderboardEntry('عبدون', '🥈', 391),
+    LeaderboardEntry('الرابية', '🥉', 347),
+    LeaderboardEntry('شميساني', '4️⃣', 298),
+    LeaderboardEntry('دابوق', '5️⃣', 261),
+    LeaderboardEntry('الجاردنز', '6️⃣', 233),
+    LeaderboardEntry('جبل عمان', '7️⃣', 198),
+    LeaderboardEntry('خلدا', '8️⃣', 175),
+    LeaderboardEntry('ام الحيران', '9️⃣', 142),
+    LeaderboardEntry('الميدان', '🔟', 118),
+  ];
 
   /// Partner discount coupons unlocked at points milestones.
   static const List<DiscountCoupon> coupons = [

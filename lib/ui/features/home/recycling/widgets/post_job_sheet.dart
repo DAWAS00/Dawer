@@ -4,14 +4,15 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/order/order.dart';
 import 'post_job_form.dart';
 
-typedef PostJobSubmitCallback = void Function({
-  required List<WasteType> wasteTypes,
-  required PaymentModel paymentModel,
-  required double price,
-  required String collectionArea,
-  required String jobDescription,
-  double? minQuantityKg,
-});
+typedef PostJobSubmitCallback =
+    void Function({
+      required List<WasteType> wasteTypes,
+      required PaymentModel paymentModel,
+      required double price,
+      required String collectionArea,
+      required String jobDescription,
+      double? minQuantityKg,
+    });
 
 class PostJobSheet extends HookWidget {
   final PostJobSubmitCallback onSubmit;
@@ -44,7 +45,8 @@ class PostJobSheet extends HookWidget {
         price: double.parse(priceCtrl.text.trim()),
         collectionArea: areaCtrl.text.trim(),
         jobDescription: descCtrl.text.trim(),
-        minQuantityKg: paymentModel.value == PaymentModel.perKg &&
+        minQuantityKg:
+            paymentModel.value == PaymentModel.perKg &&
                 minQtyCtrl.text.trim().isNotEmpty
             ? double.tryParse(minQtyCtrl.text.trim())
             : null,
@@ -54,7 +56,8 @@ class PostJobSheet extends HookWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).bottomSheetTheme.backgroundColor ??
+        color:
+            Theme.of(context).bottomSheetTheme.backgroundColor ??
             Theme.of(context).scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -62,11 +65,16 @@ class PostJobSheet extends HookWidget {
         maxHeight: MediaQuery.of(context).size.height * 0.92,
       ),
       child: Padding(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(
-              24, 16, 24, MediaQuery.of(context).padding.bottom + 32),
+            24,
+            16,
+            24,
+            MediaQuery.of(context).padding.bottom + 32,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -93,7 +101,9 @@ class PostJobSheet extends HookWidget {
               Text(
                 'حدّد المواد والتسعيرة وسيظهر في السوق للجميع',
                 style: GoogleFonts.cairo(
-                    fontSize: 12, color: const Color(0xFF717973)),
+                  fontSize: 12,
+                  color: const Color(0xFF717973),
+                ),
               ),
               const SizedBox(height: 20),
               PostJobFormBody(
@@ -116,8 +126,13 @@ class PostJobSheet extends HookWidget {
               ),
               const SizedBox(height: 28),
               ListenableBuilder(
-                listenable: Listenable.merge(
-                    [priceCtrl, areaCtrl, descCtrl, selected, paymentModel]),
+                listenable: Listenable.merge([
+                  priceCtrl,
+                  areaCtrl,
+                  descCtrl,
+                  selected,
+                  paymentModel,
+                ]),
                 builder: (context, _) => SizedBox(
                   width: double.infinity,
                   height: 54,
@@ -125,8 +140,9 @@ class PostJobSheet extends HookWidget {
                     onPressed: isValid() ? submit : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF14401F),
-                      disabledBackgroundColor:
-                          const Color(0xFF14401F).withValues(alpha: 0.35),
+                      disabledBackgroundColor: const Color(
+                        0xFF14401F,
+                      ).withValues(alpha: 0.35),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),

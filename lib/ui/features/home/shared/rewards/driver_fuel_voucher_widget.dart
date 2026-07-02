@@ -8,16 +8,13 @@ import '../../../../../data/services/eco_points_engine.dart';
 class DriverFuelVoucherWidget extends StatelessWidget {
   final int completedDeliveries;
 
-  const DriverFuelVoucherWidget({
-    super.key,
-    required this.completedDeliveries,
-  });
+  const DriverFuelVoucherWidget({super.key, required this.completedDeliveries});
 
   static const _milestones = [
-    (20, 'FUEL1JD',  '1 دينار'),
-    (60, 'FUEL3JD',  '3 دينار'),
-    (100,'FUEL5JD',  '5 دينار'),
-    (200,'FUEL10JD', '10 دينار'),
+    (20, 'FUEL1JD', '1 دينار'),
+    (60, 'FUEL3JD', '3 دينار'),
+    (100, 'FUEL5JD', '5 دينار'),
+    (200, 'FUEL10JD', '10 دينار'),
   ];
 
   @override
@@ -59,8 +56,7 @@ class DriverFuelVoucherWidget extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
@@ -125,12 +121,14 @@ class DriverFuelVoucherWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          ..._milestones.map((m) => _MilestoneTile(
-                deliveriesRequired: m.$1,
-                code: m.$2,
-                label: m.$3,
-                completed: completedDeliveries,
-              )),
+          ..._milestones.map(
+            (m) => _MilestoneTile(
+              deliveriesRequired: m.$1,
+              code: m.$2,
+              label: m.$3,
+              completed: completedDeliveries,
+            ),
+          ),
         ],
       ),
     );
@@ -176,8 +174,10 @@ class _MilestoneTile extends StatelessWidget {
                 );
               },
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(8),
@@ -185,8 +185,11 @@ class _MilestoneTile extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.copy_rounded,
-                        size: 12, color: Colors.white),
+                    const Icon(
+                      Icons.copy_rounded,
+                      size: 12,
+                      color: Colors.white,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       code,

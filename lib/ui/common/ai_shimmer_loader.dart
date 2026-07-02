@@ -16,7 +16,8 @@ class AiShimmerLoader extends StatefulWidget {
   State<AiShimmerLoader> createState() => _AiShimmerLoaderState();
 }
 
-class _AiShimmerLoaderState extends State<AiShimmerLoader> with SingleTickerProviderStateMixin {
+class _AiShimmerLoaderState extends State<AiShimmerLoader>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Color?> _colorAnimation;
 

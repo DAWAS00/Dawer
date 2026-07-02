@@ -17,25 +17,35 @@ class GeminiAiValidationService implements IAiValidationService {
   Future<AiValidationResult> validatePhoto(String filePath) async {
     try {
       final bytes = await File(filePath).readAsBytes();
-      final mime = filePath.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
+      final mime = filePath.toLowerCase().endsWith('.png')
+          ? 'image/png'
+          : 'image/jpeg';
       final response = await GeminiService.instance.model().generateContent([
         Content.multi([DataPart(mime, bytes), TextPart(_prompt)]),
       ]);
       final parsed = _parseJson(response.text);
       if (parsed == null) {
         return const AiValidationResult(
-            isValid: true, statusMessage: 'aiValidationStatusSuccess', confidenceScore: 0.8);
+          isValid: true,
+          statusMessage: 'aiValidationStatusSuccess',
+          confidenceScore: 0.8,
+        );
       }
       final isValid = parsed['isValid'] as bool? ?? true;
       final confidence = (parsed['confidence'] as num?)?.toDouble() ?? 0.8;
       return AiValidationResult(
         isValid: isValid,
-        statusMessage: isValid ? 'aiValidationStatusSuccess' : 'aiValidationStatusInvalid',
+        statusMessage: isValid
+            ? 'aiValidationStatusSuccess'
+            : 'aiValidationStatusInvalid',
         confidenceScore: confidence,
       );
     } catch (_) {
       return const AiValidationResult(
-          isValid: true, statusMessage: 'aiValidationStatusSuccess', confidenceScore: 0.75);
+        isValid: true,
+        statusMessage: 'aiValidationStatusSuccess',
+        confidenceScore: 0.75,
+      );
     }
   }
 

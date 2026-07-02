@@ -4,10 +4,15 @@ import 'order/order.dart';
 extension OrderSupabaseExt on Order {
   Map<String, dynamic> toSupabaseMap(String? activeUserId) {
     return {
-      if (id.length == 36) 'id': id, // Only pass id if it's a UUID, Supabase auto-generates if omitted. Our mock uses 'ORD-xxx'
+      if (id.length == 36)
+        'id':
+            id, // Only pass id if it's a UUID, Supabase auto-generates if omitted. Our mock uses 'ORD-xxx'
       'type': type.name, // ENUM
       'status': status.name,
-      if (type == OrderType.collection) 'company_id': activeUserId else 'supplier_id': activeUserId,
+      if (type == OrderType.collection)
+        'company_id': activeUserId
+      else
+        'supplier_id': activeUserId,
       'waste_types': wasteTypes.map((e) => e.name).toList(),
       if (wasteForm != null) 'waste_form': wasteForm!.name,
       if (weightCategory != null) 'weight_category': weightCategory!.name,
@@ -28,22 +33,30 @@ extension OrderSupabaseExt on Order {
       'is_marketplace_shared': isMarketplaceShared,
       'requires_rider': requiresRider,
       if (linkedJobId != null) 'linked_job_id': linkedJobId,
-      if (collectionDeliveryMethod != null) 'collection_delivery_method': collectionDeliveryMethod!.name,
-      if (collectionTransactionType != null) 'collection_transaction_type': collectionTransactionType!.name,
+      if (collectionDeliveryMethod != null)
+        'collection_delivery_method': collectionDeliveryMethod!.name,
+      if (collectionTransactionType != null)
+        'collection_transaction_type': collectionTransactionType!.name,
       if (jobDescription != null) 'job_description': jobDescription,
       if (paymentModel != null) 'payment_model': paymentModel!.name,
       if (pricePerKg != null) 'price_per_kg': pricePerKg,
       if (itemPrice != null) 'item_price': itemPrice,
       if (minQuantityKg != null) 'min_quantity_kg': minQuantityKg,
       if (weightKg != null) 'actual_weight_kg': weightKg,
-      if (arrivedAtPickupAt != null) 'arrived_at_pickup_at': arrivedAtPickupAt!.toUtc().toIso8601String(),
-      if (arrivedAtDropoffAt != null) 'arrived_at_dropoff_at': arrivedAtDropoffAt!.toUtc().toIso8601String(),
-      if (arrivalConfirmationStatus != null) 'arrival_confirmation_status': arrivalConfirmationStatus!.name,
-      if (supplierHoldAmount != null) 'supplier_hold_amount': supplierHoldAmount,
-      if (driverCompensationAmount != null) 'driver_compensation_amount': driverCompensationAmount,
+      if (arrivedAtPickupAt != null)
+        'arrived_at_pickup_at': arrivedAtPickupAt!.toUtc().toIso8601String(),
+      if (arrivedAtDropoffAt != null)
+        'arrived_at_dropoff_at': arrivedAtDropoffAt!.toUtc().toIso8601String(),
+      if (arrivalConfirmationStatus != null)
+        'arrival_confirmation_status': arrivalConfirmationStatus!.name,
+      if (supplierHoldAmount != null)
+        'supplier_hold_amount': supplierHoldAmount,
+      if (driverCompensationAmount != null)
+        'driver_compensation_amount': driverCompensationAmount,
       if (fraudAttemptCount > 0) 'fraud_attempt_count': fraudAttemptCount,
       if (weightVarianceFlag) 'weight_variance_flag': true,
-      if (requiredVehicleType != null) 'required_vehicle_type': requiredVehicleType!.name,
+      if (requiredVehicleType != null)
+        'required_vehicle_type': requiredVehicleType!.name,
       if (requiresChemicalPermit) 'requires_chemical_permit': true,
       if (adminApprovalStatus != AdminApprovalStatus.notRequired)
         'admin_approval_status': adminApprovalStatus.name,
@@ -60,11 +73,14 @@ extension OrderSupabaseExt on Order {
       },
       if (pickupProof != null) ...{
         'pickup_proof_photo_url': pickupProof!.imagePath,
-        'pickup_proof_captured_at': pickupProof!.capturedAt.toUtc().toIso8601String(),
+        'pickup_proof_captured_at': pickupProof!.capturedAt
+            .toUtc()
+            .toIso8601String(),
         'pickup_proof_lat': pickupProof!.lat,
         'pickup_proof_lng': pickupProof!.lng,
         'pickup_proof_checksum': pickupProof!.checksum,
-        if (pickupProof!.weightKg != null) 'pickup_proof_weight_kg': pickupProof!.weightKg,
+        if (pickupProof!.weightKg != null)
+          'pickup_proof_weight_kg': pickupProof!.weightKg,
       },
     };
   }
@@ -92,7 +108,11 @@ Order orderFromSupabaseJson(Map<String, dynamic> json) {
   return Order(
     id: json['id'] as String,
     supplierId: json['supplier_id'] as String?,
-    type: parseEnum(json['type'] as String?, OrderType.values, OrderType.pickup),
+    type: parseEnum(
+      json['type'] as String?,
+      OrderType.values,
+      OrderType.pickup,
+    ),
     wasteTypes: ((json['waste_types'] as List?) ?? [])
         .map((n) => parseEnumN(n.toString(), WasteType.values))
         .whereType<WasteType>()
@@ -119,20 +139,38 @@ Order orderFromSupabaseJson(Map<String, dynamic> json) {
     dropoffLat: (json['dropoff_lat'] as num?)?.toDouble(),
     dropoffLng: (json['dropoff_lng'] as num?)?.toDouble(),
     wasteForm: parseEnumN(json['waste_form'] as String?, WasteForm.values),
-    weightCategory: parseEnumN(json['weight_category'] as String?, WeightCategory.values),
-    pickupTarget: parseEnumN(json['pickup_target'] as String?, PickupTarget.values),
+    weightCategory: parseEnumN(
+      json['weight_category'] as String?,
+      WeightCategory.values,
+    ),
+    pickupTarget: parseEnumN(
+      json['pickup_target'] as String?,
+      PickupTarget.values,
+    ),
     isMarketplaceShared: json['is_marketplace_shared'] as bool? ?? false,
     requiresRider: json['requires_rider'] as bool? ?? false,
     linkedJobId: json['linked_job_id'] as String?,
-    collectionDeliveryMethod: parseEnumN(json['collection_delivery_method'] as String?, CollectionDeliveryMethod.values),
-    collectionTransactionType: parseEnumN(json['collection_transaction_type'] as String?, CollectionTransactionType.values),
+    collectionDeliveryMethod: parseEnumN(
+      json['collection_delivery_method'] as String?,
+      CollectionDeliveryMethod.values,
+    ),
+    collectionTransactionType: parseEnumN(
+      json['collection_transaction_type'] as String?,
+      CollectionTransactionType.values,
+    ),
     jobDescription: json['job_description'] as String?,
-    paymentModel: parseEnumN(json['payment_model'] as String?, PaymentModel.values),
+    paymentModel: parseEnumN(
+      json['payment_model'] as String?,
+      PaymentModel.values,
+    ),
     pricePerKg: (json['price_per_kg'] as num?)?.toDouble(),
     itemPrice: (json['item_price'] as num?)?.toDouble(),
     minQuantityKg: (json['min_quantity_kg'] as num?)?.toDouble(),
     weightKg: (json['actual_weight_kg'] as num?)?.toDouble(),
-    requiredVehicleType: parseEnumN(json['required_vehicle_type'] as String?, VehicleType.values),
+    requiredVehicleType: parseEnumN(
+      json['required_vehicle_type'] as String?,
+      VehicleType.values,
+    ),
     requiresChemicalPermit: json['requires_chemical_permit'] as bool? ?? false,
     adminApprovalStatus: parseEnum(
       json['admin_approval_status'] as String?,
@@ -146,7 +184,8 @@ Order orderFromSupabaseJson(Map<String, dynamic> json) {
         ? null
         : OrderProof(
             imagePath: json['proof_image_path'] as String,
-            capturedAt: parseDt(json['proof_captured_at'] as String?) ?? DateTime.now(),
+            capturedAt:
+                parseDt(json['proof_captured_at'] as String?) ?? DateTime.now(),
             lat: (json['proof_lat'] as num?)?.toDouble() ?? 0.0,
             lng: (json['proof_lng'] as num?)?.toDouble() ?? 0.0,
             checksum: json['proof_checksum'] as String? ?? '',
@@ -156,7 +195,9 @@ Order orderFromSupabaseJson(Map<String, dynamic> json) {
         ? null
         : OrderProof(
             imagePath: json['pickup_proof_photo_url'] as String,
-            capturedAt: parseDt(json['pickup_proof_captured_at'] as String?) ?? DateTime.now(),
+            capturedAt:
+                parseDt(json['pickup_proof_captured_at'] as String?) ??
+                DateTime.now(),
             lat: (json['pickup_proof_lat'] as num?)?.toDouble() ?? 0.0,
             lng: (json['pickup_proof_lng'] as num?)?.toDouble() ?? 0.0,
             checksum: json['pickup_proof_checksum'] as String? ?? '',

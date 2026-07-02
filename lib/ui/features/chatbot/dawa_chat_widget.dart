@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -168,8 +168,10 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
             Expanded(
               child: ListView.builder(
                 controller: _scrollController,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 itemCount: vm.messages.length,
                 itemBuilder: (context, index) {
                   final msg = vm.messages[index];
@@ -184,9 +186,15 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
 
             // One busy indicator at a time: image scan → oil analysis → reply.
             if (vm.isScanning)
-              _BusyIndicator(theme: theme, label: context.l10n.chatbotScanningImage)
+              _BusyIndicator(
+                theme: theme,
+                label: context.l10n.chatbotScanningImage,
+              )
             else if (vm.isAnalyzing)
-              _BusyIndicator(theme: theme, label: context.l10n.chatbotAnalyzingOil)
+              _BusyIndicator(
+                theme: theme,
+                label: context.l10n.chatbotAnalyzingOil,
+              )
             else if (vm.isThinking)
               _BusyIndicator(theme: theme, label: context.l10n.chatbotThinking),
 
@@ -303,8 +311,9 @@ class _TypingDotsState extends State<_TypingDots>
                   width: 6,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryGreen
-                        .withValues(alpha: 0.4 + 0.6 * bounce),
+                    color: AppColors.primaryGreen.withValues(
+                      alpha: 0.4 + 0.6 * bounce,
+                    ),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -380,9 +389,7 @@ class _DawaChatHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
-        border: Border(
-          bottom: BorderSide(color: theme.dividerColor, width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: theme.dividerColor, width: 1)),
       ),
       child: Column(
         children: [
@@ -428,8 +435,10 @@ class _DawaChatHeader extends StatelessWidget {
               ),
               // AI badge
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.primaryGreen.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(20),
@@ -440,8 +449,11 @@ class _DawaChatHeader extends StatelessWidget {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.auto_awesome_rounded,
-                        size: 12, color: AppColors.primaryGreen),
+                    Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 12,
+                      color: AppColors.primaryGreen,
+                    ),
                     SizedBox(width: 4),
                     Text(
                       'AI',
@@ -510,16 +522,16 @@ class _MessageBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Column(
-        crossAxisAlignment:
-            isUser ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+        crossAxisAlignment: isUser
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.end,
         children: [
           // ML Kit source badge (shown when triggered by image scan)
           if (message.mlSource != null && !isUser)
             Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: const Color(0xFFFEF3C7),
                   borderRadius: BorderRadius.circular(10),
@@ -537,8 +549,9 @@ class _MessageBubble extends StatelessWidget {
 
           // Bubble row — bot messages carry the Dawa avatar beside them.
           Row(
-            mainAxisAlignment:
-                isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            mainAxisAlignment: isUser
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               if (!isUser) ...[
@@ -551,7 +564,9 @@ class _MessageBubble extends StatelessWidget {
                     maxWidth: MediaQuery.of(context).size.width * 0.74,
                   ),
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 10),
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: bubbleColor,
                     borderRadius: BorderRadius.only(
@@ -562,9 +577,7 @@ class _MessageBubble extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: (isUser
-                                ? AppColors.primaryDark
-                                : Colors.black)
+                        color: (isUser ? AppColors.primaryDark : Colors.black)
                             .withValues(alpha: 0.06),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
@@ -605,10 +618,7 @@ class _MessageBubble extends StatelessWidget {
 
           // Follow-up chips (bot messages only)
           if (!isUser && message.followUps.isNotEmpty)
-            _FollowUpChips(
-              followUps: message.followUps,
-              onTap: onFollowUpTap,
-            ),
+            _FollowUpChips(followUps: message.followUps, onTap: onFollowUpTap),
         ],
       ),
     );
@@ -636,8 +646,9 @@ class _FollowUpChips extends StatelessWidget {
         alignment: WrapAlignment.end,
         children: followUps.map((entry) {
           final label = entry.response.split('\n').first;
-          final short =
-              label.length > 30 ? '${label.substring(0, 28)}…' : label;
+          final short = label.length > 30
+              ? '${label.substring(0, 28)}…'
+              : label;
           return Material(
             color: AppColors.primaryGreen.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(18),
@@ -645,8 +656,10 @@ class _FollowUpChips extends StatelessWidget {
               onTap: () => onTap(entry.id),
               borderRadius: BorderRadius.circular(18),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
                   border: Border.all(
@@ -656,8 +669,11 @@ class _FollowUpChips extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.bolt_rounded,
-                        size: 13, color: AppColors.primaryGreen),
+                    const Icon(
+                      Icons.bolt_rounded,
+                      size: 13,
+                      color: AppColors.primaryGreen,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       short,
@@ -706,9 +722,7 @@ class _InputBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 14),
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
-        border: Border(
-          top: BorderSide(color: theme.dividerColor, width: 1),
-        ),
+        border: Border(top: BorderSide(color: theme.dividerColor, width: 1)),
       ),
       child: SafeArea(
         top: false,
@@ -742,11 +756,17 @@ class _InputBar extends StatelessWidget {
                             color: theme.hintColor,
                           ),
                           border: InputBorder.none,
-                          contentPadding: const EdgeInsetsDirectional
-                              .fromSTEB(16, 12, 4, 12),
+                          contentPadding: const EdgeInsetsDirectional.fromSTEB(
+                            16,
+                            12,
+                            4,
+                            12,
+                          ),
                         ),
                         style: const TextStyle(
-                            fontFamily: 'Cairo', fontSize: 14),
+                          fontFamily: 'Cairo',
+                          fontSize: 14,
+                        ),
                         onSubmitted: isBusy ? null : (_) => onSend(),
                         textInputAction: TextInputAction.send,
                       ),
@@ -757,9 +777,7 @@ class _InputBar extends StatelessWidget {
                       tooltip: l10n.chatbotSendImageTooltip,
                       icon: Icon(
                         Icons.add_photo_alternate_rounded,
-                        color: isBusy
-                            ? Colors.grey
-                            : AppColors.primaryGreen,
+                        color: isBusy ? Colors.grey : AppColors.primaryGreen,
                         size: 24,
                       ),
                     ),
@@ -776,10 +794,9 @@ class _InputBar extends StatelessWidget {
                 height: 46,
                 decoration: BoxDecoration(
                   gradient: isBusy
-                      ? LinearGradient(colors: [
-                          Colors.grey.shade400,
-                          Colors.grey.shade500,
-                        ])
+                      ? LinearGradient(
+                          colors: [Colors.grey.shade400, Colors.grey.shade500],
+                        )
                       : const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -793,15 +810,17 @@ class _InputBar extends StatelessWidget {
                       ? null
                       : [
                           BoxShadow(
-                            color: AppColors.primaryDark
-                                .withValues(alpha: 0.3),
+                            color: AppColors.primaryDark.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 3),
                           ),
                         ],
                 ),
-                child: const Icon(Icons.send_rounded,
-                    color: Colors.white, size: 20),
+                child: const Icon(
+                  Icons.send_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
             ),
           ],

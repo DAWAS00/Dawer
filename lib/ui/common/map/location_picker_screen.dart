@@ -53,8 +53,11 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                 color: dt.surfaceVariant,
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.close_rounded,
-                  size: 20, color: dt.onSurfaceMuted),
+              child: Icon(
+                Icons.close_rounded,
+                size: 20,
+                color: dt.onSurfaceMuted,
+              ),
             ),
           ),
         ),

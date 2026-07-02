@@ -15,19 +15,16 @@ import 'package:dwaar/data/models/order/order.dart';
 class OrderProgressStepper extends StatelessWidget {
   final OrderStatus status;
 
-  const OrderProgressStepper({
-    super.key,
-    required this.status,
-  });
+  const OrderProgressStepper({super.key, required this.status});
 
   int get _currentStep => switch (status) {
-        OrderStatus.pending => 0,
-        OrderStatus.accepted => 1,
-        OrderStatus.arrivedAtPickup => 2,
-        OrderStatus.inTransit => 3,
-        OrderStatus.arrivedAtDropoff || OrderStatus.completed => 4,
-        _ => 0,
-      };
+    OrderStatus.pending => 0,
+    OrderStatus.accepted => 1,
+    OrderStatus.arrivedAtPickup => 2,
+    OrderStatus.inTransit => 3,
+    OrderStatus.arrivedAtDropoff || OrderStatus.completed => 4,
+    _ => 0,
+  };
 
   /// True once the order has fully finished — the last node renders as a
   /// completed check rather than a "current" halo.
@@ -38,7 +35,7 @@ class OrderProgressStepper extends StatelessWidget {
     'تم القبول',
     'وصل للاستلام',
     'في الطريق',
-    'تم التسليم'
+    'تم التسليم',
   ];
 
   @override
@@ -66,7 +63,8 @@ class OrderProgressStepper extends StatelessWidget {
         }
 
         final step = i ~/ 2;
-        final isCompleted = step < _currentStep || (step == _currentStep && _isDone);
+        final isCompleted =
+            step < _currentStep || (step == _currentStep && _isDone);
         final isCurrent = step == _currentStep && !_isDone;
 
         return Column(

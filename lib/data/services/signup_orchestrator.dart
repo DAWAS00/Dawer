@@ -20,9 +20,9 @@ final class SupabaseSignupOrchestrator implements ISignupOrchestrator {
     required IAuthRepository authRepository,
     required IFileStorageRepository fileStorage,
     required SupabaseClient client,
-  })  : _auth = authRepository,
-        _files = fileStorage,
-        _client = client;
+  }) : _auth = authRepository,
+       _files = fileStorage,
+       _client = client;
 
   final IAuthRepository _auth;
   final IFileStorageRepository _files;
@@ -46,10 +46,9 @@ final class SupabaseSignupOrchestrator implements ISignupOrchestrator {
           // Upload failure is non-fatal: the account exists, just without a
           // photo. Log and continue rather than rolling back the signup.
           if (upload is Success<String, AppFailure>) {
-            await _writeProfileFields(
-              session.userId,
-              {'profile_photo_url': upload.value},
-            );
+            await _writeProfileFields(session.userId, {
+              'profile_photo_url': upload.value,
+            });
           } else {
             debugPrint(
               '[SignupOrchestrator] profile photo upload failed for '
@@ -67,7 +66,9 @@ final class SupabaseSignupOrchestrator implements ISignupOrchestrator {
   Future<AppResult<void>> updateProfile(SignUpRequest request) async {
     final userId = _client.auth.currentUser?.id;
     if (userId == null) {
-      return const Failure(AuthFailure(message: 'انتهت الجلسة. سجّل الدخول مجدداً.'));
+      return const Failure(
+        AuthFailure(message: 'انتهت الجلسة. سجّل الدخول مجدداً.'),
+      );
     }
 
     // Build the subset of fields that are "progressive" (collected after the
@@ -89,7 +90,9 @@ final class SupabaseSignupOrchestrator implements ISignupOrchestrator {
   Future<AppResult<String>> uploadIdentityDocument(File document) async {
     final userId = _client.auth.currentUser?.id;
     if (userId == null) {
-      return const Failure(AuthFailure(message: 'انتهت الجلسة. سجّل الدخول مجدداً.'));
+      return const Failure(
+        AuthFailure(message: 'انتهت الجلسة. سجّل الدخول مجدداً.'),
+      );
     }
 
     final upload = await _files.uploadIdentityDocument(
@@ -119,10 +122,7 @@ final class SupabaseSignupOrchestrator implements ISignupOrchestrator {
     Map<String, dynamic> fields,
   ) async {
     try {
-      await _client
-          .from('profiles')
-          .update(fields)
-          .eq('auth_id', userId);
+      await _client.from('profiles').update(fields).eq('auth_id', userId);
       return const Success(null);
     } on PostgrestException catch (e) {
       return Failure(UnknownFailure(message: e.message, code: e.code));

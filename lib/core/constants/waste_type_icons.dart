@@ -27,6 +27,10 @@ class WasteTypeIcons {
 
   /// Returns the icon for a given [WasteType], falling back to
   /// [Icons.recycling_rounded] if no match is found.
-  static IconData iconFor(WasteType type) =>
-      all.firstWhere((e) => e.$1 == type, orElse: () => (type, Icons.recycling_rounded)).$2;
+  static IconData iconFor(WasteType type) => all
+      .firstWhere(
+        (e) => e.$1 == type,
+        orElse: () => (type, Icons.recycling_rounded),
+      )
+      .$2;
 }

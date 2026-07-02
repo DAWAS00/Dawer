@@ -43,7 +43,8 @@ class WasteProfitabilityChart extends StatelessWidget {
               isTop: i == 0,
               topBadgeLabel: l10n.analyticsProfitabilityTopBadge,
               perKgLabel: l10n.analyticsProfitabilityPerKg(
-                  data[i].rewardPerKg.toStringAsFixed(1)),
+                data[i].rewardPerKg.toStringAsFixed(1),
+              ),
             ),
           ),
       ],
@@ -74,7 +75,9 @@ class _Row extends StatelessWidget {
           width: 10,
           height: 10,
           decoration: BoxDecoration(
-              color: item.type.ganttColor, shape: BoxShape.circle),
+            color: item.type.ganttColor,
+            shape: BoxShape.circle,
+          ),
         ),
         const SizedBox(width: 8),
         Expanded(
@@ -86,15 +89,18 @@ class _Row extends StatelessWidget {
                   Text(
                     item.type.label,
                     style: GoogleFonts.cairo(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textMain),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textMain,
+                    ),
                   ),
                   if (isTop) ...[
                     const SizedBox(width: 6),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 1),
+                        horizontal: 6,
+                        vertical: 1,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFFEF3C7),
                         borderRadius: BorderRadius.circular(6),
@@ -102,9 +108,10 @@ class _Row extends StatelessWidget {
                       child: Text(
                         topBadgeLabel,
                         style: GoogleFonts.cairo(
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF92400E)),
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF92400E),
+                        ),
                       ),
                     ),
                   ],
@@ -112,9 +119,10 @@ class _Row extends StatelessWidget {
                   Text(
                     perKgLabel,
                     style: GoogleFonts.dmSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primaryGreen),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryGreen,
+                    ),
                   ),
                 ],
               ),
@@ -125,8 +133,9 @@ class _Row extends StatelessWidget {
                   value: fraction,
                   minHeight: 8,
                   backgroundColor: AppColors.surfaceAlt,
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(item.type.ganttColor),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    item.type.ganttColor,
+                  ),
                 ),
               ),
             ],

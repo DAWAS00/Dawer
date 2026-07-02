@@ -16,7 +16,7 @@ class WizardBottomActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isLast = controller.currentStep == 2;
-    
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
       decoration: const BoxDecoration(

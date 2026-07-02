@@ -7,17 +7,17 @@ abstract class IAiSimulationService {
   /// Simulates verifying a document and an address using AI OCR and Location Intelligence.
   /// [FUTURE IMPLEMENTATION: AI API Integration]
   /// Replace with real Vision OCR and Address Validation API calls.
-  Future<VerificationResult> verifyDocumentAndAddress(String address, String documentPath);
+  Future<VerificationResult> verifyDocumentAndAddress(
+    String address,
+    String documentPath,
+  );
 }
 
 class AiGenerationResult {
   final String story;
   final List<String> categories;
 
-  const AiGenerationResult({
-    required this.story,
-    required this.categories,
-  });
+  const AiGenerationResult({required this.story, required this.categories});
 }
 
 class VerificationResult {

@@ -59,7 +59,10 @@ class DriverEarningsBreakdownChart extends StatelessWidget {
             width: 64,
             child: Text(
               type.label,
-              style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF404943)),
+              style: GoogleFonts.cairo(
+                fontSize: 11,
+                color: const Color(0xFF404943),
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -102,7 +105,10 @@ class DriverEarningsBreakdownChart extends StatelessWidget {
               if (trips > 0)
                 Text(
                   '$trips رحلة',
-                  style: GoogleFonts.cairo(fontSize: 9, color: const Color(0xFF9099A2)),
+                  style: GoogleFonts.cairo(
+                    fontSize: 9,
+                    color: const Color(0xFF9099A2),
+                  ),
                 ),
             ],
           ),

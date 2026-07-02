@@ -27,7 +27,8 @@ class _EarningsDashboardViewState extends State<EarningsDashboardView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final riderId = context.read<IAuthRepository>().currentSession?.userId ?? '';
+      final riderId =
+          context.read<IAuthRepository>().currentSession?.userId ?? '';
       context.read<EarningsViewModel>().init(riderId);
     });
   }
@@ -37,7 +38,8 @@ class _EarningsDashboardViewState extends State<EarningsDashboardView> {
     return Consumer<EarningsViewModel>(
       builder: (context, vm, _) {
         final body = switch (vm.state) {
-          Idle() || Loading() => const Center(child: CircularProgressIndicator()),
+          Idle() ||
+          Loading() => const Center(child: CircularProgressIndicator()),
           Failed(:final failure) => Center(child: Text(failure.message)),
           Loaded(:final data) => _buildDashboard(data, vm),
         };
@@ -174,9 +176,21 @@ class _EarningsDashboardViewState extends State<EarningsDashboardView> {
         }
         return Column(
           children: [
-            Row(children: [Expanded(child: cards[0]), const SizedBox(width: 12), Expanded(child: cards[1])]),
+            Row(
+              children: [
+                Expanded(child: cards[0]),
+                const SizedBox(width: 12),
+                Expanded(child: cards[1]),
+              ],
+            ),
             const SizedBox(height: 12),
-            Row(children: [Expanded(child: cards[2]), const SizedBox(width: 12), Expanded(child: cards[3])]),
+            Row(
+              children: [
+                Expanded(child: cards[2]),
+                const SizedBox(width: 12),
+                Expanded(child: cards[3]),
+              ],
+            ),
           ],
         );
       },
@@ -186,7 +200,9 @@ class _EarningsDashboardViewState extends State<EarningsDashboardView> {
   Widget _sectionTitle(String title) {
     return Text(
       title,
-      style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.primaryGreen),
+      style: Theme.of(
+        context,
+      ).textTheme.titleLarge?.copyWith(color: AppColors.primaryGreen),
     );
   }
 }

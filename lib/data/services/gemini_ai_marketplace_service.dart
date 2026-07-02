@@ -5,11 +5,15 @@ import 'gemini_service.dart';
 
 class GeminiAiMarketplaceService implements IAiMarketplaceService {
   @override
-  Future<AiMarketplaceSuggestion> getSuggestionsForSupplier(String category) async {
+  Future<AiMarketplaceSuggestion> getSuggestionsForSupplier(
+    String category,
+  ) async {
     if (category.trim().isEmpty) {
       return const AiMarketplaceSuggestion(
-        marketplaceLookupPrompt: 'استكشف أحدث الفئات المطلوبة في سوق التدوير اليوم.',
-        appDiscoverySuggestion: 'جرّب أداة "الإدراج السريع" لنشر أول عرض لك في أقل من دقيقتين.',
+        marketplaceLookupPrompt:
+            'استكشف أحدث الفئات المطلوبة في سوق التدوير اليوم.',
+        appDiscoverySuggestion:
+            'جرّب أداة "الإدراج السريع" لنشر أول عرض لك في أقل من دقيقتين.',
       );
     }
     try {
@@ -29,27 +33,33 @@ class GeminiAiMarketplaceService implements IAiMarketplaceService {
           .where((l) => l.trim().isNotEmpty)
           .toList();
       return AiMarketplaceSuggestion(
-        marketplaceLookupPrompt:
-            lines.isNotEmpty ? lines[0] : 'تحقق من الطلب الحالي على $category في منطقتك.',
+        marketplaceLookupPrompt: lines.isNotEmpty
+            ? lines[0]
+            : 'تحقق من الطلب الحالي على $category في منطقتك.',
         appDiscoverySuggestion: lines.length > 1
             ? lines[1]
             : 'فعّل الإشعارات الفورية لتعرف عند وجود مشترين قريبين.',
       );
     } catch (_) {
       return AiMarketplaceSuggestion(
-        marketplaceLookupPrompt: 'تحقق من الطلب الحالي على $category وأسعاره في منطقتك.',
-        appDiscoverySuggestion: 'فعّل الإشعارات الفورية لتعرف عند وجود مشترين قريبين منك.',
+        marketplaceLookupPrompt:
+            'تحقق من الطلب الحالي على $category وأسعاره في منطقتك.',
+        appDiscoverySuggestion:
+            'فعّل الإشعارات الفورية لتعرف عند وجود مشترين قريبين منك.',
       );
     }
   }
 
   @override
   Future<AiMarketplaceSuggestion> getSuggestionsForRestaurant(
-      String cuisine, String address) async {
+    String cuisine,
+    String address,
+  ) async {
     if (cuisine.trim().isEmpty) {
       return const AiMarketplaceSuggestion(
         marketplaceLookupPrompt: 'استكشف خدمات تجميع النفايات المتاحة لمطعمك.',
-        appDiscoverySuggestion: 'جدوِّل عمليات تجميع النفايات أسبوعياً لتوفير الوقت والتكلفة.',
+        appDiscoverySuggestion:
+            'جدوِّل عمليات تجميع النفايات أسبوعياً لتوفير الوقت والتكلفة.',
       );
     }
     try {
@@ -78,8 +88,10 @@ class GeminiAiMarketplaceService implements IAiMarketplaceService {
       );
     } catch (_) {
       return AiMarketplaceSuggestion(
-        marketplaceLookupPrompt: 'مطعم $cuisine يُنتج نفايات عضوية وزيوت قابلة للتدوير.',
-        appDiscoverySuggestion: 'جدوِّل عمليات تجميع النفايات أسبوعياً عبر تطبيق دوّر.',
+        marketplaceLookupPrompt:
+            'مطعم $cuisine يُنتج نفايات عضوية وزيوت قابلة للتدوير.',
+        appDiscoverySuggestion:
+            'جدوِّل عمليات تجميع النفايات أسبوعياً عبر تطبيق دوّر.',
       );
     }
   }

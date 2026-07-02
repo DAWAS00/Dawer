@@ -15,7 +15,7 @@ import '../../domain/repositories/i_file_storage_repository.dart';
 ///   • `user-documents` (private) → `{userId}/identity.<ext>`
 class SupabaseFileStorageRepository implements IFileStorageRepository {
   SupabaseFileStorageRepository({SupabaseClient? client})
-      : _client = client ?? Supabase.instance.client;
+    : _client = client ?? Supabase.instance.client;
 
   final SupabaseClient _client;
 
@@ -23,7 +23,13 @@ class SupabaseFileStorageRepository implements IFileStorageRepository {
   static const String _docsBucket = 'user-documents';
 
   static const Set<String> _imageExts = {'.jpg', '.jpeg', '.png', '.webp'};
-  static const Set<String> _docExts = {'.jpg', '.jpeg', '.png', '.webp', '.pdf'};
+  static const Set<String> _docExts = {
+    '.jpg',
+    '.jpeg',
+    '.png',
+    '.webp',
+    '.pdf',
+  };
 
   @override
   Future<AppResult<String>> uploadProfilePhoto({
@@ -61,10 +67,9 @@ class SupabaseFileStorageRepository implements IFileStorageRepository {
     Duration validity = const Duration(minutes: 5),
   }) async {
     try {
-      final url = await _client.storage.from(_docsBucket).createSignedUrl(
-            objectPath,
-            validity.inSeconds,
-          );
+      final url = await _client.storage
+          .from(_docsBucket)
+          .createSignedUrl(objectPath, validity.inSeconds);
       return Success(url);
     } on StorageException catch (e) {
       return Failure(StorageFailure(message: e.message, code: e.statusCode));
@@ -85,10 +90,14 @@ class SupabaseFileStorageRepository implements IFileStorageRepository {
   }) async {
     final ext = p.extension(file.path).toLowerCase();
     if (!allowedExts.contains(ext)) {
-      return Failure(ValidationFailure(
-        message: 'صيغة الملف غير مدعومة',
-        fieldErrors: {'file': 'يجب أن يكون الملف بصيغة ${allowedExts.join("، ")}'},
-      ));
+      return Failure(
+        ValidationFailure(
+          message: 'صيغة الملف غير مدعومة',
+          fieldErrors: {
+            'file': 'يجب أن يكون الملف بصيغة ${allowedExts.join("، ")}',
+          },
+        ),
+      );
     }
 
     if (!await file.exists()) {
@@ -97,7 +106,9 @@ class SupabaseFileStorageRepository implements IFileStorageRepository {
 
     final objectPath = '$userId/$baseName$ext';
     try {
-      await _client.storage.from(bucket).upload(
+      await _client.storage
+          .from(bucket)
+          .upload(
             objectPath,
             file,
             fileOptions: const FileOptions(upsert: true),

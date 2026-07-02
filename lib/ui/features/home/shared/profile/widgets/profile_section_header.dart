@@ -7,11 +7,7 @@ import '../../../../../../l10n/l10n.dart';
 /// In RTL the title sits on the right (start) and the edit button on the
 /// left (end). Used to head each profile section (info, settings, etc.).
 class ProfileSectionHeader extends StatelessWidget {
-  const ProfileSectionHeader({
-    super.key,
-    required this.title,
-    this.onEdit,
-  });
+  const ProfileSectionHeader({super.key, required this.title, this.onEdit});
 
   final String title;
   final VoidCallback? onEdit;
@@ -36,7 +32,11 @@ class ProfileSectionHeader extends StatelessWidget {
           if (onEdit != null)
             TextButton.icon(
               onPressed: onEdit,
-              icon: Icon(Icons.edit_rounded, size: 16, color: theme.primaryColor),
+              icon: Icon(
+                Icons.edit_rounded,
+                size: 16,
+                color: theme.primaryColor,
+              ),
               label: Text(
                 context.l10n.edit,
                 style: GoogleFonts.cairo(

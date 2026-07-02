@@ -2,10 +2,10 @@ enum RewardTransactionType { earned, redeemed, bonus }
 
 extension RewardTransactionTypeLabel on RewardTransactionType {
   String get label => switch (this) {
-        RewardTransactionType.earned => 'مكسبة',
-        RewardTransactionType.redeemed => 'مُستبدلة',
-        RewardTransactionType.bonus => 'مكافأة',
-      };
+    RewardTransactionType.earned => 'مكسبة',
+    RewardTransactionType.redeemed => 'مُستبدلة',
+    RewardTransactionType.bonus => 'مكافأة',
+  };
 
   bool get isPositive => this != RewardTransactionType.redeemed;
 }

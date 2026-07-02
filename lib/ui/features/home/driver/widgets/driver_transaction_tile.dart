@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/reward_transaction.dart';
 
@@ -31,13 +31,19 @@ class DriverTransactionTile extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: isPositive ? const Color(0xFFDCFCE7) : const Color(0xFFFEE2E2),
+              color: isPositive
+                  ? const Color(0xFFDCFCE7)
+                  : const Color(0xFFFEE2E2),
               shape: BoxShape.circle,
             ),
             child: Icon(
-              isPositive ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded,
+              isPositive
+                  ? Icons.arrow_downward_rounded
+                  : Icons.arrow_upward_rounded,
               size: 18,
-              color: isPositive ? const Color(0xFF166534) : const Color(0xFF991B1B),
+              color: isPositive
+                  ? const Color(0xFF166534)
+                  : const Color(0xFF991B1B),
             ),
           ),
           const SizedBox(width: 12),
@@ -55,7 +61,10 @@ class DriverTransactionTile extends StatelessWidget {
                 ),
                 Text(
                   _formatDate(tx.createdAt),
-                  style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF9099A2)),
+                  style: GoogleFonts.cairo(
+                    fontSize: 11,
+                    color: const Color(0xFF9099A2),
+                  ),
                 ),
               ],
             ),
@@ -68,12 +77,17 @@ class DriverTransactionTile extends StatelessWidget {
                 style: GoogleFonts.dmSans(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: isPositive ? const Color(0xFF166534) : const Color(0xFF991B1B),
+                  color: isPositive
+                      ? const Color(0xFF166534)
+                      : const Color(0xFF991B1B),
                 ),
               ),
               Text(
                 '${tx.points} نقطة',
-                style: GoogleFonts.cairo(fontSize: 10, color: const Color(0xFF9099A2)),
+                style: GoogleFonts.cairo(
+                  fontSize: 10,
+                  color: const Color(0xFF9099A2),
+                ),
               ),
             ],
           ),
@@ -84,8 +98,18 @@ class DriverTransactionTile extends StatelessWidget {
 
   String _formatDate(DateTime dt) {
     const months = [
-      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
+      'يناير',
+      'فبراير',
+      'مارس',
+      'أبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
     ];
     return '${dt.day} ${months[dt.month - 1]} ${dt.year}';
   }

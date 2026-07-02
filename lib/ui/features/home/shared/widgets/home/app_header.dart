@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:dwaar/core/constants/app_colors.dart';
 import 'package:dwaar/core/layout/app_layout.dart';
 
@@ -78,8 +78,11 @@ class HomeAppHeader extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.star_rounded,
-                    size: 14, color: AppColors.accentAmber),
+                const Icon(
+                  Icons.star_rounded,
+                  size: 14,
+                  color: AppColors.accentAmber,
+                ),
                 const SizedBox(width: 5),
                 Text(
                   '$points',
@@ -92,10 +95,7 @@ class HomeAppHeader extends StatelessWidget {
                 const SizedBox(width: 4),
                 const Text(
                   'نقطة',
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: Colors.white70,
-                  ),
+                  style: TextStyle(fontSize: 10, color: Colors.white70),
                 ),
               ],
             ),

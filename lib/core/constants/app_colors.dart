@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 class AppColors {
   // Brand Tokens (Committed Color Strategy - Shamrock)
   static const Color primaryGreen = Color(0xFF0F5A34); // Deep, rich brand hue
-  static const Color primaryDark = Color(0xFF06331C); // Very dark tint for high contrast
+  static const Color primaryDark = Color(
+    0xFF06331C,
+  ); // Very dark tint for high contrast
   static const Color accentAmber = Color(0xFFD97706); // Action accent
-  static const Color amberContainer = Color(0xFFFEF3C7); // Legacy warning container
+  static const Color amberContainer = Color(
+    0xFFFEF3C7,
+  ); // Legacy warning container
 
   // Tinted Neutrals (Tinted slightly towards primary green to avoid muddy grays)
   static const Color background = Color(0xFFF3F7F5); // #F3F7F5 OKLCH approx
@@ -36,7 +40,7 @@ class AppColors {
   static const Color mapDropoffPin = Color(0xFFE53935);
   static const Color mapRouteLine = Color(0xFF0F5A34);
   static const Color mapSurface = Color(0xFFE8F5E9);
-  
+
   // Marketplace — Job Blue (collection jobs distinct visual treatment)
   static const Color jobBlue = Color(0xFF1E40AF);
   static const Color jobBlueBg = Color(0xFFEFF6FF);

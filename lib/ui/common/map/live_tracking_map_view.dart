@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -156,7 +156,8 @@ class _LiveTrackingMapViewState extends State<LiveTrackingMapView> {
     const r = 6371000.0;
     final dLat = _rad(b.latitude - a.latitude);
     final dLng = _rad(b.longitude - a.longitude);
-    final h = pow(sin(dLat / 2), 2) +
+    final h =
+        pow(sin(dLat / 2), 2) +
         cos(_rad(a.latitude)) * cos(_rad(b.latitude)) * pow(sin(dLng / 2), 2);
     return 2 * r * asin(sqrt(h));
   }
@@ -180,7 +181,9 @@ class _LiveTrackingMapViewState extends State<LiveTrackingMapView> {
         Marker(
           markerId: const MarkerId('driver'),
           position: driver,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueAzure,
+          ),
         ),
     };
 
@@ -216,8 +219,8 @@ class _LiveTrackingMapViewState extends State<LiveTrackingMapView> {
             child: driver == null
                 ? const _LocatingChip()
                 : displayEta != null
-                    ? _EtaChip(minutes: displayEta)
-                    : const SizedBox.shrink(),
+                ? _EtaChip(minutes: displayEta)
+                : const SizedBox.shrink(),
           ),
 
           const Positioned(

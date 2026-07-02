@@ -186,10 +186,7 @@ class SignupController extends ChangeNotifier {
     final result = await _orchestrator.updateProfile(_buildFullRequest());
 
     _isSubmitting = false;
-    result.fold(
-      onSuccess: (_) {},
-      onFailure: (f) => _error = f.message,
-    );
+    result.fold(onSuccess: (_) {}, onFailure: (f) => _error = f.message);
     notifyListeners();
     return result is Success;
   }
@@ -209,7 +206,9 @@ class SignupController extends ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    final result = await _orchestrator.uploadIdentityDocument(identityDocument!);
+    final result = await _orchestrator.uploadIdentityDocument(
+      identityDocument!,
+    );
 
     String? path;
     result.fold(

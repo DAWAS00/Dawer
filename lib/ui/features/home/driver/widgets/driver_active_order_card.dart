@@ -22,7 +22,6 @@ class DriverActiveOrderCard extends StatefulWidget {
 }
 
 class _DriverActiveOrderCardState extends State<DriverActiveOrderCard> {
-
   bool get _hasCoords =>
       widget.order.pickupLat != null &&
       widget.order.pickupLng != null &&
@@ -30,32 +29,29 @@ class _DriverActiveOrderCardState extends State<DriverActiveOrderCard> {
       widget.order.dropoffLng != null;
 
   LatLng get _midpoint => LatLng(
-        ((widget.order.pickupLat ?? 0) + (widget.order.dropoffLat ?? 0)) / 2,
-        ((widget.order.pickupLng ?? 0) + (widget.order.dropoffLng ?? 0)) / 2,
-      );
+    ((widget.order.pickupLat ?? 0) + (widget.order.dropoffLat ?? 0)) / 2,
+    ((widget.order.pickupLng ?? 0) + (widget.order.dropoffLng ?? 0)) / 2,
+  );
 
   Set<Marker> get _markers => {
-        Marker(
-          markerId: const MarkerId('pickup'),
-          position:
-              LatLng(widget.order.pickupLat!, widget.order.pickupLng!),
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-              BitmapDescriptor.hueGreen),
-        ),
-        Marker(
-          markerId: const MarkerId('dropoff'),
-          position:
-              LatLng(widget.order.dropoffLat!, widget.order.dropoffLng!),
-        ),
-      };
+    Marker(
+      markerId: const MarkerId('pickup'),
+      position: LatLng(widget.order.pickupLat!, widget.order.pickupLng!),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+    ),
+    Marker(
+      markerId: const MarkerId('dropoff'),
+      position: LatLng(widget.order.dropoffLat!, widget.order.dropoffLng!),
+    ),
+  };
 
   int get _currentStep => switch (widget.order.status) {
-        OrderStatus.accepted => 0,
-        OrderStatus.arrivedAtPickup => 1,
-        OrderStatus.inTransit => 2,
-        OrderStatus.arrivedAtDropoff || OrderStatus.completed => 3,
-        _ => 0,
-      };
+    OrderStatus.accepted => 0,
+    OrderStatus.arrivedAtPickup => 1,
+    OrderStatus.inTransit => 2,
+    OrderStatus.arrivedAtDropoff || OrderStatus.completed => 3,
+    _ => 0,
+  };
 
   bool get _isHeadingToPickup => widget.order.status == OrderStatus.accepted;
 
@@ -137,14 +133,17 @@ class _DriverActiveOrderCardState extends State<DriverActiveOrderCard> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            _isHeadingToPickup ? l10n.driverHeadingToPickup : l10n.driverHeadingToDelivery,
-            style: GoogleFonts.cairo(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: AppColors.shamrock200,
-            ),
-          ).animate(onPlay: (c) => c.repeat(reverse: true))
-           .fade(duration: 1.seconds, begin: 0.5, end: 1.0),
+                _isHeadingToPickup
+                    ? l10n.driverHeadingToPickup
+                    : l10n.driverHeadingToDelivery,
+                style: GoogleFonts.cairo(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.shamrock200,
+                ),
+              )
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .fade(duration: 1.seconds, begin: 0.5, end: 1.0),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
@@ -494,7 +493,10 @@ class _MetricItem extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               label,
-              style: GoogleFonts.cairo(fontSize: 10, color: AppColors.mutedText),
+              style: GoogleFonts.cairo(
+                fontSize: 10,
+                color: AppColors.mutedText,
+              ),
             ),
           ],
         ),

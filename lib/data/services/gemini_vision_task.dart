@@ -55,12 +55,11 @@ abstract class GeminiVisionTask<T> {
         config: GeminiService.kJsonConfig,
       );
 
-      final response = await m.generateContent([
-        Content.multi([
-          DataPart(mimeType, imageBytes),
-          TextPart(prompt),
-        ]),
-      ]).timeout(timeout);
+      final response = await m
+          .generateContent([
+            Content.multi([DataPart(mimeType, imageBytes), TextPart(prompt)]),
+          ])
+          .timeout(timeout);
 
       final raw = response.text?.trim() ?? '';
       final data = GeminiService.extractJson(raw);
@@ -68,7 +67,9 @@ abstract class GeminiVisionTask<T> {
 
       return fromJson(data);
     } on TimeoutException {
-      debugPrint('[$runtimeType] Gemini request timed out after ${timeout.inSeconds}s.');
+      debugPrint(
+        '[$runtimeType] Gemini request timed out after ${timeout.inSeconds}s.',
+      );
       return null;
     } catch (e, st) {
       debugPrint('[$runtimeType] Error: $e\n$st');

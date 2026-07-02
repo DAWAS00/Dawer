@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dwaar/l10n/l10n.dart';
 import '../viewmodels/driver_earnings_viewmodel.dart';
@@ -60,7 +60,10 @@ class DriverEarningsHeader extends StatelessWidget {
           const SizedBox(height: 28),
           Text(
             l10n.earningsNetTotal,
-            style: GoogleFonts.cairo(fontSize: 13, color: Colors.white.withValues(alpha: 0.7)),
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              color: Colors.white.withValues(alpha: 0.7),
+            ),
           ),
           const SizedBox(height: 4),
           Row(
@@ -99,7 +102,11 @@ class DriverEarningsHeader extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.trending_up_rounded, color: Color(0xFF4ADE80), size: 14),
+                    const Icon(
+                      Icons.trending_up_rounded,
+                      color: Color(0xFF4ADE80),
+                      size: 14,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       '+${summary.netGrowth}%',
@@ -115,7 +122,10 @@ class DriverEarningsHeader extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 l10n.earningsIncreaseVsPrev,
-                style: GoogleFonts.cairo(fontSize: 11, color: Colors.white.withValues(alpha: 0.6)),
+                style: GoogleFonts.cairo(
+                  fontSize: 11,
+                  color: Colors.white.withValues(alpha: 0.6),
+                ),
               ),
             ],
           ),
@@ -144,7 +154,9 @@ class _PeriodChip extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.1),
+          color: isSelected
+              ? Colors.white
+              : Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(

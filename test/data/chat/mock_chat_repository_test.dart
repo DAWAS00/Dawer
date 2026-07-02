@@ -27,18 +27,12 @@ void main() {
 
   group('MockChatRepository – seed data', () {
     test('ORD-S01 is pre-seeded with 3 messages', () async {
-      final events = await _collect(
-        repo.watchMessages('ORD-S01'),
-        () async {},
-      );
+      final events = await _collect(repo.watchMessages('ORD-S01'), () async {});
       expect(events.first.length, 3);
     });
 
     test('seed messages have correct roomId', () async {
-      final events = await _collect(
-        repo.watchMessages('ORD-S01'),
-        () async {},
-      );
+      final events = await _collect(repo.watchMessages('ORD-S01'), () async {});
       expect(events.first.every((m) => m.roomId == 'ORD-S01'), isTrue);
     });
 
@@ -55,10 +49,7 @@ void main() {
 
   group('MockChatRepository – watchMessages', () {
     test('stream emits immediately on subscribe', () async {
-      final events = await _collect(
-        repo.watchMessages('ORD-S01'),
-        () async {},
-      );
+      final events = await _collect(repo.watchMessages('ORD-S01'), () async {});
       expect(events, isNotEmpty);
     });
 
@@ -142,10 +133,7 @@ void main() {
         content: 'ثانية',
       );
 
-      final events = await _collect(
-        repo.watchMessages('ORD-S01'),
-        () async {},
-      );
+      final events = await _collect(repo.watchMessages('ORD-S01'), () async {});
       final ids = events.first.map((m) => m.id).toSet();
       expect(ids.length, events.first.length);
     });
@@ -157,24 +145,16 @@ void main() {
     test('marks other-sender messages as read', () async {
       await repo.markRead('ORD-S01', 'mock-user-01');
 
-      final events = await _collect(
-        repo.watchMessages('ORD-S01'),
-        () async {},
-      );
-      final driverMsgs =
-          events.first.where((m) => m.senderId == 'driver-01');
+      final events = await _collect(repo.watchMessages('ORD-S01'), () async {});
+      final driverMsgs = events.first.where((m) => m.senderId == 'driver-01');
       expect(driverMsgs.every((m) => m.isRead), isTrue);
     });
 
     test('own messages are not touched by markRead', () async {
       await repo.markRead('ORD-S01', 'mock-user-01');
 
-      final events = await _collect(
-        repo.watchMessages('ORD-S01'),
-        () async {},
-      );
-      final mine =
-          events.first.where((m) => m.senderId == 'mock-user-01');
+      final events = await _collect(repo.watchMessages('ORD-S01'), () async {});
+      final mine = events.first.where((m) => m.senderId == 'mock-user-01');
       expect(mine, isNotEmpty);
     });
 

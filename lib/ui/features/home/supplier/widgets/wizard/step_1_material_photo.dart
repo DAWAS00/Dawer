@@ -77,16 +77,33 @@ class Step1MaterialAndPhoto extends StatelessWidget {
       borderRadius: BorderRadius.circular(14),
       border: Border.all(color: const Color(0xFF1E40AF).withValues(alpha: 0.2)),
     ),
-    child: Row(children: [
-      const SizedBox(width: 20, height: 20,
-          child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF1E40AF))),
-      const Spacer(),
-      Text(l10n.wizardAiAnalyzing,
-          style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold,
-              color: const Color(0xFF1E40AF))),
-      const SizedBox(width: 10),
-      const Icon(Icons.psychology_rounded, size: 22, color: Color(0xFF1E40AF)),
-    ]),
+    child: Row(
+      children: [
+        const SizedBox(
+          width: 20,
+          height: 20,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: Color(0xFF1E40AF),
+          ),
+        ),
+        const Spacer(),
+        Text(
+          l10n.wizardAiAnalyzing,
+          style: GoogleFonts.cairo(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF1E40AF),
+          ),
+        ),
+        const SizedBox(width: 10),
+        const Icon(
+          Icons.psychology_rounded,
+          size: 22,
+          color: Color(0xFF1E40AF),
+        ),
+      ],
+    ),
   );
 
   Widget _aiFilledBanner(List<String> labels) => Container(
@@ -97,23 +114,41 @@ class Step1MaterialAndPhoto extends StatelessWidget {
       borderRadius: BorderRadius.circular(14),
       border: Border.all(color: const Color(0xFF065F46).withValues(alpha: 0.2)),
     ),
-    child: Row(children: [
-      Expanded(
-        child: Wrap(spacing: 6, runSpacing: 4, alignment: WrapAlignment.end,
-          children: labels.map((f) => Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: const Color(0xFF065F46).withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(f, style: GoogleFonts.cairo(fontSize: 12,
-                color: const Color(0xFF065F46), fontWeight: FontWeight.bold)),
-          )).toList(),
+    child: Row(
+      children: [
+        Expanded(
+          child: Wrap(
+            spacing: 6,
+            runSpacing: 4,
+            alignment: WrapAlignment.end,
+            children: labels
+                .map(
+                  (f) => Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF065F46).withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      f,
+                      style: GoogleFonts.cairo(
+                        fontSize: 12,
+                        color: const Color(0xFF065F46),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
         ),
-      ),
-      const SizedBox(width: 12),
-      const Icon(Icons.verified_rounded, size: 22, color: Color(0xFF065F46)),
-    ]),
+        const SizedBox(width: 12),
+        const Icon(Icons.verified_rounded, size: 22, color: Color(0xFF065F46)),
+      ],
+    ),
   );
 
   Widget _aiErrorBanner(AppLocalizations l10n, String error) => Container(
@@ -124,25 +159,34 @@ class Step1MaterialAndPhoto extends StatelessWidget {
       borderRadius: BorderRadius.circular(14),
       border: Border.all(color: const Color(0xFFC62828).withValues(alpha: 0.2)),
     ),
-    child: Row(children: [
-      IconButton(
-        icon: const Icon(Icons.close, size: 18, color: Color(0xFFC62828)),
-        onPressed: controller.clearAiError,
-        padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(),
-      ),
-      const Spacer(),
-      Expanded(
-        child: Text(
-          l10n.wizardAiAnalysisFailed(error),
-          style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold,
-              color: const Color(0xFFC62828)),
-          textAlign: TextAlign.right,
+    child: Row(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.close, size: 18, color: Color(0xFFC62828)),
+          onPressed: controller.clearAiError,
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
         ),
-      ),
-      const SizedBox(width: 10),
-      const Icon(Icons.error_outline_rounded, size: 22, color: Color(0xFFC62828)),
-    ]),
+        const Spacer(),
+        Expanded(
+          child: Text(
+            l10n.wizardAiAnalysisFailed(error),
+            style: GoogleFonts.cairo(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFFC62828),
+            ),
+            textAlign: TextAlign.right,
+          ),
+        ),
+        const SizedBox(width: 10),
+        const Icon(
+          Icons.error_outline_rounded,
+          size: 22,
+          color: Color(0xFFC62828),
+        ),
+      ],
+    ),
   );
 }
 
@@ -170,7 +214,10 @@ class _StepHeader extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: GoogleFonts.cairo(fontSize: 13, color: WizardColors.textSecondary),
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              color: WizardColors.textSecondary,
+            ),
             textAlign: TextAlign.right,
           ),
         ],
@@ -233,13 +280,17 @@ class _MaterialTypeCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: selected ? WizardColors.primaryBorder : WizardColors.surfaceAlt,
+                color: selected
+                    ? WizardColors.primaryBorder
+                    : WizardColors.surfaceAlt,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 icon,
                 size: 22,
-                color: selected ? WizardColors.primaryMid : WizardColors.textSecondary,
+                color: selected
+                    ? WizardColors.primaryMid
+                    : WizardColors.textSecondary,
               ),
             ),
             const SizedBox(height: 6),
@@ -248,7 +299,9 @@ class _MaterialTypeCard extends StatelessWidget {
               style: GoogleFonts.cairo(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: selected ? WizardColors.primaryMid : WizardColors.textSecondary,
+                color: selected
+                    ? WizardColors.primaryMid
+                    : WizardColors.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),

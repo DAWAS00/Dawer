@@ -54,9 +54,10 @@ class EarningsEfficiencyCard extends StatelessWidget {
               child: Text(
                 'د.أ/كم',
                 style: GoogleFonts.cairo(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.mutedText),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.mutedText,
+                ),
               ),
             ),
           ],
@@ -71,9 +72,10 @@ class EarningsEfficiencyCard extends StatelessWidget {
           Text(
             l10n.analyticsEfficiencyTopJobs,
             style: GoogleFonts.cairo(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textMain),
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textMain,
+            ),
           ),
           const SizedBox(height: 8),
           for (final job in bestJobs) ...[
@@ -109,31 +111,33 @@ class _JobRow extends StatelessWidget {
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-                color: wasteType.ganttColor, shape: BoxShape.circle),
+              color: wasteType.ganttColor,
+              shape: BoxShape.circle,
+            ),
           ),
           const SizedBox(width: 8),
         ],
         Text(
           wasteType?.label ?? '—',
           style: GoogleFonts.cairo(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textMain),
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textMain,
+          ),
         ),
         const SizedBox(width: 8),
         Text(
           dateStr,
-          style: GoogleFonts.dmSans(
-              fontSize: 11, color: AppColors.mutedText),
+          style: GoogleFonts.dmSans(fontSize: 11, color: AppColors.mutedText),
         ),
         const Spacer(),
         Text(
-          l10n.analyticsEfficiencyRatioValue(
-              job.jodPerKm.toStringAsFixed(2)),
+          l10n.analyticsEfficiencyRatioValue(job.jodPerKm.toStringAsFixed(2)),
           style: GoogleFonts.dmSans(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: AppColors.primaryGreen),
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: AppColors.primaryGreen,
+          ),
         ),
       ],
     );

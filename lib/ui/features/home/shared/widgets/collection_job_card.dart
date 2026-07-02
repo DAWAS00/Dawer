@@ -50,24 +50,24 @@ class CollectionJobCard extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(14),
           child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildTopRow(context),
-            const SizedBox(height: 10),
-            _buildWasteChips(context),
-            const SizedBox(height: 10),
-            _buildPriceRow(context),
-            if (job.jobDescription != null &&
-                job.jobDescription!.isNotEmpty) ...[
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildTopRow(context),
               const SizedBox(height: 10),
-              _buildDescription(),
+              _buildWasteChips(context),
+              const SizedBox(height: 10),
+              _buildPriceRow(context),
+              if (job.jobDescription != null &&
+                  job.jobDescription!.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                _buildDescription(),
+              ],
+              const SizedBox(height: 12),
+              const Divider(height: 1, color: Color(0xFFEFF6FF)),
+              const SizedBox(height: 12),
+              _buildFooter(context),
             ],
-            const SizedBox(height: 12),
-            const Divider(height: 1, color: Color(0xFFEFF6FF)),
-            const SizedBox(height: 12),
-            _buildFooter(context),
-          ],
-        ),
+          ),
         ),
       ),
     );
@@ -139,8 +139,7 @@ class CollectionJobCard extends StatelessWidget {
       children: job.wasteTypes
           .map(
             (t) => Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: AppColors.jobBlueBg,
                 borderRadius: BorderRadius.circular(8),
@@ -171,7 +170,8 @@ class CollectionJobCard extends StatelessWidget {
           _InfoChip(
             icon: Icons.scale_rounded,
             label: l10n.collectionJobMinQtyFrom(
-                job.minQuantityKg!.toStringAsFixed(0)),
+              job.minQuantityKg!.toStringAsFixed(0),
+            ),
             bgColor: const Color(0xFFF3E8FF),
             textColor: const Color(0xFF7C3AED),
           ),
@@ -230,8 +230,11 @@ class CollectionJobCard extends StatelessWidget {
         Expanded(
           child: Row(
             children: [
-              const Icon(Icons.location_on_outlined,
-                  size: 13, color: Color(0xFF9CA3AF)),
+              const Icon(
+                Icons.location_on_outlined,
+                size: 13,
+                color: Color(0xFF9CA3AF),
+              ),
               const SizedBox(width: 3),
               Flexible(
                 child: Text(
@@ -255,13 +258,14 @@ class CollectionJobCard extends StatelessWidget {
             label: Text(
               l10n.collectionJobAcceptButton,
               style: GoogleFonts.cairo(
-                  fontSize: 13, fontWeight: FontWeight.w700),
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.jobBlue,
               foregroundColor: Colors.white,
-              padding:
-                  const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -271,8 +275,11 @@ class CollectionJobCard extends StatelessWidget {
         else
           TextButton.icon(
             onPressed: onTap,
-            icon: const Icon(Icons.arrow_forward_ios_rounded,
-                size: 12, color: AppColors.jobBlue),
+            icon: const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 12,
+              color: AppColors.jobBlue,
+            ),
             label: Text(
               l10n.driverViewDetails,
               style: GoogleFonts.cairo(
@@ -312,8 +319,11 @@ class _JobBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.work_outline_rounded,
-              size: 11, color: AppColors.jobBlue),
+          const Icon(
+            Icons.work_outline_rounded,
+            size: 11,
+            color: AppColors.jobBlue,
+          ),
           const SizedBox(width: 4),
           Text(
             context.l10n.collectionJobBadge,

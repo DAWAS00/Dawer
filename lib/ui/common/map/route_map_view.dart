@@ -34,15 +34,23 @@ class _RouteMapViewState extends State<RouteMapView> {
   LatLng get _dropoff => LatLng(widget.dropoffLat, widget.dropoffLng);
 
   LatLngBounds get _bounds => LatLngBounds(
-        southwest: LatLng(
-          widget.pickupLat < widget.dropoffLat ? widget.pickupLat : widget.dropoffLat,
-          widget.pickupLng < widget.dropoffLng ? widget.pickupLng : widget.dropoffLng,
-        ),
-        northeast: LatLng(
-          widget.pickupLat > widget.dropoffLat ? widget.pickupLat : widget.dropoffLat,
-          widget.pickupLng > widget.dropoffLng ? widget.pickupLng : widget.dropoffLng,
-        ),
-      );
+    southwest: LatLng(
+      widget.pickupLat < widget.dropoffLat
+          ? widget.pickupLat
+          : widget.dropoffLat,
+      widget.pickupLng < widget.dropoffLng
+          ? widget.pickupLng
+          : widget.dropoffLng,
+    ),
+    northeast: LatLng(
+      widget.pickupLat > widget.dropoffLat
+          ? widget.pickupLat
+          : widget.dropoffLat,
+      widget.pickupLng > widget.dropoffLng
+          ? widget.pickupLng
+          : widget.dropoffLng,
+    ),
+  );
 
   void _openDirections(BuildContext context) {
     final l10n = context.l10n;
@@ -86,14 +94,16 @@ class _RouteMapViewState extends State<RouteMapView> {
                   markerId: const MarkerId('pickup'),
                   position: _pickup,
                   icon: BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueGreen),
+                    BitmapDescriptor.hueGreen,
+                  ),
                   onTap: () => _openDirections(context),
                 ),
                 Marker(
                   markerId: const MarkerId('dropoff'),
                   position: _dropoff,
                   icon: BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueRed),
+                    BitmapDescriptor.hueRed,
+                  ),
                   onTap: () => _openDirections(context),
                 ),
               },
@@ -123,14 +133,15 @@ class _RouteMapViewState extends State<RouteMapView> {
             end: 12,
             bottom: 12,
             child: FloatingActionButton.extended(
-              heroTag:
-                  'route-map-fab-${widget.pickupLat}-${widget.dropoffLat}',
+              heroTag: 'route-map-fab-${widget.pickupLat}-${widget.dropoffLat}',
               onPressed: () => _openDirections(context),
               icon: const Icon(Icons.directions_rounded, size: 20),
               label: Text(
                 context.l10n.openInGoogleMaps,
                 style: GoogleFonts.cairo(
-                    fontSize: 12, fontWeight: FontWeight.w700),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               backgroundColor: AppColors.primaryDark,
               foregroundColor: Colors.white,

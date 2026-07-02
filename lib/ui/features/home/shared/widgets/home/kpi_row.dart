@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:dwaar/core/theme/app_tokens.dart';
 import 'package:dwaar/core/constants/app_colors.dart';
 import 'package:dwaar/core/layout/app_layout.dart';
@@ -117,13 +117,7 @@ class _KpiCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 3),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 9,
-              color: dt.onSurfaceMuted,
-            ),
-          ),
+          Text(label, style: TextStyle(fontSize: 9, color: dt.onSurfaceMuted)),
         ],
       ),
     );

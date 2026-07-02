@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../domain/entities/earnings/trip_earning.dart';
 
@@ -10,7 +10,8 @@ class EarningsTripTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: 'رحلة #${trip.orderId} بقيمة ${trip.amount} دينار من ${trip.pickupAddress} إلى ${trip.dropoffAddress}',
+      label:
+          'رحلة #${trip.orderId} بقيمة ${trip.amount} دينار من ${trip.pickupAddress} إلى ${trip.dropoffAddress}',
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -37,12 +38,18 @@ class EarningsTripTile extends StatelessWidget {
                 children: [
                   Text(
                     'طلب #${trip.orderId}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '${trip.pickupAddress} ← ${trip.dropoffAddress}',
-                    style: const TextStyle(color: AppColors.mutedText, fontSize: 12),
+                    style: const TextStyle(
+                      color: AppColors.mutedText,
+                      fontSize: 12,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -63,7 +70,10 @@ class EarningsTripTile extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   '${trip.distanceKm} كم',
-                  style: const TextStyle(color: AppColors.mutedText, fontSize: 12),
+                  style: const TextStyle(
+                    color: AppColors.mutedText,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),

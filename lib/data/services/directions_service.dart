@@ -91,13 +91,17 @@ class DirectionsService {
       client.close();
 
       if (response.statusCode != 200) {
-        debugPrint('[DirectionsService] reverseGeocode HTTP ${response.statusCode}');
+        debugPrint(
+          '[DirectionsService] reverseGeocode HTTP ${response.statusCode}',
+        );
         return null;
       }
 
       final data = jsonDecode(body) as Map<String, dynamic>;
       if (data['status'] != 'OK') {
-        debugPrint('[DirectionsService] reverseGeocode status: ${data["status"]}');
+        debugPrint(
+          '[DirectionsService] reverseGeocode status: ${data["status"]}',
+        );
         return null;
       }
 
@@ -105,16 +109,13 @@ class DirectionsService {
       if (results == null || results.isEmpty) return null;
 
       // Prefer a result covering a named route/neighbourhood over a plus-code.
-      final best = results.firstWhere(
-        (r) {
-          final types = (r['types'] as List?)?.cast<String>() ?? [];
-          return types.contains('route') ||
-              types.contains('neighborhood') ||
-              types.contains('sublocality') ||
-              types.contains('premise');
-        },
-        orElse: () => results.first,
-      );
+      final best = results.firstWhere((r) {
+        final types = (r['types'] as List?)?.cast<String>() ?? [];
+        return types.contains('route') ||
+            types.contains('neighborhood') ||
+            types.contains('sublocality') ||
+            types.contains('premise');
+      }, orElse: () => results.first);
 
       return best['formatted_address'] as String?;
     } catch (e, st) {

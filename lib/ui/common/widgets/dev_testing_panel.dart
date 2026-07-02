@@ -47,8 +47,15 @@ class _DevTestingPanelSheetState extends State<_DevTestingPanelSheet> {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<AppOrderStore>();
-    final activeOrder = store.driverActiveOrder ?? 
-        store.orders.where((o) => o.status != OrderStatus.completed && o.status != OrderStatus.cancelled).firstOrNull ??
+    final activeOrder =
+        store.driverActiveOrder ??
+        store.orders
+            .where(
+              (o) =>
+                  o.status != OrderStatus.completed &&
+                  o.status != OrderStatus.cancelled,
+            )
+            .firstOrNull ??
         store.orders.firstOrNull;
 
     return Container(
@@ -71,32 +78,54 @@ class _DevTestingPanelSheetState extends State<_DevTestingPanelSheet> {
                 const Icon(Icons.bug_report_rounded, color: Colors.red),
                 Text(
                   'لوحة تحكم المطورين (Dev Panel)',
-                  style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: GoogleFonts.cairo(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
               ],
             ),
             const Divider(),
             const SizedBox(height: 10),
-            
+
             // --- Switch Roles Section ---
-            Text('تغيير دور المستخدم:', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+            Text(
+              'تغيير دور المستخدم:',
+              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _roleButton(context, 'سائق', UserRole.driver, null),
-                _roleButton(context, 'مورد (فرد)', UserRole.supplier, SupplierType.individual),
-                _roleButton(context, 'مسترجع (شركة)', UserRole.recyclingCo, null),
+                _roleButton(
+                  context,
+                  'مورد (فرد)',
+                  UserRole.supplier,
+                  SupplierType.individual,
+                ),
+                _roleButton(
+                  context,
+                  'مسترجع (شركة)',
+                  UserRole.recyclingCo,
+                  null,
+                ),
               ],
             ),
             const SizedBox(height: 20),
 
             // --- Inject Orders ---
-            Text('توليد طلبات اختبارية:', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+            Text(
+              'توليد طلبات اختبارية:',
+              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             ElevatedButton.icon(
               icon: const Icon(Icons.add_location_alt_rounded),
-              label: Text('حقن طلب معلق (Inject Pending Order)', style: GoogleFonts.cairo()),
+              label: Text(
+                'حقن طلب معلق (Inject Pending Order)',
+                style: GoogleFonts.cairo(),
+              ),
               onPressed: () {
                 store.submitPickupRequest(
                   CreatePickupRequest(
@@ -114,7 +143,9 @@ class _DevTestingPanelSheetState extends State<_DevTestingPanelSheet> {
                 );
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('تم حقن طلب اختبار معلق بنجاح!')),
+                  const SnackBar(
+                    content: Text('تم حقن طلب اختبار معلق بنجاح!'),
+                  ),
                 );
               },
             ),
@@ -124,7 +155,10 @@ class _DevTestingPanelSheetState extends State<_DevTestingPanelSheet> {
             if (activeOrder != null) ...[
               Text(
                 'الطلب النشط المحدد: #${activeOrder.id.length > 6 ? activeOrder.id.substring(0, 6) : activeOrder.id} (${activeOrder.status.name})',
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: Colors.blue.shade900),
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade900,
+                ),
               ),
               const SizedBox(height: 10),
               Wrap(
@@ -160,7 +194,8 @@ class _DevTestingPanelSheetState extends State<_DevTestingPanelSheet> {
                     _actionButton('إكمال التوصيل (Force Complete)', () {
                       store.completeOrder(activeOrder.copyWith(weightKg: 15.0));
                     }),
-                  if (activeOrder.status == OrderStatus.pending || activeOrder.status == OrderStatus.accepted)
+                  if (activeOrder.status == OrderStatus.pending ||
+                      activeOrder.status == OrderStatus.accepted)
                     _actionButton('إلغاء الطلب (Force Cancel)', () {
                       store.cancelOrder(activeOrder.id);
                     }, color: Colors.red),
@@ -169,7 +204,10 @@ class _DevTestingPanelSheetState extends State<_DevTestingPanelSheet> {
             ] else
               Text(
                 'لا يوجد طلب نشط حالياً للتحكم به.',
-                style: GoogleFonts.cairo(fontStyle: FontStyle.italic, color: Colors.grey),
+                style: GoogleFonts.cairo(
+                  fontStyle: FontStyle.italic,
+                  color: Colors.grey,
+                ),
                 textAlign: TextAlign.center,
               ),
             const SizedBox(height: 20),
@@ -179,7 +217,12 @@ class _DevTestingPanelSheetState extends State<_DevTestingPanelSheet> {
     );
   }
 
-  Widget _roleButton(BuildContext context, String label, UserRole role, SupplierType? type) {
+  Widget _roleButton(
+    BuildContext context,
+    String label,
+    UserRole role,
+    SupplierType? type,
+  ) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),

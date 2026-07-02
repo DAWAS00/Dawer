@@ -15,16 +15,17 @@ class GeolocatorProximityService implements IProximityService {
   final _controller = StreamController<LatLng>.broadcast();
 
   GeolocatorProximityService() {
-    _sub = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 10,
-      ),
-    ).listen((p) {
-      if (!_controller.isClosed) {
-        _controller.add((lat: p.latitude, lng: p.longitude));
-      }
-    });
+    _sub =
+        Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            distanceFilter: 10,
+          ),
+        ).listen((p) {
+          if (!_controller.isClosed) {
+            _controller.add((lat: p.latitude, lng: p.longitude));
+          }
+        });
   }
 
   @override

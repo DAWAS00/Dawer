@@ -15,12 +15,17 @@ class LangPickerSheet extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).bottomSheetTheme.backgroundColor ??
+        color:
+            Theme.of(context).bottomSheetTheme.backgroundColor ??
             Theme.of(context).scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: EdgeInsets.fromLTRB(
-          24, 24, 24, MediaQuery.of(context).padding.bottom + 24),
+        24,
+        24,
+        24,
+        MediaQuery.of(context).padding.bottom + 24,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -88,15 +93,17 @@ class LangPickerSheet extends StatelessWidget {
                 label,
                 style: GoogleFonts.cairo(
                   fontSize: 16,
-                  fontWeight:
-                      isSelected ? FontWeight.bold : FontWeight.w600,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                   color: color,
                 ),
               ),
             ),
             if (isSelected)
-              Icon(Icons.check_circle_rounded,
-                  color: Theme.of(context).primaryColor, size: 24),
+              Icon(
+                Icons.check_circle_rounded,
+                color: Theme.of(context).primaryColor,
+                size: 24,
+              ),
           ],
         ),
       ),

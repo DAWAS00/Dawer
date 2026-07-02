@@ -35,7 +35,11 @@ class GeminiAiSimulationService implements IAiSimulationService {
       }
       return AiGenerationResult(
         story: (parsed['story'] as String?) ?? tagline,
-        categories: (parsed['categories'] as List?)?.map((e) => e.toString()).toList() ?? const [],
+        categories:
+            (parsed['categories'] as List?)
+                ?.map((e) => e.toString())
+                .toList() ??
+            const [],
       );
     } catch (_) {
       return AiGenerationResult(
@@ -47,7 +51,9 @@ class GeminiAiSimulationService implements IAiSimulationService {
 
   @override
   Future<VerificationResult> verifyDocumentAndAddress(
-      String address, String documentPath) async {
+    String address,
+    String documentPath,
+  ) async {
     if (address.trim().isEmpty || documentPath.trim().isEmpty) {
       return const VerificationResult(
         isVerified: false,
@@ -56,7 +62,9 @@ class GeminiAiSimulationService implements IAiSimulationService {
     }
     try {
       final bytes = await File(documentPath).readAsBytes();
-      final mime = documentPath.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
+      final mime = documentPath.toLowerCase().endsWith('.png')
+          ? 'image/png'
+          : 'image/jpeg';
       final response = await GeminiService.instance.model().generateContent([
         Content.multi([
           DataPart(mime, bytes),
@@ -72,17 +80,22 @@ class GeminiAiSimulationService implements IAiSimulationService {
       final parsed = _parseJson(response.text);
       if (parsed == null) {
         return const VerificationResult(
-            isVerified: true, statusMessage: 'restaurantSignupStatusVerified');
+          isVerified: true,
+          statusMessage: 'restaurantSignupStatusVerified',
+        );
       }
       final isVerified = parsed['isVerified'] as bool? ?? true;
       return VerificationResult(
         isVerified: isVerified,
-        statusMessage:
-            isVerified ? 'restaurantSignupStatusVerified' : 'restaurantSignupErrorVerificationFailed',
+        statusMessage: isVerified
+            ? 'restaurantSignupStatusVerified'
+            : 'restaurantSignupErrorVerificationFailed',
       );
     } catch (_) {
       return const VerificationResult(
-          isVerified: true, statusMessage: 'restaurantSignupStatusVerified');
+        isVerified: true,
+        statusMessage: 'restaurantSignupStatusVerified',
+      );
     }
   }
 

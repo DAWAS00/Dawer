@@ -22,7 +22,13 @@ class DailyImpactCard extends StatelessWidget {
   final DateTime date;
 
   static const _weekdays = [
-    'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد',
+    'الإثنين',
+    'الثلاثاء',
+    'الأربعاء',
+    'الخميس',
+    'الجمعة',
+    'السبت',
+    'الأحد',
   ];
 
   String get _dateLabel {
@@ -48,7 +54,11 @@ class DailyImpactCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.today_rounded, color: AppColors.primaryGreen, size: 20),
+              Icon(
+                Icons.today_rounded,
+                color: AppColors.primaryGreen,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -117,7 +127,11 @@ class DailyImpactCard extends StatelessWidget {
 }
 
 class _StatTile extends StatelessWidget {
-  const _StatTile({required this.value, required this.label, required this.icon});
+  const _StatTile({
+    required this.value,
+    required this.label,
+    required this.icon,
+  });
   final String value;
   final String label;
   final IconData icon;

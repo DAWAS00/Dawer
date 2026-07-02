@@ -51,14 +51,16 @@ class ProofBuilder {
     final path = 'proof-photos/$uid/$orderId/$proofType.jpg';
     final bytes = await File(imageFile.path).readAsBytes();
 
-    await client.storage.from('proof-photos').uploadBinary(
-      path,
-      bytes,
-      fileOptions: const FileOptions(
-        contentType: 'image/jpeg',
-        upsert: true,
-      ),
-    );
+    await client.storage
+        .from('proof-photos')
+        .uploadBinary(
+          path,
+          bytes,
+          fileOptions: const FileOptions(
+            contentType: 'image/jpeg',
+            upsert: true,
+          ),
+        );
 
     return client.storage.from('proof-photos').getPublicUrl(path);
   }

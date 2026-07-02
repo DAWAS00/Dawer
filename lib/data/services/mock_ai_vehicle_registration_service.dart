@@ -1,7 +1,8 @@
 import '../../data/models/order/order.dart' show VehicleType;
 import '../../domain/services/i_ai_vehicle_registration_service.dart';
 
-class MockAiVehicleRegistrationService implements IAiVehicleRegistrationService {
+class MockAiVehicleRegistrationService
+    implements IAiVehicleRegistrationService {
   static final _mockResults = [
     ExtractedVehicleData(
       vehicleType: VehicleType.pickup,

@@ -41,41 +41,45 @@ Widget _harness() {
 }
 
 void main() {
-  testWidgets('About Dwaar sheet shows the public impact section with stat labels',
-      (tester) async {
-    await tester.pumpWidget(_harness());
-    await tester.tap(find.text('open'));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'About Dwaar sheet shows the public impact section with stat labels',
+    (tester) async {
+      await tester.pumpWidget(_harness());
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
 
-    final l10n = await AppLocalizations.delegate.load(const Locale('ar'));
-    expect(find.text(l10n.aboutDwaarImpactTitle), findsOneWidget);
-    expect(find.text(l10n.aboutDwaarImpactOrders), findsOneWidget);
-    expect(find.text(l10n.aboutDwaarImpactWeight), findsOneWidget);
-    expect(find.text(l10n.aboutDwaarImpactCo2), findsOneWidget);
-    expect(find.text(l10n.aboutDwaarImpactDownloadButton), findsOneWidget);
-  });
+      final l10n = await AppLocalizations.delegate.load(const Locale('ar'));
+      expect(find.text(l10n.aboutDwaarImpactTitle), findsOneWidget);
+      expect(find.text(l10n.aboutDwaarImpactOrders), findsOneWidget);
+      expect(find.text(l10n.aboutDwaarImpactWeight), findsOneWidget);
+      expect(find.text(l10n.aboutDwaarImpactCo2), findsOneWidget);
+      expect(find.text(l10n.aboutDwaarImpactDownloadButton), findsOneWidget);
+    },
+  );
 
-  testWidgets('Download certificate button shows generating state while pending',
-      (tester) async {
-    // Taller surface so the draggable sheet's download button (near the
-    // bottom of a long scroll list) is actually laid out within the
-    // hit-testable viewport.
-    await tester.binding.setSurfaceSize(const Size(800, 1600));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
+  testWidgets(
+    'Download certificate button shows generating state while pending',
+    (tester) async {
+      // Taller surface so the draggable sheet's download button (near the
+      // bottom of a long scroll list) is actually laid out within the
+      // hit-testable viewport.
+      await tester.binding.setSurfaceSize(const Size(800, 1600));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    await tester.pumpWidget(_harness());
-    await tester.tap(find.text('open'));
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(_harness());
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
 
-    final l10n = await AppLocalizations.delegate.load(const Locale('ar'));
-    final button = find.text(l10n.aboutDwaarImpactDownloadButton);
-    await tester.ensureVisible(button);
-    await tester.tap(button);
-    await tester.pump();
+      final l10n = await AppLocalizations.delegate.load(const Locale('ar'));
+      final button = find.text(l10n.aboutDwaarImpactDownloadButton);
+      await tester.ensureVisible(button);
+      await tester.tap(button);
+      await tester.pump();
 
-    // The PDF/share pipeline has no plugin implementation in the test
-    // environment, so it fails fast — we only assert the button reacted
-    // (loading state entered) without crashing the widget tree.
-    expect(tester.takeException(), isNull);
-  });
+      // The PDF/share pipeline has no plugin implementation in the test
+      // environment, so it fails fast — we only assert the button reacted
+      // (loading state entered) without crashing the widget tree.
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

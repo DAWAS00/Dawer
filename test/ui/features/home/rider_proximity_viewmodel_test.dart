@@ -65,19 +65,19 @@ const double _farLat = 24.0;
 const double _farLng = 46.0;
 
 Order _makeOrder({OrderStatus status = OrderStatus.accepted}) => Order(
-      id: 'ORD-TEST-01',
-      type: OrderType.pickup,
-      wasteTypes: [WasteType.plastic],
-      pickupAddress: 'نقطة الاستلام',
-      dropoffAddress: 'نقطة التسليم',
-      status: status,
-      reward: 20,
-      createdAt: DateTime(2025, 1, 1),
-      pickupLat: _pickupLat,
-      pickupLng: _pickupLng,
-      dropoffLat: _dropoffLat,
-      dropoffLng: _dropoffLng,
-    );
+  id: 'ORD-TEST-01',
+  type: OrderType.pickup,
+  wasteTypes: [WasteType.plastic],
+  pickupAddress: 'نقطة الاستلام',
+  dropoffAddress: 'نقطة التسليم',
+  status: status,
+  reward: 20,
+  createdAt: DateTime(2025, 1, 1),
+  pickupLat: _pickupLat,
+  pickupLng: _pickupLng,
+  dropoffLat: _dropoffLat,
+  dropoffLng: _dropoffLng,
+);
 
 /// Pumps the event loop to let stream listeners fire.
 Future<void> _settle() => Future.delayed(Duration.zero);
@@ -122,7 +122,7 @@ void main() {
   group('near pickup (accepted order)', () {
     test('transitions to NearPickup when within threshold', () async {
       var notified = 0;
-      final disposeEffect = effect(() => { vm.proximityState, notified++ });
+      final disposeEffect = effect(() => {vm.proximityState, notified++});
 
       proxSvc.simulatePosition(_nearPickupLat, _nearPickupLng);
       await _settle();
@@ -209,11 +209,14 @@ void main() {
 
     tearDown(() => transitVm.dispose());
 
-    test('transitions to NearDropoff when inTransit and near dropoff', () async {
-      proxSvc.simulatePosition(_nearDropoffLat, _nearDropoffLng);
-      await _settle();
-      expect(transitVm.proximityState, isA<NearDropoff>());
-    });
+    test(
+      'transitions to NearDropoff when inTransit and near dropoff',
+      () async {
+        proxSvc.simulatePosition(_nearDropoffLat, _nearDropoffLng);
+        await _settle();
+        expect(transitVm.proximityState, isA<NearDropoff>());
+      },
+    );
 
     test('chat is enabled when NearDropoff', () async {
       proxSvc.simulatePosition(_nearDropoffLat, _nearDropoffLng);
@@ -234,12 +237,15 @@ void main() {
       );
     });
 
-    test('accepted order does NOT trigger NearDropoff even when near dropoff', () async {
-      // vm uses accepted status; near dropoff position should stay idle
-      proxSvc.simulatePosition(_nearDropoffLat, _nearDropoffLng);
-      await _settle();
-      expect(vm.proximityState, isA<ProximityIdle>());
-    });
+    test(
+      'accepted order does NOT trigger NearDropoff even when near dropoff',
+      () async {
+        // vm uses accepted status; near dropoff position should stay idle
+        proxSvc.simulatePosition(_nearDropoffLat, _nearDropoffLng);
+        await _settle();
+        expect(vm.proximityState, isA<ProximityIdle>());
+      },
+    );
   });
 
   // ── Simulation helpers ─────────────────────────────────────────────────────

@@ -50,7 +50,11 @@ class _RateDriverSheetState extends State<RateDriverSheet> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: EdgeInsets.fromLTRB(
-          24, 20, 24, MediaQuery.of(context).viewInsets.bottom + 32),
+        24,
+        20,
+        24,
+        MediaQuery.of(context).viewInsets.bottom + 32,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -66,22 +70,28 @@ class _RateDriverSheetState extends State<RateDriverSheet> {
           CircleAvatar(
             radius: 32,
             backgroundColor: const Color(0xFF1E5C35).withValues(alpha: 0.1),
-            child: const Icon(Icons.person_rounded,
-                size: 36, color: Color(0xFF1E5C35)),
+            child: const Icon(
+              Icons.person_rounded,
+              size: 36,
+              color: Color(0xFF1E5C35),
+            ),
           ),
           const SizedBox(height: 12),
           Text(
             widget.order.driverName ?? context.l10n.orderDriverSection,
             style: GoogleFonts.cairo(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF002819)),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF002819),
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             context.l10n.rateDriverExperience,
             style: GoogleFonts.cairo(
-                fontSize: 13, color: const Color(0xFF717973)),
+              fontSize: 13,
+              color: const Color(0xFF717973),
+            ),
           ),
           const SizedBox(height: 20),
           Row(
@@ -106,16 +116,17 @@ class _RateDriverSheetState extends State<RateDriverSheet> {
             _rating == 0
                 ? context.l10n.rateDriverPickLabel
                 : _rating <= 2
-                    ? context.l10n.rateDriverPoor
-                    : _rating == 3
-                        ? context.l10n.rateDriverFair
-                        : _rating == 4
-                            ? context.l10n.rateDriverGood
-                            : context.l10n.rateDriverExcellent,
+                ? context.l10n.rateDriverPoor
+                : _rating == 3
+                ? context.l10n.rateDriverFair
+                : _rating == 4
+                ? context.l10n.rateDriverGood
+                : context.l10n.rateDriverExcellent,
             style: GoogleFonts.cairo(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF1E5C35)),
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF1E5C35),
+            ),
           ),
           const SizedBox(height: 24),
           SizedBox(
@@ -130,23 +141,32 @@ class _RateDriverSheetState extends State<RateDriverSheet> {
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF06402B),
-                disabledBackgroundColor:
-                    const Color(0xFF06402B).withValues(alpha: 0.3),
+                disabledBackgroundColor: const Color(
+                  0xFF06402B,
+                ).withValues(alpha: 0.3),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
-              child: Text(context.l10n.rateDriverSubmit,
-                  style: GoogleFonts.cairo(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white)),
+              child: Text(
+                context.l10n.rateDriverSubmit,
+                style: GoogleFonts.cairo(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(context.l10n.rateDriverSkip,
-                style:
-                    GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF9099A2))),
+            child: Text(
+              context.l10n.rateDriverSkip,
+              style: GoogleFonts.cairo(
+                fontSize: 13,
+                color: const Color(0xFF9099A2),
+              ),
+            ),
           ),
         ],
       ),

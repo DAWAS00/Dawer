@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/constants/app_colors.dart';
@@ -33,7 +33,11 @@ class ProximitySimulationPanel extends StatelessWidget {
           Row(
             textDirection: TextDirection.rtl,
             children: [
-              const Icon(Icons.bug_report_rounded, size: 14, color: Colors.white54),
+              const Icon(
+                Icons.bug_report_rounded,
+                size: 14,
+                color: Colors.white54,
+              ),
               const SizedBox(width: 6),
               Text(
                 'محاكاة الموقع — للاختبار فقط',

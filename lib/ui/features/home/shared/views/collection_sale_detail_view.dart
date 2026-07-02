@@ -11,8 +11,7 @@ class CollectionSaleDetailView extends StatelessWidget {
 
   const CollectionSaleDetailView({super.key, required this.sale});
 
-  bool get _isNew =>
-      DateTime.now().difference(sale.createdAt).inMinutes < 30;
+  bool get _isNew => DateTime.now().difference(sale.createdAt).inMinutes < 30;
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +26,10 @@ class CollectionSaleDetailView extends StatelessWidget {
         title: Text(
           l10n.collectionSaleDetailTitle,
           style: GoogleFonts.cairo(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.white),
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
       body: ListView(
@@ -80,40 +80,45 @@ class CollectionSaleDetailView extends StatelessWidget {
       children: [
         if (isNew) ...[
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: const Color(0xFF14401F),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(l10n.collectionSaleNew,
-                style: GoogleFonts.cairo(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
+            child: Text(
+              l10n.collectionSaleNew,
+              style: GoogleFonts.cairo(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
           ),
           const SizedBox(width: 8),
         ],
         Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
             color: _statusBg,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Text(sale.status.label,
-              style: GoogleFonts.cairo(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: _statusColor)),
+          child: Text(
+            sale.status.label,
+            style: GoogleFonts.cairo(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: _statusColor,
+            ),
+          ),
         ),
         const Spacer(),
         Text(
           sale.id,
           style: GoogleFonts.dmSans(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF717973)),
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF717973),
+          ),
         ),
       ],
     );
@@ -127,15 +132,19 @@ class CollectionSaleDetailView extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.location_on_rounded,
-                  color: Color(0xFF14401F), size: 20),
+              const Icon(
+                Icons.location_on_rounded,
+                color: Color(0xFF14401F),
+                size: 20,
+              ),
               const Spacer(),
               Text(
                 l10n.collectionSaleDeliveryLocationNoColon,
                 style: GoogleFonts.cairo(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF002819)),
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF002819),
+                ),
               ),
             ],
           ),
@@ -151,9 +160,10 @@ class CollectionSaleDetailView extends StatelessWidget {
               sale.dropoffAddress,
               textAlign: TextAlign.right,
               style: GoogleFonts.cairo(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819)),
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF002819),
+              ),
             ),
           ),
           if (sale.supplierNotes != null) ...[
@@ -163,7 +173,9 @@ class CollectionSaleDetailView extends StatelessWidget {
               child: Text(
                 l10n.collectionSaleCompanyNote(sale.supplierNotes!),
                 style: GoogleFonts.cairo(
-                    fontSize: 12, color: const Color(0xFF717973)),
+                  fontSize: 12,
+                  color: const Color(0xFF717973),
+                ),
               ),
             ),
           ],
@@ -178,15 +190,19 @@ class CollectionSaleDetailView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(l10n.collectionSaleAgreementTitle,
-              style: GoogleFonts.cairo(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819))),
+          Text(
+            l10n.collectionSaleAgreementTitle,
+            style: GoogleFonts.cairo(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF002819),
+            ),
+          ),
           const SizedBox(height: 12),
           if (sale.collectionDeliveryMethod != null) ...[
             _infoRow(
-              icon: sale.collectionDeliveryMethod ==
+              icon:
+                  sale.collectionDeliveryMethod ==
                       CollectionDeliveryMethod.selfDelivery
                   ? Icons.directions_car_rounded
                   : Icons.local_shipping_rounded,
@@ -198,14 +214,16 @@ class CollectionSaleDetailView extends StatelessWidget {
           ],
           if (sale.collectionTransactionType != null)
             _infoRow(
-              icon: sale.collectionTransactionType ==
+              icon:
+                  sale.collectionTransactionType ==
                       CollectionTransactionType.donate
                   ? Icons.volunteer_activism_rounded
                   : Icons.sell_rounded,
               label: l10n.collectionSaleTransactionTypeLabel,
               value: sale.collectionTransactionType!.label,
               subtitle: sale.collectionTransactionType!.description,
-              valueColor: sale.collectionTransactionType ==
+              valueColor:
+                  sale.collectionTransactionType ==
                       CollectionTransactionType.donate
                   ? const Color(0xFF166534)
                   : const Color(0xFFC8860A),
@@ -221,30 +239,40 @@ class CollectionSaleDetailView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(l10n.collectionSaleWasteTypesLabel,
-              style: GoogleFonts.cairo(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819))),
+          Text(
+            l10n.collectionSaleWasteTypesLabel,
+            style: GoogleFonts.cairo(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF002819),
+            ),
+          ),
           const SizedBox(height: 10),
           Wrap(
             spacing: 6,
             runSpacing: 4,
             alignment: WrapAlignment.end,
             children: sale.wasteTypes
-                .map((t) => Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFD4EBAB).withValues(alpha: 0.6),
-                        borderRadius: BorderRadius.circular(10),
+                .map(
+                  (t) => Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD4EBAB).withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      t.label,
+                      style: GoogleFonts.cairo(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF14401F),
                       ),
-                      child: Text(t.label,
-                          style: GoogleFonts.cairo(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF14401F))),
-                    ))
+                    ),
+                  ),
+                )
                 .toList(),
           ),
           if (sale.jobDescription != null &&
@@ -254,7 +282,9 @@ class CollectionSaleDetailView extends StatelessWidget {
               sale.jobDescription!,
               textAlign: TextAlign.right,
               style: GoogleFonts.cairo(
-                  fontSize: 12, color: const Color(0xFF717973)),
+                fontSize: 12,
+                color: const Color(0xFF717973),
+              ),
             ),
           ],
         ],
@@ -273,8 +303,7 @@ class CollectionSaleDetailView extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: const Color(0xFF14401F).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(10),
@@ -282,17 +311,21 @@ class CollectionSaleDetailView extends StatelessWidget {
             child: Text(
               '${price.toStringAsFixed(2)} $priceUnit',
               style: GoogleFonts.dmSans(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF14401F)),
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF14401F),
+              ),
             ),
           ),
           const Spacer(),
-          Text(l10n.collectionSaleAgreedPriceNoColon,
-              style: GoogleFonts.cairo(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819))),
+          Text(
+            l10n.collectionSaleAgreedPriceNoColon,
+            style: GoogleFonts.cairo(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF002819),
+            ),
+          ),
         ],
       ),
     );
@@ -304,8 +337,8 @@ class CollectionSaleDetailView extends StatelessWidget {
     final ageStr = diff.inDays > 0
         ? l10n.timeAgoDays(diff.inDays)
         : diff.inHours > 0
-            ? l10n.timeAgoHours(diff.inHours)
-            : l10n.timeAgoMinutes(diff.inMinutes);
+        ? l10n.timeAgoHours(diff.inHours)
+        : l10n.timeAgoMinutes(diff.inMinutes);
     return _card(
       child: Column(
         children: [
@@ -336,19 +369,30 @@ class CollectionSaleDetailView extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(label,
-                style: GoogleFonts.cairo(
-                    fontSize: 11, color: const Color(0xFF717973))),
-            Text(value,
-                style: GoogleFonts.cairo(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: valueColor ?? const Color(0xFF002819))),
+            Text(
+              label,
+              style: GoogleFonts.cairo(
+                fontSize: 11,
+                color: const Color(0xFF717973),
+              ),
+            ),
+            Text(
+              value,
+              style: GoogleFonts.cairo(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: valueColor ?? const Color(0xFF002819),
+              ),
+            ),
             if (subtitle != null)
-              Text(subtitle,
-                  textAlign: TextAlign.right,
-                  style: GoogleFonts.cairo(
-                      fontSize: 10, color: const Color(0xFF9CA3AF))),
+              Text(
+                subtitle,
+                textAlign: TextAlign.right,
+                style: GoogleFonts.cairo(
+                  fontSize: 10,
+                  color: const Color(0xFF9CA3AF),
+                ),
+              ),
           ],
         ),
       ],
@@ -358,15 +402,22 @@ class CollectionSaleDetailView extends StatelessWidget {
   Widget _metaRow(String label, String value) {
     return Row(
       children: [
-        Text(value,
-            style: GoogleFonts.dmSans(
-                fontSize: 12, color: const Color(0xFF717973))),
+        Text(
+          value,
+          style: GoogleFonts.dmSans(
+            fontSize: 12,
+            color: const Color(0xFF717973),
+          ),
+        ),
         const Spacer(),
-        Text(label,
-            style: GoogleFonts.cairo(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF404943))),
+        Text(
+          label,
+          style: GoogleFonts.cairo(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF404943),
+          ),
+        ),
       ],
     );
   }
@@ -380,9 +431,10 @@ class CollectionSaleDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2)),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: child,
@@ -390,18 +442,22 @@ class CollectionSaleDetailView extends StatelessWidget {
   }
 
   Color get _statusColor => switch (sale.status) {
-        OrderStatus.pending => const Color(0xFFC8860A),
-        OrderStatus.accepted || OrderStatus.arrivedAtPickup => const Color(0xFF1E5C35),
-        OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => const Color(0xFF1E40AF),
-        OrderStatus.completed => const Color(0xFF166534),
-        OrderStatus.cancelled => const Color(0xFF991B1B),
-      };
+    OrderStatus.pending => const Color(0xFFC8860A),
+    OrderStatus.accepted ||
+    OrderStatus.arrivedAtPickup => const Color(0xFF1E5C35),
+    OrderStatus.inTransit ||
+    OrderStatus.arrivedAtDropoff => const Color(0xFF1E40AF),
+    OrderStatus.completed => const Color(0xFF166534),
+    OrderStatus.cancelled => const Color(0xFF991B1B),
+  };
 
   Color get _statusBg => switch (sale.status) {
-        OrderStatus.pending => const Color(0xFFFEF3C7),
-        OrderStatus.accepted || OrderStatus.arrivedAtPickup => const Color(0xFFD1FAE5),
-        OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => const Color(0xFFDBEAFE),
-        OrderStatus.completed => const Color(0xFFDCFCE7),
-        OrderStatus.cancelled => const Color(0xFFFEE2E2),
-      };
+    OrderStatus.pending => const Color(0xFFFEF3C7),
+    OrderStatus.accepted ||
+    OrderStatus.arrivedAtPickup => const Color(0xFFD1FAE5),
+    OrderStatus.inTransit ||
+    OrderStatus.arrivedAtDropoff => const Color(0xFFDBEAFE),
+    OrderStatus.completed => const Color(0xFFDCFCE7),
+    OrderStatus.cancelled => const Color(0xFFFEE2E2),
+  };
 }

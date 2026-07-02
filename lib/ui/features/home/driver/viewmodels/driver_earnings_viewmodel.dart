@@ -48,15 +48,18 @@ class DriverEarningsSummary {
 
 class DriverEarningsViewModel extends ChangeNotifier {
   // Placeholder implementation for UI stability
-  
+
   DriverEarningsSummary get summary => DriverEarningsSummary(
     totalEarnings: 154.20,
     totalOrders: 42,
     netGrowth: 12.5,
-    trends: List.generate(7, (i) => EarningsBucket(
-      time: DateTime.now().subtract(Duration(days: 6 - i)),
-      netJd: 10.0 + (i * 5.0),
-    )),
+    trends: List.generate(
+      7,
+      (i) => EarningsBucket(
+        time: DateTime.now().subtract(Duration(days: 6 - i)),
+        netJd: 10.0 + (i * 5.0),
+      ),
+    ),
     jdByType: {
       WasteType.plastic: 45.0,
       WasteType.metal: 32.0,
@@ -74,10 +77,10 @@ class DriverEarningsViewModel extends ChangeNotifier {
       urgencyFee: 9.0,
     ),
   );
-  
+
   EarningsPeriod _period = EarningsPeriod.week;
   EarningsPeriod get period => _period;
-  
+
   void setPeriod(EarningsPeriod p) {
     _period = p;
     notifyListeners();

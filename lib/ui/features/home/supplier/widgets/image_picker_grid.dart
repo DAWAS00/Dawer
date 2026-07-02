@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -58,37 +58,55 @@ class ImagePickerGrid extends StatelessWidget {
                     color: ctxDt.onSurface,
                   ),
                 ),
-              const SizedBox(height: 16),
-              ListTile(
-                leading: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF06402B).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
+                const SizedBox(height: 16),
+                ListTile(
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF06402B).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt_rounded,
+                      color: Color(0xFF06402B),
+                    ),
                   ),
-                  child: const Icon(Icons.camera_alt_rounded, color: Color(0xFF06402B)),
-                ),
-                title: Text(ctx.l10n.imagePickerCamera, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: ctxDt.onSurface)),
-                onTap: () => Navigator.pop(ctx, ImageSource.camera),
-              ),
-              ListTile(
-                leading: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF06402B).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
+                  title: Text(
+                    ctx.l10n.imagePickerCamera,
+                    style: GoogleFonts.cairo(
+                      fontWeight: FontWeight.bold,
+                      color: ctxDt.onSurface,
+                    ),
                   ),
-                  child: const Icon(Icons.photo_library_rounded, color: Color(0xFF06402B)),
+                  onTap: () => Navigator.pop(ctx, ImageSource.camera),
                 ),
-                title: Text(ctx.l10n.imagePickerGallery, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: ctxDt.onSurface)),
-                onTap: () => Navigator.pop(ctx, ImageSource.gallery),
-              ),
-            ],
+                ListTile(
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF06402B).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.photo_library_rounded,
+                      color: Color(0xFF06402B),
+                    ),
+                  ),
+                  title: Text(
+                    ctx.l10n.imagePickerGallery,
+                    style: GoogleFonts.cairo(
+                      fontWeight: FontWeight.bold,
+                      color: ctxDt.onSurface,
+                    ),
+                  ),
+                  onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+                ),
+              ],
+            ),
           ),
-        ),
-      );
+        );
       },
     );
 
@@ -114,7 +132,10 @@ class ImagePickerGrid extends StatelessWidget {
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
         mainAxisExtent: tileHeight,
-        childAspectRatio: tileHeight == null ? 1 : (MediaQuery.of(context).size.width / crossAxisCount) / tileHeight!,
+        childAspectRatio: tileHeight == null
+            ? 1
+            : (MediaQuery.of(context).size.width / crossAxisCount) /
+                  tileHeight!,
       ),
       itemCount: itemCount,
       itemBuilder: (context, index) {
@@ -153,7 +174,11 @@ class _AddTile extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.add_a_photo_rounded, color: Color(0xFF06402B), size: 28),
+            const Icon(
+              Icons.add_a_photo_rounded,
+              color: Color(0xFF06402B),
+              size: 28,
+            ),
             const SizedBox(height: 6),
             Text(
               context.l10n.imagePickerAddPhoto,
@@ -212,7 +237,11 @@ class _ImageTile extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Icon(Icons.close_rounded, color: Colors.white, size: 16),
+              child: const Icon(
+                Icons.close_rounded,
+                color: Colors.white,
+                size: 16,
+              ),
             ),
           ),
         ),
@@ -235,7 +264,11 @@ class _ImageTile extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 14),
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: Colors.white,
+                  size: 14,
+                ),
               ),
             ),
           ),

@@ -51,9 +51,10 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (widget.currentUserName != null) {
-      _hasAccepted = context
-          .read<MarketplaceViewModel>()
-          .hasAcceptedJob(_job.id, widget.currentUserName!);
+      _hasAccepted = context.read<MarketplaceViewModel>().hasAcceptedJob(
+        _job.id,
+        widget.currentUserName!,
+      );
     }
   }
 
@@ -74,8 +75,10 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  if (_job.pickupLat != null && _job.dropoffLat != null) ...
-                    [_buildMapSection(), const SizedBox(height: 16)],
+                  if (_job.pickupLat != null && _job.dropoffLat != null) ...[
+                    _buildMapSection(),
+                    const SizedBox(height: 16),
+                  ],
                   if (_job.isEdited) _buildEditedBanner(),
                   _buildCompanyCard(),
                   const SizedBox(height: 16),
@@ -121,7 +124,10 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
         title: Text(
           context.l10n.collectionJobTitle,
           style: GoogleFonts.cairo(
-              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
         background: Container(
           decoration: const BoxDecoration(
@@ -137,7 +143,9 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
   }
 
   Widget _buildEditedBanner() {
-    final timeLabel = _job.editedAt != null ? _formatAge(context, _job.editedAt!) : '';
+    final timeLabel = _job.editedAt != null
+        ? _formatAge(context, _job.editedAt!)
+        : '';
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 16),
@@ -156,13 +164,17 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
               Text(
                 context.l10n.collectionJobEditedAt(timeLabel),
                 style: GoogleFonts.cairo(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF92400E)),
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF92400E),
+                ),
               ),
               const SizedBox(width: 8),
-              const Icon(Icons.edit_rounded,
-                  size: 16, color: Color(0xFF92400E)),
+              const Icon(
+                Icons.edit_rounded,
+                size: 16,
+                color: Color(0xFF92400E),
+              ),
             ],
           ),
           if (_job.editNote != null && _job.editNote!.isNotEmpty) ...[
@@ -171,7 +183,9 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
               _job.editNote!,
               textAlign: TextAlign.right,
               style: GoogleFonts.cairo(
-                  fontSize: 12, color: const Color(0xFFB45309)),
+                fontSize: 12,
+                color: const Color(0xFFB45309),
+              ),
             ),
           ],
         ],
@@ -189,12 +203,16 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
               Text(
                 _formatAge(context, _job.createdAt),
                 style: GoogleFonts.cairo(
-                    fontSize: 11, color: const Color(0xFF9CA3AF)),
+                  fontSize: 11,
+                  color: const Color(0xFF9CA3AF),
+                ),
               ),
               Text(
                 _job.id,
                 style: GoogleFonts.dmSans(
-                    fontSize: 11, color: const Color(0xFFBBBFBD)),
+                  fontSize: 11,
+                  color: const Color(0xFFBBBFBD),
+                ),
               ),
             ],
           ),
@@ -205,13 +223,13 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
               Text(
                 _job.supplierName ?? context.l10n.collectionJobRecyclingCoLabel,
                 style: GoogleFonts.cairo(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF002819)),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF002819),
+                ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: const Color(0xFFD4EBAB),
                   borderRadius: BorderRadius.circular(8),
@@ -219,9 +237,10 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
                 child: Text(
                   context.l10n.collectionJobRecyclingCoLabel,
                   style: GoogleFonts.cairo(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF14401F)),
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF14401F),
+                  ),
                 ),
               ),
             ],
@@ -229,10 +248,12 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
           const SizedBox(width: 12),
           CircleAvatar(
             radius: 24,
-            backgroundColor:
-                const Color(0xFF14401F).withValues(alpha: 0.08),
-            child: const Icon(Icons.recycling_rounded,
-                size: 24, color: Color(0xFF14401F)),
+            backgroundColor: const Color(0xFF14401F).withValues(alpha: 0.08),
+            child: const Icon(
+              Icons.recycling_rounded,
+              size: 24,
+              color: Color(0xFF14401F),
+            ),
           ),
         ],
       ),
@@ -245,45 +266,62 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           _SectionTitle(
-              icon: Icons.category_rounded, label: context.l10n.collectionJobRequiredMaterials),
+            icon: Icons.category_rounded,
+            label: context.l10n.collectionJobRequiredMaterials,
+          ),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
             runSpacing: 6,
             alignment: WrapAlignment.end,
             children: _job.wasteTypes
-                .map((t) => Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFD4EBAB).withValues(alpha: 0.6),
-                        borderRadius: BorderRadius.circular(20),
+                .map(
+                  (t) => Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD4EBAB).withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      t.label,
+                      style: GoogleFonts.cairo(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF14401F),
                       ),
-                      child: Text(t.label,
-                          style: GoogleFonts.cairo(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF14401F))),
-                    ))
+                    ),
+                  ),
+                )
                 .toList(),
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              const Icon(Icons.location_on_rounded,
-                  size: 14, color: Color(0xFF9CA3AF)),
+              const Icon(
+                Icons.location_on_rounded,
+                size: 14,
+                color: Color(0xFF9CA3AF),
+              ),
               const SizedBox(width: 4),
               Text(
                 _job.pickupAddress,
                 style: GoogleFonts.cairo(
-                    fontSize: 12, color: const Color(0xFF717973)),
+                  fontSize: 12,
+                  color: const Color(0xFF717973),
+                ),
               ),
               const Spacer(),
-              Text(context.l10n.collectionJobCollectionArea,
-                  style: GoogleFonts.cairo(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF404943))),
+              Text(
+                context.l10n.collectionJobCollectionArea,
+                style: GoogleFonts.cairo(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF404943),
+                ),
+              ),
             ],
           ),
         ],
@@ -299,44 +337,53 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           _SectionTitle(
-              icon: Icons.payments_rounded, label: context.l10n.collectionJobPricingTitle),
+            icon: Icons.payments_rounded,
+            label: context.l10n.collectionJobPricingTitle,
+          ),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               if (model != null) ...[
                 _Chip(
-                    label: model.label,
-                    icon: model == PaymentModel.perKg
-                        ? Icons.scale_rounded
-                        : Icons.payments_rounded,
-                    color: const Color(0xFF14401F)),
+                  label: model.label,
+                  icon: model == PaymentModel.perKg
+                      ? Icons.scale_rounded
+                      : Icons.payments_rounded,
+                  color: const Color(0xFF14401F),
+                ),
                 const SizedBox(width: 12),
               ],
               if (price != null) ...[
                 Text(
                   '$price ${model?.unitLabelFor(Localizations.localeOf(context)) ?? context.l10n.orderCurrencyJD}',
                   style: GoogleFonts.dmSans(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF14401F)),
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF14401F),
+                  ),
                 ),
                 const SizedBox(width: 4),
-                const Icon(Icons.monetization_on_rounded,
-                    size: 18, color: Color(0xFF14401F)),
+                const Icon(
+                  Icons.monetization_on_rounded,
+                  size: 18,
+                  color: Color(0xFF14401F),
+                ),
               ],
             ],
           ),
-          if (_job.minQuantityKg != null &&
-              model == PaymentModel.perKg) ...[
+          if (_job.minQuantityKg != null && model == PaymentModel.perKg) ...[
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 _Chip(
-                  label: context.l10n.collectionJobMinQtyChip(_job.minQuantityKg!.toStringAsFixed(0)),
+                  label: context.l10n.collectionJobMinQtyChip(
+                    _job.minQuantityKg!.toStringAsFixed(0),
+                  ),
                   icon: Icons.scale_rounded,
-                  color: const Color(0xFF7C3AED)),
+                  color: const Color(0xFF7C3AED),
+                ),
               ],
             ),
           ],
@@ -354,15 +401,18 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           _SectionTitle(
-              icon: Icons.description_rounded, label: context.l10n.collectionJobDescTitle),
+            icon: Icons.description_rounded,
+            label: context.l10n.collectionJobDescTitle,
+          ),
           const SizedBox(height: 10),
           Text(
             _job.jobDescription!,
             textAlign: TextAlign.right,
             style: GoogleFonts.cairo(
-                fontSize: 14,
-                color: const Color(0xFF404943),
-                height: 1.6),
+              fontSize: 14,
+              color: const Color(0xFF404943),
+              height: 1.6,
+            ),
           ),
         ],
       ),
@@ -375,7 +425,11 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
     }
     return Container(
       padding: EdgeInsets.fromLTRB(
-          20, 14, 20, MediaQuery.of(context).padding.bottom + 14),
+        20,
+        14,
+        20,
+        MediaQuery.of(context).padding.bottom + 14,
+      ),
       color: Colors.white,
       child: Row(
         children: [
@@ -384,14 +438,17 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
               child: OutlinedButton.icon(
                 onPressed: () => _showEditSheet(context),
                 icon: const Icon(Icons.edit_rounded, size: 16),
-                label: Text(context.l10n.edit,
-                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                label: Text(
+                  context.l10n.edit,
+                  style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: const Color(0xFF14401F),
                   side: const BorderSide(color: Color(0xFF14401F)),
                   padding: const EdgeInsets.symmetric(vertical: 13),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -400,15 +457,18 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
               child: ElevatedButton.icon(
                 onPressed: () => _confirmDelete(context),
                 icon: const Icon(Icons.delete_rounded, size: 16),
-                label: Text(context.l10n.collectionJobDeleteTitle,
-                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                label: Text(
+                  context.l10n.collectionJobDeleteTitle,
+                  style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF991B1B),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 13),
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -422,23 +482,28 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
               child: ElevatedButton.icon(
                 onPressed: () => _acceptJob(context),
                 icon: Icon(
-                    widget.role == UserRole.driver
-                        ? Icons.check_circle_rounded
-                        : Icons.handshake_rounded,
-                    size: 18),
+                  widget.role == UserRole.driver
+                      ? Icons.check_circle_rounded
+                      : Icons.handshake_rounded,
+                  size: 18,
+                ),
                 label: Text(
-                    widget.role == UserRole.driver
-                        ? context.l10n.collectionJobAcceptButton
-                        : context.l10n.collectionJobAcceptSellButton,
-                    style: GoogleFonts.cairo(
-                        fontSize: 15, fontWeight: FontWeight.bold)),
+                  widget.role == UserRole.driver
+                      ? context.l10n.collectionJobAcceptButton
+                      : context.l10n.collectionJobAcceptSellButton,
+                  style: GoogleFonts.cairo(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF14401F),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -455,31 +520,33 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
       isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (_) => EditCollectionJobSheet(
         job: _job,
-        onUpdate: ({
-          required List<WasteType> wasteTypes,
-          required PaymentModel paymentModel,
-          required double price,
-          required String collectionArea,
-          required String jobDescription,
-          double? minQuantityKg,
-          String? editNote,
-        }) {
-          final updated = vm.updateCollectionJob(
-            jobId: _job.id,
-            companyName: widget.currentUserName ?? '',
-            wasteTypes: wasteTypes,
-            collectionArea: collectionArea,
-            jobDescription: jobDescription,
-            paymentModel: paymentModel,
-            price: price,
-            minQuantityKg: minQuantityKg,
-            editNote: editNote,
-          );
-          if (updated != null) setState(() => _job = updated);
-        },
+        onUpdate:
+            ({
+              required List<WasteType> wasteTypes,
+              required PaymentModel paymentModel,
+              required double price,
+              required String collectionArea,
+              required String jobDescription,
+              double? minQuantityKg,
+              String? editNote,
+            }) {
+              final updated = vm.updateCollectionJob(
+                jobId: _job.id,
+                companyName: widget.currentUserName ?? '',
+                wasteTypes: wasteTypes,
+                collectionArea: collectionArea,
+                jobDescription: jobDescription,
+                paymentModel: paymentModel,
+                price: price,
+                minQuantityKg: minQuantityKg,
+                editNote: editNote,
+              );
+              if (updated != null) setState(() => _job = updated);
+            },
       ),
     );
   }
@@ -488,11 +555,16 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
     showDialog<void>(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text(context.l10n.collectionJobDeleteTitle,
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-            textAlign: TextAlign.right),
-        content: Text(context.l10n.collectionJobDeleteConfirm,
-            style: GoogleFonts.cairo(), textAlign: TextAlign.right),
+        title: Text(
+          context.l10n.collectionJobDeleteTitle,
+          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+          textAlign: TextAlign.right,
+        ),
+        content: Text(
+          context.l10n.collectionJobDeleteConfirm,
+          style: GoogleFonts.cairo(),
+          textAlign: TextAlign.right,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -500,16 +572,21 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF991B1B)),
+              backgroundColor: const Color(0xFF991B1B),
+            ),
             onPressed: () {
               final vm = context.read<MarketplaceViewModel>();
               vm.deleteCollectionJob(_job.id, widget.currentUserName ?? '');
               Navigator.pop(context);
               Navigator.pop(context);
             },
-            child: Text(context.l10n.delete,
-                style: GoogleFonts.cairo(
-                    color: Colors.white, fontWeight: FontWeight.bold)),
+            child: Text(
+              context.l10n.delete,
+              style: GoogleFonts.cairo(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -527,14 +604,20 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.check_circle_rounded,
-              color: Color(0xFF14401F), size: 18),
+          const Icon(
+            Icons.check_circle_rounded,
+            color: Color(0xFF14401F),
+            size: 18,
+          ),
           const SizedBox(width: 8),
-          Text(context.l10n.collectionJobAccepted,
-              style: GoogleFonts.cairo(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF14401F))),
+          Text(
+            context.l10n.collectionJobAccepted,
+            style: GoogleFonts.cairo(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF14401F),
+            ),
+          ),
         ],
       ),
     );
@@ -546,8 +629,11 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
       AcceptCollectionJobSheet.show(
         context,
         job: _job,
-        onConfirm: (deliveryMethod, transactionType) =>
-            _doAccept(context, deliveryMethod: deliveryMethod, transactionType: transactionType),
+        onConfirm: (deliveryMethod, transactionType) => _doAccept(
+          context,
+          deliveryMethod: deliveryMethod,
+          transactionType: transactionType,
+        ),
       );
     } else {
       _doAccept(context);
@@ -567,14 +653,18 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
       transactionType: transactionType,
     );
     if (error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(error, style: GoogleFonts.cairo(color: Colors.white)),
-        backgroundColor: const Color(0xFF991B1B),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error, style: GoogleFonts.cairo(color: Colors.white)),
+          backgroundColor: const Color(0xFF991B1B),
+        ),
+      );
     } else {
       if (!mounted) return;
       final newSale = widget.currentUserName != null
-          ? context.read<MarketplaceViewModel>().latestCollectionSaleFor(widget.currentUserName!)
+          ? context.read<MarketplaceViewModel>().latestCollectionSaleFor(
+              widget.currentUserName!,
+            )
           : null;
       Navigator.of(context).pop();
       widget.onAccepted?.call(newSale);
@@ -606,9 +696,10 @@ class _DetailCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2))
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: child,
@@ -626,11 +717,14 @@ class _SectionTitle extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Text(label,
-            style: GoogleFonts.cairo(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF404943))),
+        Text(
+          label,
+          style: GoogleFonts.cairo(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF404943),
+          ),
+        ),
         const SizedBox(width: 6),
         Icon(icon, size: 16, color: const Color(0xFF14401F)),
       ],
@@ -655,11 +749,14 @@ class _Chip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label,
-              style: GoogleFonts.cairo(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: color)),
+          Text(
+            label,
+            style: GoogleFonts.cairo(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
           const SizedBox(width: 4),
           Icon(icon, size: 13, color: color),
         ],

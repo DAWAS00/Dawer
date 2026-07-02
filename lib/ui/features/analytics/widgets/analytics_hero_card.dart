@@ -75,11 +75,12 @@ class _AnalyticsHeroCardState extends State<AnalyticsHeroCard>
 
   void _setupAnim(double target) {
     final begin = _displayedValue;
-    _anim = Tween<double>(begin: begin, end: target)
-        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic))
-      ..addListener(() {
-        setState(() => _displayedValue = _anim.value);
-      });
+    _anim =
+        Tween<double>(begin: begin, end: target).animate(
+          CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic),
+        )..addListener(() {
+          setState(() => _displayedValue = _anim.value);
+        });
   }
 
   @override
@@ -122,8 +123,11 @@ class _AnalyticsHeroCardState extends State<AnalyticsHeroCard>
                 _StreakChip(streak: widget.currentStreak),
               ],
               const Spacer(),
-              Icon(Icons.insights_rounded,
-                  color: Colors.white.withValues(alpha: 0.7), size: 18),
+              Icon(
+                Icons.insights_rounded,
+                color: Colors.white.withValues(alpha: 0.7),
+                size: 18,
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -159,8 +163,11 @@ class _AnalyticsHeroCardState extends State<AnalyticsHeroCard>
           ] else ...[
             Row(
               children: [
-                Icon(Icons.bar_chart_rounded,
-                    color: Colors.white.withValues(alpha: 0.6), size: 28),
+                Icon(
+                  Icons.bar_chart_rounded,
+                  color: Colors.white.withValues(alpha: 0.6),
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
                 Text(
                   'لا يوجد نشاط بعد',
@@ -244,11 +251,7 @@ class _SparklinePainter extends CustomPainter {
     final basePaint = Paint()
       ..color = color.withValues(alpha: 0.15)
       ..strokeWidth = 1;
-    canvas.drawLine(
-      Offset(0, h - pad),
-      Offset(w, h - pad),
-      basePaint,
-    );
+    canvas.drawLine(Offset(0, h - pad), Offset(w, h - pad), basePaint);
 
     if (points.length < 2) return;
 
@@ -277,11 +280,12 @@ class _SparklinePainter extends CustomPainter {
       ..close();
     canvas.drawPath(
       area,
-      Paint()..shader = LinearGradient(
-        colors: [color.withValues(alpha: 0.35), color.withValues(alpha: 0.0)],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ).createShader(Rect.fromLTWH(0, 0, w, h)),
+      Paint()
+        ..shader = LinearGradient(
+          colors: [color.withValues(alpha: 0.35), color.withValues(alpha: 0.0)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
     );
 
     // The line itself

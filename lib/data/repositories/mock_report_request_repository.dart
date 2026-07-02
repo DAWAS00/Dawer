@@ -8,9 +8,7 @@ class MockReportRequestRepository implements IReportRequestRepository {
   @override
   Future<AppResult<List<ReportRequest>>> fetchRequests(String userId) async {
     await Future<void>.delayed(const Duration(milliseconds: 200));
-    final results = _requests
-        .where((r) => r.userId == userId)
-        .toList()
+    final results = _requests.where((r) => r.userId == userId).toList()
       ..sort((a, b) => b.requestedAt.compareTo(a.requestedAt));
     return Success(results);
   }

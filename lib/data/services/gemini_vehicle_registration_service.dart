@@ -6,18 +6,19 @@ import '../../core/config/ai_config.dart';
 import '../../data/models/order/order.dart' show VehicleType, VehicleTypeLabel;
 import '../../domain/services/i_ai_vehicle_registration_service.dart';
 
-class GeminiVehicleRegistrationService implements IAiVehicleRegistrationService {
+class GeminiVehicleRegistrationService
+    implements IAiVehicleRegistrationService {
   final GenerativeModel _model;
 
   GeminiVehicleRegistrationService()
-      : _model = GenerativeModel(
-          model: 'gemini-2.5-flash',
-          apiKey: AiConfig.geminiApiKey,
-          generationConfig: GenerationConfig(
-            responseMimeType: 'application/json',
-            temperature: 0.1,
-          ),
-        );
+    : _model = GenerativeModel(
+        model: 'gemini-2.5-flash',
+        apiKey: AiConfig.geminiApiKey,
+        generationConfig: GenerationConfig(
+          responseMimeType: 'application/json',
+          temperature: 0.1,
+        ),
+      );
 
   GeminiVehicleRegistrationService.withModel(this._model);
 
@@ -30,10 +31,7 @@ class GeminiVehicleRegistrationService implements IAiVehicleRegistrationService 
     final file = File(filePath);
     final bytes = await file.readAsBytes();
     final content = [
-      Content.multi([
-        TextPart(_prompt),
-        DataPart(_mimeType(file), bytes),
-      ]),
+      Content.multi([TextPart(_prompt), DataPart(_mimeType(file), bytes)]),
     ];
 
     return _callWithRetry(content);
@@ -77,7 +75,6 @@ class GeminiVehicleRegistrationService implements IAiVehicleRegistrationService 
     );
   }
 
-
   VehicleRegistrationResult _parseResult(Map<String, dynamic> json) {
     if (json['isVehicleRegistration'] == false) {
       return const VehicleRegistrationResult.failure(
@@ -99,36 +96,49 @@ class GeminiVehicleRegistrationService implements IAiVehicleRegistrationService 
     final expiryRaw = json['registrationExpiry']?.toString();
     if (expiryRaw != null) expiry = DateTime.tryParse(expiryRaw);
 
-    return VehicleRegistrationResult.success(ExtractedVehicleData(
-      vehicleType: vehicleType,
-      vehicleClass: vehicleClass.isNotEmpty ? vehicleClass : vehicleType.label,
-      make: _nonEmpty(json['make']?.toString()),
-      model: _nonEmpty(json['model']?.toString()),
-      color: _nonEmpty(json['color']?.toString()),
-      plateNumber: _nonEmpty(json['plateNumber']?.toString()),
-      registrationExpiry: expiry,
-      confidenceScore: confidence,
-      hasChemicalPermit: json['hasChemicalPermit'] == true,
-    ));
+    return VehicleRegistrationResult.success(
+      ExtractedVehicleData(
+        vehicleType: vehicleType,
+        vehicleClass: vehicleClass.isNotEmpty
+            ? vehicleClass
+            : vehicleType.label,
+        make: _nonEmpty(json['make']?.toString()),
+        model: _nonEmpty(json['model']?.toString()),
+        color: _nonEmpty(json['color']?.toString()),
+        plateNumber: _nonEmpty(json['plateNumber']?.toString()),
+        registrationExpiry: expiry,
+        confidenceScore: confidence,
+        hasChemicalPermit: json['hasChemicalPermit'] == true,
+      ),
+    );
   }
 
   static VehicleType _mapVehicleType(String raw) {
     final s = raw.toLowerCase();
-    if (s.contains('دراجة') || s.contains('motorcycle') || s.contains('motorbike')) {
+    if (s.contains('دراجة') ||
+        s.contains('motorcycle') ||
+        s.contains('motorbike')) {
       return VehicleType.motorcycle;
     }
-    if (s.contains('شاحنة ثقيلة') || s.contains('heavy') ||
-        s.contains('مقطورة') || s.contains('semi')) {
+    if (s.contains('شاحنة ثقيلة') ||
+        s.contains('heavy') ||
+        s.contains('مقطورة') ||
+        s.contains('semi')) {
       return VehicleType.heavyTruck;
     }
     if (s.contains('شاحنة') || s.contains('truck') || s.contains('lorry')) {
       return VehicleType.truck;
     }
-    if (s.contains('فان') || s.contains('ونيت') || s.contains('van') ||
-        s.contains('minibus') || s.contains('ميكروباص')) {
+    if (s.contains('فان') ||
+        s.contains('ونيت') ||
+        s.contains('van') ||
+        s.contains('minibus') ||
+        s.contains('ميكروباص')) {
       return VehicleType.van;
     }
-    if (s.contains('بيك') || s.contains('pickup') || s.contains('pick-up') ||
+    if (s.contains('بيك') ||
+        s.contains('pickup') ||
+        s.contains('pick-up') ||
         s.contains('pick up')) {
       return VehicleType.pickup;
     }

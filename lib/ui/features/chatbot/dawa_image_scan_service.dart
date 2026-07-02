@@ -58,7 +58,7 @@ class DawaImageScanService {
       final labels = await labeler.processImage(input);
 
       final topLabel = labels.isEmpty ? '' : labels.first.label;
-      final topConf  = labels.isEmpty ? 0.0  : labels.first.confidence;
+      final topConf = labels.isEmpty ? 0.0 : labels.first.confidence;
       final category = _categorise(labels);
 
       return DawaImageScanResult(
@@ -68,9 +68,7 @@ class DawaImageScanService {
       );
     } catch (e) {
       if (e is DawaImageScanException) rethrow;
-      throw DawaImageScanException(
-        'تعذّر تشغيل نموذج التعرف. تفاصيل: $e',
-      );
+      throw DawaImageScanException('تعذّر تشغيل نموذج التعرف. تفاصيل: $e');
     } finally {
       await labeler.close();
     }
@@ -81,19 +79,37 @@ class DawaImageScanService {
   // ─────────────────────────────────────────────
 
   static const _oilTerms = [
-    'oil', 'petroleum', 'lubricant', 'grease', 'automotive',
-    'motor', 'engine', 'fuel', 'diesel', 'fluid',
+    'oil',
+    'petroleum',
+    'lubricant',
+    'grease',
+    'automotive',
+    'motor',
+    'engine',
+    'fuel',
+    'diesel',
+    'fluid',
   ];
 
   static const _woodTerms = [
-    'wood', 'lumber', 'timber', 'plank', 'hardwood', 'softwood',
-    'log', 'board', 'beam', 'construction', 'sawdust', 'trunk',
+    'wood',
+    'lumber',
+    'timber',
+    'plank',
+    'hardwood',
+    'softwood',
+    'log',
+    'board',
+    'beam',
+    'construction',
+    'sawdust',
+    'trunk',
   ];
 
   static String _categorise(List<ImageLabel> labels) {
     for (final lbl in labels) {
       final l = lbl.label.toLowerCase();
-      if (_oilTerms.any((t) => l.contains(t)))  return 'oil';
+      if (_oilTerms.any((t) => l.contains(t))) return 'oil';
       if (_woodTerms.any((t) => l.contains(t))) return 'wood';
     }
     return 'unknown';

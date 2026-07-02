@@ -42,8 +42,9 @@ class GreenCreditsService {
   /// Streak breaks at the first missing week when counting backwards.
   static int weekStreakFrom(List<Order> completedOrders) {
     final dones = completedOrders
-        .where((o) =>
-            o.status == OrderStatus.completed && o.completedAt != null)
+        .where(
+          (o) => o.status == OrderStatus.completed && o.completedAt != null,
+        )
         .toList();
 
     if (dones.isEmpty) return 0;

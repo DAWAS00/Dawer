@@ -82,10 +82,7 @@ Future<void> _pumpLoginForm(
 
 LoginViewModel _vm(WidgetTester tester) {
   final formFinder = find.byType(LoginForm);
-  return Provider.of<LoginViewModel>(
-    tester.element(formFinder),
-    listen: false,
-  );
+  return Provider.of<LoginViewModel>(tester.element(formFinder), listen: false);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -94,8 +91,9 @@ LoginViewModel _vm(WidgetTester tester) {
 
 void main() {
   group('LoginForm — validation', () {
-    testWidgets('tapping continue with empty phone surfaces an error',
-        (tester) async {
+    testWidgets('tapping continue with empty phone surfaces an error', (
+      tester,
+    ) async {
       // [DEV] Test disabled while validation is bypassed
       /*
       final repo = _FakeAuthRepository();
@@ -114,8 +112,7 @@ void main() {
   });
 
   group('LoginForm — repository wiring', () {
-    testWidgets('successful OTP request sets otpSent to true',
-        (tester) async {
+    testWidgets('successful OTP request sets otpSent to true', (tester) async {
       final repo = _FakeAuthRepository()
         ..nextRequestOtpResult = const Success(null);
 
@@ -142,7 +139,9 @@ void main() {
       expect(vm.isLoading, isFalse);
     });
 
-    testWidgets('failed OTP request surfaces the failure message', (tester) async {
+    testWidgets('failed OTP request surfaces the failure message', (
+      tester,
+    ) async {
       final repo = _FakeAuthRepository()
         ..nextRequestOtpResult = const Failure(
           AuthFailure(message: 'Error sending OTP'),

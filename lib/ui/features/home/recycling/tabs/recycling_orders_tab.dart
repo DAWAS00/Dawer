@@ -56,7 +56,8 @@ class _RecyclingOrdersTabState extends State<RecyclingOrdersTab> {
         IncomingStatusFilter.inTransit => o.status == OrderStatus.inTransit,
         IncomingStatusFilter.all => true,
       };
-      final typeOk = _filterIncomingType == null ||
+      final typeOk =
+          _filterIncomingType == null ||
           o.wasteTypes.any((t) => t.label == _filterIncomingType);
       return statusOk && typeOk;
     }).toList();
@@ -172,8 +173,7 @@ class _RecyclingOrdersTabState extends State<RecyclingOrdersTab> {
                     _enumFilterRow(
                       chips: jobsPaymentChips,
                       selected: _filterJobsPayment,
-                      onSelected: (v) =>
-                          setState(() => _filterJobsPayment = v),
+                      onSelected: (v) => setState(() => _filterJobsPayment = v),
                     ),
                     Expanded(
                       child: _RecyclingOrderList(
@@ -361,23 +361,23 @@ class _RecyclingOrderList extends StatelessWidget {
   Widget _buildAcceptorRow(BuildContext context, Order sale) {
     final l10n = context.l10n;
     Color chipBg(OrderStatus s) => switch (s) {
-          OrderStatus.pending => const Color(0xFFFEF3C7),
-          OrderStatus.accepted || OrderStatus.arrivedAtPickup =>
-            const Color(0xFFD1FAE5),
-          OrderStatus.inTransit || OrderStatus.arrivedAtDropoff =>
-            const Color(0xFFDBEAFE),
-          OrderStatus.completed => const Color(0xFFDCFCE7),
-          OrderStatus.cancelled => const Color(0xFFFEE2E2),
-        };
+      OrderStatus.pending => const Color(0xFFFEF3C7),
+      OrderStatus.accepted ||
+      OrderStatus.arrivedAtPickup => const Color(0xFFD1FAE5),
+      OrderStatus.inTransit ||
+      OrderStatus.arrivedAtDropoff => const Color(0xFFDBEAFE),
+      OrderStatus.completed => const Color(0xFFDCFCE7),
+      OrderStatus.cancelled => const Color(0xFFFEE2E2),
+    };
     Color chipText(OrderStatus s) => switch (s) {
-          OrderStatus.pending => const Color(0xFFC8860A),
-          OrderStatus.accepted || OrderStatus.arrivedAtPickup =>
-            const Color(0xFF1E5C35),
-          OrderStatus.inTransit || OrderStatus.arrivedAtDropoff =>
-            const Color(0xFF1E40AF),
-          OrderStatus.completed => const Color(0xFF166534),
-          OrderStatus.cancelled => const Color(0xFF991B1B),
-        };
+      OrderStatus.pending => const Color(0xFFC8860A),
+      OrderStatus.accepted ||
+      OrderStatus.arrivedAtPickup => const Color(0xFF1E5C35),
+      OrderStatus.inTransit ||
+      OrderStatus.arrivedAtDropoff => const Color(0xFF1E40AF),
+      OrderStatus.completed => const Color(0xFF166534),
+      OrderStatus.cancelled => const Color(0xFF991B1B),
+    };
 
     final dateStr = DateFormatter.date(sale.createdAt);
 

@@ -21,10 +21,10 @@ class AppThemeNotifier extends ChangeNotifier {
 
   Future<void> setMode(ThemeMode mode) async {
     if (_mode == mode) return;
-    
+
     _mode = mode;
     notifyListeners();
-    
+
     if (mode == ThemeMode.system) {
       await _prefs.remove(_key);
     } else {

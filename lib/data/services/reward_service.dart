@@ -10,39 +10,39 @@ class RewardService {
 
   static const Map<VehicleType, double> _baseFees = {
     VehicleType.motorcycle: 0.80,
-    VehicleType.car:        1.20,
-    VehicleType.pickup:     1.50,
-    VehicleType.van:        2.00,
-    VehicleType.truck:      3.50,
+    VehicleType.car: 1.20,
+    VehicleType.pickup: 1.50,
+    VehicleType.van: 2.00,
+    VehicleType.truck: 3.50,
     VehicleType.heavyTruck: 5.00,
   };
 
   static const Map<VehicleType, double> _distanceRates = {
     VehicleType.motorcycle: 0.30,
-    VehicleType.car:        0.45,
-    VehicleType.pickup:     0.60,
-    VehicleType.van:        0.75,
-    VehicleType.truck:      1.00,
+    VehicleType.car: 0.45,
+    VehicleType.pickup: 0.60,
+    VehicleType.van: 0.75,
+    VehicleType.truck: 1.00,
     VehicleType.heavyTruck: 1.20,
   };
 
   static const Map<WasteType, double> _materialRates = {
     WasteType.copperAluminium: 0.15,
-    WasteType.electronics:     0.10,
-    WasteType.chemicals:       0.08,
-    WasteType.batteries:       0.08,
-    WasteType.metal:           0.07,
-    WasteType.oil:             0.05,
-    WasteType.plastic:         0.03,
-    WasteType.tires:           0.03,
-    WasteType.paper:           0.02,
-    WasteType.textile:         0.02,
-    WasteType.wood:            0.02,
-    WasteType.rubber:          0.02,
-    WasteType.construction:    0.02,
-    WasteType.glass:           0.02,
-    WasteType.furniture:       0.02,
-    WasteType.organic:         0.01,
+    WasteType.electronics: 0.10,
+    WasteType.chemicals: 0.08,
+    WasteType.batteries: 0.08,
+    WasteType.metal: 0.07,
+    WasteType.oil: 0.05,
+    WasteType.plastic: 0.03,
+    WasteType.tires: 0.03,
+    WasteType.paper: 0.02,
+    WasteType.textile: 0.02,
+    WasteType.wood: 0.02,
+    WasteType.rubber: 0.02,
+    WasteType.construction: 0.02,
+    WasteType.glass: 0.02,
+    WasteType.furniture: 0.02,
+    WasteType.organic: 0.01,
   };
 
   double _round3(double v) => (v * 1000).round() / 1000;
@@ -88,32 +88,39 @@ class RewardService {
     final primary = wasteTypes.first;
     final rate = _materialRates[primary];
     final weightForMaterial = actualWeightKg ?? estimatedWeightKg;
-    final weightVariance = actualWeightKg != null &&
+    final weightVariance =
+        actualWeightKg != null &&
         hasWeightVariance(estimatedWeightKg, actualWeightKg);
     final needsManualReview = rate == null || weightVariance;
 
-    final baseFee       = _baseFees[vehicleType] ?? 1.50;
-    final distanceFee   = _round3(distanceKm * (_distanceRates[vehicleType] ?? 0.60));
-    final weightSurch   = weightSurchargeFor(estimatedWeightKg);
-    final materialFee   = _round3(weightForMaterial * (rate ?? 0));
-    final urgency       = isUrgent ? _urgencyBonus : 0.0;
-    final grossFee      = _round3(baseFee + distanceFee + weightSurch + materialFee + urgency);
-    final platformCut   = _round3(grossFee * _platformCutRate);
-    final driverPayout  = _round3(
+    final baseFee = _baseFees[vehicleType] ?? 1.50;
+    final distanceFee = _round3(
+      distanceKm * (_distanceRates[vehicleType] ?? 0.60),
+    );
+    final weightSurch = weightSurchargeFor(estimatedWeightKg);
+    final materialFee = _round3(weightForMaterial * (rate ?? 0));
+    final urgency = isUrgent ? _urgencyBonus : 0.0;
+    final grossFee = _round3(
+      baseFee + distanceFee + weightSurch + materialFee + urgency,
+    );
+    final platformCut = _round3(grossFee * _platformCutRate);
+    final driverPayout = _round3(
       (grossFee - platformCut).clamp(baseFee, _maxPayout),
     );
 
-    return Success(RewardBreakdown(
-      baseFee:         baseFee,
-      distanceFee:     distanceFee,
-      weightSurcharge: weightSurch,
-      materialFee:     materialFee,
-      urgencyBonus:    urgency,
-      grossFee:        grossFee,
-      platformCut:     platformCut,
-      driverPayout:    driverPayout,
-      totalJd:         driverPayout,
-      needsManualReview: needsManualReview,
-    ));
+    return Success(
+      RewardBreakdown(
+        baseFee: baseFee,
+        distanceFee: distanceFee,
+        weightSurcharge: weightSurch,
+        materialFee: materialFee,
+        urgencyBonus: urgency,
+        grossFee: grossFee,
+        platformCut: platformCut,
+        driverPayout: driverPayout,
+        totalJd: driverPayout,
+        needsManualReview: needsManualReview,
+      ),
+    );
   }
 }

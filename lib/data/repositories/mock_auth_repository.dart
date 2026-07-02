@@ -78,20 +78,24 @@ final class MockAuthRepository implements IAuthRepository {
     await Future.delayed(const Duration(seconds: 1));
 
     if (otp != simulatedOtp) {
-      return const Failure(AuthFailure(
-        code: AuthErrorCodes.invalidOtp,
-        message: 'رمز التحقق غير صحيح. استخدم: $simulatedOtp',
-      ));
+      return const Failure(
+        AuthFailure(
+          code: AuthErrorCodes.invalidOtp,
+          message: 'رمز التحقق غير صحيح. استخدم: $simulatedOtp',
+        ),
+      );
     }
 
     final normalizedPhone = _normalizePhone(phone);
     final existingSession = _users[normalizedPhone];
 
     if (existingSession == null) {
-      return const Failure(NotFoundFailure(
-        code: AuthErrorCodes.phoneNotRegistered,
-        message: 'رقم الهاتف غير مسجل. يرجى إنشاء حساب أولاً.',
-      ));
+      return const Failure(
+        NotFoundFailure(
+          code: AuthErrorCodes.phoneNotRegistered,
+          message: 'رقم الهاتف غير مسجل. يرجى إنشاء حساب أولاً.',
+        ),
+      );
     }
 
     _activeSession = existingSession;

@@ -67,8 +67,7 @@ class CollectionJobsSection extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: const Color(0xFFDBEAFE),
               borderRadius: BorderRadius.circular(20),
@@ -84,8 +83,7 @@ class CollectionJobsSection extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
               color: const Color(0xFFEFF6FF),
               borderRadius: BorderRadius.circular(8),
@@ -189,8 +187,7 @@ class CollectionJobsSection extends StatelessWidget {
     if (error != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(error,
-              style: GoogleFonts.cairo(color: Colors.white)),
+          content: Text(error, style: GoogleFonts.cairo(color: Colors.white)),
           backgroundColor: const Color(0xFF991B1B),
         ),
       );

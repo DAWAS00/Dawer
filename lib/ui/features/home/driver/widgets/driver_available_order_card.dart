@@ -20,7 +20,8 @@ class DriverAvailableOrderCard extends StatefulWidget {
   final VoidCallback? onTap;
 
   @override
-  State<DriverAvailableOrderCard> createState() => _DriverAvailableOrderCardState();
+  State<DriverAvailableOrderCard> createState() =>
+      _DriverAvailableOrderCardState();
 }
 
 class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
@@ -33,23 +34,33 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(context.l10n.orderAcceptButton,
-            textAlign: TextAlign.right,
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        content: Text('هل أنت متأكد من رغبتك في قبول هذا الطلب؟',
-            textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+        title: Text(
+          context.l10n.orderAcceptButton,
+          textAlign: TextAlign.right,
+          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          'هل أنت متأكد من رغبتك في قبول هذا الطلب؟',
+          textAlign: TextAlign.right,
+          style: GoogleFonts.cairo(),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text(context.l10n.cancel,
-                style: GoogleFonts.cairo(color: AppColors.mutedText)),
+            child: Text(
+              context.l10n.cancel,
+              style: GoogleFonts.cairo(color: AppColors.mutedText),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text(context.l10n.confirm,
-                style: GoogleFonts.cairo(
-                    color: AppColors.primaryGreen,
-                    fontWeight: FontWeight.bold)),
+            child: Text(
+              context.l10n.confirm,
+              style: GoogleFonts.cairo(
+                color: AppColors.primaryGreen,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -79,7 +90,10 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
 
   @override
   Widget build(BuildContext context) {
-    final (badgeLabel, badgeBg, badgeFg) = _resolveBadge(widget.order.status, context);
+    final (badgeLabel, badgeBg, badgeFg) = _resolveBadge(
+      widget.order.status,
+      context,
+    );
     final dateString =
         '${widget.order.createdAt.day}/${widget.order.createdAt.month}/${widget.order.createdAt.year}';
 
@@ -118,7 +132,10 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
                         // Status badge
                         Flexible(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: badgeBg,
                               borderRadius: BorderRadius.circular(20),
@@ -138,7 +155,10 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
                         const SizedBox(width: 8),
                         // Reward badge
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.amberContainer,
                             borderRadius: BorderRadius.circular(20),
@@ -146,7 +166,11 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(LucideIcons.coins, size: 12, color: AppColors.accentAmber),
+                              const Icon(
+                                LucideIcons.coins,
+                                size: 12,
+                                color: AppColors.accentAmber,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 '${widget.order.reward.toStringAsFixed(1)} د.أ',
@@ -191,7 +215,11 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
                       color: AppColors.primaryGreen.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(LucideIcons.package, size: 15, color: AppColors.primaryGreen),
+                    child: const Icon(
+                      LucideIcons.package,
+                      size: 15,
+                      color: AppColors.primaryGreen,
+                    ),
                   ),
                 ],
               ),
@@ -210,7 +238,10 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
 
                   // Metrics row: distance + waste type
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF8FAF8),
                       borderRadius: BorderRadius.circular(12),
@@ -225,7 +256,11 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
                               ? '${widget.order.distanceKm!.toStringAsFixed(1)} كم'
                               : '--',
                         ),
-                        Container(width: 1, height: 24, color: AppColors.borderSubtle),
+                        Container(
+                          width: 1,
+                          height: 24,
+                          color: AppColors.borderSubtle,
+                        ),
                         _buildMetric(
                           icon: LucideIcons.recycle,
                           label: context.l10n.driverWasteTypeLabel,
@@ -233,8 +268,13 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
                               ? widget.order.wasteTypes.first.label
                               : '--',
                         ),
-                        if (widget.order.distanceKm != null && widget.order.etaMinutes != null) ...[
-                          Container(width: 1, height: 24, color: AppColors.borderSubtle),
+                        if (widget.order.distanceKm != null &&
+                            widget.order.etaMinutes != null) ...[
+                          Container(
+                            width: 1,
+                            height: 24,
+                            color: AppColors.borderSubtle,
+                          ),
                           _buildMetric(
                             icon: LucideIcons.clock,
                             label: context.l10n.driverTimeLabel,
@@ -252,9 +292,9 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
                       spacing: 6,
                       runSpacing: 4,
                       children: [
-                        ...widget.order.wasteTypes.take(4).map(
-                          (t) => _WasteChip(type: t),
-                        ),
+                        ...widget.order.wasteTypes
+                            .take(4)
+                            .map((t) => _WasteChip(type: t)),
                         if (widget.order.wasteTypes.length > 4)
                           _MoreChip(count: widget.order.wasteTypes.length - 4),
                       ],
@@ -267,52 +307,70 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
                   SizedBox(
                     width: double.infinity,
                     height: 60,
-                    child: ElevatedButton(
-                      onPressed: (_isLoading || _isSuccess) ? null : _handleAccept,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _isSuccess
-                            ? const Color(0xFF4CAF50)
-                            : AppColors.primaryGreen,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                  color: Colors.white, strokeWidth: 3),
-                            )
-                          : _isSuccess
-                              ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(LucideIcons.checkCircle2, size: 22),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      context.l10n.driverOrderAccepted,
-                                      style: GoogleFonts.cairo(
-                                          fontSize: 18, fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      context.l10n.orderAcceptButton,
-                                      style: GoogleFonts.cairo(
-                                          fontSize: 18, fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    const Icon(LucideIcons.arrowLeft, size: 20),
-                                  ],
+                    child:
+                        ElevatedButton(
+                              onPressed: (_isLoading || _isSuccess)
+                                  ? null
+                                  : _handleAccept,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: _isSuccess
+                                    ? const Color(0xFF4CAF50)
+                                    : AppColors.primaryGreen,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
                                 ),
-                    ).animate(target: _isSuccess ? 1 : 0).shimmer(
-                        duration: 400.ms, color: Colors.white24),
+                              ),
+                              child: _isLoading
+                                  ? const SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 3,
+                                      ),
+                                    )
+                                  : _isSuccess
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(
+                                          LucideIcons.checkCircle2,
+                                          size: 22,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          context.l10n.driverOrderAccepted,
+                                          style: GoogleFonts.cairo(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          context.l10n.orderAcceptButton,
+                                          style: GoogleFonts.cairo(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Icon(
+                                          LucideIcons.arrowLeft,
+                                          size: 20,
+                                        ),
+                                      ],
+                                    ),
+                            )
+                            .animate(target: _isSuccess ? 1 : 0)
+                            .shimmer(duration: 400.ms, color: Colors.white24),
                   ),
                 ],
               ),
@@ -379,7 +437,10 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.12),
               shape: BoxShape.circle,
-              border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
+              border: Border.all(
+                color: color.withValues(alpha: 0.3),
+                width: 1.5,
+              ),
             ),
             child: Icon(icon, color: color, size: 17),
           ),
@@ -396,10 +457,7 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: GoogleFonts.cairo(
-              fontSize: 9,
-              color: AppColors.mutedText,
-            ),
+            style: GoogleFonts.cairo(fontSize: 9, color: AppColors.mutedText),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -424,7 +482,10 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
             const SizedBox(width: 3),
             Text(
               label,
-              style: GoogleFonts.cairo(fontSize: 10, color: AppColors.mutedText),
+              style: GoogleFonts.cairo(
+                fontSize: 10,
+                color: AppColors.mutedText,
+              ),
             ),
           ],
         ),
@@ -441,12 +502,17 @@ class _DriverAvailableOrderCardState extends State<DriverAvailableOrderCard> {
     );
   }
 
-  (String, Color, Color) _resolveBadge(OrderStatus status, BuildContext context) =>
-      switch (status) {
-        OrderStatus.pending =>
-          (context.l10n.driverNewOrderBadge, const Color(0xFFE3F2FD), const Color(0xFF1565C0)),
-        _ => (status.label, AppColors.statusActiveBg, AppColors.primaryGreen),
-      };
+  (String, Color, Color) _resolveBadge(
+    OrderStatus status,
+    BuildContext context,
+  ) => switch (status) {
+    OrderStatus.pending => (
+      context.l10n.driverNewOrderBadge,
+      const Color(0xFFE3F2FD),
+      const Color(0xFF1565C0),
+    ),
+    _ => (status.label, AppColors.statusActiveBg, AppColors.primaryGreen),
+  };
 }
 
 class _WasteChip extends StatelessWidget {

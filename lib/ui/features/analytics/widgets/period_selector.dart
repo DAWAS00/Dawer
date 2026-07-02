@@ -25,11 +25,13 @@ class PeriodSelector extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: AnalyticsPeriod.values
-            .map((p) => _PeriodChip(
-                  period: p,
-                  isSelected: p == selected,
-                  onTap: () => onChanged(p),
-                ))
+            .map(
+              (p) => _PeriodChip(
+                period: p,
+                isSelected: p == selected,
+                onTap: () => onChanged(p),
+              ),
+            )
             .toList(),
       ),
     );

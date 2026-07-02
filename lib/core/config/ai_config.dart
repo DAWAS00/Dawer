@@ -23,7 +23,9 @@ class AiConfig {
         'To use real AI, add GEMINI_API_KEY to your .env.local file.\x1B[0m',
       );
     } else {
-      debugPrint('\x1B[32m[AiConfig] Gemini key loaded (length=${geminiApiKey.length}).\x1B[0m');
+      debugPrint(
+        '\x1B[32m[AiConfig] Gemini key loaded (length=${geminiApiKey.length}).\x1B[0m',
+      );
     }
   }
 }

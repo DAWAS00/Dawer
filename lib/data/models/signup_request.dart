@@ -67,8 +67,10 @@ class SignUpRequest {
     final normalizedPhone = phone.trim();
     if (normalizedPhone.isEmpty) {
       errors['phone'] = 'رقم الهاتف مطلوب';
-    } else if (normalizedPhone.length != 10 || !_phoneRegex.hasMatch(normalizedPhone)) {
-      errors['phone'] = 'رقم الهاتف يجب أن يتكون من 10 أرقام ويبدأ بـ 07 (مثال: 07XXXXXXXX)';
+    } else if (normalizedPhone.length != 10 ||
+        !_phoneRegex.hasMatch(normalizedPhone)) {
+      errors['phone'] =
+          'رقم الهاتف يجب أن يتكون من 10 أرقام ويبدأ بـ 07 (مثال: 07XXXXXXXX)';
     }
 
     if (email != null && email!.trim().isNotEmpty) {
@@ -105,7 +107,8 @@ class SignUpRequest {
 
   Map<String, dynamic> toInsertRow({required String authId}) {
     final cleanPhone = phone.trim();
-    final normalizedPhone = (cleanPhone.length == 10 && cleanPhone.startsWith('0'))
+    final normalizedPhone =
+        (cleanPhone.length == 10 && cleanPhone.startsWith('0'))
         ? '+962${cleanPhone.substring(1)}'
         : cleanPhone;
 

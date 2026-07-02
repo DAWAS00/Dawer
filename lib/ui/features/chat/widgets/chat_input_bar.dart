@@ -91,7 +91,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
                     final err = await widget.onPickImage!();
                     if (err != null && mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(err, style: GoogleFonts.cairo())),
+                        SnackBar(
+                          content: Text(err, style: GoogleFonts.cairo()),
+                        ),
                       );
                     }
                   },
@@ -107,7 +109,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
                     final err = await widget.onShareLocation!();
                     if (err != null && mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(err, style: GoogleFonts.cairo())),
+                        SnackBar(
+                          content: Text(err, style: GoogleFonts.cairo()),
+                        ),
                       );
                     }
                   },
@@ -157,15 +161,19 @@ class _ChatInputBarState extends State<ChatInputBar> {
                             color: AppColors.primaryGreen,
                           ),
                         ),
-                        backgroundColor:
-                            AppColors.primaryGreen.withValues(alpha: 0.08),
+                        backgroundColor: AppColors.primaryGreen.withValues(
+                          alpha: 0.08,
+                        ),
                         side: BorderSide(
-                            color:
-                                AppColors.primaryGreen.withValues(alpha: 0.2)),
+                          color: AppColors.primaryGreen.withValues(alpha: 0.2),
+                        ),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 4, vertical: 0),
+                          horizontal: 4,
+                          vertical: 0,
+                        ),
                         onPressed: () => widget.onSend(script),
                       ),
                     );
@@ -219,21 +227,22 @@ class _ChatInputBarState extends State<ChatInputBar> {
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide:
-                            BorderSide(color: Colors.grey.shade200),
+                        borderSide: BorderSide(color: Colors.grey.shade200),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide:
-                            BorderSide(color: Colors.grey.shade200),
+                        borderSide: BorderSide(color: Colors.grey.shade200),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide:
-                            const BorderSide(color: AppColors.primaryGreen),
+                        borderSide: const BorderSide(
+                          color: AppColors.primaryGreen,
+                        ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
                       isDense: true,
                     ),
                   ),

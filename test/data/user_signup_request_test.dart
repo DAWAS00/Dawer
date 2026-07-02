@@ -9,29 +9,27 @@ SignUpRequest _driver({
   String password = 'Passw0rd!',
   String? vehiclePlate = '12-34567',
   String? email,
-}) =>
-    SignUpRequest(
-      name: name,
-      phone: phone,
-      password: password,
-      role: UserRole.driver,
-      vehiclePlate: vehiclePlate,
-      email: email,
-    );
+}) => SignUpRequest(
+  name: name,
+  phone: phone,
+  password: password,
+  role: UserRole.driver,
+  vehiclePlate: vehiclePlate,
+  email: email,
+);
 
 SignUpRequest _supplier({
   SupplierType? supplierType = SupplierType.individual,
   String name = 'متجر دوّار',
   String phone = '0791111111',
   String password = 'Passw0rd!',
-}) =>
-    SignUpRequest(
-      name: name,
-      phone: phone,
-      password: password,
-      role: UserRole.supplier,
-      supplierType: supplierType,
-    );
+}) => SignUpRequest(
+  name: name,
+  phone: phone,
+  password: password,
+  role: UserRole.supplier,
+  supplierType: supplierType,
+);
 
 void main() {
   group('SignUpRequest.validate — happy path', () {
@@ -64,10 +62,7 @@ void main() {
     });
 
     test('too-long name rejected', () {
-      expect(
-        _driver(name: 'ا' * 121).validate().keys,
-        contains('name'),
-      );
+      expect(_driver(name: 'ا' * 121).validate().keys, contains('name'));
     });
 
     test('empty phone rejected', () {
@@ -83,10 +78,7 @@ void main() {
     });
 
     test('too-long password rejected', () {
-      expect(
-        _driver(password: 'a' * 73).validate().keys,
-        contains('password'),
-      );
+      expect(_driver(password: 'a' * 73).validate().keys, contains('password'));
     });
   });
 
@@ -96,10 +88,7 @@ void main() {
     });
 
     test('malformed email rejected', () {
-      expect(
-        _driver(email: 'not-an-email').validate().keys,
-        contains('email'),
-      );
+      expect(_driver(email: 'not-an-email').validate().keys, contains('email'));
     });
 
     test('empty email string is ignored', () {

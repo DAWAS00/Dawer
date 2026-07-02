@@ -44,8 +44,19 @@ class _MarketItemReserveSheetState extends State<MarketItemReserveSheet> {
 
   String _formatDate(DateTime dt) {
     const months = [
-      '', 'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+      '',
+      'يناير',
+      'فبراير',
+      'مارس',
+      'أبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
     ];
     return '${dt.day} ${months[dt.month]} ${dt.year}';
   }
@@ -65,7 +76,8 @@ class _MarketItemReserveSheetState extends State<MarketItemReserveSheet> {
             // Handle
             Center(
               child: Container(
-                width: 40, height: 4,
+                width: 40,
+                height: 4,
                 decoration: BoxDecoration(
                   color: const Color(0xFFD1D5DB),
                   borderRadius: BorderRadius.circular(999),
@@ -86,7 +98,10 @@ class _MarketItemReserveSheetState extends State<MarketItemReserveSheet> {
             const SizedBox(height: 4),
             Text(
               'احجز هذا العنصر الآن بدفع ١٠٪ من قيمته كتأمين قابل للاسترداد.',
-              style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF6B7280)),
+              style: GoogleFonts.cairo(
+                fontSize: 13,
+                color: const Color(0xFF6B7280),
+              ),
               textAlign: TextAlign.right,
             ),
 
@@ -134,8 +149,11 @@ class _MarketItemReserveSheetState extends State<MarketItemReserveSheet> {
                       ),
                     ),
                     const SizedBox(width: 6),
-                    const Icon(Icons.warning_amber_rounded,
-                        color: Color(0xFFDC2626), size: 16),
+                    const Icon(
+                      Icons.warning_amber_rounded,
+                      color: Color(0xFFDC2626),
+                      size: 16,
+                    ),
                   ],
                 ),
               ),
@@ -187,7 +205,9 @@ class _MarketItemReserveSheetState extends State<MarketItemReserveSheet> {
                             _dayName(date.weekday),
                             style: GoogleFonts.cairo(
                               fontSize: 10,
-                              color: selected ? Colors.white70 : const Color(0xFF9CA3AF),
+                              color: selected
+                                  ? Colors.white70
+                                  : const Color(0xFF9CA3AF),
                             ),
                           ),
                           Text(
@@ -195,7 +215,9 @@ class _MarketItemReserveSheetState extends State<MarketItemReserveSheet> {
                             style: GoogleFonts.cairo(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: selected ? Colors.white : const Color(0xFF002819),
+                              color: selected
+                                  ? Colors.white
+                                  : const Color(0xFF002819),
                             ),
                           ),
                         ],
@@ -243,8 +265,11 @@ class _MarketItemReserveSheetState extends State<MarketItemReserveSheet> {
                     ),
                   ),
                   const SizedBox(width: 6),
-                  const Icon(Icons.info_outline_rounded,
-                      color: Color(0xFFD97706), size: 16),
+                  const Icon(
+                    Icons.info_outline_rounded,
+                    color: Color(0xFFD97706),
+                    size: 16,
+                  ),
                 ],
               ),
             ),
@@ -266,7 +291,8 @@ class _MarketItemReserveSheetState extends State<MarketItemReserveSheet> {
                   backgroundColor: const Color(0xFF06402B),
                   disabledBackgroundColor: const Color(0xFFD1D5DB),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   elevation: 0,
                 ),
                 child: Text(
@@ -288,7 +314,16 @@ class _MarketItemReserveSheetState extends State<MarketItemReserveSheet> {
   }
 
   static String _dayName(int weekday) {
-    const names = ['', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت', 'أحد'];
+    const names = [
+      '',
+      'إثنين',
+      'ثلاثاء',
+      'أربعاء',
+      'خميس',
+      'جمعة',
+      'سبت',
+      'أحد',
+    ];
     return names[weekday];
   }
 }

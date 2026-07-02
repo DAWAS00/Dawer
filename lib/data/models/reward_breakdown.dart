@@ -53,17 +53,17 @@ class RewardBreakdown {
   }
 
   Map<String, dynamic> toJson() => {
-        'base_fee': baseFee,
-        'distance_fee': distanceFee,
-        'weight_surcharge': weightSurcharge,
-        'material_fee': materialFee,
-        'urgency_bonus': urgencyBonus,
-        'gross_fee': grossFee,
-        'platform_cut': platformCut,
-        'driver_payout': driverPayout,
-        'total_jd': totalJd,
-        if (needsManualReview) 'needs_manual_review': true,
-      };
+    'base_fee': baseFee,
+    'distance_fee': distanceFee,
+    'weight_surcharge': weightSurcharge,
+    'material_fee': materialFee,
+    'urgency_bonus': urgencyBonus,
+    'gross_fee': grossFee,
+    'platform_cut': platformCut,
+    'driver_payout': driverPayout,
+    'total_jd': totalJd,
+    if (needsManualReview) 'needs_manual_review': true,
+  };
 
   @override
   String toString() =>

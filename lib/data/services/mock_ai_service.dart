@@ -80,11 +80,11 @@ abstract final class MockAiService {
       isVerified: true,
       summary: 'تم التحقق من الوثائق والعنوان بنجاح',
       detectedFields: {
-        'اسم الشركة': name,                 // TODO: from real OCR
+        'اسم الشركة': name, // TODO: from real OCR
         'رقم الترخيص': 'REC-2024-JO-0421', // TODO: from real OCR
-        'تاريخ الانتهاء': '31/12/2026',     // TODO: from real OCR
+        'تاريخ الانتهاء': '31/12/2026', // TODO: from real OCR
         'منطقة الخدمة': addr,
-        'حالة الترخيص': 'ساري المفعول',     // TODO: from real OCR
+        'حالة الترخيص': 'ساري المفعول', // TODO: from real OCR
       },
     );
   }

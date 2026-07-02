@@ -138,8 +138,7 @@ void main() {
       );
 
       // 5 minutes = 300 seconds, fraction = 300/600 = 0.5
-      final elapsed =
-          DateTime.now().difference(order.inTransitAt!).inSeconds;
+      final elapsed = DateTime.now().difference(order.inTransitAt!).inSeconds;
       final fraction = (elapsed / 600).clamp(0.05, 0.95);
       final driverLat =
           order.pickupLat! + (order.dropoffLat! - order.pickupLat!) * fraction;
@@ -156,8 +155,7 @@ void main() {
 
   group('Mock data coordinates', () {
     test('all seed orders have coordinates', () {
-      final orders =
-          _buildSeedOrderIds();
+      final orders = _buildSeedOrderIds();
       for (final id in orders) {
         expect(id, isNotEmpty);
       }
@@ -169,7 +167,15 @@ List<String> _buildSeedOrderIds() {
   // Just verify the IDs exist in mock data — the actual coordinate tests
   // are covered by the seed data verification below
   return [
-    'ORD-S01', 'ORD-S02', 'ORD-001', 'ORD-002', 'ORD-003',
-    'INC-001', 'JOB-001', 'JOB-002', 'ORD-H01', 'ORD-H02',
+    'ORD-S01',
+    'ORD-S02',
+    'ORD-001',
+    'ORD-002',
+    'ORD-003',
+    'INC-001',
+    'JOB-001',
+    'JOB-002',
+    'ORD-H01',
+    'ORD-H02',
   ];
 }

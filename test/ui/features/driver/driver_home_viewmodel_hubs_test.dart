@@ -14,6 +14,9 @@ class _FakeHubRepository implements IHubRepository {
     if (shouldFail) return Failure(const NetworkFailure(message: 'timeout'));
     return Success(hubs);
   }
+
+  @override
+  Stream<List<Hub>> watchActiveHubs() => Stream.value(hubs);
 }
 
 Hub _makeHub(String id, String name) => Hub(
@@ -40,10 +43,9 @@ void main() {
     });
 
     test('fetchActiveHubs succeeds and returns list', () async {
-      final repo = _FakeHubRepository(hubs: [
-        _makeHub('1', 'Hub A'),
-        _makeHub('2', 'Hub B'),
-      ]);
+      final repo = _FakeHubRepository(
+        hubs: [_makeHub('1', 'Hub A'), _makeHub('2', 'Hub B')],
+      );
       final result = await repo.fetchActiveHubs();
       result.fold(
         onSuccess: (hubs) => expect(hubs, hasLength(2)),

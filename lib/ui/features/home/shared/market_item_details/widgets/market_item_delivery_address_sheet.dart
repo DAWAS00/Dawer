@@ -14,19 +14,21 @@ class MarketItemDeliveryAddressSheet extends StatefulWidget {
   });
 
   @override
-  State<MarketItemDeliveryAddressSheet> createState() => _MarketItemDeliveryAddressSheetState();
+  State<MarketItemDeliveryAddressSheet> createState() =>
+      _MarketItemDeliveryAddressSheetState();
 }
 
-class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddressSheet> {
+class _MarketItemDeliveryAddressSheetState
+    extends State<MarketItemDeliveryAddressSheet> {
   double get _distanceFee => (widget.item.distanceKm ?? 5.0) * 0.2;
 
   double get _weightSurcharge => switch (widget.item.weightCategory) {
-        WeightCategory.light => 0.0,
-        WeightCategory.medium => 1.0,
-        WeightCategory.heavy => 2.5,
-        WeightCategory.veryHeavy => 5.0,
-        null => 0.0,
-      };
+    WeightCategory.light => 0.0,
+    WeightCategory.medium => 1.0,
+    WeightCategory.heavy => 2.5,
+    WeightCategory.veryHeavy => 5.0,
+    null => 0.0,
+  };
 
   double get _deliveryFee => 1.5 + _distanceFee + _weightSurcharge;
   double get _totalCost => (widget.item.itemPrice ?? 0) + _deliveryFee;
@@ -36,7 +38,9 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
     final l10n = context.l10n;
     final distanceLabel = widget.item.distanceKm?.toStringAsFixed(1) ?? '–';
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         child: Column(
@@ -64,7 +68,10 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
             const SizedBox(height: 4),
             Text(
               l10n.marketDeliveryFeeNote,
-              style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF717973)),
+              style: GoogleFonts.cairo(
+                fontSize: 13,
+                color: const Color(0xFF717973),
+              ),
             ),
             const SizedBox(height: 20),
             _addressTile(
@@ -79,10 +86,17 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.more_vert_rounded, color: Color(0xFFD1D5DB), size: 20),
+                  const Icon(
+                    Icons.more_vert_rounded,
+                    color: Color(0xFFD1D5DB),
+                    size: 20,
+                  ),
                   const SizedBox(width: 6),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFF06402B).withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(20),
@@ -97,17 +111,26 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
                     ),
                   ),
                   const SizedBox(width: 6),
-                  const Icon(Icons.more_vert_rounded, color: Color(0xFFD1D5DB), size: 20),
+                  const Icon(
+                    Icons.more_vert_rounded,
+                    color: Color(0xFFD1D5DB),
+                    size: 20,
+                  ),
                 ],
               ),
             ),
             GestureDetector(
               onTap: () => ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(l10n.mapsComingSoon, style: GoogleFonts.cairo()),
+                  content: Text(
+                    l10n.mapsComingSoon,
+                    style: GoogleFonts.cairo(),
+                  ),
                   backgroundColor: const Color(0xFF1E5C35),
                   behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
               child: _addressTile(
@@ -151,7 +174,10 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
                     l10n.marketDeliveryBaseFee,
                     '1.50 ${l10n.currencyJodShort}',
                   ),
-                  const Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Divider(height: 1)),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Divider(height: 1),
+                  ),
                   _costRow(
                     l10n.marketDeliveryTotal,
                     '${_totalCost.toStringAsFixed(2)} ${l10n.currencyJodShort}',
@@ -165,10 +191,13 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
               width: double.infinity,
               height: 44,
               child: ElevatedButton(
-                onPressed: () => widget.onConfirm(l10n.newOrderCurrentAddress, _deliveryFee),
+                onPressed: () =>
+                    widget.onConfirm(l10n.newOrderCurrentAddress, _deliveryFee),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF06402B),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   elevation: 0,
                 ),
                 child: Row(
@@ -185,7 +214,11 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
+                    const Icon(
+                      Icons.check_circle_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ],
                 ),
               ),
@@ -210,7 +243,9 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
       decoration: BoxDecoration(
         color: isPlaceholder ? const Color(0xFFF9FAFB) : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isPlaceholder ? const Color(0xFFE6E9E7) : Colors.transparent),
+        border: Border.all(
+          color: isPlaceholder ? const Color(0xFFE6E9E7) : Colors.transparent,
+        ),
         boxShadow: isPlaceholder
             ? null
             : [
@@ -227,14 +262,22 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(label, style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF9CA3AF))),
+              Text(
+                label,
+                style: GoogleFonts.cairo(
+                  fontSize: 11,
+                  color: const Color(0xFF9CA3AF),
+                ),
+              ),
               const SizedBox(height: 2),
               Text(
                 value,
                 style: GoogleFonts.cairo(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
-                  color: isPlaceholder ? const Color(0xFF9CA3AF) : const Color(0xFF002819),
+                  color: isPlaceholder
+                      ? const Color(0xFF9CA3AF)
+                      : const Color(0xFF002819),
                 ),
               ),
             ],
@@ -243,7 +286,10 @@ class _MarketItemDeliveryAddressSheetState extends State<MarketItemDeliveryAddre
           Container(
             width: 36,
             height: 36,
-            decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(
+              color: bg,
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: Icon(icon, size: 18, color: color),
           ),
         ],

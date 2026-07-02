@@ -8,7 +8,7 @@ import '../../../../domain/repositories/i_auth_repository.dart';
 
 class LoginViewModel extends ChangeNotifier {
   LoginViewModel({required IAuthRepository authRepository})
-      : _authRepository = authRepository;
+    : _authRepository = authRepository;
 
   final IAuthRepository _authRepository;
 

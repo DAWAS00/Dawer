@@ -5,8 +5,9 @@ import 'package:dwaar/ui/features/analytics/widgets/daily_impact_card.dart';
 import '../../../helpers/test_app.dart';
 
 void main() {
-  testWidgets('DailyImpactCard shows order count, weight, and impact values',
-      (tester) async {
+  testWidgets('DailyImpactCard shows order count, weight, and impact values', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       wrapWithL10n(
         DailyImpactCard(
@@ -31,8 +32,9 @@ void main() {
     expect(find.textContaining('الإثنين'), findsOneWidget);
   });
 
-  testWidgets('DailyImpactCard renders zero state without overflow',
-      (tester) async {
+  testWidgets('DailyImpactCard renders zero state without overflow', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       wrapWithL10n(
         DailyImpactCard(

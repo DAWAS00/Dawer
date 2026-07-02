@@ -45,10 +45,7 @@ class PostJobFormBody extends StatelessWidget {
         const SizedBox(height: 20),
         _SectionLabel(text: l10n.collectionJobPaymentModelLabel),
         const SizedBox(height: 10),
-        _PaymentToggle(
-          current: paymentModel,
-          onChange: onPaymentModelChanged,
-        ),
+        _PaymentToggle(current: paymentModel, onChange: onPaymentModelChanged),
         const SizedBox(height: 20),
         _SectionLabel(
           text: l10n.collectionJobPriceLabel(paymentModel.unitLabel),
@@ -78,10 +75,7 @@ class PostJobFormBody extends StatelessWidget {
         const SizedBox(height: 20),
         _SectionLabel(text: '${l10n.collectionJobCollectionArea} *'),
         const SizedBox(height: 8),
-        _FormField(
-          controller: areaCtrl,
-          hint: l10n.collectionJobAreaHint,
-        ),
+        _FormField(controller: areaCtrl, hint: l10n.collectionJobAreaHint),
         const SizedBox(height: 20),
         _SectionLabel(text: '${l10n.collectionJobDescTitle} *'),
         const SizedBox(height: 8),
@@ -156,9 +150,11 @@ class _WasteTypeChips extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 5),
-                Icon(icon,
-                    size: 13,
-                    color: isSel ? Colors.white : const Color(0xFF717973)),
+                Icon(
+                  icon,
+                  size: 13,
+                  color: isSel ? Colors.white : const Color(0xFF717973),
+                ),
               ],
             ),
           ),
@@ -232,9 +228,11 @@ class _ToggleOption extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon,
-                  size: 16,
-                  color: isSelected ? Colors.white : const Color(0xFF717973)),
+              Icon(
+                icon,
+                size: 16,
+                color: isSelected ? Colors.white : const Color(0xFF717973),
+              ),
               const SizedBox(width: 6),
               Text(
                 label,

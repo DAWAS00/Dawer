@@ -37,7 +37,8 @@ class RestaurantRegistrationData {
       aiGeneratedContent: aiGeneratedContent ?? this.aiGeneratedContent,
       selectedCategories: selectedCategories ?? this.selectedCategories,
       address: address ?? this.address,
-      isCertificationVerified: isCertificationVerified ?? this.isCertificationVerified,
+      isCertificationVerified:
+          isCertificationVerified ?? this.isCertificationVerified,
     );
   }
 

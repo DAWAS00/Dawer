@@ -125,8 +125,10 @@ void main() {
       );
 
       final map = order.toSupabaseMap(null);
-      expect(map['pickup_proof_photo_url'],
-          'https://storage.example.com/pickup.jpg');
+      expect(
+        map['pickup_proof_photo_url'],
+        'https://storage.example.com/pickup.jpg',
+      );
       expect(map['pickup_proof_weight_kg'], 20.0);
       expect(map['pickup_proof_checksum'], 'deadbeef');
       expect(map.containsKey('proof_image_path'), isFalse);

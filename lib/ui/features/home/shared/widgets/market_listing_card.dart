@@ -17,28 +17,34 @@ class MarketListingCard extends StatelessWidget {
   });
 
   Color get _statusColor => switch (order.status) {
-        OrderStatus.pending => const Color(0xFFC8860A),
-        OrderStatus.accepted || OrderStatus.arrivedAtPickup => const Color(0xFF1E5C35),
-        OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => const Color(0xFF1E40AF),
-        OrderStatus.completed => const Color(0xFF166534),
-        OrderStatus.cancelled => const Color(0xFF991B1B),
-      };
+    OrderStatus.pending => const Color(0xFFC8860A),
+    OrderStatus.accepted ||
+    OrderStatus.arrivedAtPickup => const Color(0xFF1E5C35),
+    OrderStatus.inTransit ||
+    OrderStatus.arrivedAtDropoff => const Color(0xFF1E40AF),
+    OrderStatus.completed => const Color(0xFF166534),
+    OrderStatus.cancelled => const Color(0xFF991B1B),
+  };
 
   Color get _statusBg => switch (order.status) {
-        OrderStatus.pending => const Color(0xFFFEF3C7),
-        OrderStatus.accepted || OrderStatus.arrivedAtPickup => const Color(0xFFD1FAE5),
-        OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => const Color(0xFFDBEAFE),
-        OrderStatus.completed => const Color(0xFFDCFCE7),
-        OrderStatus.cancelled => const Color(0xFFFEE2E2),
-      };
+    OrderStatus.pending => const Color(0xFFFEF3C7),
+    OrderStatus.accepted ||
+    OrderStatus.arrivedAtPickup => const Color(0xFFD1FAE5),
+    OrderStatus.inTransit ||
+    OrderStatus.arrivedAtDropoff => const Color(0xFFDBEAFE),
+    OrderStatus.completed => const Color(0xFFDCFCE7),
+    OrderStatus.cancelled => const Color(0xFFFEE2E2),
+  };
 
   String _statusLabel(AppLocalizations l10n) => switch (order.status) {
-        OrderStatus.pending => l10n.marketListingStatusPending,
-        OrderStatus.accepted || OrderStatus.arrivedAtPickup => l10n.marketListingStatusAccepted,
-        OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => l10n.marketListingStatusInTransit,
-        OrderStatus.completed => l10n.marketListingStatusCompleted,
-        OrderStatus.cancelled => l10n.marketListingStatusCancelled,
-      };
+    OrderStatus.pending => l10n.marketListingStatusPending,
+    OrderStatus.accepted ||
+    OrderStatus.arrivedAtPickup => l10n.marketListingStatusAccepted,
+    OrderStatus.inTransit ||
+    OrderStatus.arrivedAtDropoff => l10n.marketListingStatusInTransit,
+    OrderStatus.completed => l10n.marketListingStatusCompleted,
+    OrderStatus.cancelled => l10n.marketListingStatusCancelled,
+  };
 
   String _formatAge(AppLocalizations l10n, DateTime dt) {
     final diff = DateTime.now().difference(dt);
@@ -110,7 +116,10 @@ class MarketListingCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: _statusBg,
                     borderRadius: BorderRadius.circular(20),
@@ -134,7 +143,10 @@ class MarketListingCard extends StatelessWidget {
               children: order.wasteTypes
                   .map(
                     (t) => Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF2F4F2),
                         borderRadius: BorderRadius.circular(8),
@@ -157,7 +169,10 @@ class MarketListingCard extends StatelessWidget {
                 children: [
                   if (order.weightCategory != null)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF8FAF8),
                         borderRadius: BorderRadius.circular(8),
@@ -193,5 +208,4 @@ class MarketListingCard extends StatelessWidget {
       ),
     );
   }
-
 }

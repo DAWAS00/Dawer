@@ -47,7 +47,10 @@ class Step3LocationAndReview extends StatelessWidget {
             },
           ),
           const SizedBox(height: 12),
-          _CurrentLocationButton(controller: controller, label: l10n.wizardUseCurrentLocation),
+          _CurrentLocationButton(
+            controller: controller,
+            label: l10n.wizardUseCurrentLocation,
+          ),
           const SizedBox(height: 20),
 
           _FieldLabel(text: l10n.wizardNotesOptional),
@@ -63,10 +66,16 @@ class Step3LocationAndReview extends StatelessWidget {
               maxLines: 3,
               textAlign: TextAlign.right,
               textDirection: TextDirection.rtl,
-              style: GoogleFonts.cairo(fontSize: 13, color: WizardColors.textPrimary),
+              style: GoogleFonts.cairo(
+                fontSize: 13,
+                color: WizardColors.textPrimary,
+              ),
               decoration: InputDecoration(
                 hintText: l10n.wizardNotesHint,
-                hintStyle: const TextStyle(fontSize: 13, color: WizardColors.textHint),
+                hintStyle: const TextStyle(
+                  fontSize: 13,
+                  color: WizardColors.textHint,
+                ),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.all(14),
               ),
@@ -107,36 +116,54 @@ class _LocationCard extends StatelessWidget {
           color: hasLocation ? WizardColors.primaryLight : WizardColors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: hasLocation ? WizardColors.borderSelected : WizardColors.border,
+            color: hasLocation
+                ? WizardColors.borderSelected
+                : WizardColors.border,
             width: hasLocation ? 1.5 : 1,
           ),
         ),
         child: Column(
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(13)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(13),
+              ),
               child: Container(
                 height: 90,
                 color: const Color(0xFFDCEDDC),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    ...List.generate(5, (i) => Positioned(
-                      left: i * 60.0,
-                      top: 0,
-                      bottom: 0,
-                      child: Container(width: 0.5, color: const Color(0xFFA5C8A5)),
-                    )),
-                    ...List.generate(4, (i) => Positioned(
-                      top: i * 22.5,
-                      left: 0,
-                      right: 0,
-                      child: Container(height: 0.5, color: const Color(0xFFA5C8A5)),
-                    )),
+                    ...List.generate(
+                      5,
+                      (i) => Positioned(
+                        left: i * 60.0,
+                        top: 0,
+                        bottom: 0,
+                        child: Container(
+                          width: 0.5,
+                          color: const Color(0xFFA5C8A5),
+                        ),
+                      ),
+                    ),
+                    ...List.generate(
+                      4,
+                      (i) => Positioned(
+                        top: i * 22.5,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          height: 0.5,
+                          color: const Color(0xFFA5C8A5),
+                        ),
+                      ),
+                    ),
                     Icon(
                       Icons.location_pin,
                       size: 36,
-                      color: hasLocation ? WizardColors.primaryMid : WizardColors.textHint,
+                      color: hasLocation
+                          ? WizardColors.primaryMid
+                          : WizardColors.textHint,
                     ),
                   ],
                 ),
@@ -147,7 +174,10 @@ class _LocationCard extends StatelessWidget {
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 7,
+                    ),
                     decoration: BoxDecoration(
                       color: WizardColors.primaryMid,
                       borderRadius: BorderRadius.circular(8),
@@ -221,7 +251,11 @@ class _CurrentLocationButton extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            const Icon(Icons.my_location_rounded, size: 16, color: WizardColors.primaryMid),
+            const Icon(
+              Icons.my_location_rounded,
+              size: 16,
+              color: WizardColors.primaryMid,
+            ),
           ],
         ),
       ),
@@ -255,7 +289,9 @@ class _SummaryCard extends StatelessWidget {
             icon: Icons.recycling_outlined,
             label: l10n.wizardSummaryMaterialType,
             value: controller.selectedTypes.isNotEmpty
-                ? controller.selectedTypes.map((t) => t.label).join(isAr ? '، ' : ', ')
+                ? controller.selectedTypes
+                      .map((t) => t.label)
+                      .join(isAr ? '، ' : ', ')
                 : '—',
             hasValue: controller.selectedTypes.isNotEmpty,
           ),
@@ -284,14 +320,18 @@ class _SummaryCard extends StatelessWidget {
           _SummaryRow(
             icon: Icons.eco_rounded,
             label: l10n.wizardCo2Savings,
-            value: l10n.orderWeightKgLabel(impact.co2SavedKg.toStringAsFixed(1)),
+            value: l10n.orderWeightKgLabel(
+              impact.co2SavedKg.toStringAsFixed(1),
+            ),
             hasValue: true,
             color: const Color(0xFF059669),
           ),
           _SummaryRow(
             icon: Icons.water_drop_rounded,
             label: l10n.wizardWaterSavings,
-            value: l10n.wizardWaterLiters(impact.waterSavedLiters.toStringAsFixed(0)),
+            value: l10n.wizardWaterLiters(
+              impact.waterSavedLiters.toStringAsFixed(0),
+            ),
             hasValue: true,
             color: const Color(0xFF1E40AF),
             isLast: true,
@@ -326,7 +366,9 @@ class _SummaryRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: isLast
             ? null
-            : const Border(bottom: BorderSide(color: WizardColors.border, width: 0.5)),
+            : const Border(
+                bottom: BorderSide(color: WizardColors.border, width: 0.5),
+              ),
       ),
       child: Row(
         children: [
@@ -334,7 +376,10 @@ class _SummaryRow extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             label,
-            style: GoogleFonts.cairo(fontSize: 12, color: WizardColors.textSecondary),
+            style: GoogleFonts.cairo(
+              fontSize: 12,
+              color: WizardColors.textSecondary,
+            ),
           ),
           const Spacer(),
           Expanded(
@@ -343,7 +388,9 @@ class _SummaryRow extends StatelessWidget {
               style: GoogleFonts.cairo(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: hasValue ? (color ?? WizardColors.primaryMid) : WizardColors.textHint,
+                color: hasValue
+                    ? (color ?? WizardColors.primaryMid)
+                    : WizardColors.textHint,
               ),
               textAlign: TextAlign.right,
               overflow: TextOverflow.ellipsis,
@@ -379,7 +426,10 @@ class _StepHeader extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: GoogleFonts.cairo(fontSize: 13, color: WizardColors.textSecondary),
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              color: WizardColors.textSecondary,
+            ),
             textAlign: TextAlign.right,
           ),
         ],

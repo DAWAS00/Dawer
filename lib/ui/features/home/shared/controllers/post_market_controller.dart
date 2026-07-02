@@ -17,10 +17,9 @@ import '../../../../../core/config/ai_config.dart';
 /// testable.
 class PostMarketController extends ChangeNotifier {
   PostMarketController({IMarketAiService? aiService})
-      : _aiService = aiService ??
-            (AiConfig.hasGeminiKey
-                ? MarketAiService()
-                : MockMarketAiService());
+    : _aiService =
+          aiService ??
+          (AiConfig.hasGeminiKey ? MarketAiService() : MockMarketAiService());
 
   final IMarketAiService _aiService;
 
@@ -41,7 +40,8 @@ class PostMarketController extends ChangeNotifier {
   double get confidence => _confidence;
   double _confidence = 0.0;
 
-  bool get hasLowConfidence => _confidence > 0 && _confidence < _kLowConfidenceThreshold;
+  bool get hasLowConfidence =>
+      _confidence > 0 && _confidence < _kLowConfidenceThreshold;
 
   static const double _kLowConfidenceThreshold = 0.70;
 

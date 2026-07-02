@@ -44,7 +44,10 @@ class RestaurantHomeView extends StatelessWidget {
           ),
         ),
       ],
-      child: _RestaurantHomeBody(userName: userName, supplierType: supplierType),
+      child: _RestaurantHomeBody(
+        userName: userName,
+        supplierType: supplierType,
+      ),
     );
   }
 }
@@ -53,7 +56,10 @@ class _RestaurantHomeBody extends StatelessWidget {
   final String userName;
   final SupplierType supplierType;
 
-  const _RestaurantHomeBody({required this.userName, required this.supplierType});
+  const _RestaurantHomeBody({
+    required this.userName,
+    required this.supplierType,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +78,11 @@ class _RestaurantHomeBody extends StatelessWidget {
         onJobAccepted: (sale) {
           vm.setTab(2);
           if (sale != null) {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (_) => CollectionSaleDetailView(sale: sale),
-            ));
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => CollectionSaleDetailView(sale: sale),
+              ),
+            );
           }
         },
       ),
@@ -100,10 +108,7 @@ class _RestaurantHomeBody extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
-          IndexedStack(
-            index: vm.currentTab,
-            children: tabs,
-          ),
+          IndexedStack(index: vm.currentTab, children: tabs),
           if (kDebugMode) const DevTestingPanel(),
         ],
       ),
@@ -111,45 +116,50 @@ class _RestaurantHomeBody extends StatelessWidget {
           ? FloatingActionButton.extended(
               onPressed: () {
                 if (!marketVm.canAddListing(vm.user.name)) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(
-                      'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
+                      ),
+                      backgroundColor: const Color(0xFFB91C1C),
+                      behavior: SnackBarBehavior.floating,
                     ),
-                    backgroundColor: const Color(0xFFB91C1C),
-                    behavior: SnackBarBehavior.floating,
-                  ));
+                  );
                   return;
                 }
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => NewPickupRequestView(
-                    role: UserRole.supplier,
-                    initialMode: OrderMode.marketplace,
-                    onSubmit: ({
-                      required List<WasteType> wasteTypes,
-                      required String pickupAddress,
-                      List<String> images = const [],
-                      String? notes,
-                      WasteForm? wasteForm,
-                      WeightCategory? weightCategory,
-                      double? itemPrice,
-                      double? pickupLat,
-                      double? pickupLng,
-                    }) {
-                      final order = vm.createListing(
-                        wasteTypes: wasteTypes,
-                        pickupAddress: pickupAddress,
-                        images: images,
-                        notes: notes,
-                        wasteForm: wasteForm,
-                        weightCategory: weightCategory,
-                        itemPrice: itemPrice,
-                        pickupLat: pickupLat,
-                        pickupLng: pickupLng,
-                      );
-                      marketVm.addListing(order);
-                    },
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => NewPickupRequestView(
+                      role: UserRole.supplier,
+                      initialMode: OrderMode.marketplace,
+                      onSubmit:
+                          ({
+                            required List<WasteType> wasteTypes,
+                            required String pickupAddress,
+                            List<String> images = const [],
+                            String? notes,
+                            WasteForm? wasteForm,
+                            WeightCategory? weightCategory,
+                            double? itemPrice,
+                            double? pickupLat,
+                            double? pickupLng,
+                          }) {
+                            final order = vm.createListing(
+                              wasteTypes: wasteTypes,
+                              pickupAddress: pickupAddress,
+                              images: images,
+                              notes: notes,
+                              wasteForm: wasteForm,
+                              weightCategory: weightCategory,
+                              itemPrice: itemPrice,
+                              pickupLat: pickupLat,
+                              pickupLng: pickupLng,
+                            );
+                            marketVm.addListing(order);
+                          },
+                    ),
                   ),
-                ));
+                );
               },
               backgroundColor: AppColors.primaryGreen,
               icon: const Icon(Icons.add_rounded, color: Colors.white),

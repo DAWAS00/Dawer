@@ -67,19 +67,27 @@ class Step2QuantityAndPrice extends StatelessWidget {
 
   IconData _getIconForWasteForm(WasteForm form) {
     switch (form) {
-      case WasteForm.solid: return Icons.crop_square_outlined;
-      case WasteForm.liquid: return Icons.water_drop_outlined;
-      case WasteForm.gas: return Icons.air_outlined;
-      case WasteForm.mixed: return Icons.layers_outlined;
+      case WasteForm.solid:
+        return Icons.crop_square_outlined;
+      case WasteForm.liquid:
+        return Icons.water_drop_outlined;
+      case WasteForm.gas:
+        return Icons.air_outlined;
+      case WasteForm.mixed:
+        return Icons.layers_outlined;
     }
   }
 
   IconData _getIconForWeightCategory(WeightCategory cat) {
     switch (cat) {
-      case WeightCategory.light: return Icons.eco_outlined;
-      case WeightCategory.medium: return Icons.straighten_outlined;
-      case WeightCategory.heavy: return Icons.fitness_center_outlined;
-      case WeightCategory.veryHeavy: return Icons.local_shipping_outlined;
+      case WeightCategory.light:
+        return Icons.eco_outlined;
+      case WeightCategory.medium:
+        return Icons.straighten_outlined;
+      case WeightCategory.heavy:
+        return Icons.fitness_center_outlined;
+      case WeightCategory.veryHeavy:
+        return Icons.local_shipping_outlined;
     }
   }
 }
@@ -120,14 +128,18 @@ class _ConditionChip extends StatelessWidget {
               style: GoogleFonts.cairo(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: selected ? WizardColors.primaryMid : WizardColors.textSecondary,
+                color: selected
+                    ? WizardColors.primaryMid
+                    : WizardColors.textSecondary,
               ),
             ),
             const SizedBox(width: 6),
             Icon(
               icon,
               size: 16,
-              color: selected ? WizardColors.primaryMid : WizardColors.textSecondary,
+              color: selected
+                  ? WizardColors.primaryMid
+                  : WizardColors.textSecondary,
             ),
           ],
         ),
@@ -183,7 +195,9 @@ class _QuantityCard extends StatelessWidget {
                     style: GoogleFonts.cairo(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: selected ? WizardColors.primaryMid : WizardColors.textPrimary,
+                      color: selected
+                          ? WizardColors.primaryMid
+                          : WizardColors.textPrimary,
                     ),
                     textDirection: TextDirection.rtl,
                   ),
@@ -203,13 +217,17 @@ class _QuantityCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: selected ? WizardColors.primaryBorder : WizardColors.surfaceAlt,
+                color: selected
+                    ? WizardColors.primaryBorder
+                    : WizardColors.surfaceAlt,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 icon,
                 size: 20,
-                color: selected ? WizardColors.primaryMid : WizardColors.textSecondary,
+                color: selected
+                    ? WizardColors.primaryMid
+                    : WizardColors.textSecondary,
               ),
             ),
           ],
@@ -262,7 +280,10 @@ class _PriceInput extends StatelessWidget {
             color: WizardColors.primaryMid,
           ),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
     );
@@ -293,7 +314,10 @@ class _StepHeader extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: GoogleFonts.cairo(fontSize: 13, color: WizardColors.textSecondary),
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              color: WizardColors.textSecondary,
+            ),
             textAlign: TextAlign.right,
           ),
         ],

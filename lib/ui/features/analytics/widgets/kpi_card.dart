@@ -58,7 +58,8 @@ class KpiCard extends StatelessWidget {
               ],
               border: isDark
                   ? Border.all(
-                      color: theme.colorScheme.outline.withValues(alpha: 0.4))
+                      color: theme.colorScheme.outline.withValues(alpha: 0.4),
+                    )
                   : null,
             ),
             child: Column(
@@ -77,10 +78,7 @@ class KpiCard extends StatelessWidget {
                     ),
                     if (delta != null) ...[
                       const Spacer(),
-                      _DeltaChip(
-                        text: delta!,
-                        positive: deltaPositive,
-                      ),
+                      _DeltaChip(text: delta!, positive: deltaPositive),
                     ],
                   ],
                 ),
@@ -125,7 +123,9 @@ class _DeltaChip extends StatelessWidget {
     final isUp = positive == true;
     const up = Color(0xFF16A34A);
     const down = Color(0xFFDC2626);
-    final color = positive == null ? const Color(0xFF6A7973) : (isUp ? up : down);
+    final color = positive == null
+        ? const Color(0xFF6A7973)
+        : (isUp ? up : down);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(

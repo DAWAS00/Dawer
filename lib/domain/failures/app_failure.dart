@@ -44,5 +44,5 @@ final class UnknownFailure extends AppFailure {
   const UnknownFailure({required super.message, super.code});
 
   UnknownFailure.fromException(Object? cause)
-      : super(message: cause?.toString() ?? 'خطأ غير معروف');
+    : super(message: cause?.toString() ?? 'خطأ غير معروف');
 }

@@ -109,8 +109,9 @@ class _GanttPainter extends CustomPainter {
     for (var i = 0; i <= labelCount; i++) {
       final fraction = i / labelCount;
       final x = fraction * size.width;
-      final date =
-          periodStart.add(Duration(milliseconds: (totalMs * fraction).round()));
+      final date = periodStart.add(
+        Duration(milliseconds: (totalMs * fraction).round()),
+      );
       final label = '${date.day}/${date.month}';
 
       final tp = TextPainter(
@@ -171,7 +172,10 @@ class _GanttPainter extends CustomPainter {
           ),
           textDirection: TextDirection.rtl,
         )..layout(maxWidth: barWidth - 8);
-        tp.paint(canvas, Offset(barLeft + 4, top + (rowHeight - tp.height) / 2));
+        tp.paint(
+          canvas,
+          Offset(barLeft + 4, top + (rowHeight - tp.height) / 2),
+        );
       }
     }
   }

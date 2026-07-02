@@ -8,7 +8,13 @@ import '../../../domain/repositories/i_report_request_repository.dart';
 import '../../../l10n/l10n.dart';
 import 'analytics_viewmodel.dart';
 export 'analytics_viewmodel.dart'
-    show HeroMetric, TrendPoint, WasteShare, CycleTimeBreakdown, WasteProfitability, EfficientJob;
+    show
+        HeroMetric,
+        TrendPoint,
+        WasteShare,
+        CycleTimeBreakdown,
+        WasteProfitability,
+        EfficientJob;
 import 'models/analytics_period.dart';
 import 'widgets/activity_statement_list.dart';
 import 'widgets/analytics_hero_card.dart';
@@ -156,8 +162,9 @@ class _AnalyticsTabBody extends StatelessWidget {
     final range = vm.period.dateRange();
 
     // ── Hero data ────────────────────────────────────────────────────────
-    final heroValue =
-        heroMetric == HeroMetric.earnings ? vm.totalEarnings : vm.totalWeightKg;
+    final heroValue = heroMetric == HeroMetric.earnings
+        ? vm.totalEarnings
+        : vm.totalWeightKg;
     final heroLabel = heroMetric == HeroMetric.earnings
         ? 'إجمالي الأرباح · ${vm.period.arabicLabel}'
         : 'إجمالي الوزن المعالج · ${vm.period.arabicLabel}';
@@ -167,10 +174,10 @@ class _AnalyticsTabBody extends StatelessWidget {
     final heroDelta = heroMetric == HeroMetric.earnings
         ? vm.deltaEarningsPct
         : vm.deltaWeightPct;
-    final heroColor =
-        heroMetric == HeroMetric.earnings ? Colors.white : Colors.white;
-    final sparkPoints =
-        vm.dailySeries(heroMetric).map((p) => p.value).toList();
+    final heroColor = heroMetric == HeroMetric.earnings
+        ? Colors.white
+        : Colors.white;
+    final sparkPoints = vm.dailySeries(heroMetric).map((p) => p.value).toList();
 
     // ── 2×2 grid cards ───────────────────────────────────────────────────
     final gridCards = <Widget>[
@@ -201,7 +208,8 @@ class _AnalyticsTabBody extends StatelessWidget {
         deltaPositive: (vm.deltaOrdersPct ?? 0) >= 0,
       ),
       KpiCard(
-        value: roleKpi?.value ?? '${vm.avgRewardPerOrder.toStringAsFixed(1)} د.أ',
+        value:
+            roleKpi?.value ?? '${vm.avgRewardPerOrder.toStringAsFixed(1)} د.أ',
         label: roleKpi?.label ?? 'متوسط الربح/طلب',
         icon: roleKpi?.icon ?? Icons.payments_rounded,
         color: roleKpi?.color ?? const Color(0xFFD97706),
@@ -234,10 +242,7 @@ class _AnalyticsTabBody extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
               child: Row(
                 children: [
-                  PeriodSelector(
-                    selected: vm.period,
-                    onChanged: vm.setPeriod,
-                  ),
+                  PeriodSelector(selected: vm.period, onChanged: vm.setPeriod),
                 ],
               ),
             ),
@@ -325,7 +330,9 @@ class _AnalyticsTabBody extends StatelessWidget {
 
               // ── Profitability (supplier/recycling) ─────────────────────
               if (showProfitability && vm.wasteProfitability.isNotEmpty) ...[
-                _SectionHeader(title: context.l10n.analyticsProfitabilitySectionTitle),
+                _SectionHeader(
+                  title: context.l10n.analyticsProfitabilitySectionTitle,
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: WasteProfitabilityChart(data: vm.wasteProfitability),
@@ -345,7 +352,9 @@ class _AnalyticsTabBody extends StatelessWidget {
 
               // ── Earnings efficiency (driver) ───────────────────────────
               if (showEarningsEfficiency && vm.earningsPerKm != null) ...[
-                _SectionHeader(title: context.l10n.analyticsEfficiencySectionTitle),
+                _SectionHeader(
+                  title: context.l10n.analyticsEfficiencySectionTitle,
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: EarningsEfficiencyCard(

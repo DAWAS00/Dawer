@@ -92,16 +92,15 @@ ChatMessage _msg({
   required String senderId,
   String content = 'رسالة اختبار',
   bool isMine = false,
-}) =>
-    ChatMessage(
-      id: id,
-      roomId: 'ORD-TEST',
-      senderId: senderId,
-      senderName: isMine ? 'مستخدم' : 'سائق',
-      senderRole: isMine ? UserRole.supplier : UserRole.driver,
-      content: content,
-      sentAt: DateTime.now(),
-    );
+}) => ChatMessage(
+  id: id,
+  roomId: 'ORD-TEST',
+  senderId: senderId,
+  senderName: isMine ? 'مستخدم' : 'سائق',
+  senderRole: isMine ? UserRole.supplier : UserRole.driver,
+  content: content,
+  sentAt: DateTime.now(),
+);
 
 Future<void> _pumpChatView(
   WidgetTester tester, {
@@ -201,22 +200,20 @@ void main() {
       final msg = _msg(id: 'm1', senderId: 'mock-user-01', isMine: true);
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ChatBubble(message: msg, isMine: true),
-          ),
+          home: Scaffold(body: ChatBubble(message: msg, isMine: true)),
         ),
       );
       final align = tester.widget<Align>(find.byType(Align).first);
       expect(align.alignment, Alignment.centerLeft);
     });
 
-    testWidgets('isMine=false aligns to the right (RTL trailing)', (tester) async {
+    testWidgets('isMine=false aligns to the right (RTL trailing)', (
+      tester,
+    ) async {
       final msg = _msg(id: 'm1', senderId: 'other-user');
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ChatBubble(message: msg, isMine: false),
-          ),
+          home: Scaffold(body: ChatBubble(message: msg, isMine: false)),
         ),
       );
       final align = tester.widget<Align>(find.byType(Align).first);
@@ -237,9 +234,7 @@ void main() {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: const [Locale('ar'), Locale('en')],
-          home: Scaffold(
-            body: ChatInputBar(onSend: (t) => captured = t),
-          ),
+          home: Scaffold(body: ChatInputBar(onSend: (t) => captured = t)),
         ),
       );
       await tester.pumpAndSettle();
@@ -265,9 +260,7 @@ void main() {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: const [Locale('ar'), Locale('en')],
-          home: Scaffold(
-            body: ChatInputBar(onSend: (_) {}),
-          ),
+          home: Scaffold(body: ChatInputBar(onSend: (_) {})),
         ),
       );
       await tester.pumpAndSettle();

@@ -87,11 +87,9 @@ class MarketplaceViewModel extends ChangeNotifier {
       final q = _searchQuery.toLowerCase();
       items = items.where((o) {
         final matchTypes = o.wasteTypes.any((t) => t.label.contains(q));
-        final matchName =
-            (o.supplierName ?? '').toLowerCase().contains(q);
+        final matchName = (o.supplierName ?? '').toLowerCase().contains(q);
         final matchAddress = o.pickupAddress.toLowerCase().contains(q);
-        final matchNotes =
-            (o.supplierNotes ?? '').toLowerCase().contains(q);
+        final matchNotes = (o.supplierNotes ?? '').toLowerCase().contains(q);
         return matchTypes || matchName || matchAddress || matchNotes;
       }).toList();
     }
@@ -132,13 +130,12 @@ class MarketplaceViewModel extends ChangeNotifier {
     required SupplierPurchaseMode mode,
     String? dropoffAddress,
     double deliveryFee = 0,
-  }) =>
-      _store.purchaseMarketItem(
-        orderId: orderId,
-        selfPickup: mode == SupplierPurchaseMode.selfPickup,
-        dropoffAddress: dropoffAddress,
-        deliveryFee: deliveryFee,
-      );
+  }) => _store.purchaseMarketItem(
+    orderId: orderId,
+    selfPickup: mode == SupplierPurchaseMode.selfPickup,
+    dropoffAddress: dropoffAddress,
+    deliveryFee: deliveryFee,
+  );
 
   // ── Company: receive at facility ──────────────────────────────────────────
 
@@ -157,37 +154,34 @@ class MarketplaceViewModel extends ChangeNotifier {
     required String reserverName,
     required String reserverId,
     required DateTime pickupDate,
-  }) =>
-      _store.reserveMarketItem(
-        orderId: orderId,
-        reserverName: reserverName,
-        reserverId: reserverId,
-        pickupDate: pickupDate,
-      );
+  }) => _store.reserveMarketItem(
+    orderId: orderId,
+    reserverName: reserverName,
+    reserverId: reserverId,
+    pickupDate: pickupDate,
+  );
 
   /// Seller accepts or rejects a reservation.
   String? respondToReservation({
     required String orderId,
     required String sellerName,
     required bool accept,
-  }) =>
-      _store.respondToReservation(
-        orderId: orderId,
-        sellerName: sellerName,
-        accept: accept,
-      );
+  }) => _store.respondToReservation(
+    orderId: orderId,
+    sellerName: sellerName,
+    accept: accept,
+  );
 
   /// Cancel a reservation (buyer or seller).
   String? cancelReservation({
     required String orderId,
     required String cancellerName,
     required bool isBuyer,
-  }) =>
-      _store.cancelReservation(
-        orderId: orderId,
-        cancellerName: cancellerName,
-        isBuyer: isBuyer,
-      );
+  }) => _store.cancelReservation(
+    orderId: orderId,
+    cancellerName: cancellerName,
+    isBuyer: isBuyer,
+  );
 
   /// Pending reservation requests for items listed by [sellerName].
   List<Order> pendingReservationsForSeller(String sellerName) =>
@@ -229,18 +223,17 @@ class MarketplaceViewModel extends ChangeNotifier {
     required double price,
     double? minQuantityKg,
     String? editNote,
-  }) =>
-      _store.updateCollectionJob(
-        jobId: jobId,
-        companyName: companyName,
-        wasteTypes: wasteTypes,
-        collectionArea: collectionArea,
-        jobDescription: jobDescription,
-        paymentModel: paymentModel,
-        price: price,
-        minQuantityKg: minQuantityKg,
-        editNote: editNote,
-      );
+  }) => _store.updateCollectionJob(
+    jobId: jobId,
+    companyName: companyName,
+    wasteTypes: wasteTypes,
+    collectionArea: collectionArea,
+    jobDescription: jobDescription,
+    paymentModel: paymentModel,
+    price: price,
+    minQuantityKg: minQuantityKg,
+    editNote: editNote,
+  );
 
   /// Delete a collection job (owner only). Returns true on success.
   bool deleteCollectionJob(String jobId, String companyName) =>

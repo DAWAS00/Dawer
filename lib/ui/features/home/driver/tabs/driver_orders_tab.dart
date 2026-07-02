@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/constants/app_colors.dart';
@@ -38,27 +38,34 @@ void _showCompleteDialog(
     context: context,
     builder: (ctx) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Text(context.l10n.orderDeliveryConfirmTitle,
-          textAlign: TextAlign.right,
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+      title: Text(
+        context.l10n.orderDeliveryConfirmTitle,
+        textAlign: TextAlign.right,
+        style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(context.l10n.orderDeliveryConfirmMsg,
-              textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+          Text(
+            context.l10n.orderDeliveryConfirmMsg,
+            textAlign: TextAlign.right,
+            style: GoogleFonts.cairo(),
+          ),
           if (sale.paymentModel == PaymentModel.perKg) ...[
             const SizedBox(height: 16),
             TextField(
               controller: weightController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               textAlign: TextAlign.right,
               decoration: InputDecoration(
                 labelText: context.l10n.orderActualWeight,
                 labelStyle: GoogleFonts.cairo(),
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ],
@@ -73,14 +80,17 @@ void _showCompleteDialog(
           onPressed: () {
             Navigator.pop(ctx);
             final weightText = weightController.text.trim();
-            final weight =
-                weightText.isEmpty ? null : double.tryParse(weightText);
+            final weight = weightText.isEmpty
+                ? null
+                : double.tryParse(weightText);
             final error = onComplete(sale.id, actualWeightKg: weight);
             if (error != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(error,
-                      style: GoogleFonts.cairo(color: Colors.white)),
+                  content: Text(
+                    error,
+                    style: GoogleFonts.cairo(color: Colors.white),
+                  ),
                   backgroundColor: const Color(0xFF991B1B),
                   behavior: SnackBarBehavior.floating,
                 ),
@@ -92,10 +102,13 @@ void _showCompleteDialog(
             foregroundColor: Colors.white,
             elevation: 0,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
-          child: Text(context.l10n.confirm,
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+          child: Text(
+            context.l10n.confirm,
+            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     ),
@@ -180,7 +193,11 @@ class _DriverOrdersTabState extends State<DriverOrdersTab>
             ),
           ),
           padding: EdgeInsets.fromLTRB(
-              20, MediaQuery.of(context).padding.top + 20, 20, 0),
+            20,
+            MediaQuery.of(context).padding.top + 20,
+            20,
+            0,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -189,7 +206,9 @@ class _DriverOrdersTabState extends State<DriverOrdersTab>
                   // Stats bubble
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
@@ -197,8 +216,11 @@ class _DriverOrdersTabState extends State<DriverOrdersTab>
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.receipt_long_rounded,
-                            size: 13, color: Colors.white70),
+                        const Icon(
+                          Icons.receipt_long_rounded,
+                          size: 13,
+                          color: Colors.white70,
+                        ),
                         const SizedBox(width: 5),
                         Text(
                           '${all.length}',
@@ -248,7 +270,9 @@ class _DriverOrdersTabState extends State<DriverOrdersTab>
                   ),
                 ],
                 labelStyle: GoogleFonts.cairo(fontWeight: FontWeight.w700),
-                unselectedLabelStyle: GoogleFonts.cairo(fontWeight: FontWeight.w500),
+                unselectedLabelStyle: GoogleFonts.cairo(
+                  fontWeight: FontWeight.w500,
+                ),
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.white60,
                 indicatorColor: Colors.white,
@@ -269,8 +293,9 @@ class _DriverOrdersTabState extends State<DriverOrdersTab>
               children: [
                 _OrderListView(
                   orders: all,
-                  collectionSaleOrders:
-                      loading ? const [] : widget.collectionSaleOrders,
+                  collectionSaleOrders: loading
+                      ? const []
+                      : widget.collectionSaleOrders,
                   tab: this,
                 ),
                 _OrderListView(
@@ -278,8 +303,8 @@ class _DriverOrdersTabState extends State<DriverOrdersTab>
                   collectionSaleOrders: loading
                       ? const []
                       : widget.collectionSaleOrders
-                          .where((o) => _activeStatuses.contains(o.status))
-                          .toList(),
+                            .where((o) => _activeStatuses.contains(o.status))
+                            .toList(),
                   tab: this,
                 ),
                 _OrderListView(
@@ -373,22 +398,30 @@ class _OrderListView extends StatelessWidget {
                     sale: collectionSaleOrders[i],
                     onCancel:
                         collectionSaleOrders[i].status == OrderStatus.pending &&
-                                tab.widget.onCancelSale != null
-                            ? () =>
-                                tab.widget.onCancelSale!(collectionSaleOrders[i].id)
-                            : null,
+                            tab.widget.onCancelSale != null
+                        ? () => tab.widget.onCancelSale!(
+                            collectionSaleOrders[i].id,
+                          )
+                        : null,
                     onStartTransit:
                         collectionSaleOrders[i].status == OrderStatus.pending &&
-                                tab.widget.onStartTransit != null
-                            ? () => _handleStartTransit(ctx, collectionSaleOrders[i],
-                                tab.widget.onStartTransit!)
-                            : null,
+                            tab.widget.onStartTransit != null
+                        ? () => _handleStartTransit(
+                            ctx,
+                            collectionSaleOrders[i],
+                            tab.widget.onStartTransit!,
+                          )
+                        : null,
                     onComplete:
-                        collectionSaleOrders[i].status == OrderStatus.inTransit &&
-                                tab.widget.onComplete != null
-                            ? () => _showCompleteDialog(ctx, collectionSaleOrders[i],
-                                tab.widget.onComplete!)
-                            : null,
+                        collectionSaleOrders[i].status ==
+                                OrderStatus.inTransit &&
+                            tab.widget.onComplete != null
+                        ? () => _showCompleteDialog(
+                            ctx,
+                            collectionSaleOrders[i],
+                            tab.widget.onComplete!,
+                          )
+                        : null,
                   ),
                 ),
                 childCount: collectionSaleOrders.length,
@@ -449,8 +482,7 @@ class _SectionHeader extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
@@ -502,23 +534,27 @@ class _DriverOrderCard extends StatelessWidget {
   bool get _isActive => _activeStatuses.contains(order.status);
 
   void _openDetails(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => OrderDetailsView(
-        order: order,
-        hideStatus: true,
-        isDriverView: true,
-        onCompleteOrder: onCompleteOrder,
-        onMarkArrivedAtPickup: onMarkArrivedAtPickup,
-        onMarkArrivedAtDropoff: onMarkArrivedAtDropoff,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => OrderDetailsView(
+          order: order,
+          hideStatus: true,
+          isDriverView: true,
+          onCompleteOrder: onCompleteOrder,
+          onMarkArrivedAtPickup: onMarkArrivedAtPickup,
+          onMarkArrivedAtDropoff: onMarkArrivedAtDropoff,
+        ),
       ),
-    ));
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return OrderCard(
       order: order,
-      mode: _isActive ? OrderCardMode.driverActive : OrderCardMode.driverHistory,
+      mode: _isActive
+          ? OrderCardMode.driverActive
+          : OrderCardMode.driverHistory,
       onAction: _isActive ? () => _openDetails(context) : null,
     );
   }

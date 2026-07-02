@@ -10,10 +10,10 @@ enum SupplierType { individual, storeBusiness }
 extension UserRoleDbMapping on UserRole {
   /// Exact label used by the `user_role` Postgres enum.
   String get dbValue => switch (this) {
-        UserRole.driver => 'driver',
-        UserRole.supplier => 'supplier',
-        UserRole.recyclingCo => 'recyclingCo',
-      };
+    UserRole.driver => 'driver',
+    UserRole.supplier => 'supplier',
+    UserRole.recyclingCo => 'recyclingCo',
+  };
 
   /// Parse a value coming back from Postgres. Throws [ArgumentError] on an
   /// unknown label so a drifted schema fails loudly instead of silently.
@@ -32,9 +32,9 @@ extension UserRoleDbMapping on UserRole {
 
 extension SupplierTypeDbMapping on SupplierType {
   String get dbValue => switch (this) {
-        SupplierType.individual => 'individual',
-        SupplierType.storeBusiness => 'storeBusiness',
-      };
+    SupplierType.individual => 'individual',
+    SupplierType.storeBusiness => 'storeBusiness',
+  };
 
   static SupplierType fromDb(String value) {
     for (final t in SupplierType.values) {

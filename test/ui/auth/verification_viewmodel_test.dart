@@ -18,10 +18,12 @@ class _FakeAuthRepository implements IAuthRepository {
       throw UnimplementedError();
 
   @override
-  Future<AppResult<void>> requestOtp(String phone) async => nextRequestOtpResult;
+  Future<AppResult<void>> requestOtp(String phone) async =>
+      nextRequestOtpResult;
 
   @override
-  Future<AppResult<AuthSession>> verifyOtp(String phone, String otp) async => nextVerifyResult;
+  Future<AppResult<AuthSession>> verifyOtp(String phone, String otp) async =>
+      nextVerifyResult;
 
   @override
   Future<void> signOut() async {}
@@ -51,7 +53,10 @@ void main() {
 
     test('successful verification sets verified to true', () async {
       final repo = _FakeAuthRepository();
-      final vm = VerificationViewModel(authRepository: repo, phoneNumber: '0790000000');
+      final vm = VerificationViewModel(
+        authRepository: repo,
+        phoneNumber: '0790000000',
+      );
 
       vm.setOtp('123456');
       await vm.verify();
@@ -63,8 +68,13 @@ void main() {
 
     test('phoneNotRegistered sets needsSignup flag', () async {
       final repo = _FakeAuthRepository()
-        ..nextVerifyResult = const Failure(NotFoundFailure(code: AuthErrorCodes.phoneNotRegistered, message: ''));
-      final vm = VerificationViewModel(authRepository: repo, phoneNumber: '0790000000');
+        ..nextVerifyResult = const Failure(
+          NotFoundFailure(code: AuthErrorCodes.phoneNotRegistered, message: ''),
+        );
+      final vm = VerificationViewModel(
+        authRepository: repo,
+        phoneNumber: '0790000000',
+      );
 
       vm.setOtp('123456');
       await vm.verify();
@@ -76,7 +86,10 @@ void main() {
 
     test('resend OTP resets error and sends request', () async {
       final repo = _FakeAuthRepository();
-      final vm = VerificationViewModel(authRepository: repo, phoneNumber: '0790000000');
+      final vm = VerificationViewModel(
+        authRepository: repo,
+        phoneNumber: '0790000000',
+      );
 
       await vm.resendOtp();
 

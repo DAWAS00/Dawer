@@ -88,7 +88,10 @@ class _CategorySection extends StatelessWidget {
             children: [
               if (items.isNotEmpty)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF06402B),
                     borderRadius: BorderRadius.circular(12),

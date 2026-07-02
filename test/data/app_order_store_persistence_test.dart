@@ -20,7 +20,10 @@ void main() {
     // Allow ctor fire-and-forget writes to drain.
     await Future<void>.delayed(const Duration(milliseconds: 10));
 
-    expect(sut.driverFeedFor().isNotEmpty || sut.companyIncoming.isNotEmpty, isTrue);
+    expect(
+      sut.driverFeedFor().isNotEmpty || sut.companyIncoming.isNotEmpty,
+      isTrue,
+    );
     expect(store.isFirstLaunch, isFalse);
     expect(store.readOrders().isNotEmpty, isTrue);
   });
@@ -42,9 +45,13 @@ void main() {
     await Future<void>.delayed(const Duration(milliseconds: 10));
 
     expect(
-      sut2.supplierOrdersFor('متجر دوّار').any((o) =>
-          o.type == OrderType.pickup &&
-          o.wasteTypes.contains(WasteType.plastic)),
+      sut2
+          .supplierOrdersFor('متجر دوّار')
+          .any(
+            (o) =>
+                o.type == OrderType.pickup &&
+                o.wasteTypes.contains(WasteType.plastic),
+          ),
       isTrue,
     );
   });

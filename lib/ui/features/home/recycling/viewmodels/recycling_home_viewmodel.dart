@@ -99,13 +99,14 @@ class RecyclingHomeViewModel extends ChangeNotifier {
   int get totalShipments => _company.totalOrders;
 
   double get totalWeightProcessed =>
-      incoming.fold<double>(0, (sum, o) => sum + (o.weightKg ?? 0)) +
-      12400;
+      incoming.fold<double>(0, (sum, o) => sum + (o.weightKg ?? 0)) + 12400;
 
   int get activeJobs => jobs
-      .where((j) =>
-          j.status == OrderStatus.pending ||
-          j.status == OrderStatus.inTransit)
+      .where(
+        (j) =>
+            j.status == OrderStatus.pending ||
+            j.status == OrderStatus.inTransit,
+      )
       .length;
 
   int get driversInProgress =>
@@ -137,21 +138,20 @@ class RecyclingHomeViewModel extends ChangeNotifier {
     double? itemPrice,
     double? pickupLat,
     double? pickupLng,
-  }) =>
-      _store.createCollectionJob(
-        wasteTypes: wasteTypes,
-        pickupAddress: pickupAddress,
-        companyName: companyName,
-        notes: notes,
-        images: images,
-        wasteForm: wasteForm,
-        weightCategory: weightCategory,
-        reward: reward,
-        itemPrice: itemPrice,
-        pickupLat: pickupLat,
-        pickupLng: pickupLng,
-        expiresAt: DateTime.now().add(const Duration(days: 30)),
-      );
+  }) => _store.createCollectionJob(
+    wasteTypes: wasteTypes,
+    pickupAddress: pickupAddress,
+    companyName: companyName,
+    notes: notes,
+    images: images,
+    wasteForm: wasteForm,
+    weightCategory: weightCategory,
+    reward: reward,
+    itemPrice: itemPrice,
+    pickupLat: pickupLat,
+    pickupLng: pickupLng,
+    expiresAt: DateTime.now().add(const Duration(days: 30)),
+  );
 
   /// Post a paid collection job to the marketplace.
   Order postCollectionJob({
@@ -161,17 +161,16 @@ class RecyclingHomeViewModel extends ChangeNotifier {
     required PaymentModel paymentModel,
     required double price,
     double? minQuantityKg,
-  }) =>
-      _store.createCollectionJob(
-        wasteTypes: wasteTypes,
-        pickupAddress: collectionArea,
-        companyName: companyName,
-        jobDescription: jobDescription,
-        paymentModel: paymentModel,
-        pricePerKg: paymentModel == PaymentModel.perKg ? price : null,
-        itemPrice: paymentModel == PaymentModel.flatFee ? price : null,
-        minQuantityKg: minQuantityKg,
-      );
+  }) => _store.createCollectionJob(
+    wasteTypes: wasteTypes,
+    pickupAddress: collectionArea,
+    companyName: companyName,
+    jobDescription: jobDescription,
+    paymentModel: paymentModel,
+    pricePerKg: paymentModel == PaymentModel.perKg ? price : null,
+    itemPrice: paymentModel == PaymentModel.flatFee ? price : null,
+    minQuantityKg: minQuantityKg,
+  );
 
   // ── Profile ───────────────────────────────────────────────────────────────
 

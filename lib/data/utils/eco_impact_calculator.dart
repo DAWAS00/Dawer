@@ -16,7 +16,10 @@ class EcoImpactCalculator {
   /// Estimates environmental savings based on waste type and weight
   /// category (used before the actual weight is known, e.g. in the
   /// pickup-request wizard).
-  static EcoImpactResult calculate(List<WasteType> types, WeightCategory? weight) {
+  static EcoImpactResult calculate(
+    List<WasteType> types,
+    WeightCategory? weight,
+  ) {
     final approxWeight = switch (weight) {
       WeightCategory.light => 2.5,
       WeightCategory.medium => 12.5,
@@ -30,9 +33,16 @@ class EcoImpactCalculator {
   /// Estimates environmental savings from an actual measured weight (kg),
   /// distributed evenly across [types]. Data based on general recycling
   /// industry averages.
-  static EcoImpactResult calculateForWeight(List<WasteType> types, double totalWeightKg) {
+  static EcoImpactResult calculateForWeight(
+    List<WasteType> types,
+    double totalWeightKg,
+  ) {
     if (types.isEmpty || totalWeightKg <= 0) {
-      return const EcoImpactResult(co2SavedKg: 0, waterSavedLiters: 0, energySavedKwh: 0);
+      return const EcoImpactResult(
+        co2SavedKg: 0,
+        waterSavedLiters: 0,
+        energySavedKwh: 0,
+      );
     }
 
     double totalCo2 = 0;

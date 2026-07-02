@@ -7,7 +7,7 @@ import '../../../domain/repositories/i_reservation_repository.dart';
 
 class ReservationViewModel extends ChangeNotifier {
   ReservationViewModel({required IReservationRepository repository})
-      : _repository = repository;
+    : _repository = repository;
 
   final IReservationRepository _repository;
 
@@ -37,12 +37,17 @@ class ReservationViewModel extends ChangeNotifier {
 
   /// Ticks every second so countdowns in the UI stay live without a manual refresh.
   void startCountdownTicker() {
-    _tickTimer ??= Timer.periodic(const Duration(seconds: 1), (_) => notifyListeners());
+    _tickTimer ??= Timer.periodic(
+      const Duration(seconds: 1),
+      (_) => notifyListeners(),
+    );
   }
 
   static String normalizePhone(String raw) {
     final clean = raw.trim().replaceAll(RegExp(r'[\s\-]'), '');
-    final local = clean.length == 9 && clean.startsWith('7') ? '0$clean' : clean;
+    final local = clean.length == 9 && clean.startsWith('7')
+        ? '0$clean'
+        : clean;
     if (local.length == 10 && local.startsWith('0')) {
       return '+962${local.substring(1)}';
     }

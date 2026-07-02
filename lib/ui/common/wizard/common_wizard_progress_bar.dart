@@ -29,8 +29,8 @@ class CommonWizardProgressBar extends StatelessWidget {
                   color: isDone
                       ? const Color(0xFF059669)
                       : isActive
-                          ? const Color(0xFF06402B)
-                          : const Color(0xFFE5E7EB),
+                      ? const Color(0xFF06402B)
+                      : const Color(0xFFE5E7EB),
                 ),
               ),
             ),

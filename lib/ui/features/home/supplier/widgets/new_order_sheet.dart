@@ -23,7 +23,8 @@ class NewOrderSheet extends StatefulWidget {
     double? itemPrice,
     double? pickupLat,
     double? pickupLng,
-  }) onSubmit;
+  })
+  onSubmit;
 
   const NewOrderSheet({
     super.key,
@@ -153,7 +154,9 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
           content: Text('يرجى تحديد موقع الاستلام', style: GoogleFonts.cairo()),
           backgroundColor: const Color(0xFFB91C1C),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
       return;
@@ -161,10 +164,15 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
     if (_isGeocoding) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('جارٍ تحديد العنوان، يرجى الانتظار...', style: GoogleFonts.cairo()),
+          content: Text(
+            'جارٍ تحديد العنوان، يرجى الانتظار...',
+            style: GoogleFonts.cairo(),
+          ),
           backgroundColor: const Color(0xFFC8860A),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
       return;
@@ -189,7 +197,9 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
   Widget build(BuildContext context) {
     final dt = context.dt;
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
         child: Column(
@@ -217,7 +227,11 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                       color: dt.surfaceVariant,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(Icons.close_rounded, size: 20, color: dt.onSurfaceMuted),
+                    child: Icon(
+                      Icons.close_rounded,
+                      size: 20,
+                      color: dt.onSurfaceMuted,
+                    ),
                   ),
                 ),
                 const Spacer(),
@@ -226,11 +240,18 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                   children: [
                     Text(
                       context.l10n.newOrderTitle,
-                      style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.bold, color: dt.onSurface),
+                      style: GoogleFonts.cairo(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: dt.onSurface,
+                      ),
                     ),
                     Text(
                       context.l10n.newOrderSubtitle,
-                      style: GoogleFonts.cairo(fontSize: 12, color: dt.onSurfaceMuted),
+                      style: GoogleFonts.cairo(
+                        fontSize: 12,
+                        color: dt.onSurfaceMuted,
+                      ),
                     ),
                   ],
                 ),
@@ -254,9 +275,14 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                   }),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 180),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFF06402B) : dt.surfaceVariant,
+                      color: isSelected
+                          ? const Color(0xFF06402B)
+                          : dt.surfaceVariant,
                       borderRadius: BorderRadius.circular(30),
                       border: isSelected ? null : Border.all(color: dt.border),
                     ),
@@ -268,11 +294,17 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                           style: GoogleFonts.cairo(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: isSelected ? Colors.white : dt.onSurfaceVariant,
+                            color: isSelected
+                                ? Colors.white
+                                : dt.onSurfaceVariant,
                           ),
                         ),
                         const SizedBox(width: 6),
-                        Icon(icon, size: 15, color: isSelected ? Colors.white : dt.onSurfaceMuted),
+                        Icon(
+                          icon,
+                          size: 15,
+                          color: isSelected ? Colors.white : dt.onSurfaceMuted,
+                        ),
                       ],
                     ),
                   ),
@@ -295,23 +327,37 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                     }),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 180),
-                      margin: EdgeInsets.only(left: form != WasteForm.mixed ? 8 : 0),
+                      margin: EdgeInsets.only(
+                        left: form != WasteForm.mixed ? 8 : 0,
+                      ),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF06402B) : dt.surfaceVariant,
+                        color: isSelected
+                            ? const Color(0xFF06402B)
+                            : dt.surfaceVariant,
                         borderRadius: BorderRadius.circular(14),
-                        border: isSelected ? null : Border.all(color: dt.border),
+                        border: isSelected
+                            ? null
+                            : Border.all(color: dt.border),
                       ),
                       child: Column(
                         children: [
-                          Icon(icon, size: 22, color: isSelected ? Colors.white : dt.onSurfaceMuted),
+                          Icon(
+                            icon,
+                            size: 22,
+                            color: isSelected
+                                ? Colors.white
+                                : dt.onSurfaceMuted,
+                          ),
                           const SizedBox(height: 6),
                           Text(
                             form.label,
                             style: GoogleFonts.cairo(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
-                              color: isSelected ? Colors.white : dt.onSurfaceVariant,
+                              color: isSelected
+                                  ? Colors.white
+                                  : dt.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -336,7 +382,10 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
                   margin: const EdgeInsets.only(bottom: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected ? const Color(0xFF06402B) : dt.surface,
                     borderRadius: BorderRadius.circular(14),
@@ -348,9 +397,17 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                   child: Row(
                     children: [
                       if (isSelected)
-                        const Icon(Icons.check_circle_rounded, color: Colors.white, size: 20)
+                        const Icon(
+                          Icons.check_circle_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        )
                       else
-                        Icon(Icons.radio_button_off_rounded, color: dt.border, size: 20),
+                        Icon(
+                          Icons.radio_button_off_rounded,
+                          color: dt.border,
+                          size: 20,
+                        ),
                       const Spacer(),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -367,7 +424,9 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                             cat.label,
                             style: GoogleFonts.cairo(
                               fontSize: 11,
-                              color: isSelected ? Colors.white70 : dt.onSurfaceMuted,
+                              color: isSelected
+                                  ? Colors.white70
+                                  : dt.onSurfaceMuted,
                             ),
                           ),
                         ],
@@ -377,10 +436,16 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: isSelected ? Colors.white.withValues(alpha: 0.15) : dt.surfaceVariant,
+                          color: isSelected
+                              ? Colors.white.withValues(alpha: 0.15)
+                              : dt.surfaceVariant,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Icon(entry.$2, size: 18, color: isSelected ? Colors.white : dt.onSurfaceMuted),
+                        child: Icon(
+                          entry.$2,
+                          size: 18,
+                          color: isSelected ? Colors.white : dt.onSurfaceMuted,
+                        ),
                       ),
                     ],
                   ),
@@ -412,14 +477,21 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFF06402B).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         context.l10n.newOrderSelectButton,
-                        style: GoogleFonts.cairo(fontSize: 12, fontWeight: FontWeight.bold, color: const Color(0xFF06402B)),
+                        style: GoogleFonts.cairo(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF06402B),
+                        ),
                       ),
                     ),
                     const Spacer(),
@@ -438,7 +510,10 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                           const SizedBox(width: 8),
                           Text(
                             'جارٍ تحديد العنوان...',
-                            style: GoogleFonts.cairo(fontSize: 12, color: dt.onSurfaceMuted),
+                            style: GoogleFonts.cairo(
+                              fontSize: 12,
+                              color: dt.onSurfaceMuted,
+                            ),
                           ),
                         ],
                       )
@@ -462,7 +537,10 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                             ),
                             Text(
                               context.l10n.newOrderTapToSelectLocation,
-                              style: GoogleFonts.cairo(fontSize: 11, color: dt.onSurfaceMuted),
+                              style: GoogleFonts.cairo(
+                                fontSize: 11,
+                                color: dt.onSurfaceMuted,
+                              ),
                             ),
                           ],
                         ),
@@ -516,18 +594,31 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                       margin: EdgeInsets.only(
                         left: target == PickupTarget.riderBuy ? 8 : 0,
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 12,
+                      ),
                       decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF06402B) : dt.surface,
+                        color: isSelected
+                            ? const Color(0xFF06402B)
+                            : dt.surface,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: isSelected ? const Color(0xFF06402B) : dt.border,
+                          color: isSelected
+                              ? const Color(0xFF06402B)
+                              : dt.border,
                           width: isSelected ? 2 : 1,
                         ),
                       ),
                       child: Column(
                         children: [
-                          Icon(icon, size: 28, color: isSelected ? Colors.white : dt.onSurfaceMuted),
+                          Icon(
+                            icon,
+                            size: 28,
+                            color: isSelected
+                                ? Colors.white
+                                : dt.onSurfaceMuted,
+                          ),
                           const SizedBox(height: 8),
                           Text(
                             target.label,
@@ -535,13 +626,19 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                             style: GoogleFonts.cairo(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: isSelected ? Colors.white : dt.onSurfaceVariant,
+                              color: isSelected
+                                  ? Colors.white
+                                  : dt.onSurfaceVariant,
                             ),
                           ),
                           if (isSelected)
                             Padding(
                               padding: const EdgeInsets.only(top: 6),
-                              child: Icon(Icons.check_circle_rounded, color: Colors.white.withValues(alpha: 0.8), size: 18),
+                              child: Icon(
+                                Icons.check_circle_rounded,
+                                color: Colors.white.withValues(alpha: 0.8),
+                                size: 18,
+                              ),
                             ),
                         ],
                       ),
@@ -569,22 +666,46 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
               ),
               child: TextField(
                 controller: _priceCtrl,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 textDirection: TextDirection.ltr,
                 textAlign: TextAlign.left,
-                style: GoogleFonts.dmSans(fontSize: 16, fontWeight: FontWeight.bold, color: dt.onSurface),
+                style: GoogleFonts.dmSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: dt.onSurface,
+                ),
                 decoration: InputDecoration(
                   hintText: '0.00',
-                  hintStyle: GoogleFonts.dmSans(fontSize: 16, color: dt.onSurfaceMuted.withValues(alpha: 0.6)),
+                  hintStyle: GoogleFonts.dmSans(
+                    fontSize: 16,
+                    color: dt.onSurfaceMuted.withValues(alpha: 0.6),
+                  ),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 14,
+                  ),
                   suffixIcon: Padding(
                     padding: const EdgeInsets.only(left: 14),
-                    child: Text(context.l10n.orderCurrencyJD, style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: dt.onSurfaceMuted)),
+                    child: Text(
+                      context.l10n.orderCurrencyJD,
+                      style: GoogleFonts.cairo(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: dt.onSurfaceMuted,
+                      ),
+                    ),
                   ),
-                  suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                  suffixIconConstraints: const BoxConstraints(
+                    minWidth: 0,
+                    minHeight: 0,
+                  ),
                   prefixIcon: Icon(
-                    _pickupTarget == PickupTarget.riderBuy ? Icons.sell_rounded : Icons.storefront_rounded,
+                    _pickupTarget == PickupTarget.riderBuy
+                        ? Icons.sell_rounded
+                        : Icons.storefront_rounded,
                     color: dt.onSurfaceMuted,
                     size: 20,
                   ),
@@ -608,7 +729,10 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                 style: GoogleFonts.cairo(fontSize: 14, color: dt.onSurface),
                 decoration: InputDecoration(
                   hintText: context.l10n.newOrderNotesHint,
-                  hintStyle: GoogleFonts.cairo(fontSize: 13, color: dt.onSurfaceMuted.withValues(alpha: 0.7)),
+                  hintStyle: GoogleFonts.cairo(
+                    fontSize: 13,
+                    color: dt.onSurfaceMuted.withValues(alpha: 0.7),
+                  ),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.all(14),
                 ),
@@ -629,7 +753,11 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                 children: [
                   Text(
                     '${_deliveryFee.toStringAsFixed(1)} ${context.l10n.orderCurrencyJD}',
-                    style: GoogleFonts.dmSans(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFFC8860A)),
+                    style: GoogleFonts.dmSans(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFFC8860A),
+                    ),
                   ),
                   const Spacer(),
                   Column(
@@ -637,16 +765,27 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                     children: [
                       Text(
                         context.l10n.newOrderDeliveryFeeLabel,
-                        style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF92400E)),
+                        style: GoogleFonts.cairo(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF92400E),
+                        ),
                       ),
                       Text(
                         context.l10n.newOrderDeliveryFeeSubtitle,
-                        style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFFB45309)),
+                        style: GoogleFonts.cairo(
+                          fontSize: 11,
+                          color: const Color(0xFFB45309),
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(width: 12),
-                  const Icon(Icons.local_shipping_rounded, color: Color(0xFFC8860A), size: 22),
+                  const Icon(
+                    Icons.local_shipping_rounded,
+                    color: Color(0xFFC8860A),
+                    size: 22,
+                  ),
                 ],
               ),
             ),
@@ -660,8 +799,12 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                 onPressed: _selected.isNotEmpty ? _submit : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF06402B),
-                  disabledBackgroundColor: const Color(0xFF06402B).withValues(alpha: 0.4),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  disabledBackgroundColor: const Color(
+                    0xFF06402B,
+                  ).withValues(alpha: 0.4),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   elevation: 0,
                 ),
                 child: Row(
@@ -669,10 +812,18 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                   children: [
                     Text(
                       context.l10n.newOrderSubmitButton,
-                      style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: GoogleFonts.cairo(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(width: 8),
-                    const Icon(Icons.send_rounded, color: Colors.white, size: 20),
+                    const Icon(
+                      Icons.send_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ],
                 ),
               ),
@@ -686,7 +837,11 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
   Widget _buildSectionLabel(String text, AppTokens dt) {
     return Text(
       text,
-      style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: dt.onSurfaceVariant),
+      style: GoogleFonts.cairo(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: dt.onSurfaceVariant,
+      ),
     );
   }
 }

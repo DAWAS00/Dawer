@@ -54,7 +54,10 @@ class _RecordingOrderRepository implements IOrderRepository {
   }
 
   @override
-  Future<AppResult<void>> markPurchased(String orderId, {required bool requiresRider}) async {
+  Future<AppResult<void>> markPurchased(
+    String orderId, {
+    required bool requiresRider,
+  }) async {
     calls.add('markPurchased');
     return const Success(null);
   }
@@ -66,7 +69,10 @@ class _RecordingOrderRepository implements IOrderRepository {
   }
 
   @override
-  Future<AppResult<void>> markArrivedAtPickup(String orderId, {OrderProof? pickupProof}) async {
+  Future<AppResult<void>> markArrivedAtPickup(
+    String orderId, {
+    OrderProof? pickupProof,
+  }) async {
     calls.add('markArrivedAtPickup');
     return const Success(null);
   }
@@ -78,7 +84,10 @@ class _RecordingOrderRepository implements IOrderRepository {
   }
 
   @override
-  Future<AppResult<void>> markCompleted(String orderId, {double? actualWeightKg}) async {
+  Future<AppResult<void>> markCompleted(
+    String orderId, {
+    double? actualWeightKg,
+  }) async {
     calls.add('markCompleted');
     return const Success(null);
   }
@@ -94,7 +103,11 @@ class _RecordingOrderRepository implements IOrderRepository {
   }
 
   @override
-  Future<AppResult<bool>> verifyArrival(String orderId, double lat, double lng) async {
+  Future<AppResult<bool>> verifyArrival(
+    String orderId,
+    double lat,
+    double lng,
+  ) async {
     calls.add('verifyArrival');
     return const Success(true);
   }
@@ -126,7 +139,7 @@ void main() {
         pickupAddress: 'Test Area',
         companyName: 'Test Co',
       );
-      
+
       store.updateCollectionJob(
         jobId: job.id,
         companyName: 'Test Co',
@@ -136,7 +149,7 @@ void main() {
         paymentModel: PaymentModel.flatFee,
         price: 10,
       );
-      
+
       await Future<void>.delayed(Duration.zero);
       expect(repo.calls, containsAll(['insertOrder', 'updateOrder']));
     });
@@ -147,9 +160,9 @@ void main() {
         pickupAddress: 'Test Area',
         companyName: 'Test Co',
       );
-      
+
       store.deleteCollectionJob(job.id, 'Test Co');
-      
+
       await Future<void>.delayed(Duration.zero);
       expect(repo.calls, containsAll(['insertOrder', 'deleteOrder']));
     });
@@ -161,7 +174,7 @@ void main() {
         collectionArea: 'Test Area',
         wasteTypes: [WasteType.plastic],
       );
-      
+
       await Future<void>.delayed(Duration.zero);
       expect(repo.calls, contains('insertOrder'));
     });
@@ -173,41 +186,44 @@ void main() {
         collectionArea: 'Test Area',
         wasteTypes: [WasteType.plastic],
       );
-      
+
       final saleId = store.collectionSalesFor('Test Supplier').first.id;
       store.markCollectionSaleInTransit(saleId);
-      
+
       await Future<void>.delayed(Duration.zero);
       expect(repo.calls, containsAll(['insertOrder', 'markInTransit']));
     });
 
     test('completeCollectionSale calls remote.markCompleted', () async {
-       store.createCollectionSale(
+      store.createCollectionSale(
         jobId: 'JOB-123',
         acceptorName: 'Test Supplier',
         collectionArea: 'Test Area',
         wasteTypes: [WasteType.plastic],
       );
-      
+
       final saleId = store.collectionSalesFor('Test Supplier').first.id;
       store.markCollectionSaleInTransit(saleId);
       store.completeCollectionSale(saleId, actualWeightKg: 10.5);
-      
+
       await Future<void>.delayed(Duration.zero);
-      expect(repo.calls, containsAll(['insertOrder', 'markInTransit', 'markCompleted']));
+      expect(
+        repo.calls,
+        containsAll(['insertOrder', 'markInTransit', 'markCompleted']),
+      );
     });
 
     test('cancelCollectionSale calls remote.markCancelled', () async {
-       store.createCollectionSale(
+      store.createCollectionSale(
         jobId: 'JOB-123',
         acceptorName: 'Test Supplier',
         collectionArea: 'Test Area',
         wasteTypes: [WasteType.plastic],
       );
-      
+
       final saleId = store.collectionSalesFor('Test Supplier').first.id;
       store.cancelCollectionSale(saleId);
-      
+
       await Future<void>.delayed(Duration.zero);
       expect(repo.calls, containsAll(['insertOrder', 'markCancelled']));
     });

@@ -48,9 +48,7 @@ class ChatBubble extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
           decoration: BoxDecoration(
-            color: isMine
-                ? AppColors.primaryGreen
-                : const Color(0xFFF1F5F9),
+            color: isMine ? AppColors.primaryGreen : const Color(0xFFF1F5F9),
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(18),
               topRight: const Radius.circular(18),
@@ -60,26 +58,26 @@ class ChatBubble extends StatelessWidget {
           ),
           child: switch (message.kind) {
             ChatMessageKind.image => _ImageBubbleBody(
-                message: message,
-                isMine: isMine,
-                isSending: isSending,
-                isFailed: isFailed,
-                onRetry: onRetry,
-              ),
+              message: message,
+              isMine: isMine,
+              isSending: isSending,
+              isFailed: isFailed,
+              onRetry: onRetry,
+            ),
             ChatMessageKind.location => _LocationBubbleBody(
-                message: message,
-                isMine: isMine,
-                isSending: isSending,
-                isFailed: isFailed,
-                onRetry: onRetry,
-              ),
+              message: message,
+              isMine: isMine,
+              isSending: isSending,
+              isFailed: isFailed,
+              onRetry: onRetry,
+            ),
             _ => _TextBubbleBody(
-                message: message,
-                isMine: isMine,
-                isSending: isSending,
-                isFailed: isFailed,
-                onRetry: onRetry,
-              ),
+              message: message,
+              isMine: isMine,
+              isSending: isSending,
+              isFailed: isFailed,
+              onRetry: onRetry,
+            ),
           },
         ),
       ),
@@ -241,8 +239,11 @@ class _LocationBubbleBody extends StatelessWidget {
     final lat = message.lat;
     final lng = message.lng;
     if (lat == null || lng == null) return;
-    final uri = Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$lng');
-    if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
+    final uri = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
+    );
+    if (await canLaunchUrl(uri))
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   @override
@@ -260,8 +261,11 @@ class _LocationBubbleBody extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.location_on_rounded,
-                  size: 18, color: isMine ? Colors.white70 : AppColors.primaryGreen),
+              Icon(
+                Icons.location_on_rounded,
+                size: 18,
+                color: isMine ? Colors.white70 : AppColors.primaryGreen,
+              ),
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
@@ -296,9 +300,11 @@ class _LocationBubbleBody extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.open_in_new_rounded,
-                      size: 12,
-                      color: isMine ? Colors.white : AppColors.primaryGreen),
+                  Icon(
+                    Icons.open_in_new_rounded,
+                    size: 12,
+                    color: isMine ? Colors.white : AppColors.primaryGreen,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     'افتح في الخريطة',
@@ -346,10 +352,7 @@ class _SystemMessage extends StatelessWidget {
           child: Text(
             content,
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
-              fontSize: 11,
-              color: AppColors.mutedText,
-            ),
+            style: GoogleFonts.cairo(fontSize: 11, color: AppColors.mutedText),
           ),
         ),
       ),
@@ -421,7 +424,11 @@ class _Timestamp extends StatelessWidget {
               ),
             ),
           const SizedBox(width: 4),
-          const Icon(Icons.error_outline_rounded, size: 13, color: Colors.redAccent),
+          const Icon(
+            Icons.error_outline_rounded,
+            size: 13,
+            color: Colors.redAccent,
+          ),
         ],
       );
     }
@@ -438,14 +445,14 @@ class _Timestamp extends StatelessWidget {
             isSending
                 ? Icons.access_time_rounded
                 : message.isRead
-                    ? Icons.done_all_rounded
-                    : Icons.done_rounded,
+                ? Icons.done_all_rounded
+                : Icons.done_rounded,
             size: 13,
             color: isSending
                 ? Colors.white.withValues(alpha: 0.4)
                 : message.isRead
-                    ? Colors.white70
-                    : Colors.white.withValues(alpha: 0.5),
+                ? Colors.white70
+                : Colors.white.withValues(alpha: 0.5),
           ),
           const SizedBox(width: 4),
         ],

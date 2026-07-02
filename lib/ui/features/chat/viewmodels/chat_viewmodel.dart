@@ -82,27 +82,37 @@ class ChatViewModel extends ChangeNotifier {
     _state = const Loading();
     notifyListeners();
 
-    _msgSub = _repo.watchMessages(orderId).listen(
-      (msgs) {
-        if (_disposed) return;
-        _realMessages = msgs;
-        // Reconcile: remove pending messages that have now appeared in the real list.
-        _pending.removeWhere((p) => msgs.any((r) =>
-          r.senderId == p.senderId &&
-          r.content == p.content &&
-          r.sentAt.difference(p.sentAt).abs() < const Duration(seconds: 15),
-        ));
-        _state = Loaded([..._realMessages, ..._pending]);
-        notifyListeners();
-        final hasUnread = msgs.any((m) => m.senderId != currentUserId && !m.isRead);
-        if (hasUnread) _repo.markRead(orderId, currentUserId);
-      },
-      onError: (_) {
-        if (_disposed) return;
-        _state = const Failed(UnknownFailure(message: 'تعذّر تحميل الرسائل'));
-        notifyListeners();
-      },
-    );
+    _msgSub = _repo
+        .watchMessages(orderId)
+        .listen(
+          (msgs) {
+            if (_disposed) return;
+            _realMessages = msgs;
+            // Reconcile: remove pending messages that have now appeared in the real list.
+            _pending.removeWhere(
+              (p) => msgs.any(
+                (r) =>
+                    r.senderId == p.senderId &&
+                    r.content == p.content &&
+                    r.sentAt.difference(p.sentAt).abs() <
+                        const Duration(seconds: 15),
+              ),
+            );
+            _state = Loaded([..._realMessages, ..._pending]);
+            notifyListeners();
+            final hasUnread = msgs.any(
+              (m) => m.senderId != currentUserId && !m.isRead,
+            );
+            if (hasUnread) _repo.markRead(orderId, currentUserId);
+          },
+          onError: (_) {
+            if (_disposed) return;
+            _state = const Failed(
+              UnknownFailure(message: 'تعذّر تحميل الرسائل'),
+            );
+            notifyListeners();
+          },
+        );
 
     _typingSub = _repo.watchTyping(orderId, currentUserId).listen((_) {
       if (_disposed) return;
@@ -180,7 +190,10 @@ class ChatViewModel extends ChangeNotifier {
     final picker = ImagePicker();
     final XFile? xfile;
     try {
-      xfile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+      xfile = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
     } catch (e) {
       return 'تعذّر فتح المعرض';
     }
@@ -217,12 +230,17 @@ class ChatViewModel extends ChangeNotifier {
       );
       String? label;
       try {
-        final marks = await placemarkFromCoordinates(pos.latitude, pos.longitude);
+        final marks = await placemarkFromCoordinates(
+          pos.latitude,
+          pos.longitude,
+        );
         if (marks.isNotEmpty) {
           final p = marks.first;
-          label = [p.name, p.street, p.locality]
-              .where((x) => x != null && x.isNotEmpty)
-              .join('، ');
+          label = [
+            p.name,
+            p.street,
+            p.locality,
+          ].where((x) => x != null && x.isNotEmpty).join('، ');
         }
       } catch (_) {}
 

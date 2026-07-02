@@ -15,7 +15,11 @@ class BackendErrorScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.cloud_off_rounded, size: 64, color: Colors.white54),
+              const Icon(
+                Icons.cloud_off_rounded,
+                size: 64,
+                color: Colors.white54,
+              ),
               const SizedBox(height: 24),
               Text(
                 'تعذّر الاتصال بالخادم',
@@ -40,10 +44,7 @@ class BackendErrorScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 Text(
                   detail,
-                  style: GoogleFonts.cairo(
-                    fontSize: 12,
-                    color: Colors.white38,
-                  ),
+                  style: GoogleFonts.cairo(fontSize: 12, color: Colors.white38),
                   textAlign: TextAlign.center,
                 ),
               ],

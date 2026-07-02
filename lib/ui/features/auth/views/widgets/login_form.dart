@@ -16,7 +16,8 @@ class LoginForm extends StatelessWidget {
     final l10n = context.l10n;
 
     // For supplier role: show credentials only once a sub-type is chosen.
-    final showCredentials = viewModel.selectedRole != UserRole.supplier ||
+    final showCredentials =
+        viewModel.selectedRole != UserRole.supplier ||
         viewModel.supplierType != null;
 
     return Column(
@@ -60,7 +61,9 @@ class LoginForm extends StatelessWidget {
                           // Jordan country-code badge (fixed, non-editable)
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 16),
+                              horizontal: 14,
+                              vertical: 16,
+                            ),
                             decoration: BoxDecoration(
                               color: const Color(0xFFE6E9E7),
                               borderRadius: BorderRadius.circular(12),
@@ -82,8 +85,9 @@ class LoginForm extends StatelessWidget {
                                 hintText: '7XXXXXXXX',
                                 hintStyle: GoogleFonts.dmSans(
                                   fontSize: 16,
-                                  color: const Color(0xFF6B7280)
-                                      .withValues(alpha: 0.5),
+                                  color: const Color(
+                                    0xFF6B7280,
+                                  ).withValues(alpha: 0.5),
                                 ),
                                 filled: true,
                                 fillColor: const Color(0xFFE6E9E7),
@@ -92,7 +96,9 @@ class LoginForm extends StatelessWidget {
                                   borderSide: BorderSide.none,
                                 ),
                                 contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 16),
+                                  horizontal: 16,
+                                  vertical: 16,
+                                ),
                                 counterText: '',
                               ),
                               keyboardType: TextInputType.phone,
@@ -154,4 +160,3 @@ class LoginForm extends StatelessWidget {
     );
   }
 }
-

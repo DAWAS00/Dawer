@@ -56,14 +56,16 @@ class _ReportCenterSectionState extends State<ReportCenterSection> {
           _submitting = null;
         });
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-              'تم إرسال طلب التقرير ✓',
-              style: GoogleFonts.cairo(),
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'تم إرسال طلب التقرير ✓',
+                style: GoogleFonts.cairo(),
+              ),
+              backgroundColor: AppColors.primaryGreen,
+              behavior: SnackBarBehavior.floating,
             ),
-            backgroundColor: AppColors.primaryGreen,
-            behavior: SnackBarBehavior.floating,
-          ));
+          );
         }
       },
       onFailure: (_) => setState(() => _submitting = null),
@@ -86,14 +88,16 @@ class _ReportCenterSectionState extends State<ReportCenterSection> {
             ),
           ),
         ),
-        ...ReportTemplate.values.map((t) => Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: ReportTemplateCard(
-                template: t,
-                isLoading: _submitting == t,
-                onRequest: () => _request(t),
-              ),
-            )),
+        ...ReportTemplate.values.map(
+          (t) => Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: ReportTemplateCard(
+              template: t,
+              isLoading: _submitting == t,
+              onRequest: () => _request(t),
+            ),
+          ),
+        ),
         if (_submitted.isNotEmpty) ...[
           const SizedBox(height: 8),
           Padding(
@@ -119,10 +123,10 @@ class _SubmittedRequestRow extends StatelessWidget {
   final ReportRequest request;
 
   Color get _statusColor => switch (request.status) {
-        ReportStatus.pending => const Color(0xFFD97706),
-        ReportStatus.processing => const Color(0xFF2563EB),
-        ReportStatus.ready => const Color(0xFF16A34A),
-      };
+    ReportStatus.pending => const Color(0xFFD97706),
+    ReportStatus.processing => const Color(0xFF2563EB),
+    ReportStatus.ready => const Color(0xFF16A34A),
+  };
 
   @override
   Widget build(BuildContext context) {

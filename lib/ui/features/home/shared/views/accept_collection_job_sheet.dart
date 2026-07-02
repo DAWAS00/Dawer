@@ -15,7 +15,8 @@ class AcceptCollectionJobSheet extends StatefulWidget {
   final void Function(
     CollectionDeliveryMethod deliveryMethod,
     CollectionTransactionType transactionType,
-  ) onConfirm;
+  )
+  onConfirm;
 
   const AcceptCollectionJobSheet({
     super.key,
@@ -26,10 +27,8 @@ class AcceptCollectionJobSheet extends StatefulWidget {
   static Future<void> show(
     BuildContext context, {
     required Order job,
-    required void Function(
-      CollectionDeliveryMethod,
-      CollectionTransactionType,
-    ) onConfirm,
+    required void Function(CollectionDeliveryMethod, CollectionTransactionType)
+    onConfirm,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -86,15 +85,15 @@ class _AcceptCollectionJobSheetState extends State<AcceptCollectionJobSheet> {
   }
 
   Widget _buildHandle() => Center(
-        child: Container(
-          width: 40,
-          height: 4,
-          decoration: BoxDecoration(
-            color: const Color(0xFFD1D5DB),
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ),
-      );
+    child: Container(
+      width: 40,
+      height: 4,
+      decoration: BoxDecoration(
+        color: const Color(0xFFD1D5DB),
+        borderRadius: BorderRadius.circular(4),
+      ),
+    ),
+  );
 
   Widget _buildHeader(BuildContext context) {
     final l10n = context.l10n;
@@ -124,70 +123,70 @@ class _AcceptCollectionJobSheetState extends State<AcceptCollectionJobSheet> {
   }
 
   Widget _buildSectionTitle(String title) => Align(
-        alignment: Alignment.centerRight,
-        child: Text(
-          title,
-          style: GoogleFonts.cairo(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF404943),
-          ),
-        ),
-      );
+    alignment: Alignment.centerRight,
+    child: Text(
+      title,
+      style: GoogleFonts.cairo(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: const Color(0xFF404943),
+      ),
+    ),
+  );
 
   Widget _buildDeliveryOptions() => Row(
-        children: [
-          Expanded(
-            child: _ChoiceCard(
-              icon: Icons.directions_car_rounded,
-              title: CollectionDeliveryMethod.selfDelivery.label,
-              subtitle: CollectionDeliveryMethod.selfDelivery.description,
-              selected: _delivery == CollectionDeliveryMethod.selfDelivery,
-              onTap: () => setState(
-                  () => _delivery = CollectionDeliveryMethod.selfDelivery),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: _ChoiceCard(
-              icon: Icons.local_shipping_rounded,
-              title: CollectionDeliveryMethod.assignRider.label,
-              subtitle: CollectionDeliveryMethod.assignRider.description,
-              selected: _delivery == CollectionDeliveryMethod.assignRider,
-              onTap: () => setState(
-                  () => _delivery = CollectionDeliveryMethod.assignRider),
-            ),
-          ),
-        ],
-      );
+    children: [
+      Expanded(
+        child: _ChoiceCard(
+          icon: Icons.directions_car_rounded,
+          title: CollectionDeliveryMethod.selfDelivery.label,
+          subtitle: CollectionDeliveryMethod.selfDelivery.description,
+          selected: _delivery == CollectionDeliveryMethod.selfDelivery,
+          onTap: () =>
+              setState(() => _delivery = CollectionDeliveryMethod.selfDelivery),
+        ),
+      ),
+      const SizedBox(width: 10),
+      Expanded(
+        child: _ChoiceCard(
+          icon: Icons.local_shipping_rounded,
+          title: CollectionDeliveryMethod.assignRider.label,
+          subtitle: CollectionDeliveryMethod.assignRider.description,
+          selected: _delivery == CollectionDeliveryMethod.assignRider,
+          onTap: () =>
+              setState(() => _delivery = CollectionDeliveryMethod.assignRider),
+        ),
+      ),
+    ],
+  );
 
   Widget _buildTransactionOptions() => Row(
-        children: [
-          Expanded(
-            child: _ChoiceCard(
-              icon: Icons.volunteer_activism_rounded,
-              title: CollectionTransactionType.donate.label,
-              subtitle: CollectionTransactionType.donate.description,
-              selected: _transaction == CollectionTransactionType.donate,
-              accentColor: const Color(0xFF1E5C35),
-              onTap: () => setState(
-                  () => _transaction = CollectionTransactionType.donate),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: _ChoiceCard(
-              icon: Icons.sell_rounded,
-              title: CollectionTransactionType.sell.label,
-              subtitle: CollectionTransactionType.sell.description,
-              selected: _transaction == CollectionTransactionType.sell,
-              accentColor: const Color(0xFFC8860A),
-              onTap: () => setState(
-                  () => _transaction = CollectionTransactionType.sell),
-            ),
-          ),
-        ],
-      );
+    children: [
+      Expanded(
+        child: _ChoiceCard(
+          icon: Icons.volunteer_activism_rounded,
+          title: CollectionTransactionType.donate.label,
+          subtitle: CollectionTransactionType.donate.description,
+          selected: _transaction == CollectionTransactionType.donate,
+          accentColor: const Color(0xFF1E5C35),
+          onTap: () =>
+              setState(() => _transaction = CollectionTransactionType.donate),
+        ),
+      ),
+      const SizedBox(width: 10),
+      Expanded(
+        child: _ChoiceCard(
+          icon: Icons.sell_rounded,
+          title: CollectionTransactionType.sell.label,
+          subtitle: CollectionTransactionType.sell.description,
+          selected: _transaction == CollectionTransactionType.sell,
+          accentColor: const Color(0xFFC8860A),
+          onTap: () =>
+              setState(() => _transaction = CollectionTransactionType.sell),
+        ),
+      ),
+    ],
+  );
 
   Widget _buildSummary(BuildContext context) {
     final l10n = context.l10n;
@@ -199,19 +198,25 @@ class _AcceptCollectionJobSheetState extends State<AcceptCollectionJobSheet> {
       decoration: BoxDecoration(
         color: const Color(0xFF14401F).withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(12),
-        border:
-            Border.all(color: const Color(0xFF14401F).withValues(alpha: 0.15)),
+        border: Border.all(
+          color: const Color(0xFF14401F).withValues(alpha: 0.15),
+        ),
       ),
       child: Row(
         children: [
-          const Icon(Icons.info_outline_rounded,
-              size: 16, color: Color(0xFF14401F)),
+          const Icon(
+            Icons.info_outline_rounded,
+            size: 16,
+            color: Color(0xFF14401F),
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               deliveryFeeNote,
               style: GoogleFonts.cairo(
-                  fontSize: 12, color: const Color(0xFF14401F)),
+                fontSize: 12,
+                color: const Color(0xFF14401F),
+              ),
             ),
           ),
           Text(
@@ -229,33 +234,31 @@ class _AcceptCollectionJobSheetState extends State<AcceptCollectionJobSheet> {
   }
 
   Widget _buildConfirmButton(BuildContext context) => SizedBox(
-        width: double.infinity,
-        height: 54,
-        child: ElevatedButton(
-          onPressed: _canConfirm
-              ? () {
-                  Navigator.pop(context);
-                  widget.onConfirm(_delivery!, _transaction!);
-                }
-              : null,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF06402B),
-            disabledBackgroundColor:
-                const Color(0xFF06402B).withValues(alpha: 0.3),
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16)),
-          ),
-          child: Text(
-            context.l10n.acceptJobConfirmButton,
-            style: GoogleFonts.cairo(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
+    width: double.infinity,
+    height: 54,
+    child: ElevatedButton(
+      onPressed: _canConfirm
+          ? () {
+              Navigator.pop(context);
+              widget.onConfirm(_delivery!, _transaction!);
+            }
+          : null,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF06402B),
+        disabledBackgroundColor: const Color(0xFF06402B).withValues(alpha: 0.3),
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+      child: Text(
+        context.l10n.acceptJobConfirmButton,
+        style: GoogleFonts.cairo(
+          fontSize: 15,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
         ),
-      );
+      ),
+    ),
+  );
 }
 
 class _ChoiceCard extends StatelessWidget {
@@ -299,11 +302,13 @@ class _ChoiceCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 if (selected)
-                  Icon(Icons.check_circle_rounded,
-                      size: 18, color: accentColor)
+                  Icon(Icons.check_circle_rounded, size: 18, color: accentColor)
                 else
-                  Icon(Icons.circle_outlined,
-                      size: 18, color: const Color(0xFFBBBFBD)),
+                  Icon(
+                    Icons.circle_outlined,
+                    size: 18,
+                    color: const Color(0xFFBBBFBD),
+                  ),
                 Icon(icon, size: 24, color: accentColor),
               ],
             ),

@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -89,7 +89,10 @@ class PhotoPickerCard extends StatelessWidget {
                 top: -6,
                 right: -6,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF06402B),
                     borderRadius: BorderRadius.circular(8),
@@ -104,8 +107,11 @@ class PhotoPickerCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.auto_awesome_rounded,
-                          size: 10, color: Color(0xFF4ADE80)),
+                      const Icon(
+                        Icons.auto_awesome_rounded,
+                        size: 10,
+                        color: Color(0xFF4ADE80),
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'AI SECURED',

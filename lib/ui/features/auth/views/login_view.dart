@@ -91,35 +91,45 @@ class _LoginScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         Image.asset(
-                          'assets/images/LoginScreenPhoto.png',
-                          height: 160,
-                          errorBuilder: (context, error, stackTrace) => const Icon(
-                            Icons.eco_rounded,
-                            size: 80,
-                            color: Color(0xFF06402B),
-                          ),
-                        ).animate().fadeIn(duration: 600.ms).scale(
+                              'assets/images/LoginScreenPhoto.png',
+                              height: 160,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(
+                                    Icons.eco_rounded,
+                                    size: 80,
+                                    color: Color(0xFF06402B),
+                                  ),
+                            )
+                            .animate()
+                            .fadeIn(duration: 600.ms)
+                            .scale(
                               begin: const Offset(0.9, 0.9),
                               curve: Curves.easeOutBack,
                             ),
                         const SizedBox(height: 24),
                         Text(
-                          context.l10n.appTitle,
-                          style: GoogleFonts.cairo(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w900,
-                            color: const Color(0xFF06402B),
-                            letterSpacing: -0.5,
-                          ),
-                        ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2, end: 0),
+                              context.l10n.appTitle,
+                              style: GoogleFonts.cairo(
+                                fontSize: 36,
+                                fontWeight: FontWeight.w900,
+                                color: const Color(0xFF06402B),
+                                letterSpacing: -0.5,
+                              ),
+                            )
+                            .animate()
+                            .fadeIn(delay: 200.ms)
+                            .slideY(begin: 0.2, end: 0),
                         Text(
-                          context.l10n.appTagline,
-                          style: GoogleFonts.cairo(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xFF446649),
-                          ),
-                        ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2, end: 0),
+                              context.l10n.appTagline,
+                              style: GoogleFonts.cairo(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF446649),
+                              ),
+                            )
+                            .animate()
+                            .fadeIn(delay: 400.ms)
+                            .slideY(begin: 0.2, end: 0),
                         const SizedBox(height: 16),
                         const _AboutDwaarButton()
                             .animate()
@@ -168,7 +178,9 @@ class _AboutDwaarButton extends StatelessWidget {
           foregroundColor: const Color(0xFF06402B),
           side: const BorderSide(color: Color(0xFF06402B), width: 1),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
         ),
       ),
     );
@@ -191,11 +203,9 @@ class _DynamicRegisterButton extends StatelessWidget {
     return Center(
       child: TextButton.icon(
         onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => destination,
-            ),
-          );
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => destination));
         },
         icon: Icon(icon),
         label: Text(
@@ -206,12 +216,15 @@ class _DynamicRegisterButton extends StatelessWidget {
           foregroundColor: const Color(0xFF06402B),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           backgroundColor: const Color(0xFF06402B).withValues(alpha: 0.05),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     );
   }
 }
+
 class _LangToggleButton extends StatelessWidget {
   const _LangToggleButton();
 
@@ -230,7 +243,10 @@ class _LangToggleButton extends StatelessWidget {
             child: GestureDetector(
               onTap: () => showLangPickerSheet(context),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),

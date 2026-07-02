@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../data/services/mock_ai_service.dart';
@@ -32,10 +32,7 @@ class OnboardingHeaderBanner extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            accentColor,
-            Color.lerp(accentColor, Colors.black, 0.14)!,
-          ],
+          colors: [accentColor, Color.lerp(accentColor, Colors.black, 0.14)!],
           begin: AlignmentDirectional.topStart,
           end: AlignmentDirectional.bottomEnd,
         ),
@@ -58,17 +55,23 @@ class OnboardingHeaderBanner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: GoogleFonts.cairo(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white)),
+                Text(
+                  title,
+                  style: GoogleFonts.cairo(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
                 const SizedBox(height: 3),
-                Text(subtitle,
-                    textAlign: TextAlign.start,
-                    style: GoogleFonts.cairo(
-                        fontSize: 12,
-                        color: Colors.white.withValues(alpha: 0.85))),
+                Text(
+                  subtitle,
+                  textAlign: TextAlign.start,
+                  style: GoogleFonts.cairo(
+                    fontSize: 12,
+                    color: Colors.white.withValues(alpha: 0.85),
+                  ),
+                ),
               ],
             ),
           ),
@@ -98,17 +101,19 @@ class OnboardingSectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconColor =
-        accentIcon ? const Color(0xFF7C3AED) : const Color(0xFF06402B);
+    final iconColor = accentIcon
+        ? const Color(0xFF7C3AED)
+        : const Color(0xFF06402B);
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF2F4F2),
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 4,
-              offset: const Offset(0, 2)),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       padding: const EdgeInsets.all(18),
@@ -131,15 +136,22 @@ class OnboardingSectionCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,
-                      style: GoogleFonts.cairo(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF002819))),
+                  Text(
+                    title,
+                    style: GoogleFonts.cairo(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF002819),
+                    ),
+                  ),
                   if (subtitle != null)
-                    Text(subtitle!,
-                        style: GoogleFonts.cairo(
-                            fontSize: 11, color: const Color(0xFF717973))),
+                    Text(
+                      subtitle!,
+                      style: GoogleFonts.cairo(
+                        fontSize: 11,
+                        color: const Color(0xFF717973),
+                      ),
+                    ),
                 ],
               ),
             ],
@@ -184,21 +196,25 @@ class OnboardingInputField extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(label,
-                style: GoogleFonts.cairo(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF404943))),
+            Text(
+              label,
+              style: GoogleFonts.cairo(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF404943),
+              ),
+            ),
             if (isRequired)
-              const Text(' *',
-                  style: TextStyle(color: Colors.red, fontSize: 13)),
+              const Text(
+                ' *',
+                style: TextStyle(color: Colors.red, fontSize: 13),
+              ),
           ],
         ),
         const SizedBox(height: 5),
         Container(
           decoration: BoxDecoration(
-            color:
-                error != null ? Colors.red.shade50 : const Color(0xFFE6E9E7),
+            color: error != null ? Colors.red.shade50 : const Color(0xFFE6E9E7),
             borderRadius: BorderRadius.circular(10),
             border: error != null
                 ? Border.all(color: Colors.red.shade300)
@@ -213,26 +229,34 @@ class OnboardingInputField extends StatelessWidget {
             textDirection: textDirection,
             onChanged: onChanged,
             style: GoogleFonts.cairo(
-                fontSize: 14, color: const Color(0xFF191C1B)),
+              fontSize: 14,
+              color: const Color(0xFF191C1B),
+            ),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: GoogleFonts.cairo(
-                  fontSize: 13,
-                  color: const Color(0xFF6B7280).withValues(alpha: 0.5)),
+                fontSize: 13,
+                color: const Color(0xFF6B7280).withValues(alpha: 0.5),
+              ),
               border: InputBorder.none,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 12,
+              ),
             ),
           ),
         ),
         if (error != null) ...[
           const SizedBox(height: 3),
-          Text(error!,
-              textAlign: TextAlign.start,
-              style: GoogleFonts.cairo(
-                  fontSize: 11,
-                  color: Colors.red.shade600,
-                  fontWeight: FontWeight.bold)),
+          Text(
+            error!,
+            textAlign: TextAlign.start,
+            style: GoogleFonts.cairo(
+              fontSize: 11,
+              color: Colors.red.shade600,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ],
     );
@@ -273,13 +297,15 @@ class _OnboardingPasswordFieldState extends State<OnboardingPasswordField> {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(widget.label,
-                style: GoogleFonts.cairo(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF404943))),
-            const Text(' *',
-                style: TextStyle(color: Colors.red, fontSize: 13)),
+            Text(
+              widget.label,
+              style: GoogleFonts.cairo(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF404943),
+              ),
+            ),
+            const Text(' *', style: TextStyle(color: Colors.red, fontSize: 13)),
           ],
         ),
         const SizedBox(height: 5),
@@ -303,15 +329,17 @@ class _OnboardingPasswordFieldState extends State<OnboardingPasswordField> {
                   textAlign: TextAlign.start,
                   onChanged: widget.onChanged,
                   style: GoogleFonts.cairo(
-                      fontSize: 14, color: const Color(0xFF191C1B)),
+                    fontSize: 14,
+                    color: const Color(0xFF191C1B),
+                  ),
                   decoration: InputDecoration(
                     hintText: widget.hint,
                     hintStyle: GoogleFonts.cairo(
-                        fontSize: 13,
-                        color: const Color(0xFF6B7280).withValues(alpha: 0.5)),
+                      fontSize: 13,
+                      color: const Color(0xFF6B7280).withValues(alpha: 0.5),
+                    ),
                     border: InputBorder.none,
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                 ),
               ),
@@ -331,12 +359,15 @@ class _OnboardingPasswordFieldState extends State<OnboardingPasswordField> {
         ),
         if (widget.error != null) ...[
           const SizedBox(height: 3),
-          Text(widget.error!,
-              textAlign: TextAlign.start,
-              style: GoogleFonts.cairo(
-                  fontSize: 11,
-                  color: Colors.red.shade600,
-                  fontWeight: FontWeight.bold)),
+          Text(
+            widget.error!,
+            textAlign: TextAlign.start,
+            style: GoogleFonts.cairo(
+              fontSize: 11,
+              color: Colors.red.shade600,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ],
     );
@@ -396,21 +427,25 @@ class OnboardingLocationTile extends StatelessWidget {
                       ? '${lat!.toStringAsFixed(4)}, ${lng!.toStringAsFixed(4)}'
                       : l10n.signupLocationSelectPrompt,
                   style: GoogleFonts.cairo(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: hasCoords
-                          ? const Color(0xFF06402B)
-                          : const Color(0xFF404943)),
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: hasCoords
+                        ? const Color(0xFF06402B)
+                        : const Color(0xFF404943),
+                  ),
                 ),
-                Text(l10n.signupLocationOpenMap,
-                    style: GoogleFonts.cairo(
-                        fontSize: 11, color: const Color(0xFF717973))),
+                Text(
+                  l10n.signupLocationOpenMap,
+                  style: GoogleFonts.cairo(
+                    fontSize: 11,
+                    color: const Color(0xFF717973),
+                  ),
+                ),
               ],
             ),
           ),
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: const Color(0xFF06402B).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
@@ -418,9 +453,10 @@ class OnboardingLocationTile extends StatelessWidget {
             child: Text(
               hasCoords ? l10n.signupLocationChange : l10n.signupLocationSelect,
               style: GoogleFonts.cairo(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF06402B)),
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF06402B),
+              ),
             ),
           ),
         ],
@@ -434,8 +470,11 @@ class OnboardingLocationTile extends StatelessWidget {
 class OnboardingShimmerBox extends StatefulWidget {
   final double width;
   final double height;
-  const OnboardingShimmerBox(
-      {super.key, required this.width, required this.height});
+  const OnboardingShimmerBox({
+    super.key,
+    required this.width,
+    required this.height,
+  });
 
   @override
   State<OnboardingShimmerBox> createState() => _OnboardingShimmerBoxState();
@@ -450,10 +489,13 @@ class _OnboardingShimmerBoxState extends State<OnboardingShimmerBox>
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1000))
-      ..repeat(reverse: true);
-    _anim = Tween<double>(begin: 0.25, end: 0.7)
-        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..repeat(reverse: true);
+    _anim = Tween<double>(
+      begin: 0.25,
+      end: 0.7,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -504,17 +546,19 @@ class OnboardingCategoriesSection extends StatelessWidget {
             Text(
               l10n.onboardingCategoriesSuggested,
               style: GoogleFonts.cairo(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819)),
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF002819),
+              ),
             ),
             const SizedBox(width: 6),
             Text(
               l10n.onboardingCategoriesSelected(selected.length),
               style: GoogleFonts.cairo(
-                  fontSize: 11,
-                  color: const Color(0xFF06402B),
-                  fontWeight: FontWeight.bold),
+                fontSize: 11,
+                color: const Color(0xFF06402B),
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
@@ -523,7 +567,9 @@ class OnboardingCategoriesSection extends StatelessWidget {
           l10n.onboardingCategoriesNote,
           textAlign: TextAlign.start,
           style: GoogleFonts.cairo(
-              fontSize: 11, color: const Color(0xFF717973)),
+            fontSize: 11,
+            color: const Color(0xFF717973),
+          ),
         ),
         const SizedBox(height: 10),
         Container(
@@ -544,7 +590,9 @@ class OnboardingCategoriesSection extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 10),
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
                       child: Row(
                         children: [
                           Checkbox(
@@ -552,9 +600,12 @@ class OnboardingCategoriesSection extends StatelessWidget {
                             onChanged: (_) => onToggle(cat),
                             activeColor: const Color(0xFF06402B),
                             side: const BorderSide(
-                                color: Color(0xFFC0C9C1), width: 1.5),
+                              color: Color(0xFFC0C9C1),
+                              width: 1.5,
+                            ),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4)),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
                             materialTapTargetSize:
                                 MaterialTapTargetSize.shrinkWrap,
                             visualDensity: VisualDensity.compact,
@@ -581,10 +632,11 @@ class OnboardingCategoriesSection extends StatelessWidget {
                   ),
                   if (!isLast)
                     const Divider(
-                        height: 1,
-                        indent: 14,
-                        endIndent: 14,
-                        color: Color(0xFFEEF1EE)),
+                      height: 1,
+                      indent: 14,
+                      endIndent: 14,
+                      color: Color(0xFFEEF1EE),
+                    ),
                 ],
               );
             }),
@@ -610,16 +662,19 @@ class OnboardingHighlightsSection extends StatelessWidget {
         Text(
           l10n.onboardingHighlightsTitle,
           style: GoogleFonts.cairo(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF002819)),
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF002819),
+          ),
         ),
         const SizedBox(height: 4),
         Text(
           l10n.onboardingHighlightsSubtitle,
           textAlign: TextAlign.start,
           style: GoogleFonts.cairo(
-              fontSize: 11, color: const Color(0xFF717973)),
+            fontSize: 11,
+            color: const Color(0xFF717973),
+          ),
         ),
         const SizedBox(height: 10),
         ...List.generate(highlights.length, (i) {
@@ -640,9 +695,10 @@ class OnboardingHighlightsSection extends StatelessWidget {
                     child: Text(
                       '${i + 1}',
                       style: GoogleFonts.cairo(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF06402B)),
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF06402B),
+                      ),
                     ),
                   ),
                 ),
@@ -652,7 +708,9 @@ class OnboardingHighlightsSection extends StatelessWidget {
                     highlights[i],
                     textAlign: TextAlign.start,
                     style: GoogleFonts.cairo(
-                        fontSize: 13, color: const Color(0xFF191C1B)),
+                      fontSize: 13,
+                      color: const Color(0xFF191C1B),
+                    ),
                   ),
                 ),
               ],
@@ -707,13 +765,16 @@ class OnboardingAiSuggestionsPanel extends StatelessWidget {
               color: const Color(0xFF7C3AED).withValues(alpha: 0.07),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                  color: const Color(0xFF7C3AED).withValues(alpha: 0.18)),
+                color: const Color(0xFF7C3AED).withValues(alpha: 0.18),
+              ),
             ),
             child: Text(
               l10n.onboardingAiPanelContext,
               textAlign: TextAlign.start,
               style: GoogleFonts.cairo(
-                  fontSize: 12, color: const Color(0xFF5B21B6)),
+                fontSize: 12,
+                color: const Color(0xFF5B21B6),
+              ),
             ),
           ),
           const SizedBox(height: 14),
@@ -730,14 +791,19 @@ class OnboardingAiSuggestionsPanel extends StatelessWidget {
 
           // Generate button
           GreenButton(
-            text: isAiLoading ? l10n.onboardingAiGenerating : l10n.onboardingAiGenerateButton,
+            text: isAiLoading
+                ? l10n.onboardingAiGenerating
+                : l10n.onboardingAiGenerateButton,
             height: 50,
             borderRadius: 12,
             isLoading: isAiLoading,
             leadingIcon: isAiLoading
                 ? null
-                : const Icon(Icons.auto_awesome_rounded,
-                    color: Colors.white, size: 16),
+                : const Icon(
+                    Icons.auto_awesome_rounded,
+                    color: Colors.white,
+                    size: 16,
+                  ),
             onPressed: onGenerate,
           ),
 
@@ -765,7 +831,8 @@ class OnboardingAiSuggestionsPanel extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             OnboardingHighlightsSection(
-                highlights: brandProfile!.companyHighlights),
+              highlights: brandProfile!.companyHighlights,
+            ),
           ],
         ],
       ),

@@ -25,7 +25,9 @@ class ProfileStatCard extends StatelessWidget {
     final children = <Widget>[];
     for (var i = 0; i < stats.length; i++) {
       if (i > 0) {
-        children.add(Container(width: 1, height: 40, color: theme.dividerColor));
+        children.add(
+          Container(width: 1, height: 40, color: theme.dividerColor),
+        );
       }
       children.add(_StatColumn(stat: stats[i]));
     }
@@ -38,7 +40,9 @@ class ProfileStatCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: isDark ? Border.all(color: theme.colorScheme.outline) : null,
+            border: isDark
+                ? Border.all(color: theme.colorScheme.outline)
+                : null,
             boxShadow: [
               if (!isDark)
                 BoxShadow(

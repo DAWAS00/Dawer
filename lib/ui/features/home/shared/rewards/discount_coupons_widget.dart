@@ -39,10 +39,7 @@ class DiscountCouponsSection extends StatelessWidget {
           itemBuilder: (context, index) {
             final coupon = coupons[index];
             final unlocked = totalPoints >= coupon.pointsRequired;
-            return _CouponCard(
-              coupon: coupon,
-              unlocked: unlocked,
-            );
+            return _CouponCard(coupon: coupon, unlocked: unlocked);
           },
         ),
       ],
@@ -90,16 +87,18 @@ class _CouponCard extends StatelessWidget {
           Row(
             children: [
               if (!unlocked)
-                Icon(Icons.lock_rounded, size: 14, color: accent.withValues(alpha: 0.50))
+                Icon(
+                  Icons.lock_rounded,
+                  size: 14,
+                  color: accent.withValues(alpha: 0.50),
+                )
               else
                 GestureDetector(
                   onTap: () => _copyCode(context),
-                  child: Icon(Icons.copy_rounded,
-                      size: 14, color: accent),
+                  child: Icon(Icons.copy_rounded, size: 14, color: accent),
                 ),
               const Spacer(),
-              Text(coupon.iconEmoji,
-                  style: const TextStyle(fontSize: 22)),
+              Text(coupon.iconEmoji, style: const TextStyle(fontSize: 22)),
             ],
           ),
           const Spacer(),

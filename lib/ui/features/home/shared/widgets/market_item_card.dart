@@ -11,11 +11,7 @@ class MarketItemCard extends StatelessWidget {
   final Order item;
   final VoidCallback onTap;
 
-  const MarketItemCard({
-    super.key,
-    required this.item,
-    required this.onTap,
-  });
+  const MarketItemCard({super.key, required this.item, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +23,8 @@ class MarketItemCard extends StatelessWidget {
     final timeLabel = timeDiff.inDays > 0
         ? l10n.timeAgoDays(timeDiff.inDays)
         : timeDiff.inHours > 0
-            ? l10n.timeAgoHours(timeDiff.inHours)
-            : l10n.timeAgoMinutes(timeDiff.inMinutes);
+        ? l10n.timeAgoHours(timeDiff.inHours)
+        : l10n.timeAgoMinutes(timeDiff.inMinutes);
 
     return GestureDetector(
       onTap: onTap,
@@ -129,7 +125,9 @@ class MarketItemCard extends StatelessWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFFEF3C7),
                         borderRadius: BorderRadius.circular(6),
@@ -147,8 +145,11 @@ class MarketItemCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 4),
-                          const Icon(Icons.lock_clock_rounded,
-                              color: Color(0xFFD97706), size: 11),
+                          const Icon(
+                            Icons.lock_clock_rounded,
+                            color: Color(0xFFD97706),
+                            size: 11,
+                          ),
                         ],
                       ),
                     ),
@@ -171,7 +172,9 @@ class MarketItemCard extends StatelessWidget {
                         .firstOrNull;
                     return Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.surfaceAlt,
                         borderRadius: BorderRadius.circular(8),
@@ -203,8 +206,7 @@ class MarketItemCard extends StatelessWidget {
               ),
 
             // ── Optional notes ──
-            if (item.supplierNotes != null &&
-                item.supplierNotes!.isNotEmpty)
+            if (item.supplierNotes != null && item.supplierNotes!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
                 child: Text(
@@ -225,7 +227,8 @@ class MarketItemCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.surfaceAlt.withValues(alpha: 0.5),
                 borderRadius: const BorderRadius.vertical(
-                    bottom: Radius.circular(16)),
+                  bottom: Radius.circular(16),
+                ),
               ),
               child: Row(
                 children: [

@@ -49,7 +49,11 @@ class OrderRouteCard extends StatelessWidget {
                     color: AppColors.primaryGreen.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(LucideIcons.route, size: 14, color: AppColors.primaryGreen),
+                  child: const Icon(
+                    LucideIcons.route,
+                    size: 14,
+                    color: AppColors.primaryGreen,
+                  ),
                 ),
               ],
             ),
@@ -212,7 +216,11 @@ class _RoutePoint extends StatelessWidget {
 }
 
 class _MetaChip extends StatelessWidget {
-  const _MetaChip({required this.icon, required this.label, required this.color});
+  const _MetaChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
   final IconData icon;
   final String label;
   final Color color;

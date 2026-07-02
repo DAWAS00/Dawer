@@ -17,7 +17,8 @@ class CreateReservationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (ctx) => ReservationViewModel(repository: ctx.read<IReservationRepository>()),
+      create: (ctx) =>
+          ReservationViewModel(repository: ctx.read<IReservationRepository>()),
       child: const _CreateReservationBody(),
     );
   }
@@ -41,7 +42,8 @@ class _CreateReservationBodyState extends State<_CreateReservationBody> {
   String? _error;
 
   double get _amount => double.tryParse(_amountCtrl.text) ?? 0;
-  double get _penaltyPreview => double.parse((_amount * 0.10).toStringAsFixed(2));
+  double get _penaltyPreview =>
+      double.parse((_amount * 0.10).toStringAsFixed(2));
 
   @override
   void dispose() {
@@ -81,9 +83,9 @@ class _CreateReservationBodyState extends State<_CreateReservationBody> {
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.reservationCreateSuccess)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.reservationCreateSuccess)));
     Navigator.of(context).pop();
   }
 
@@ -98,7 +100,10 @@ class _CreateReservationBodyState extends State<_CreateReservationBody> {
         elevation: 0,
         title: Text(
           l10n.reservationFormTitle,
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: AppColors.textMain),
+          style: GoogleFonts.cairo(
+            fontWeight: FontWeight.bold,
+            color: AppColors.textMain,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -108,7 +113,10 @@ class _CreateReservationBodyState extends State<_CreateReservationBody> {
           children: [
             _label(l10n.reservationItemTitleLabel),
             const SizedBox(height: 8),
-            _field(controller: _itemTitleCtrl, hint: l10n.reservationItemTitleHint),
+            _field(
+              controller: _itemTitleCtrl,
+              hint: l10n.reservationItemTitleHint,
+            ),
             const SizedBox(height: 20),
 
             _label(l10n.reservationBuyerPhoneLabel),
@@ -125,7 +133,9 @@ class _CreateReservationBodyState extends State<_CreateReservationBody> {
             _field(
               controller: _amountCtrl,
               hint: '0.00',
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 20),
@@ -198,16 +208,24 @@ class _CreateReservationBodyState extends State<_CreateReservationBody> {
                 decoration: BoxDecoration(
                   color: AppColors.statusCancelledBg,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.statusCancelledText.withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: AppColors.statusCancelledText.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.warning_amber_rounded, color: AppColors.statusCancelledText, size: 20),
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      color: AppColors.statusCancelledText,
+                      size: 20,
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        l10n.reservationPenaltyBanner(_penaltyPreview.toStringAsFixed(2)),
+                        l10n.reservationPenaltyBanner(
+                          _penaltyPreview.toStringAsFixed(2),
+                        ),
                         style: GoogleFonts.cairo(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
@@ -223,7 +241,10 @@ class _CreateReservationBodyState extends State<_CreateReservationBody> {
               const SizedBox(height: 12),
               Text(
                 _error!,
-                style: GoogleFonts.cairo(color: AppColors.statusCancelledText, fontSize: 13),
+                style: GoogleFonts.cairo(
+                  color: AppColors.statusCancelledText,
+                  fontSize: 13,
+                ),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -266,9 +287,13 @@ class _CreateReservationBodyState extends State<_CreateReservationBody> {
   }
 
   Widget _label(String text) => Text(
-        text,
-        style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textMain),
-      );
+    text,
+    style: GoogleFonts.cairo(
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      color: AppColors.textMain,
+    ),
+  );
 
   Widget _field({
     required TextEditingController controller,
@@ -285,7 +310,10 @@ class _CreateReservationBodyState extends State<_CreateReservationBody> {
         hintText: hint,
         filled: true,
         fillColor: AppColors.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.borderSubtle),

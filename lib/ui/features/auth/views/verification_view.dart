@@ -58,7 +58,8 @@ class _VerificationScreen extends StatelessWidget {
           MaterialPageRoute(
             builder: (_) => HomeRouter(
               role: viewModel.session!.role,
-              supplierType: viewModel.session!.supplierType ?? SupplierType.individual,
+              supplierType:
+                  viewModel.session!.supplierType ?? SupplierType.individual,
               userName: viewModel.session!.userName,
             ),
           ),
@@ -106,13 +107,20 @@ class _VerificationScreen extends StatelessWidget {
             children: [
               Text(
                 l10n.otpSubtitle(viewModel.phoneNumber),
-                style: GoogleFonts.cairo(fontSize: 16, height: 1.5, color: const Color(0xFF404943)),
+                style: GoogleFonts.cairo(
+                  fontSize: 16,
+                  height: 1.5,
+                  color: const Color(0xFF404943),
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
                 l10n.otpSimulatedHint,
-                style: GoogleFonts.cairo(fontSize: 12, color: const Color(0xFF717973)),
+                style: GoogleFonts.cairo(
+                  fontSize: 12,
+                  color: const Color(0xFF717973),
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
@@ -123,7 +131,10 @@ class _VerificationScreen extends StatelessWidget {
                   defaultPinTheme: defaultPinTheme,
                   focusedPinTheme: defaultPinTheme.copyWith(
                     decoration: defaultPinTheme.decoration!.copyWith(
-                      border: Border.all(color: const Color(0xFF06402B), width: 2),
+                      border: Border.all(
+                        color: const Color(0xFF06402B),
+                        width: 2,
+                      ),
                     ),
                   ),
                   onChanged: viewModel.setOtp,
@@ -151,7 +162,9 @@ class _VerificationScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               TextButton(
-                onPressed: viewModel.isLoading ? null : () => viewModel.resendOtp(),
+                onPressed: viewModel.isLoading
+                    ? null
+                    : () => viewModel.resendOtp(),
                 child: Text(
                   l10n.otpResendButton,
                   style: GoogleFonts.cairo(

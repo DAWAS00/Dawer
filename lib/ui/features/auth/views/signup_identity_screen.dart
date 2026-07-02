@@ -108,7 +108,8 @@ class _SignupIdentityBodyState extends State<_SignupIdentityBody> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final controller = context.watch<SignupController>();
-    final isBusiness = controller.role == UserRole.recyclingCo ||
+    final isBusiness =
+        controller.role == UserRole.recyclingCo ||
         (controller.role == UserRole.supplier &&
             controller.supplierType == SupplierType.storeBusiness);
 
@@ -317,8 +318,7 @@ class _SupplierTypeToggle extends StatelessWidget {
             child: _ToggleOption(
               label: l10n.signupRoleStoreLabel,
               icon: Icons.storefront_rounded,
-              selected:
-                  controller.supplierType == SupplierType.storeBusiness,
+              selected: controller.supplierType == SupplierType.storeBusiness,
               onTap: () =>
                   controller.setSupplierType(SupplierType.storeBusiness),
             ),

@@ -64,11 +64,9 @@ class EfficientJob {
 }
 
 class AnalyticsViewModel extends ChangeNotifier {
-  AnalyticsViewModel({
-    required List<Order> orders,
-    DateTime? nowOverride,
-  })  : _allOrders = orders,
-        _nowOverride = nowOverride;
+  AnalyticsViewModel({required List<Order> orders, DateTime? nowOverride})
+    : _allOrders = orders,
+      _nowOverride = nowOverride;
 
   final List<Order> _allOrders;
   final DateTime? _nowOverride;
@@ -88,30 +86,32 @@ class AnalyticsViewModel extends ChangeNotifier {
   /// The immediately-prior window of the same length as the current period.
   DateRange get _previousRange {
     final span = _range.end.difference(_range.start);
-    return DateRange(
-      start: _range.start.subtract(span),
-      end: _range.start,
-    );
+    return DateRange(start: _range.start.subtract(span), end: _range.start);
   }
 
   bool _inRange(DateTime dt, DateRange r) =>
       (dt.isAfter(r.start) || dt.isAtSameMomentAs(r.start)) &&
       (dt.isBefore(r.end) || dt.isAtSameMomentAs(r.end));
 
-  List<Order> get filteredOrders => _allOrders
-      .where((o) =>
-          o.status == OrderStatus.completed &&
-          o.completedAt != null &&
-          _inRange(o.completedAt!, _range))
-      .toList()
-    ..sort((a, b) => b.completedAt!.compareTo(a.completedAt!));
+  List<Order> get filteredOrders =>
+      _allOrders
+          .where(
+            (o) =>
+                o.status == OrderStatus.completed &&
+                o.completedAt != null &&
+                _inRange(o.completedAt!, _range),
+          )
+          .toList()
+        ..sort((a, b) => b.completedAt!.compareTo(a.completedAt!));
 
   /// Orders completed in the previous period (for delta math).
   List<Order> get previousPeriodOrders => _allOrders
-      .where((o) =>
-          o.status == OrderStatus.completed &&
-          o.completedAt != null &&
-          _inRange(o.completedAt!, _previousRange))
+      .where(
+        (o) =>
+            o.status == OrderStatus.completed &&
+            o.completedAt != null &&
+            _inRange(o.completedAt!, _previousRange),
+      )
       .toList();
 
   double get totalEarnings =>
@@ -135,11 +135,17 @@ class AnalyticsViewModel extends ChangeNotifier {
   List<Order> get todaysCompletedOrders {
     final today = DateTime(_now.year, _now.month, _now.day);
     return _allOrders
-        .where((o) =>
-            o.status == OrderStatus.completed &&
-            o.completedAt != null &&
-            DateTime(o.completedAt!.year, o.completedAt!.month, o.completedAt!.day) ==
-                today)
+        .where(
+          (o) =>
+              o.status == OrderStatus.completed &&
+              o.completedAt != null &&
+              DateTime(
+                    o.completedAt!.year,
+                    o.completedAt!.month,
+                    o.completedAt!.day,
+                  ) ==
+                  today,
+        )
         .toList();
   }
 
@@ -178,12 +184,15 @@ class AnalyticsViewModel extends ChangeNotifier {
     return ((current - previous) / previous) * 100;
   }
 
-  double? get deltaEarningsPct =>
-      _pct(totalEarnings, previousPeriodOrders.fold(0.0, (s, o) => s + o.reward));
+  double? get deltaEarningsPct => _pct(
+    totalEarnings,
+    previousPeriodOrders.fold(0.0, (s, o) => s + o.reward),
+  );
 
   double? get deltaWeightPct => _pct(
-      totalWeightKg,
-      previousPeriodOrders.fold(0.0, (s, o) => s + (o.weightKg ?? 0)));
+    totalWeightKg,
+    previousPeriodOrders.fold(0.0, (s, o) => s + (o.weightKg ?? 0)),
+  );
 
   double? get deltaOrdersPct =>
       _pct(orderCount.toDouble(), previousPeriodOrders.length.toDouble());
@@ -199,26 +208,37 @@ class AnalyticsViewModel extends ChangeNotifier {
       return _monthlySeries(valueOf);
     }
 
-    final startDay = DateTime(_range.start.year, _range.start.month, _range.start.day);
+    final startDay = DateTime(
+      _range.start.year,
+      _range.start.month,
+      _range.start.day,
+    );
     final endDay = DateTime(_now.year, _now.month, _now.day);
     final buckets = <DateTime, double>{};
-    for (var d = startDay;
-        !d.isAfter(endDay);
-        d = d.add(const Duration(days: 1))) {
+    for (
+      var d = startDay;
+      !d.isAfter(endDay);
+      d = d.add(const Duration(days: 1))
+    ) {
       buckets[d] = 0;
     }
     for (final o in filteredOrders) {
       final key = o.completedAt != null
-          ? DateTime(o.completedAt!.year, o.completedAt!.month, o.completedAt!.day)
+          ? DateTime(
+              o.completedAt!.year,
+              o.completedAt!.month,
+              o.completedAt!.day,
+            )
           : null;
       if (key != null && buckets.containsKey(key)) {
         buckets[key] = buckets[key]! + valueOf(o);
       }
     }
-    final pts = buckets.entries
-        .map((e) => TrendPoint(day: e.key, value: e.value))
-        .toList()
-      ..sort((a, b) => a.day.compareTo(b.day));
+    final pts =
+        buckets.entries
+            .map((e) => TrendPoint(day: e.key, value: e.value))
+            .toList()
+          ..sort((a, b) => a.day.compareTo(b.day));
     return pts;
   }
 
@@ -241,10 +261,14 @@ class AnalyticsViewModel extends ChangeNotifier {
         ),
       );
     }
-    final pts = buckets.values
-        .map((b) => TrendPoint(day: DateTime(b.year, b.month, 1), value: b.value))
-        .toList()
-      ..sort((a, b) => a.day.compareTo(b.day));
+    final pts =
+        buckets.values
+            .map(
+              (b) =>
+                  TrendPoint(day: DateTime(b.year, b.month, 1), value: b.value),
+            )
+            .toList()
+          ..sort((a, b) => a.day.compareTo(b.day));
     return pts;
   }
 
@@ -261,25 +285,26 @@ class AnalyticsViewModel extends ChangeNotifier {
     }
     final grand = totals.values.fold(0.0, (s, v) => s + v);
     if (grand == 0) return const [];
-    final list = totals.entries
-        .map((e) => WasteShare(
-              type: e.key,
-              kg: e.value,
-              share: e.value / grand,
-            ))
-        .toList()
-      ..sort((a, b) => b.kg.compareTo(a.kg));
+    final list =
+        totals.entries
+            .map(
+              (e) =>
+                  WasteShare(type: e.key, kg: e.value, share: e.value / grand),
+            )
+            .toList()
+          ..sort((a, b) => b.kg.compareTo(a.kg));
     return list;
   }
 
   // ── Gantt orders ──────────────────────────────────────────────────────────
 
-  List<Order> get ganttOrders => _allOrders
-      .where((o) =>
-          o.status == OrderStatus.completed &&
-          o.completedAt != null)
-      .toList()
-    ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+  List<Order> get ganttOrders =>
+      _allOrders
+          .where(
+            (o) => o.status == OrderStatus.completed && o.completedAt != null,
+          )
+          .toList()
+        ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
   // ── Streak ─────────────────────────────────────────────────────────────────
   //
@@ -289,7 +314,13 @@ class AnalyticsViewModel extends ChangeNotifier {
 
   Set<DateTime> get _activeDays => _allOrders
       .where((o) => o.status == OrderStatus.completed && o.completedAt != null)
-      .map((o) => DateTime(o.completedAt!.year, o.completedAt!.month, o.completedAt!.day))
+      .map(
+        (o) => DateTime(
+          o.completedAt!.year,
+          o.completedAt!.month,
+          o.completedAt!.day,
+        ),
+      )
       .toSet();
 
   /// Current consecutive-day streak. 0 when no completed orders.
@@ -335,7 +366,10 @@ class AnalyticsViewModel extends ChangeNotifier {
     for (final o in _allOrders) {
       if (o.status != OrderStatus.completed || o.completedAt == null) continue;
       final d = DateTime(
-          o.completedAt!.year, o.completedAt!.month, o.completedAt!.day);
+        o.completedAt!.year,
+        o.completedAt!.month,
+        o.completedAt!.day,
+      );
       if (d.isAfter(start) || d.isAtSameMomentAs(start)) {
         counts.update(d, (v) => v + 1, ifAbsent: () => 1);
       }
@@ -348,7 +382,10 @@ class AnalyticsViewModel extends ChangeNotifier {
   // Averages each lifecycle stage over filteredOrders, skipping orders
   // missing a needed timestamp. Negative deltas (clock skew) clamped to 0.
 
-  double? _avgMinutes(DateTime? Function(Order) start, DateTime? Function(Order) end) {
+  double? _avgMinutes(
+    DateTime? Function(Order) start,
+    DateTime? Function(Order) end,
+  ) {
     final samples = <double>[];
     for (final o in filteredOrders) {
       final s = start(o);
@@ -363,14 +400,8 @@ class AnalyticsViewModel extends ChangeNotifier {
   }
 
   CycleTimeBreakdown get cycleTime {
-    final accept = _avgMinutes(
-      (o) => o.createdAt,
-      (o) => o.acceptedAt,
-    );
-    final pickup = _avgMinutes(
-      (o) => o.acceptedAt,
-      (o) => o.arrivedAtPickupAt,
-    );
+    final accept = _avgMinutes((o) => o.createdAt, (o) => o.acceptedAt);
+    final pickup = _avgMinutes((o) => o.acceptedAt, (o) => o.arrivedAtPickupAt);
     final transit = _avgMinutes(
       (o) => o.arrivedAtPickupAt,
       (o) => o.arrivedAtDropoffAt,
@@ -379,10 +410,7 @@ class AnalyticsViewModel extends ChangeNotifier {
       (o) => o.arrivedAtDropoffAt,
       (o) => o.completedAt,
     );
-    final total = _avgMinutes(
-      (o) => o.createdAt,
-      (o) => o.completedAt,
-    );
+    final total = _avgMinutes((o) => o.createdAt, (o) => o.completedAt);
     return CycleTimeBreakdown(
       avgAcceptMinutes: accept,
       avgPickupMinutes: pickup,
@@ -421,8 +449,7 @@ class AnalyticsViewModel extends ChangeNotifier {
         totalReward: e.value,
         sampleCount: count[e.key] ?? 0,
       );
-    }).toList()
-      ..sort((a, b) => b.rewardPerKg.compareTo(a.rewardPerKg));
+    }).toList()..sort((a, b) => b.rewardPerKg.compareTo(a.rewardPerKg));
     return list;
   }
 

@@ -9,7 +9,7 @@ class DriverWallet {
   factory DriverWallet.fromJson(Map<String, dynamic> json) {
     double d(Object? v) => v is num ? v.toDouble() : 0.0;
     return DriverWallet(
-      balance:    d(json['balance']),
+      balance: d(json['balance']),
       heldAmount: d(json['held_amount']),
     );
   }

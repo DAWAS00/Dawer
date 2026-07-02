@@ -23,7 +23,9 @@ void main() async {
   try {
     await dotenv.load(fileName: '.env.local');
   } catch (_) {
-    debugPrint('Warning: .env.local not found — app will run in mock/offline mode.');
+    debugPrint(
+      'Warning: .env.local not found — app will run in mock/offline mode.',
+    );
   }
 
   AiConfig.assertConfigured();
@@ -43,8 +45,8 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final localStore = await LocalStore.init();
- 
-  const mockAuth = true ;
+
+  const mockAuth = true;
 
   runApp(
     DawerApp(

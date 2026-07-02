@@ -16,7 +16,7 @@ void main() {
     // 1. Set some filters
     vm.setSearch('Bottle');
     vm.setCategory(WasteType.plastic);
-    
+
     expect(vm.searchQuery, 'Bottle');
     expect(vm.selectedCategory, WasteType.plastic);
     expect(vm.showSuggestionBanner, isTrue);

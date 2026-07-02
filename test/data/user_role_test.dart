@@ -24,10 +24,11 @@ void main() {
     });
 
     test('allowedDbValues is exhaustive and ordered', () {
-      expect(
-        UserRoleDbMapping.allowedDbValues,
-        const ['driver', 'supplier', 'recyclingCo'],
-      );
+      expect(UserRoleDbMapping.allowedDbValues, const [
+        'driver',
+        'supplier',
+        'recyclingCo',
+      ]);
     });
   });
 

@@ -11,25 +11,27 @@ class DriverEarningsStatScroll extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return KpiStrip(items: [
-      KpiItem(
-        label: 'إجمالي الأرباح',
-        value: '${summary.totalEarnings.toStringAsFixed(1)} د',
-        icon: Icons.account_balance_wallet_rounded,
-        color: const Color(0xFF0A5E3E),
-      ),
-      KpiItem(
-        label: 'عدد الطلبات',
-        value: summary.totalOrders.toString(),
-        icon: Icons.local_shipping_rounded,
-        color: const Color(0xFF1E40AF),
-      ),
-      KpiItem(
-        label: 'نسبة النمو',
-        value: '+${summary.netGrowth}%',
-        icon: Icons.trending_up_rounded,
-        color: const Color(0xFF92400E),
-      ),
-    ]);
+    return KpiStrip(
+      items: [
+        KpiItem(
+          label: 'إجمالي الأرباح',
+          value: '${summary.totalEarnings.toStringAsFixed(1)} د',
+          icon: Icons.account_balance_wallet_rounded,
+          color: const Color(0xFF0A5E3E),
+        ),
+        KpiItem(
+          label: 'عدد الطلبات',
+          value: summary.totalOrders.toString(),
+          icon: Icons.local_shipping_rounded,
+          color: const Color(0xFF1E40AF),
+        ),
+        KpiItem(
+          label: 'نسبة النمو',
+          value: '+${summary.netGrowth}%',
+          icon: Icons.trending_up_rounded,
+          color: const Color(0xFF92400E),
+        ),
+      ],
+    );
   }
 }

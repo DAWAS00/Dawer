@@ -10,10 +10,7 @@ import '../../../../domain/entities/green_level.dart';
 ///
 /// Intended to be placed inside the Analytics tab's CustomScrollView.
 class GreenLevelCard extends StatelessWidget {
-  const GreenLevelCard({
-    super.key,
-    required this.greenPoints,
-  });
+  const GreenLevelCard({super.key, required this.greenPoints});
 
   /// The user's current cumulative خُضَر balance.
   final int greenPoints;
@@ -24,8 +21,8 @@ class GreenLevelCard extends StatelessWidget {
     final progress = level.isMaxLevel
         ? 1.0
         : ((greenPoints - level.lowerThreshold) /
-               (level.nextThreshold - level.lowerThreshold))
-            .clamp(0.0, 1.0);
+                  (level.nextThreshold - level.lowerThreshold))
+              .clamp(0.0, 1.0);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -52,10 +49,7 @@ class GreenLevelCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 alignment: Alignment.center,
-                child: Text(
-                  level.emoji,
-                  style: const TextStyle(fontSize: 26),
-                ),
+                child: Text(level.emoji, style: const TextStyle(fontSize: 26)),
               ),
               const SizedBox(width: 12),
               // Level name + unlock description
@@ -114,8 +108,9 @@ class GreenLevelCard extends StatelessWidget {
               value: progress,
               minHeight: 7,
               backgroundColor: AppColors.primaryGreen.withValues(alpha: 0.13),
-              valueColor:
-                  const AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                AppColors.primaryGreen,
+              ),
             ),
           ),
           const SizedBox(height: 6),

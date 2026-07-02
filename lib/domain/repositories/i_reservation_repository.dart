@@ -23,7 +23,10 @@ abstract interface class IReservationRepository {
 
   /// Seller cancels. [reason] == 'sold_elsewhere' on an active reservation
   /// immediately applies the 10% seller-fraud penalty server-side.
-  Future<AppResult<void>> cancelReservation(String reservationId, String reason);
+  Future<AppResult<void>> cancelReservation(
+    String reservationId,
+    String reason,
+  );
 
   /// All reservations where the current user is either the seller or buyer.
   Future<AppResult<List<Reservation>>> fetchForCurrentUser();
@@ -42,8 +45,7 @@ final class NoOpReservationRepository implements IReservationRepository {
     required String itemTitle,
     required double invoiceTotal,
     required int durationMinutes,
-  }) async =>
-      const Success('');
+  }) async => const Success('');
 
   @override
   Future<AppResult<void>> approveReservation(String reservationId) async =>
@@ -54,8 +56,10 @@ final class NoOpReservationRepository implements IReservationRepository {
       const Success(null);
 
   @override
-  Future<AppResult<void>> cancelReservation(String reservationId, String reason) async =>
-      const Success(null);
+  Future<AppResult<void>> cancelReservation(
+    String reservationId,
+    String reason,
+  ) async => const Success(null);
 
   @override
   Future<AppResult<List<Reservation>>> fetchForCurrentUser() async =>

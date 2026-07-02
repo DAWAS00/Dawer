@@ -24,19 +24,20 @@ class AllDriversLocationStream {
         .from('driver_locations')
         .select('driver_id, lat, lng')
         .then((rows) {
-      if (ctrl.isClosed) return;
-      for (final row in rows) {
-        final id = row['driver_id'] as String?;
-        final lat = (row['lat'] as num?)?.toDouble();
-        final lng = (row['lng'] as num?)?.toDouble();
-        if (id != null && lat != null && lng != null) {
-          positions[id] = LatLng(lat, lng);
-        }
-      }
-      if (!ctrl.isClosed) ctrl.add(Map.unmodifiable(positions));
-    }).catchError((Object e) {
-      debugPrint('[AllDriversLocationStream] initial fetch error: $e');
-    });
+          if (ctrl.isClosed) return;
+          for (final row in rows) {
+            final id = row['driver_id'] as String?;
+            final lat = (row['lat'] as num?)?.toDouble();
+            final lng = (row['lng'] as num?)?.toDouble();
+            if (id != null && lat != null && lng != null) {
+              positions[id] = LatLng(lat, lng);
+            }
+          }
+          if (!ctrl.isClosed) ctrl.add(Map.unmodifiable(positions));
+        })
+        .catchError((Object e) {
+          debugPrint('[AllDriversLocationStream] initial fetch error: $e');
+        });
 
     // Realtime subscription — no filter, watches the entire table.
     final channel = Supabase.instance.client
@@ -64,12 +65,10 @@ class AllDriversLocationStream {
         });
 
     ctrl.onCancel = () {
-      Supabase.instance.client.removeChannel(channel).catchError(
-        (Object e) {
-          debugPrint('[AllDriversLocationStream] remove channel: $e');
-          return '';
-        },
-      );
+      Supabase.instance.client.removeChannel(channel).catchError((Object e) {
+        debugPrint('[AllDriversLocationStream] remove channel: $e');
+        return '';
+      });
       ctrl.close();
     };
 

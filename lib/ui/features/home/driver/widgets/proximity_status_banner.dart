@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:signals_flutter/signals_flutter.dart';
@@ -25,22 +25,22 @@ class ProximityStatusBanner extends StatelessWidget {
       return switch (vm.proximityState) {
         ProximityIdle() => const SizedBox.shrink(),
         final NearPickup _ => _buildBanner(
-            context: context,
-            bg: AppColors.amberContainer,
-            fg: AppColors.accentAmber,
-            icon: Icons.location_pin,
-            label: 'أنت قريب من نقطة الاستلام',
-            orderId: vm.order.id,
-            timerChip: _PickupTimerChip(vm: vm, fg: AppColors.accentAmber),
-          ),
+          context: context,
+          bg: AppColors.amberContainer,
+          fg: AppColors.accentAmber,
+          icon: Icons.location_pin,
+          label: 'أنت قريب من نقطة الاستلام',
+          orderId: vm.order.id,
+          timerChip: _PickupTimerChip(vm: vm, fg: AppColors.accentAmber),
+        ),
         NearDropoff() => _buildBanner(
-            context: context,
-            bg: AppColors.statusActiveBg,
-            fg: AppColors.statusActiveText,
-            icon: Icons.check_circle_outline_rounded,
-            label: 'أنت قريب من الزبون',
-            orderId: vm.order.id,
-          ),
+          context: context,
+          bg: AppColors.statusActiveBg,
+          fg: AppColors.statusActiveText,
+          icon: Icons.check_circle_outline_rounded,
+          label: 'أنت قريب من الزبون',
+          orderId: vm.order.id,
+        ),
       };
     });
   }

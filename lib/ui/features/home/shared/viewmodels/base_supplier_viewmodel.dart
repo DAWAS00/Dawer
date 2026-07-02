@@ -88,10 +88,12 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
   List<Order> get collectionSaleOrders => _store.collectionSalesFor(_user.name);
 
   List<Order> get activeOrders => orders
-      .where((o) =>
-          o.status == OrderStatus.pending ||
-          o.status == OrderStatus.accepted ||
-          o.status == OrderStatus.inTransit)
+      .where(
+        (o) =>
+            o.status == OrderStatus.pending ||
+            o.status == OrderStatus.accepted ||
+            o.status == OrderStatus.inTransit,
+      )
       .toList();
 
   List<Order> get completedOrders =>
@@ -195,10 +197,7 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
     _pickupSubmitError = null;
     notifyListeners();
 
-    final result = _store.submitPickupRequest(
-      request,
-      supplierName: user.name,
-    );
+    final result = _store.submitPickupRequest(request, supplierName: user.name);
 
     result.fold(
       onSuccess: (order) {

@@ -136,11 +136,8 @@ class _SegmentTab extends StatelessWidget {
                   maxLines: 1,
                   style: GoogleFonts.cairo(
                     fontSize: 13,
-                    fontWeight:
-                        isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected
-                        ? accentColor
-                        : const Color(0xFF717973),
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: isSelected ? accentColor : const Color(0xFF717973),
                   ),
                 ),
               ),
@@ -149,7 +146,9 @@ class _SegmentTab extends StatelessWidget {
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 7, vertical: 2),
+                    horizontal: 7,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected ? accentColor : countBgColor,
                     borderRadius: BorderRadius.circular(10),
@@ -159,9 +158,7 @@ class _SegmentTab extends StatelessWidget {
                     style: GoogleFonts.dmSans(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: isSelected
-                          ? Colors.white
-                          : accentColor,
+                      color: isSelected ? Colors.white : accentColor,
                     ),
                   ),
                 ),
@@ -224,10 +221,7 @@ class MarketplaceSegmentDelegate extends SliverPersistentHeaderDelegate {
           // Search bar
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
-            child: _MarketSearchBar(
-              hint: searchHint,
-              onChanged: onSearch,
-            ),
+            child: _MarketSearchBar(hint: searchHint, onChanged: onSearch),
           ),
           // Segment tabs + underline
           MarketplaceSegmentBar(
@@ -266,10 +260,7 @@ class _MarketSearchBar extends StatelessWidget {
       ),
       child: TextField(
         onChanged: onChanged,
-        style: GoogleFonts.cairo(
-          fontSize: 13,
-          color: const Color(0xFF14241C),
-        ),
+        style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF14241C)),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: GoogleFonts.cairo(

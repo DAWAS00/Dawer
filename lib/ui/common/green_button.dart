@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class GreenButton extends StatelessWidget {
@@ -52,7 +52,10 @@ class GreenButton extends StatelessWidget {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (leadingIcon != null) ...[leadingIcon!, const SizedBox(width: 8)],
+                  if (leadingIcon != null) ...[
+                    leadingIcon!,
+                    const SizedBox(width: 8),
+                  ],
                   Flexible(
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
@@ -66,7 +69,10 @@ class GreenButton extends StatelessWidget {
                       ),
                     ),
                   ),
-                  if (trailingIcon != null) ...[const SizedBox(width: 8), trailingIcon!],
+                  if (trailingIcon != null) ...[
+                    const SizedBox(width: 8),
+                    trailingIcon!,
+                  ],
                 ],
               ),
       ),

@@ -73,16 +73,14 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
         if (_segment == 0) ...[
           // AI suggestion banner
           if (!loading && vm.hasUserCategories)
-            const SliverToBoxAdapter(
-                child: MarketplaceSuggestionBanner()),
+            const SliverToBoxAdapter(child: MarketplaceSuggestionBanner()),
           // Category filter strip (always shown)
           if (!loading)
-            SliverToBoxAdapter(
-                child: _buildCategoryStrip(context, vm)),
+            SliverToBoxAdapter(child: _buildCategoryStrip(context, vm)),
           // Results header
           SliverToBoxAdapter(
-              child: _buildResultsHeader(
-                  context, loading ? 0 : items.length, vm)),
+            child: _buildResultsHeader(context, loading ? 0 : items.length, vm),
+          ),
           // Items or empty state
           if (!loading && items.isEmpty)
             _buildEmptyListings(context)
@@ -120,29 +118,32 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
         ),
       ),
       padding: EdgeInsetsDirectional.fromSTEB(
-          20, MediaQuery.of(context).padding.top + 20, 20, 20),
+        20,
+        MediaQuery.of(context).padding.top + 20,
+        20,
+        20,
+      ),
       child: Row(
         children: [
           // Role badge
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.2)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
             ),
             child: Text(
               widget.role == UserRole.driver
                   ? l10n.marketDriverRole
                   : widget.role == UserRole.supplier
-                      ? l10n.marketSupplierRole
-                      : l10n.marketRecyclingRole,
+                  ? l10n.marketSupplierRole
+                  : l10n.marketRecyclingRole,
               style: GoogleFonts.cairo(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white),
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
             ),
           ),
           const Spacer(),
@@ -153,16 +154,16 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
               Text(
                 l10n.marketTitle,
                 style: GoogleFonts.cairo(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white),
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
               ),
               Text(
                 _segment == 0
                     ? l10n.marketBrowse
                     : l10n.marketCollectionJobsSubtitle,
-                style: GoogleFonts.cairo(
-                    fontSize: 11, color: Colors.white60),
+                style: GoogleFonts.cairo(fontSize: 11, color: Colors.white60),
               ),
             ],
           ),
@@ -176,11 +177,13 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.2)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
               ),
-              child: const Icon(Icons.smart_toy_rounded,
-                  color: Colors.white, size: 20),
+              child: const Icon(
+                Icons.smart_toy_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
           ),
         ],
@@ -192,8 +195,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
     DawaAssistantSheet.show(context);
   }
 
-  Widget _buildCategoryStrip(
-      BuildContext context, MarketplaceViewModel vm) {
+  Widget _buildCategoryStrip(BuildContext context, MarketplaceViewModel vm) {
     final locale = Localizations.localeOf(context);
     final l10n = context.l10n;
 
@@ -214,7 +216,9 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 8),
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: vm.selectedCategory == null
                         ? AppColors.primaryGreen
@@ -222,8 +226,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
                     borderRadius: BorderRadius.circular(10),
                     border: vm.selectedCategory == null
                         ? null
-                        : Border.all(
-                            color: AppColors.surfaceAltBorder),
+                        : Border.all(color: AppColors.surfaceAltBorder),
                     boxShadow: vm.selectedCategory != null
                         ? [
                             BoxShadow(
@@ -271,21 +274,19 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 180),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 8),
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.primaryGreen
-                          : Colors.white,
+                      color: isSelected ? AppColors.primaryGreen : Colors.white,
                       borderRadius: BorderRadius.circular(10),
                       border: isSelected
                           ? null
-                          : Border.all(
-                              color: AppColors.surfaceAltBorder),
+                          : Border.all(color: AppColors.surfaceAltBorder),
                       boxShadow: !isSelected
                           ? [
                               BoxShadow(
-                                color:
-                                    Colors.black.withValues(alpha: 0.04),
+                                color: Colors.black.withValues(alpha: 0.04),
                                 blurRadius: 4,
                                 offset: const Offset(0, 1),
                               ),
@@ -326,7 +327,10 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
   }
 
   Widget _buildResultsHeader(
-      BuildContext context, int count, MarketplaceViewModel vm) {
+    BuildContext context,
+    int count,
+    MarketplaceViewModel vm,
+  ) {
     final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
@@ -343,8 +347,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
               ),
             ),
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: AppColors.surfaceAlt,
                 borderRadius: BorderRadius.circular(8),
@@ -353,8 +356,11 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.category_outlined,
-                      size: 13, color: AppColors.primaryGreen),
+                  const Icon(
+                    Icons.category_outlined,
+                    size: 13,
+                    color: AppColors.primaryGreen,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     'كل الفئات',
@@ -371,8 +377,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
           const Spacer(),
           // Results count
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: AppColors.surfaceAlt,
               borderRadius: BorderRadius.circular(8),
@@ -407,8 +412,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
         child: Container(
           width: double.infinity,
-          padding:
-              const EdgeInsets.symmetric(vertical: 36, horizontal: 24),
+          padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 24),
           decoration: BoxDecoration(
             color: AppColors.surfaceAlt,
             borderRadius: BorderRadius.circular(16),
@@ -471,24 +475,23 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
     final edgePad = EdgeInsets.fromLTRB(layout.hPad, 4, layout.hPad, 100);
 
     Widget buildCard(Order item) => MarketItemCard(
-          item: item,
-          onTap: () {
-            final marketVm = context.read<MarketplaceViewModel>();
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => ChangeNotifierProvider.value(
-                  value: marketVm,
-                  child: MarketItemDetailsView(
-                    item: item,
-                    role: widget.role,
-                    onSupplierPurchaseConfirmed:
-                        widget.onSupplierPurchaseConfirmed,
-                  ),
-                ),
+      item: item,
+      onTap: () {
+        final marketVm = context.read<MarketplaceViewModel>();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => ChangeNotifierProvider.value(
+              value: marketVm,
+              child: MarketItemDetailsView(
+                item: item,
+                role: widget.role,
+                onSupplierPurchaseConfirmed: widget.onSupplierPurchaseConfirmed,
               ),
-            );
-          },
+            ),
+          ),
         );
+      },
+    );
 
     if (layout.isWide) {
       return Padding(
@@ -510,9 +513,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
 
     return Padding(
       padding: edgePad,
-      child: Column(
-        children: items.map(buildCard).toList(),
-      ),
+      child: Column(children: items.map(buildCard).toList()),
     );
   }
 }

@@ -15,8 +15,11 @@ void main() {
         point: const LatLng(31.9454, 35.9284),
         apiKey: '',
       );
-      expect(result, isNull,
-          reason: 'empty key → API call skipped → graceful null');
+      expect(
+        result,
+        isNull,
+        reason: 'empty key → API call skipped → graceful null',
+      );
     });
 
     test('does not throw for Amman coordinates with empty key', () async {
@@ -43,16 +46,20 @@ void main() {
   // ── fetchRoute guard-clause (unchanged behaviour) ─────────────────────────
 
   group('DirectionsService.fetchRoute —', () {
-    test('returns null gracefully when given a bogus key', () async {
-      // Will attempt HTTP but fail with a non-OK API status → null.
-      final result = await DirectionsService.fetchRoute(
-        origin: const LatLng(31.9454, 35.9284),
-        destination: const LatLng(31.9992, 36.0025),
-        apiKey: 'INVALID_KEY_FOR_TESTING',
-      );
-      // Either null (API error) or a RouteResult if network is live.
-      // We can't assert the value, but we assert no exception is thrown.
-      expect(result, anyOf(isNull, isA<RouteResult>()));
-    }, timeout: const Timeout(Duration(seconds: 15)));
+    test(
+      'returns null gracefully when given a bogus key',
+      () async {
+        // Will attempt HTTP but fail with a non-OK API status → null.
+        final result = await DirectionsService.fetchRoute(
+          origin: const LatLng(31.9454, 35.9284),
+          destination: const LatLng(31.9992, 36.0025),
+          apiKey: 'INVALID_KEY_FOR_TESTING',
+        );
+        // Either null (API error) or a RouteResult if network is live.
+        // We can't assert the value, but we assert no exception is thrown.
+        expect(result, anyOf(isNull, isA<RouteResult>()));
+      },
+      timeout: const Timeout(Duration(seconds: 15)),
+    );
   });
 }

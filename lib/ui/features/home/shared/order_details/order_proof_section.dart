@@ -1,14 +1,11 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OrderProofSection extends StatelessWidget {
   final String imagePath;
 
-  const OrderProofSection({
-    super.key,
-    required this.imagePath,
-  });
+  const OrderProofSection({super.key, required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +15,9 @@ class OrderProofSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF06402B).withValues(alpha: 0.1)),
+        border: Border.all(
+          color: const Color(0xFF06402B).withValues(alpha: 0.1),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -32,7 +31,11 @@ class OrderProofSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.check_circle_rounded, color: Color(0xFF06402B), size: 20),
+              const Icon(
+                Icons.check_circle_rounded,
+                color: Color(0xFF06402B),
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Text(
                 'إثبات الاستلام والتسليم',
@@ -63,7 +66,11 @@ class OrderProofSection extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.broken_image_rounded, color: Color(0xFF717973), size: 32),
+                    const Icon(
+                      Icons.broken_image_rounded,
+                      color: Color(0xFF717973),
+                      size: 32,
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       'الرابط يشير لملف غير متوفر مؤقتاً',

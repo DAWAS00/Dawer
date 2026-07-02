@@ -28,66 +28,76 @@ class _FakeLocationPublisher implements ILocationPublisher {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-DriverHomeViewModel _buildVm({
-  _FakeLocationPublisher? publisher,
-}) {
+DriverHomeViewModel _buildVm({_FakeLocationPublisher? publisher}) {
   final store = AppOrderStore();
-  return DriverHomeViewModel(store, publisher: publisher ?? _FakeLocationPublisher());
+  return DriverHomeViewModel(
+    store,
+    publisher: publisher ?? _FakeLocationPublisher(),
+  );
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 void main() {
   group('DriverHomeViewModel – acceptOrder', () {
-    test('available driver: accepts order, switches to tab 2, starts publisher', () async {
-      final publisher = _FakeLocationPublisher();
-      final store = AppOrderStore();
-      final vm = DriverHomeViewModel(store, publisher: publisher);
-      addTearDown(vm.dispose);
+    test(
+      'available driver: accepts order, switches to tab 2, starts publisher',
+      () async {
+        final publisher = _FakeLocationPublisher();
+        final store = AppOrderStore();
+        final vm = DriverHomeViewModel(store, publisher: publisher);
+        addTearDown(vm.dispose);
 
-      final order = store.driverFeedFor().first;
-      final error = await vm.acceptOrder(order, _testL10n);
+        final order = store.driverFeedFor().first;
+        final error = await vm.acceptOrder(order, _testL10n);
 
-      expect(error, isNull);
-      expect(vm.currentTab, 2);
-      expect(publisher.startCallCount, 1);
-      expect(publisher.lastStartedOrderId, order.id);
-      expect(vm.active?.id, order.id);
-    });
+        expect(error, isNull);
+        expect(vm.currentTab, 2);
+        expect(publisher.startCallCount, 1);
+        expect(publisher.lastStartedOrderId, order.id);
+        expect(vm.active?.id, order.id);
+      },
+    );
 
-    test('unavailable driver: returns error, tab unchanged, publisher not called', () async {
-      final publisher = _FakeLocationPublisher();
-      final store = AppOrderStore();
-      final vm = DriverHomeViewModel(store, publisher: publisher);
-      addTearDown(vm.dispose);
+    test(
+      'unavailable driver: returns error, tab unchanged, publisher not called',
+      () async {
+        final publisher = _FakeLocationPublisher();
+        final store = AppOrderStore();
+        final vm = DriverHomeViewModel(store, publisher: publisher);
+        addTearDown(vm.dispose);
 
-      vm.toggleAvailability(false, _testL10n);
-      expect(vm.isAvailable, isFalse);
+        vm.toggleAvailability(false, _testL10n);
+        expect(vm.isAvailable, isFalse);
 
-      final order = store.driverFeedFor().first;
-      final error = await vm.acceptOrder(order, _testL10n);
+        final order = store.driverFeedFor().first;
+        final error = await vm.acceptOrder(order, _testL10n);
 
-      expect(error, isNotNull);
-      expect(vm.currentTab, 0);
-      expect(publisher.startCallCount, 0);
-    });
+        expect(error, isNotNull);
+        expect(vm.currentTab, 0);
+        expect(publisher.startCallCount, 0);
+      },
+    );
 
-    test('driver already has active order: store returns error, publisher not called', () async {
-      final publisher = _FakeLocationPublisher();
-      final store = AppOrderStore();
-      final vm = DriverHomeViewModel(store, publisher: publisher);
-      addTearDown(vm.dispose);
+    test(
+      'driver already has active order: store returns error, publisher not called',
+      () async {
+        final publisher = _FakeLocationPublisher();
+        final store = AppOrderStore();
+        final vm = DriverHomeViewModel(store, publisher: publisher);
+        addTearDown(vm.dispose);
 
-      final firstOrder = store.driverFeedFor().first;
-      await vm.acceptOrder(firstOrder, _testL10n);
-      expect(publisher.startCallCount, 1);
+        final firstOrder = store.driverFeedFor().first;
+        await vm.acceptOrder(firstOrder, _testL10n);
+        expect(publisher.startCallCount, 1);
 
-      final secondOrder = store.driverFeedFor().first;
-      final error = await vm.acceptOrder(secondOrder, _testL10n);
+        final secondOrder = store.driverFeedFor().first;
+        final error = await vm.acceptOrder(secondOrder, _testL10n);
 
-      expect(error, isNotNull);
-      expect(publisher.startCallCount, 1); // no second start
-    });
+        expect(error, isNotNull);
+        expect(publisher.startCallCount, 1); // no second start
+      },
+    );
   });
 
   group('DriverHomeViewModel – completeOrder', () {
@@ -112,7 +122,10 @@ void main() {
   group('DriverHomeViewModel – toggleAvailability', () {
     test('returns error when trying to go offline with active order', () async {
       final store = AppOrderStore();
-      final vm = DriverHomeViewModel(store, publisher: _FakeLocationPublisher());
+      final vm = DriverHomeViewModel(
+        store,
+        publisher: _FakeLocationPublisher(),
+      );
       addTearDown(vm.dispose);
 
       final order = store.driverFeedFor().first;

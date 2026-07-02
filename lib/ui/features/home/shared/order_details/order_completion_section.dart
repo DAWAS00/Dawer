@@ -67,26 +67,38 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
-                  leading: const Icon(Icons.camera_alt_rounded,
-                      color: AppColors.primaryGreen),
-                  title: Text(context.l10n.orderPhotoCamera,
-                      style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                  leading: const Icon(
+                    Icons.camera_alt_rounded,
+                    color: AppColors.primaryGreen,
+                  ),
+                  title: Text(
+                    context.l10n.orderPhotoCamera,
+                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                  ),
                   onTap: () async {
                     Navigator.pop(context);
                     final picked = await _picker.pickImage(
-                        source: ImageSource.camera, imageQuality: 80);
+                      source: ImageSource.camera,
+                      imageQuality: 80,
+                    );
                     if (picked != null) setState(() => _proofImage = picked);
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.photo_library_rounded,
-                      color: AppColors.primaryGreen),
-                  title: Text(context.l10n.orderPhotoGallery,
-                      style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                  leading: const Icon(
+                    Icons.photo_library_rounded,
+                    color: AppColors.primaryGreen,
+                  ),
+                  title: Text(
+                    context.l10n.orderPhotoGallery,
+                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                  ),
                   onTap: () async {
                     Navigator.pop(context);
                     final picked = await _picker.pickImage(
-                        source: ImageSource.gallery, imageQuality: 80);
+                      source: ImageSource.gallery,
+                      imageQuality: 80,
+                    );
                     if (picked != null) setState(() => _proofImage = picked);
                   },
                 ),
@@ -110,8 +122,10 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
 
     try {
       // Build local proof (GPS + SHA256).
-      final localProof =
-          await ProofBuilder.build(imageFile: image, weightKg: weight);
+      final localProof = await ProofBuilder.build(
+        imageFile: image,
+        weightKg: weight,
+      );
 
       // Upload photo to Supabase Storage; fall back to local path on error.
       String photoUrl;
@@ -132,8 +146,9 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Text(
             context.l10n.orderCompleteDialogTitle,
             textAlign: TextAlign.right,
@@ -145,10 +160,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
           content: Text(
             context.l10n.orderCompleteDialogMsg,
             textAlign: TextAlign.right,
-            style: GoogleFonts.cairo(
-              fontSize: 14,
-              color: AppColors.mutedText,
-            ),
+            style: GoogleFonts.cairo(fontSize: 14, color: AppColors.mutedText),
           ),
           actions: [
             TextButton(
@@ -298,8 +310,11 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
                                 color: Colors.black.withValues(alpha: 0.6),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.edit_rounded,
-                                  color: Colors.white, size: 18),
+                              child: const Icon(
+                                Icons.edit_rounded,
+                                color: Colors.white,
+                                size: 18,
+                              ),
                             ),
                           ),
                         ],
@@ -370,8 +385,11 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.error_outline,
-                        color: Colors.red.shade700, size: 18),
+                    Icon(
+                      Icons.error_outline,
+                      color: Colors.red.shade700,
+                      size: 18,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -392,15 +410,13 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _submitting
-                  ? null
-                  : (_canComplete ? _submit : null),
+              onPressed: _submitting ? null : (_canComplete ? _submit : null),
               style: ElevatedButton.styleFrom(
                 backgroundColor: _uploadError != null
                     ? Colors.red
                     : (_canComplete
-                        ? AppColors.primaryGreen
-                        : AppColors.mutedText.withValues(alpha: 0.4)),
+                          ? AppColors.primaryGreen
+                          : AppColors.mutedText.withValues(alpha: 0.4)),
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),

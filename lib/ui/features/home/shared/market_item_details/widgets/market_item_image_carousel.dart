@@ -14,7 +14,8 @@ class MarketItemImageCarousel extends StatefulWidget {
   });
 
   @override
-  State<MarketItemImageCarousel> createState() => _MarketItemImageCarouselState();
+  State<MarketItemImageCarousel> createState() =>
+      _MarketItemImageCarouselState();
 }
 
 class _MarketItemImageCarouselState extends State<MarketItemImageCarousel> {
@@ -74,8 +75,7 @@ class _MarketItemImageCarouselState extends State<MarketItemImageCarousel> {
           controller: _controller,
           onPageChanged: (p) => setState(() => _currentPage = p),
           itemCount: widget.images.length,
-          itemBuilder: (context, index) =>
-              _buildImage(widget.images[index]),
+          itemBuilder: (context, index) => _buildImage(widget.images[index]),
         ),
         Positioned(
           bottom: 0,
@@ -87,7 +87,10 @@ class _MarketItemImageCarouselState extends State<MarketItemImageCarousel> {
               gradient: LinearGradient(
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
-                colors: [Colors.black.withValues(alpha: 0.65), Colors.transparent],
+                colors: [
+                  Colors.black.withValues(alpha: 0.65),
+                  Colors.transparent,
+                ],
               ),
             ),
           ),
@@ -100,11 +103,16 @@ class _MarketItemImageCarouselState extends State<MarketItemImageCarousel> {
             children: widget.wasteTypes
                 .map(
                   (t) => Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.45),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.25),
+                      ),
                     ),
                     child: Text(
                       t.label,
@@ -134,7 +142,9 @@ class _MarketItemImageCarouselState extends State<MarketItemImageCarousel> {
                   width: _currentPage == i ? 20 : 6,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: _currentPage == i ? Colors.white : Colors.white.withValues(alpha: 0.45),
+                    color: _currentPage == i
+                        ? Colors.white
+                        : Colors.white.withValues(alpha: 0.45),
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
@@ -162,7 +172,11 @@ class _MarketItemImageCarouselState extends State<MarketItemImageCarousel> {
                   ),
                 ),
                 const SizedBox(width: 4),
-                const Icon(Icons.photo_library_rounded, size: 13, color: Colors.white70),
+                const Icon(
+                  Icons.photo_library_rounded,
+                  size: 13,
+                  color: Colors.white70,
+                ),
               ],
             ),
           ),
@@ -204,7 +218,11 @@ class MarketItemGradientPlaceholder extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               wasteType.label,
-              style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+              style: GoogleFonts.cairo(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ],
         ),
@@ -213,21 +231,21 @@ class MarketItemGradientPlaceholder extends StatelessWidget {
   }
 
   IconData _iconFor(WasteType type) => switch (type) {
-        WasteType.paper => Icons.newspaper_rounded,
-        WasteType.plastic => Icons.local_drink_rounded,
-        WasteType.metal => Icons.hardware_rounded,
-        WasteType.glass => Icons.wine_bar_rounded,
-        WasteType.electronics => Icons.devices_rounded,
-        WasteType.organic => Icons.eco_rounded,
-        WasteType.textile => Icons.checkroom_rounded,
-        WasteType.wood => Icons.park_rounded,
-        WasteType.rubber => Icons.circle_rounded,
-        WasteType.oil => Icons.water_drop_rounded,
-        WasteType.chemicals => Icons.science_rounded,
-        WasteType.batteries => Icons.battery_alert_rounded,
-        WasteType.furniture => Icons.chair_rounded,
-        WasteType.tires => Icons.tire_repair_rounded,
-        WasteType.construction => Icons.construction_rounded,
-        WasteType.copperAluminium => Icons.bolt_rounded,
-      };
+    WasteType.paper => Icons.newspaper_rounded,
+    WasteType.plastic => Icons.local_drink_rounded,
+    WasteType.metal => Icons.hardware_rounded,
+    WasteType.glass => Icons.wine_bar_rounded,
+    WasteType.electronics => Icons.devices_rounded,
+    WasteType.organic => Icons.eco_rounded,
+    WasteType.textile => Icons.checkroom_rounded,
+    WasteType.wood => Icons.park_rounded,
+    WasteType.rubber => Icons.circle_rounded,
+    WasteType.oil => Icons.water_drop_rounded,
+    WasteType.chemicals => Icons.science_rounded,
+    WasteType.batteries => Icons.battery_alert_rounded,
+    WasteType.furniture => Icons.chair_rounded,
+    WasteType.tires => Icons.tire_repair_rounded,
+    WasteType.construction => Icons.construction_rounded,
+    WasteType.copperAluminium => Icons.bolt_rounded,
+  };
 }

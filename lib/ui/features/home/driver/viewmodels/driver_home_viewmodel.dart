@@ -32,10 +32,10 @@ class DriverHomeViewModel extends ChangeNotifier {
     LocationService? locationService,
     IWalletRepository? walletRepo,
     IHubRepository? hubRepository,
-  })  : _publisher = publisher ?? LocationPublisher.instance,
-        _locationService = locationService ?? LocationService(),
-        _walletRepo = walletRepo ?? const NoOpWalletRepository(),
-        _hubRepo = hubRepository ?? const NoOpHubRepository() {
+  }) : _publisher = publisher ?? LocationPublisher.instance,
+       _locationService = locationService ?? LocationService(),
+       _walletRepo = walletRepo ?? const NoOpWalletRepository(),
+       _hubRepo = hubRepository ?? const NoOpHubRepository() {
     _store.addListener(_onStoreChanged);
     _refreshWallet();
     _loadHubs();
@@ -113,17 +113,17 @@ class DriverHomeViewModel extends ChangeNotifier {
   User get user => _user;
 
   List<Order> get available => _store.driverFeedFor(
-        vehicleType: _user.vehicleType,
-        hasChemicalPermit: _user.hasChemicalPermit,
-      );
+    vehicleType: _user.vehicleType,
+    hasChemicalPermit: _user.hasChemicalPermit,
+  );
   Order? get active => _store.driverActiveOrder;
   bool get hasActiveTrip => active != null;
   OrderStatus? get activeTripStatus => active?.status;
   List<Order> get history => _store.driverHistory;
   List<Order> get collectionSaleOrders => _store.collectionSalesFor(_user.name);
 
-  double get totalEarnings => _store.driverHistory
-      .fold(0.0, (sum, o) => sum + o.reward);
+  double get totalEarnings =>
+      _store.driverHistory.fold(0.0, (sum, o) => sum + o.reward);
 
   int get totalCompletedRides => _store.driverHistory
       .where((o) => o.status == OrderStatus.completed)
@@ -166,7 +166,11 @@ class DriverHomeViewModel extends ChangeNotifier {
   /// Called after PickupProofView collects weight + photo.
   /// Client GPS provides instant UX feedback; the Edge Function is the
   /// authoritative server-side gate (reads Supabase driver_locations).
-  Future<String?> markArrivedAtPickup(Order order, AppLocalizations l10n, {OrderProof? pickupProof}) async {
+  Future<String?> markArrivedAtPickup(
+    Order order,
+    AppLocalizations l10n, {
+    OrderProof? pickupProof,
+  }) async {
     final pos = await _locationService.getCurrentLocation();
     if (pos == null) return l10n.driverErrorLocationUnavailable;
 
@@ -180,7 +184,10 @@ class DriverHomeViewModel extends ChangeNotifier {
     // Fast client-side preflight — avoids an Edge Function round-trip when
     // the driver is clearly nowhere near the geofence.
     final clientDist = ProximityService.distanceMeters(
-      pos.lat, pos.lng, order.pickupLat!, order.pickupLng!,
+      pos.lat,
+      pos.lng,
+      order.pickupLat!,
+      order.pickupLng!,
     );
     if (clientDist > ProximityService.pickupRadiusMeters * 3) {
       _store.recordFraudAttempt(order.id);
@@ -218,7 +225,10 @@ class DriverHomeViewModel extends ChangeNotifier {
   }
 
   /// Called when driver taps "I'm Here" at the dropoff location.
-  Future<String?> markArrivedAtDropoff(Order order, AppLocalizations l10n) async {
+  Future<String?> markArrivedAtDropoff(
+    Order order,
+    AppLocalizations l10n,
+  ) async {
     final pos = await _locationService.getCurrentLocation();
     if (pos == null) return l10n.driverErrorLocationUnavailable;
 
@@ -228,7 +238,10 @@ class DriverHomeViewModel extends ChangeNotifier {
     }
 
     final clientDist = ProximityService.distanceMeters(
-      pos.lat, pos.lng, order.dropoffLat!, order.dropoffLng!,
+      pos.lat,
+      pos.lng,
+      order.dropoffLat!,
+      order.dropoffLng!,
     );
     if (clientDist > ProximityService.dropoffRadiusMeters * 3) {
       _store.recordFraudAttempt(order.id);
@@ -268,7 +281,9 @@ class DriverHomeViewModel extends ChangeNotifier {
         return null;
       },
       onFailure: (failure) {
-        debugPrint('[verify_arrival] error: ${failure.message} — falling back to client check');
+        debugPrint(
+          '[verify_arrival] error: ${failure.message} — falling back to client check',
+        );
         return null;
       },
     );
@@ -294,17 +309,13 @@ class DriverHomeViewModel extends ChangeNotifier {
 
   void _startGhostTimer(String orderId) {
     _ghostTimer?.cancel();
-    _ghostTimer = Timer(
-      const Duration(minutes: 15),
-      () {
-        final active = _store.driverActiveOrder;
-        if (active?.id == orderId &&
-            active?.status == OrderStatus.accepted) {
-          _store.cancelForNoShow(orderId);
-          _publisher.stop();
-        }
-      },
-    );
+    _ghostTimer = Timer(const Duration(minutes: 15), () {
+      final active = _store.driverActiveOrder;
+      if (active?.id == orderId && active?.status == OrderStatus.accepted) {
+        _store.cancelForNoShow(orderId);
+        _publisher.stop();
+      }
+    });
   }
 
   void _cancelGhostTimer() {
@@ -343,7 +354,8 @@ class DriverHomeViewModel extends ChangeNotifier {
     double? pickupLat,
     double? pickupLng,
   }) {
-    final orderId = 'DRV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final orderId =
+        'DRV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
     final hasChemicals = wasteTypes.contains(WasteType.chemicals);
     final order = Order(
       id: orderId,

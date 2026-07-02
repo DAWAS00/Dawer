@@ -28,18 +28,29 @@ class CycleTimeBreakdownChart extends StatelessWidget {
     }
 
     final stages = <_Stage>[
-      _Stage(l10n.analyticsCycleStageAccept, data.avgAcceptMinutes,
-          const Color(0xFF2563EB)),
-      _Stage(l10n.analyticsCycleStagePickup, data.avgPickupMinutes,
-          const Color(0xFFD97706)),
-      _Stage(l10n.analyticsCycleStageTransit, data.avgTransitMinutes,
-          const Color(0xFF16A34A)),
-      _Stage(l10n.analyticsCycleStageDropoff, data.avgDropoffMinutes,
-          const Color(0xFF7C3AED)),
+      _Stage(
+        l10n.analyticsCycleStageAccept,
+        data.avgAcceptMinutes,
+        const Color(0xFF2563EB),
+      ),
+      _Stage(
+        l10n.analyticsCycleStagePickup,
+        data.avgPickupMinutes,
+        const Color(0xFFD97706),
+      ),
+      _Stage(
+        l10n.analyticsCycleStageTransit,
+        data.avgTransitMinutes,
+        const Color(0xFF16A34A),
+      ),
+      _Stage(
+        l10n.analyticsCycleStageDropoff,
+        data.avgDropoffMinutes,
+        const Color(0xFF7C3AED),
+      ),
     ].where((s) => s.minutes != null).toList();
 
-    final total = stages.fold<double>(
-        0, (s, e) => s + (e.minutes ?? 0));
+    final total = stages.fold<double>(0, (s, e) => s + (e.minutes ?? 0));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,9 +76,10 @@ class CycleTimeBreakdownChart extends StatelessWidget {
                 children: [
                   for (int i = 0; i < stages.length; i++) ...[
                     Expanded(
-                      flex: ((stages[i].minutes! / total) * 1000)
-                          .round()
-                          .clamp(1, 100000),
+                      flex: ((stages[i].minutes! / total) * 1000).round().clamp(
+                        1,
+                        100000,
+                      ),
                       child: ColoredBox(color: stages[i].color),
                     ),
                   ],
@@ -87,25 +99,28 @@ class CycleTimeBreakdownChart extends StatelessWidget {
                   Container(
                     width: 10,
                     height: 10,
-                    decoration:
-                        BoxDecoration(color: s.color, shape: BoxShape.circle),
+                    decoration: BoxDecoration(
+                      color: s.color,
+                      shape: BoxShape.circle,
+                    ),
                   ),
                   const SizedBox(width: 6),
                   Text(
                     s.label,
                     style: GoogleFonts.cairo(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textMain),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textMain,
+                    ),
                   ),
                   const SizedBox(width: 3),
                   Text(
-                    l10n.analyticsCycleMinutes(
-                        s.minutes!.toStringAsFixed(0)),
+                    l10n.analyticsCycleMinutes(s.minutes!.toStringAsFixed(0)),
                     style: GoogleFonts.dmSans(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.mutedText),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.mutedText,
+                    ),
                   ),
                 ],
               ),

@@ -81,7 +81,7 @@ class _BadgeChip extends StatelessWidget {
                     color: badge.color.withValues(alpha: 0.12),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
-                  )
+                  ),
                 ]
               : null,
         ),

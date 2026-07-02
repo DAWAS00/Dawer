@@ -63,4 +63,3 @@ void main() {
 
   // Note: happy-path reward math is covered by dedicated breakdown/model tests.
 }
-

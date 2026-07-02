@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -59,24 +59,24 @@ class LicenseScanSection extends StatelessWidget {
           duration: const Duration(milliseconds: 300),
           child: switch (vm.state) {
             LicenseValidationState.idle => _IdleZone(
-                key: const ValueKey('idle'),
-                onTap: () => _showSourceSheet(context),
-              ),
+              key: const ValueKey('idle'),
+              onTap: () => _showSourceSheet(context),
+            ),
             LicenseValidationState.analyzing => const _AnalyzingZone(
-                key: ValueKey('analyzing'),
-              ),
+              key: ValueKey('analyzing'),
+            ),
             LicenseValidationState.valid => _ValidZone(
-                key: const ValueKey('valid'),
-                licenseFile: vm.licenseFile,
-                categories: vm.suggestedCategories,
-                extractedData: vm.extractedData,
-                onReset: onReset,
-              ),
+              key: const ValueKey('valid'),
+              licenseFile: vm.licenseFile,
+              categories: vm.suggestedCategories,
+              extractedData: vm.extractedData,
+              onReset: onReset,
+            ),
             LicenseValidationState.invalid => _InvalidZone(
-                key: const ValueKey('invalid'),
-                reason: vm.failReason,
-                onRetry: () => _showSourceSheet(context),
-              ),
+              key: const ValueKey('invalid'),
+              reason: vm.failReason,
+              onRetry: () => _showSourceSheet(context),
+            ),
           },
         ),
       ],
@@ -180,12 +180,8 @@ class _AnalyzingZoneState extends State<_AnalyzingZone>
         Stack(
           children: [
             const AiShimmerLoader(height: 140),
-            Positioned.fill(
-              child: _ScanningOverlay(animation: _scanCtrl),
-            ),
-            const Positioned.fill(
-              child: _DataPulseOverlay(),
-            ),
+            Positioned.fill(child: _ScanningOverlay(animation: _scanCtrl)),
+            const Positioned.fill(child: _DataPulseOverlay()),
           ],
         ),
         const SizedBox(height: 16),
@@ -328,7 +324,8 @@ class _DataPulseOverlayState extends State<_DataPulseOverlay> {
               duration: const Duration(milliseconds: 400),
               builder: (context, value, child) {
                 return Opacity(
-                  opacity: value * (1.0 - (value > 0.8 ? (value - 0.8) * 5 : 0)),
+                  opacity:
+                      value * (1.0 - (value > 0.8 ? (value - 0.8) * 5 : 0)),
                   child: Transform.scale(
                     scale: 0.8 + (value * 0.2),
                     child: child,
@@ -423,8 +420,10 @@ class _ValidZone extends StatelessWidget {
                 ),
               ),
               IconButton(
-                icon:
-                    const Icon(Icons.refresh_rounded, color: Color(0xFF166534)),
+                icon: const Icon(
+                  Icons.refresh_rounded,
+                  color: Color(0xFF166534),
+                ),
                 onPressed: onReset,
                 tooltip: l10n.aiValidationRetryButton,
               ),
@@ -470,8 +469,11 @@ class _ExtractedDataCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.analytics_outlined,
-                  size: 18, color: Color(0xFF06402B)),
+              const Icon(
+                Icons.analytics_outlined,
+                size: 18,
+                color: Color(0xFF06402B),
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -494,8 +496,11 @@ class _ExtractedDataCard extends StatelessWidget {
           const Divider(height: 24),
           Row(
             children: [
-              const Icon(Icons.auto_awesome_outlined,
-                  size: 14, color: Color(0xFF059669)),
+              const Icon(
+                Icons.auto_awesome_outlined,
+                size: 14,
+                color: Color(0xFF059669),
+              ),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
@@ -527,7 +532,9 @@ class _TrustScoreBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFECFDF5),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: const Color(0xFF059669).withValues(alpha: 0.3)),
+        border: Border.all(
+          color: const Color(0xFF059669).withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -601,11 +608,7 @@ class _InvalidZone extends StatelessWidget {
   final String? reason;
   final VoidCallback onRetry;
 
-  const _InvalidZone({
-    super.key,
-    required this.reason,
-    required this.onRetry,
-  });
+  const _InvalidZone({super.key, required this.reason, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -660,8 +663,9 @@ class _InvalidZone extends StatelessWidget {
           ),
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 14),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         ),
       ],
@@ -757,9 +761,7 @@ class _AiSparkleIcon extends StatelessWidget {
         color: const Color(0xFF06402B).withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
-      child: const Center(
-        child: Text('✨', style: TextStyle(fontSize: 10)),
-      ),
+      child: const Center(child: Text('✨', style: TextStyle(fontSize: 10))),
     );
   }
 }

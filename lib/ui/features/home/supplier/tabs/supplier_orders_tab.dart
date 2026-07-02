@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order/order.dart';
@@ -33,27 +33,34 @@ void _showCompleteDialog(
     context: context,
     builder: (ctx) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Text(context.l10n.orderDeliveryConfirmTitle,
-          textAlign: TextAlign.right,
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+      title: Text(
+        context.l10n.orderDeliveryConfirmTitle,
+        textAlign: TextAlign.right,
+        style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(context.l10n.orderDeliveryConfirmMsg,
-              textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+          Text(
+            context.l10n.orderDeliveryConfirmMsg,
+            textAlign: TextAlign.right,
+            style: GoogleFonts.cairo(),
+          ),
           if (sale.paymentModel == PaymentModel.perKg) ...[
             const SizedBox(height: 16),
             TextField(
               controller: weightController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               textAlign: TextAlign.right,
               decoration: InputDecoration(
                 labelText: context.l10n.orderActualWeight,
                 labelStyle: GoogleFonts.cairo(),
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ],
@@ -68,14 +75,17 @@ void _showCompleteDialog(
           onPressed: () {
             Navigator.pop(ctx);
             final weightText = weightController.text.trim();
-            final weight =
-                weightText.isEmpty ? null : double.tryParse(weightText);
+            final weight = weightText.isEmpty
+                ? null
+                : double.tryParse(weightText);
             final error = onComplete(sale.id, actualWeightKg: weight);
             if (error != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(error,
-                      style: GoogleFonts.cairo(color: Colors.white)),
+                  content: Text(
+                    error,
+                    style: GoogleFonts.cairo(color: Colors.white),
+                  ),
                   backgroundColor: const Color(0xFF991B1B),
                   behavior: SnackBarBehavior.floating,
                 ),
@@ -87,10 +97,13 @@ void _showCompleteDialog(
             foregroundColor: Colors.white,
             elevation: 0,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
-          child: Text(context.l10n.confirm,
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+          child: Text(
+            context.l10n.confirm,
+            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     ),
@@ -140,12 +153,18 @@ class SupplierOrdersTab extends StatelessWidget {
               ),
             ),
             padding: EdgeInsets.fromLTRB(
-                20, MediaQuery.of(context).padding.top + 20, 20, 20),
+              20,
+              MediaQuery.of(context).padding.top + 20,
+              20,
+              20,
+            ),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 6),
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
@@ -153,8 +172,11 @@ class SupplierOrdersTab extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.receipt_long_rounded,
-                          size: 13, color: Colors.white70),
+                      const Icon(
+                        Icons.receipt_long_rounded,
+                        size: 13,
+                        color: Colors.white70,
+                      ),
                       const SizedBox(width: 5),
                       Text(
                         '${activeOrders.length + completedOrders.length + cancelledOrders.length + collectionSaleOrders.length}',
@@ -195,8 +217,11 @@ class SupplierOrdersTab extends StatelessWidget {
                       color: AppColors.primaryGreen.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(24),
                     ),
-                    child: const Icon(Icons.receipt_long_rounded,
-                        size: 40, color: AppColors.primaryGreen),
+                    child: const Icon(
+                      Icons.receipt_long_rounded,
+                      size: 40,
+                      color: AppColors.primaryGreen,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Text(
@@ -211,7 +236,9 @@ class SupplierOrdersTab extends StatelessWidget {
                   Text(
                     l10n.ordersCreateFromHome,
                     style: GoogleFonts.cairo(
-                        fontSize: 14, color: AppColors.mutedText),
+                      fontSize: 14,
+                      color: AppColors.mutedText,
+                    ),
                   ),
                 ],
               ),
@@ -269,7 +296,9 @@ class SupplierOrdersTab extends StatelessWidget {
   }
 
   SliverPadding _buildCollectionSalesList(
-      BuildContext context, List<Order> sales) {
+    BuildContext context,
+    List<Order> sales,
+  ) {
     return SliverPadding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
       sliver: SliverList(
@@ -281,12 +310,13 @@ class SupplierOrdersTab extends StatelessWidget {
               onCancel: sales[i].status == OrderStatus.pending
                   ? () => onCancelOrder(sales[i].id)
                   : null,
-              onStartTransit: sales[i].status == OrderStatus.pending &&
+              onStartTransit:
+                  sales[i].status == OrderStatus.pending &&
                       onStartTransit != null
                   ? () => _handleStartTransit(ctx, sales[i], onStartTransit!)
                   : null,
-              onComplete: sales[i].status == OrderStatus.inTransit &&
-                      onComplete != null
+              onComplete:
+                  sales[i].status == OrderStatus.inTransit && onComplete != null
                   ? () => _showCompleteDialog(ctx, sales[i], onComplete!)
                   : null,
             ),
@@ -297,8 +327,11 @@ class SupplierOrdersTab extends StatelessWidget {
     );
   }
 
-  SliverPadding _buildOrdersList(BuildContext context, List<Order> orders,
-      {bool canCancel = false}) {
+  SliverPadding _buildOrdersList(
+    BuildContext context,
+    List<Order> orders, {
+    bool canCancel = false,
+  }) {
     return SliverPadding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
       sliver: SliverList(
@@ -307,8 +340,7 @@ class SupplierOrdersTab extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 12),
             child: SupplierOrderCard(
               order: orders[i],
-              canCancel:
-                  canCancel && orders[i].status == OrderStatus.pending,
+              canCancel: canCancel && orders[i].status == OrderStatus.pending,
               onCancelOrder: onCancelOrder,
             ),
           ),

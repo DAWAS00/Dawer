@@ -21,7 +21,11 @@ class ActivityStatementList extends StatelessWidget {
         child: Center(
           child: Column(
             children: [
-              const Icon(Icons.inbox_outlined, size: 40, color: Color(0xFF9CA3AF)),
+              const Icon(
+                Icons.inbox_outlined,
+                size: 40,
+                color: Color(0xFF9CA3AF),
+              ),
               const SizedBox(height: 8),
               Text(
                 emptyMessage,

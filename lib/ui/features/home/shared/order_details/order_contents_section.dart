@@ -14,7 +14,8 @@ class OrderContentsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context);
-    final hasExtra = order.weightKg != null ||
+    final hasExtra =
+        order.weightKg != null ||
         order.weightCategory != null ||
         order.wasteForm != null;
     final hasNotes =
@@ -62,7 +63,11 @@ class OrderContentsSection extends StatelessWidget {
                     color: AppColors.primaryGreen.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(LucideIcons.package, size: 14, color: AppColors.primaryGreen),
+                  child: const Icon(
+                    LucideIcons.package,
+                    size: 14,
+                    color: AppColors.primaryGreen,
+                  ),
                 ),
               ],
             ),
@@ -129,7 +134,11 @@ class OrderContentsSection extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Icon(LucideIcons.fileText, size: 15, color: AppColors.mutedText),
+                  const Icon(
+                    LucideIcons.fileText,
+                    size: 15,
+                    color: AppColors.mutedText,
+                  ),
                 ],
               ),
             ],
@@ -152,7 +161,9 @@ class _WasteChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.primaryGreen.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primaryGreen.withValues(alpha: 0.18)),
+        border: Border.all(
+          color: AppColors.primaryGreen.withValues(alpha: 0.18),
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

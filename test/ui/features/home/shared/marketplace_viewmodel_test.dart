@@ -64,8 +64,9 @@ void main() {
       vm.setSearch(name.substring(0, 2));
       expect(vm.filteredItems, isNotEmpty);
       expect(
-        vm.filteredItems.any((o) =>
-            (o.supplierName ?? '').contains(name.substring(0, 2))),
+        vm.filteredItems.any(
+          (o) => (o.supplierName ?? '').contains(name.substring(0, 2)),
+        ),
         isTrue,
       );
     });
@@ -227,8 +228,7 @@ void main() {
       addTearDown(vm.dispose);
       expect(vm.collectionJobs, isA<List<Order>>());
       expect(
-        vm.collectionJobs.every(
-            (j) => j.type == OrderType.collection),
+        vm.collectionJobs.every((j) => j.type == OrderType.collection),
         isTrue,
       );
     });

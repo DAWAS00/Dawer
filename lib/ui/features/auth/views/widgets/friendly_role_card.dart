@@ -30,7 +30,9 @@ class FriendlyRoleCard extends StatelessWidget {
           color: isSelected ? const Color(0xFFE8F5E9) : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? const Color(0xFF06402B) : const Color(0xFFDDE3DD),
+            color: isSelected
+                ? const Color(0xFF06402B)
+                : const Color(0xFFDDE3DD),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
@@ -48,7 +50,9 @@ class FriendlyRoleCard extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: isSelected ? const Color(0xFF06402B) : const Color(0xFFF0F2F0),
+                color: isSelected
+                    ? const Color(0xFF06402B)
+                    : const Color(0xFFF0F2F0),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(

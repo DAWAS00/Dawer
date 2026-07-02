@@ -28,7 +28,10 @@ class Co2CertificatePdfService {
                 level: 0,
                 child: pw.Text(
                   'Dwaar (دوّر) — CO2 Impact Certificate',
-                  style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold),
+                  style: pw.TextStyle(
+                    fontSize: 22,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
                 ),
               ),
               pw.SizedBox(height: 4),
@@ -38,10 +41,19 @@ class Co2CertificatePdfService {
               pw.Divider(),
               pw.SizedBox(height: 10),
               _row('Orders Completed', '${stats.totalOrders}'),
-              _row('Total Weight Recycled', '${stats.totalWeightKg.toStringAsFixed(1)} kg'),
+              _row(
+                'Total Weight Recycled',
+                '${stats.totalWeightKg.toStringAsFixed(1)} kg',
+              ),
               _row('CO2 Saved', '${stats.co2SavedKg.toStringAsFixed(1)} kg'),
-              _row('Water Saved', '${stats.waterSavedLiters.toStringAsFixed(0)} L'),
-              _row('Energy Saved', '${stats.energySavedKwh.toStringAsFixed(1)} kWh'),
+              _row(
+                'Water Saved',
+                '${stats.waterSavedLiters.toStringAsFixed(0)} L',
+              ),
+              _row(
+                'Energy Saved',
+                '${stats.energySavedKwh.toStringAsFixed(1)} kWh',
+              ),
               pw.SizedBox(height: 24),
               pw.Text(
                 'This certificate reflects a live snapshot of Dwaar\'s '
@@ -58,14 +70,16 @@ class Co2CertificatePdfService {
     final dir = await getTemporaryDirectory();
     final file = File('${dir.path}/dwaar_co2_certificate.pdf');
     await file.writeAsBytes(bytes);
-    await Share.shareXFiles([XFile(file.path)], text: 'Dwaar CO2 Impact Certificate');
+    await Share.shareXFiles([
+      XFile(file.path),
+    ], text: 'Dwaar CO2 Impact Certificate');
   }
 
   pw.Widget _row(String label, String value) => pw.Padding(
-        padding: const pw.EdgeInsets.only(bottom: 6),
-        child: pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-          children: [pw.Text(label), pw.Text(value)],
-        ),
-      );
+    padding: const pw.EdgeInsets.only(bottom: 6),
+    child: pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+      children: [pw.Text(label), pw.Text(value)],
+    ),
+  );
 }

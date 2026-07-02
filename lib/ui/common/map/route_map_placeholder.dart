@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dwaar/core/constants/app_colors.dart';
 import 'package:dwaar/core/services/map_launcher.dart';
@@ -54,10 +54,12 @@ class RouteMapPlaceholder extends StatelessWidget {
           children: [
             _MapGridOverlay(),
             if (showLabels)
-              Positioned.fill(child: _LabelsColumn(
-                pickupLabel: pickupLabel ?? l10n.mapLabelPickup,
-                dropoffLabel: dropoffLabel ?? l10n.mapLabelDropoff,
-              )),
+              Positioned.fill(
+                child: _LabelsColumn(
+                  pickupLabel: pickupLabel ?? l10n.mapLabelPickup,
+                  dropoffLabel: dropoffLabel ?? l10n.mapLabelDropoff,
+                ),
+              ),
             PositionedDirectional(
               end: 12,
               bottom: 12,
@@ -120,10 +122,7 @@ class _LabelsColumn extends StatelessWidget {
   final String pickupLabel;
   final String dropoffLabel;
 
-  const _LabelsColumn({
-    required this.pickupLabel,
-    required this.dropoffLabel,
-  });
+  const _LabelsColumn({required this.pickupLabel, required this.dropoffLabel});
 
   @override
   Widget build(BuildContext context) {

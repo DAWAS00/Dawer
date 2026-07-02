@@ -90,30 +90,33 @@ class _HomeRouterState extends State<HomeRouter> {
       if (!mounted) return;
       final session = context.read<IAuthRepository>().currentSession;
       if (session != null) {
-        context.read<AppOrderStore>().configureForUser(session.userId, session.role);
+        context.read<AppOrderStore>().configureForUser(
+          session.userId,
+          session.role,
+        );
       }
     });
 
     final Widget shell = switch (widget.role) {
       UserRole.driver => DriverHomeView(
-          userName: widget.userName,
-          aiSuggestedCategories: widget.aiSuggestedCategories,
-        ),
+        userName: widget.userName,
+        aiSuggestedCategories: widget.aiSuggestedCategories,
+      ),
       UserRole.supplier => switch (widget.supplierType) {
-          SupplierType.individual => IndividualSupplierHomeView(
-              userName: widget.userName,
-              aiSuggestedCategories: widget.aiSuggestedCategories,
-            ),
-          SupplierType.storeBusiness => RestaurantHomeView(
-              userName: widget.userName,
-              supplierType: widget.supplierType,
-              aiSuggestedCategories: widget.aiSuggestedCategories,
-            ),
-        },
-      UserRole.recyclingCo => RecyclingHomeView(
+        SupplierType.individual => IndividualSupplierHomeView(
           userName: widget.userName,
           aiSuggestedCategories: widget.aiSuggestedCategories,
         ),
+        SupplierType.storeBusiness => RestaurantHomeView(
+          userName: widget.userName,
+          supplierType: widget.supplierType,
+          aiSuggestedCategories: widget.aiSuggestedCategories,
+        ),
+      },
+      UserRole.recyclingCo => RecyclingHomeView(
+        userName: widget.userName,
+        aiSuggestedCategories: widget.aiSuggestedCategories,
+      ),
     };
 
     // Global Dawa-assistant bubble — same entry point for every role.

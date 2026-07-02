@@ -10,7 +10,7 @@ class LicenseValidationViewModel extends ChangeNotifier {
   final IAiLicenseValidationService _service;
 
   LicenseValidationViewModel({IAiLicenseValidationService? service})
-      : _service = service ?? GeminiAiLicenseValidationService();
+    : _service = service ?? GeminiAiLicenseValidationService();
 
   LicenseValidationState _state = LicenseValidationState.idle;
   LicenseValidationState get state => _state;

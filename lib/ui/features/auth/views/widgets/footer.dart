@@ -100,7 +100,11 @@ class LoginFooter extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
-                onTap: () => _showPolicySheet(context, l10n.footerTerms, l10n.footerPolicyBody),
+                onTap: () => _showPolicySheet(
+                  context,
+                  l10n.footerTerms,
+                  l10n.footerPolicyBody,
+                ),
                 child: Text(
                   l10n.footerTerms,
                   style: GoogleFonts.cairo(
@@ -123,7 +127,11 @@ class LoginFooter extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () => _showPolicySheet(context, l10n.footerPrivacy, l10n.footerPolicyBody),
+                onTap: () => _showPolicySheet(
+                  context,
+                  l10n.footerPrivacy,
+                  l10n.footerPolicyBody,
+                ),
                 child: Text(
                   l10n.footerPrivacy,
                   style: GoogleFonts.cairo(

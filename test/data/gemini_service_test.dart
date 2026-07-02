@@ -14,8 +14,7 @@ void main() {
     });
 
     test('parses JSON with nested objects', () {
-      const raw =
-          '{"material": {"type": "oil", "grade": "B"}, "payout": 2.5}';
+      const raw = '{"material": {"type": "oil", "grade": "B"}, "payout": 2.5}';
       final result = GeminiService.extractJson(raw);
       expect(result, isNotNull);
       expect((result!['material'] as Map)['grade'], 'B');

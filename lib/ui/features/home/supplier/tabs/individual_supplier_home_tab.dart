@@ -16,10 +16,7 @@ import '../../../reservations/views/reservation_inbox_view.dart';
 class IndividualSupplierHomeTab extends StatelessWidget {
   final String userName;
 
-  const IndividualSupplierHomeTab({
-    super.key,
-    required this.userName,
-  });
+  const IndividualSupplierHomeTab({super.key, required this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +29,8 @@ class IndividualSupplierHomeTab extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: _buildHeader(context, vm),
-          ),
-          
+          SliverToBoxAdapter(child: _buildHeader(context, vm)),
+
           if (tracked != null)
             SliverToBoxAdapter(
               child: Padding(
@@ -43,7 +38,7 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                 child: _buildTrackingTimeline(context, tracked),
               ),
             ),
-            
+
           if (active.isNotEmpty) ...[
             SliverToBoxAdapter(
               child: Padding(
@@ -61,7 +56,10 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.primaryGreen.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
@@ -85,25 +83,34 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                 delegate: SliverChildBuilderDelegate(
                   (context, i) => Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: OrderCard(
-                      order: active[i],
-                      mode: OrderCardMode.supplierActive,
-                      onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => OrderDetailsView(
-                            order: active[i],
-                            onSupplierConfirmArrival: (available) {
-                              final store = context.read<AppOrderStore>();
-                              if (available) {
-                                store.handleSupplierAvailable(active[i].id);
-                              } else {
-                                store.handleSupplierUnavailable(active[i].id);
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                    ).animate().fadeIn(delay: (i * 100).ms).slideY(begin: 0.1, end: 0),
+                    child:
+                        OrderCard(
+                              order: active[i],
+                              mode: OrderCardMode.supplierActive,
+                              onAction: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => OrderDetailsView(
+                                    order: active[i],
+                                    onSupplierConfirmArrival: (available) {
+                                      final store = context
+                                          .read<AppOrderStore>();
+                                      if (available) {
+                                        store.handleSupplierAvailable(
+                                          active[i].id,
+                                        );
+                                      } else {
+                                        store.handleSupplierUnavailable(
+                                          active[i].id,
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            )
+                            .animate()
+                            .fadeIn(delay: (i * 100).ms)
+                            .slideY(begin: 0.1, end: 0),
                   ),
                   childCount: active.length,
                 ),
@@ -122,14 +129,21 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                         color: AppColors.primaryGreen.withValues(alpha: 0.05),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(LucideIcons.leaf, size: 48, color: AppColors.primaryGreen),
-                    ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack),
+                      child: const Icon(
+                        LucideIcons.leaf,
+                        size: 48,
+                        color: AppColors.primaryGreen,
+                      ),
+                    ).animate().scale(
+                      duration: 500.ms,
+                      curve: Curves.easeOutBack,
+                    ),
                     const SizedBox(height: 24),
                     Text(
                       l10n.supplierNoActiveOrders,
                       style: GoogleFonts.cairo(
-                        fontSize: 20, 
-                        fontWeight: FontWeight.w800, 
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
                         color: AppColors.textMain,
                       ),
                     ),
@@ -137,7 +151,7 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                     Text(
                       l10n.supplierStartRecyclingCta,
                       style: GoogleFonts.cairo(
-                        fontSize: 14, 
+                        fontSize: 14,
                         color: AppColors.mutedText,
                       ),
                     ),
@@ -187,7 +201,11 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                         width: 1,
                       ),
                     ),
-                    child: const Icon(LucideIcons.user, color: AppColors.surface, size: 24),
+                    child: const Icon(
+                      LucideIcons.user,
+                      color: AppColors.surface,
+                      size: 24,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Column(
@@ -216,14 +234,19 @@ class IndividualSupplierHomeTab extends StatelessWidget {
               IconButton(
                 tooltip: l10n.reservationInboxTitle,
                 onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const ReservationInboxView()),
+                  MaterialPageRoute(
+                    builder: (_) => const ReservationInboxView(),
+                  ),
                 ),
-                icon: const Icon(LucideIcons.calendarClock, color: AppColors.surface),
+                icon: const Icon(
+                  LucideIcons.calendarClock,
+                  color: AppColors.surface,
+                ),
               ),
             ],
           ).animate().fadeIn(duration: 400.ms),
           const SizedBox(height: 32),
-          
+
           // Impact Card
           DwaarElevatedCard(
             padding: const EdgeInsets.all(24),
@@ -253,7 +276,12 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                 ),
               ],
             ),
-          ).animate().slideY(begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOutBack),
+          ).animate().slideY(
+            begin: 0.2,
+            end: 0,
+            duration: 400.ms,
+            curve: Curves.easeOutBack,
+          ),
         ],
       ),
     );
@@ -320,7 +348,10 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                 color: AppColors.statusInTransitBg,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(LucideIcons.truck, color: AppColors.statusInTransitText),
+              child: const Icon(
+                LucideIcons.truck,
+                color: AppColors.statusInTransitText,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -342,7 +373,10 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                       const SizedBox(width: 8),
                       if (order.eta != null)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.statusInTransitBg,
                             borderRadius: BorderRadius.circular(6),
@@ -369,7 +403,11 @@ class IndividualSupplierHomeTab extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios_rounded, color: AppColors.borderSubtle, size: 16),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: AppColors.borderSubtle,
+              size: 16,
+            ),
           ],
         ),
       ),

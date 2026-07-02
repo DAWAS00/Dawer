@@ -65,8 +65,11 @@ class PendingReservationsDialog extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          const Icon(Icons.bookmark_added_rounded,
-                              color: Colors.white, size: 22),
+                          const Icon(
+                            Icons.bookmark_added_rounded,
+                            color: Colors.white,
+                            size: 22,
+                          ),
                         ],
                       ),
                       const SizedBox(height: 4),
@@ -128,8 +131,19 @@ class _ReservationCard extends StatelessWidget {
   String _formatDate(DateTime? dt) {
     if (dt == null) return '—';
     const months = [
-      '', 'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+      '',
+      'يناير',
+      'فبراير',
+      'مارس',
+      'أبريل',
+      'مايو',
+      'يونيو',
+      'يوليو',
+      'أغسطس',
+      'سبتمبر',
+      'أكتوبر',
+      'نوفمبر',
+      'ديسمبر',
     ];
     return '${dt.day} ${months[dt.month]} ${dt.year}';
   }
@@ -193,8 +207,11 @@ class _ReservationCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              const Icon(Icons.verified_rounded,
-                  color: Color(0xFF059669), size: 14),
+              const Icon(
+                Icons.verified_rounded,
+                color: Color(0xFF059669),
+                size: 14,
+              ),
             ],
           ),
         ),
@@ -221,8 +238,11 @@ class _ReservationCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 6),
-              const Icon(Icons.info_outline_rounded,
-                  color: Color(0xFFD97706), size: 14),
+              const Icon(
+                Icons.info_outline_rounded,
+                color: Color(0xFFD97706),
+                size: 14,
+              ),
             ],
           ),
         ),
@@ -243,19 +263,23 @@ class _ReservationCard extends StatelessWidget {
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('تم رفض طلب الحجز',
-                          style: GoogleFonts.cairo()),
+                      content: Text(
+                        'تم رفض طلب الحجز',
+                        style: GoogleFonts.cairo(),
+                      ),
                       backgroundColor: const Color(0xFF374151),
                       behavior: SnackBarBehavior.floating,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   );
                 },
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Color(0xFFDC2626)),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 child: Text(
                   'رفض',
@@ -279,12 +303,15 @@ class _ReservationCard extends StatelessWidget {
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('قبلت طلب الحجز ✓',
-                          style: GoogleFonts.cairo()),
+                      content: Text(
+                        'قبلت طلب الحجز ✓',
+                        style: GoogleFonts.cairo(),
+                      ),
                       backgroundColor: const Color(0xFF1E5C35),
                       behavior: SnackBarBehavior.floating,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   );
                 },
@@ -292,7 +319,8 @@ class _ReservationCard extends StatelessWidget {
                   backgroundColor: const Color(0xFF06402B),
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 child: Text(
                   'قبول',

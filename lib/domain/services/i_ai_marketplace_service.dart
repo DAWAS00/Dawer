@@ -10,5 +10,8 @@ class AiMarketplaceSuggestion {
 
 abstract class IAiMarketplaceService {
   Future<AiMarketplaceSuggestion> getSuggestionsForSupplier(String category);
-  Future<AiMarketplaceSuggestion> getSuggestionsForRestaurant(String cuisine, String address);
+  Future<AiMarketplaceSuggestion> getSuggestionsForRestaurant(
+    String cuisine,
+    String address,
+  );
 }

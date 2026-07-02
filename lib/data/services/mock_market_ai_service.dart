@@ -16,8 +16,8 @@ class MockMarketAiService implements IMarketAiService {
       weightCategory: WeightCategory.light,
       estimatedWeightKg: 2.5,
       approxPriceJd: 0.5,
-      note: isAr 
-          ? 'تم تحليل الصورة (محاكاة): عبوات بلاستيكية شفافة، وزن خفيف.' 
+      note: isAr
+          ? 'تم تحليل الصورة (محاكاة): عبوات بلاستيكية شفافة، وزن خفيف.'
           : 'Image analyzed (mock): Clear plastic containers, light weight.',
       confidence: 0.95,
     );

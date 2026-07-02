@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -205,8 +205,11 @@ class _MapPlaceholder extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.map_outlined,
-                size: 32, color: AppColors.primaryGreen),
+            const Icon(
+              Icons.map_outlined,
+              size: 32,
+              color: AppColors.primaryGreen,
+            ),
             const SizedBox(height: 8),
             Text(
               context.l10n.mapUnavailable,
@@ -222,4 +225,3 @@ class _MapPlaceholder extends StatelessWidget {
     );
   }
 }
-

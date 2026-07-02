@@ -80,7 +80,8 @@ class Order with _$Order {
     @Default(false) bool weightVarianceFlag,
     VehicleType? requiredVehicleType,
     @Default(false) bool requiresChemicalPermit,
-    @Default(AdminApprovalStatus.notRequired) AdminApprovalStatus adminApprovalStatus,
+    @Default(AdminApprovalStatus.notRequired)
+    AdminApprovalStatus adminApprovalStatus,
     DateTime? expiresAt,
     @Default(false) bool isVatApplicable,
     double? vatAmountJd,
@@ -99,23 +100,31 @@ class Order with _$Order {
 extension VehicleTypeCapacity on VehicleType {
   double get maxWeightKg => switch (this) {
     VehicleType.motorcycle => 10,
-    VehicleType.car        => 50,
-    VehicleType.pickup     => 500,
-    VehicleType.van        => 1000,
-    VehicleType.truck      => 5000,
+    VehicleType.car => 50,
+    VehicleType.pickup => 500,
+    VehicleType.van => 1000,
+    VehicleType.truck => 5000,
     VehicleType.heavyTruck => 20000,
   };
 
   /// Physical hard-ban for non-chemicals waste types.
   Set<WasteType> get _hardBanned => switch (this) {
     VehicleType.motorcycle => {
-      WasteType.oil, WasteType.batteries, WasteType.electronics,
-      WasteType.rubber, WasteType.tires, WasteType.construction,
-      WasteType.furniture, WasteType.metal, WasteType.copperAluminium,
+      WasteType.oil,
+      WasteType.batteries,
+      WasteType.electronics,
+      WasteType.rubber,
+      WasteType.tires,
+      WasteType.construction,
+      WasteType.furniture,
+      WasteType.metal,
+      WasteType.copperAluminium,
       WasteType.wood,
     },
     VehicleType.car => {
-      WasteType.oil, WasteType.tires, WasteType.construction,
+      WasteType.oil,
+      WasteType.tires,
+      WasteType.construction,
       WasteType.furniture,
     },
     _ => {},

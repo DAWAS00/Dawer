@@ -38,7 +38,9 @@ class MarketAiResult {
       wasteTypes: _parseWasteTypes(json),
       wasteForm: _parseWasteForm(json['wasteForm']),
       weightCategory: _parseWeightCategory(json['weightCategory']),
-      estimatedWeightKg: _coerceDouble(json['estimatedWeightKg'])?.clamp(0.1, 500.0),
+      estimatedWeightKg: _coerceDouble(
+        json['estimatedWeightKg'],
+      )?.clamp(0.1, 500.0),
       approxPriceJd: _coerceDouble(json['approxPriceJd'])?.clamp(0.1, 10000.0),
       note: json['note']?.toString(),
       confidence: _coerceDouble(json['confidence'])?.clamp(0.0, 1.0) ?? 0.0,
@@ -78,7 +80,12 @@ class MarketAiResult {
     }
     // Common synonyms the model may use
     if (s == 'cardboard') return WasteType.paper;
-    if (s == 'iron' || s == 'steel' || s == 'copper' || s == 'aluminium' || s == 'aluminum') return WasteType.metal;
+    if (s == 'iron' ||
+        s == 'steel' ||
+        s == 'copper' ||
+        s == 'aluminium' ||
+        s == 'aluminum')
+      return WasteType.metal;
     if (s == 'timber' || s == 'lumber') return WasteType.wood;
     if (s == 'pvc' || s == 'pet' || s == 'hdpe') return WasteType.plastic;
     return null;
@@ -111,14 +118,15 @@ class MarketAiService implements IMarketAiService {
   final GenerativeModel _model;
 
   /// Production constructor — reads key from compile-time env.
-  MarketAiService() : _model = GenerativeModel(
-    model: 'gemini-2.5-flash',
-    apiKey: AiConfig.geminiApiKey,
-    generationConfig: GenerationConfig(
-      responseMimeType: 'application/json',
-      temperature: 0.2,
-    ),
-  );
+  MarketAiService()
+    : _model = GenerativeModel(
+        model: 'gemini-2.5-flash',
+        apiKey: AiConfig.geminiApiKey,
+        generationConfig: GenerationConfig(
+          responseMimeType: 'application/json',
+          temperature: 0.2,
+        ),
+      );
 
   /// Injection constructor for tests — accepts a pre-built model.
   MarketAiService.withModel(this._model);
@@ -132,10 +140,7 @@ class MarketAiService implements IMarketAiService {
     final bytes = await image.readAsBytes();
     final prompt = _buildPrompt(locale);
     final content = [
-      Content.multi([
-        TextPart(prompt),
-        DataPart(_mimeType(image), bytes),
-      ])
+      Content.multi([TextPart(prompt), DataPart(_mimeType(image), bytes)]),
     ];
 
     return _callWithRetry(content);

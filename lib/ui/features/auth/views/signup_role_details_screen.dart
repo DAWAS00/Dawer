@@ -8,7 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/waste_type_icons.dart';
-import '../../../../data/models/order/order.dart' show WasteType, WasteTypeLabel, VehicleTypeLabel;
+import '../../../../data/models/order/order.dart'
+    show WasteType, WasteTypeLabel, VehicleTypeLabel;
 import '../../../../data/models/user_role.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
 import '../../../../l10n/l10n.dart';
@@ -75,10 +76,14 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
       if (permission == LocationPermission.deniedForever ||
           permission == LocationPermission.denied) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(context.l10n.signupLocationPermissionDenied,
-                style: GoogleFonts.cairo()),
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                context.l10n.signupLocationPermissionDenied,
+                style: GoogleFonts.cairo(),
+              ),
+            ),
+          );
         }
         return;
       }
@@ -92,8 +97,10 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
 
       String addressText = '';
       try {
-        final placemarks =
-            await placemarkFromCoordinates(pos.latitude, pos.longitude);
+        final placemarks = await placemarkFromCoordinates(
+          pos.latitude,
+          pos.longitude,
+        );
         if (placemarks.isNotEmpty) {
           final p = placemarks.first;
           addressText = [
@@ -107,17 +114,24 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
         // Reverse geocode failed — store coords only, address stays empty.
       }
 
-      _ctrl.setLocation(pos.latitude, pos.longitude,
-          addressText.isNotEmpty ? addressText : null);
+      _ctrl.setLocation(
+        pos.latitude,
+        pos.longitude,
+        addressText.isNotEmpty ? addressText : null,
+      );
       if (addressText.isNotEmpty && mounted) {
         _addressController.text = addressText;
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(context.l10n.signupLocationError(e.toString()),
-              style: GoogleFonts.cairo()),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              context.l10n.signupLocationError(e.toString()),
+              style: GoogleFonts.cairo(),
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _isLocating = false);
@@ -223,7 +237,9 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
                 Row(
                   children: [
                     _StepDot(done: true),
-                    const Expanded(child: Divider(thickness: 2, color: Color(0xFF06402B))),
+                    const Expanded(
+                      child: Divider(thickness: 2, color: Color(0xFF06402B)),
+                    ),
                     _StepDot(done: false, active: true),
                   ],
                 ),
@@ -231,8 +247,21 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(l10n.signupIdentityLabel, style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF06402B))),
-                    Text(l10n.signupRoleDetailsLabel, style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF06402B))),
+                    Text(
+                      l10n.signupIdentityLabel,
+                      style: GoogleFonts.cairo(
+                        fontSize: 11,
+                        color: const Color(0xFF06402B),
+                      ),
+                    ),
+                    Text(
+                      l10n.signupRoleDetailsLabel,
+                      style: GoogleFonts.cairo(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF06402B),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 24),
@@ -276,7 +305,9 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
                         // AI registration scan (optional).
                         VehicleRegistrationScanSection(
                           onPick: _pickRegistrationDoc,
-                          onReset: () => context.read<VehicleRegistrationViewModel>().reset(),
+                          onReset: () => context
+                              .read<VehicleRegistrationViewModel>()
+                              .reset(),
                           onConfirm: (data) {
                             _ctrl.setVehicleData(
                               model: data.model ?? '',
@@ -286,7 +317,8 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
                               plate: data.plateNumber,
                             );
                             // Auto-fill plate text field if scan extracted one.
-                            if (data.plateNumber != null && _plateController.text.isEmpty) {
+                            if (data.plateNumber != null &&
+                                _plateController.text.isEmpty) {
                               _plateController.text = data.plateNumber!;
                             }
                           },
@@ -345,7 +377,8 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
                                   color: const Color(0xFFE6E9E7),
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
-                                      color: const Color(0xFFC0C9C1)),
+                                    color: const Color(0xFFC0C9C1),
+                                  ),
                                 ),
                                 child: Row(
                                   children: [
@@ -358,10 +391,13 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
                                       ),
                                     ),
                                     const SizedBox(width: 12),
-                                    Text(l10n.signupLocating,
-                                        style: GoogleFonts.cairo(
-                                            fontSize: 13,
-                                            color: const Color(0xFF404943))),
+                                    Text(
+                                      l10n.signupLocating,
+                                      style: GoogleFonts.cairo(
+                                        fontSize: 13,
+                                        color: const Color(0xFF404943),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               )
@@ -446,11 +482,12 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
     UserRole.recyclingCo => l10n.signupRoleRecyclingHeading,
   };
 
-  String _headerSubtitle(AppLocalizations l10n, UserRole role) => switch (role) {
-    UserRole.driver => l10n.signupRoleDriverBody,
-    UserRole.supplier => l10n.signupRoleSupplierBody,
-    UserRole.recyclingCo => l10n.signupRoleRecyclingBody,
-  };
+  String _headerSubtitle(AppLocalizations l10n, UserRole role) =>
+      switch (role) {
+        UserRole.driver => l10n.signupRoleDriverBody,
+        UserRole.supplier => l10n.signupRoleSupplierBody,
+        UserRole.recyclingCo => l10n.signupRoleRecyclingBody,
+      };
 }
 
 // ── Vehicle plate field (LTR-forced) ──────────────────────────────────────────
@@ -493,7 +530,10 @@ class _PlateField extends StatelessWidget {
               ),
               child: Text(
                 l10n.signupPlateNumberHint,
-                style: GoogleFonts.dmSans(fontSize: 10, color: const Color(0xFF713F12)),
+                style: GoogleFonts.dmSans(
+                  fontSize: 10,
+                  color: const Color(0xFF713F12),
+                ),
               ),
             ),
           ],
@@ -503,7 +543,9 @@ class _PlateField extends StatelessWidget {
           decoration: BoxDecoration(
             color: error != null ? Colors.red.shade50 : const Color(0xFFE6E9E7),
             borderRadius: BorderRadius.circular(12),
-            border: error != null ? Border.all(color: Colors.red.shade300) : null,
+            border: error != null
+                ? Border.all(color: Colors.red.shade300)
+                : null,
           ),
           child: Directionality(
             textDirection: TextDirection.ltr,
@@ -512,16 +554,25 @@ class _PlateField extends StatelessWidget {
               keyboardType: TextInputType.text,
               textCapitalization: TextCapitalization.characters,
               onChanged: onChanged,
-              style: GoogleFonts.dmSans(fontSize: 16, fontWeight: FontWeight.bold),
+              style: GoogleFonts.dmSans(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
               decoration: InputDecoration(
                 hintText: 'e.g.  12 A B C',
                 hintStyle: GoogleFonts.dmSans(
                   fontSize: 14,
                   color: const Color(0xFF9CA3AF),
                 ),
-                prefixIcon: const Icon(Icons.directions_car_rounded, color: Color(0xFF06402B)),
+                prefixIcon: const Icon(
+                  Icons.directions_car_rounded,
+                  color: Color(0xFF06402B),
+                ),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 16,
+                ),
               ),
             ),
           ),
@@ -530,7 +581,11 @@ class _PlateField extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             error!,
-            style: GoogleFonts.cairo(fontSize: 11, color: Colors.red.shade700, fontWeight: FontWeight.bold),
+            style: GoogleFonts.cairo(
+              fontSize: 11,
+              color: Colors.red.shade700,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ],
@@ -605,7 +660,11 @@ class _InfoChip extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             label,
-            style: GoogleFonts.cairo(fontSize: 12, fontWeight: FontWeight.bold, color: color),
+            style: GoogleFonts.cairo(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
           ),
         ],
       ),
@@ -659,7 +718,9 @@ class _WasteTypeChips extends StatelessWidget {
                   type.label,
                   style: GoogleFonts.cairo(
                     fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                     color: isSelected ? Colors.white : const Color(0xFF404943),
                   ),
                 ),
@@ -687,7 +748,9 @@ class _StepDot extends StatelessWidget {
       height: 28,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: done || active ? const Color(0xFF06402B) : const Color(0xFFE6E9E7),
+        color: done || active
+            ? const Color(0xFF06402B)
+            : const Color(0xFFE6E9E7),
         border: Border.all(
           color: active ? const Color(0xFF06402B) : Colors.transparent,
           width: 2,

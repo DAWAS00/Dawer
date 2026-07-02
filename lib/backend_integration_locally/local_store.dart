@@ -15,7 +15,8 @@ class LocalStore {
   static const String _currentUserNameKey = 'dwaar_current_user_name';
   static const String _currentUserRoleKey = 'dwaar_current_user_role';
   static const String _currentSupplierTypeKey = 'dwaar_current_supplier_type';
-  static const String _currentUserCategoriesKey = 'dwaar_current_user_categories';
+  static const String _currentUserCategoriesKey =
+      'dwaar_current_user_categories';
   static const String _ordersKey = 'dwaar_orders';
   static const String _marketKey = 'dwaar_market';
   static const String _marketDraftKey = 'dwaar_market_draft';

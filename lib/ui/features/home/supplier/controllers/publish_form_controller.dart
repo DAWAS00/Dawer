@@ -28,7 +28,7 @@ class PublishFormController extends ChangeNotifier {
   final List<String> images = [];
   final priceCtrl = TextEditingController();
   final notesCtrl = TextEditingController();
-  
+
   double? pickedLat;
   double? pickedLng;
   String? pickedAddress;
@@ -46,7 +46,7 @@ class PublishFormController extends ChangeNotifier {
   }
 
   // ─── Actions ───────────────────────────────────────────────────────────────
-  
+
   void nextStep() {
     if (_currentStep < 2 && canProceed) {
       _currentStep++;
@@ -120,7 +120,10 @@ class PublishFormController extends ChangeNotifier {
     _aiError = null;
     notifyListeners();
     try {
-      final result = await aiController.analyze(File(imagePath), const Locale('ar'));
+      final result = await aiController.analyze(
+        File(imagePath),
+        const Locale('ar'),
+      );
       if (result != null) {
         _applyAiResult(result);
       }
@@ -132,7 +135,7 @@ class PublishFormController extends ChangeNotifier {
 
   void _applyAiResult(MarketAiResult result) {
     final filled = <String>[];
-    
+
     if (result.wasteTypes.isNotEmpty) {
       selectedTypes.addAll(result.wasteTypes);
       filled.add('نوع المواد');
@@ -153,7 +156,7 @@ class PublishFormController extends ChangeNotifier {
       notesCtrl.text = result.note!;
       filled.add('الملاحظات');
     }
-    
+
     aiController.reportFilledFields(filled);
     notifyListeners();
   }

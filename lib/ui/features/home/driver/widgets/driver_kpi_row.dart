@@ -87,10 +87,7 @@ class _KpiCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: accentColor.withValues(alpha: 0.2),
-          width: 1,
-        ),
+        border: Border.all(color: accentColor.withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
             color: accentColor.withValues(alpha: 0.12),

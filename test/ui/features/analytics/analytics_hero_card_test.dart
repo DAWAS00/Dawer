@@ -5,8 +5,9 @@ import 'package:dwaar/ui/features/analytics/widgets/analytics_hero_card.dart';
 import '../../../helpers/test_app.dart';
 
 void main() {
-  testWidgets('AnalyticsHeroCard displays formatted value and label',
-      (tester) async {
+  testWidgets('AnalyticsHeroCard displays formatted value and label', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       wrapWithL10n(
         AnalyticsHeroCard(
@@ -21,8 +22,9 @@ void main() {
     expect(find.text('إجمالي الأرباح · هذا الشهر'), findsOneWidget);
   });
 
-  testWidgets('AnalyticsHeroCard shows delta chip when deltaPct provided',
-      (tester) async {
+  testWidgets('AnalyticsHeroCard shows delta chip when deltaPct provided', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       wrapWithL10n(
         AnalyticsHeroCard(
@@ -38,8 +40,9 @@ void main() {
     expect(find.text('+12.4%'), findsOneWidget);
   });
 
-  testWidgets('AnalyticsHeroCard shows empty state when no data',
-      (tester) async {
+  testWidgets('AnalyticsHeroCard shows empty state when no data', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       wrapWithL10n(
         const AnalyticsHeroCard(
@@ -75,8 +78,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('AnalyticsHeroCard shows streak chip when streak >= 2',
-      (tester) async {
+  testWidgets('AnalyticsHeroCard shows streak chip when streak >= 2', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       wrapWithL10n(
         AnalyticsHeroCard(

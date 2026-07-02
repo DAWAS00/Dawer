@@ -39,12 +39,13 @@ class _DawerSplashScreenState extends State<DawerSplashScreen>
   @override
   void initState() {
     super.initState();
-    _c = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 4000),
-    )..addStatusListener((s) {
-        if (s == AnimationStatus.completed) widget.onFinished?.call();
-      });
+    _c =
+        AnimationController(
+          vsync: this,
+          duration: const Duration(milliseconds: 4000),
+        )..addStatusListener((s) {
+          if (s == AnimationStatus.completed) widget.onFinished?.call();
+        });
     _c.forward();
   }
 
@@ -116,7 +117,10 @@ class _DawerSplashScreenState extends State<DawerSplashScreen>
     double pulse = 0;
     if (t >= 2.5 && t <= 3.1) pulse = math.sin(((t - 2.5) / 0.6) * math.pi);
     final size = 360 + 360 * _easeOutCubic(halo) + 80 * pulse;
-    final opacity = (0.18 * gather + 0.34 * halo + 0.18 * pulse).clamp(0.0, 1.0);
+    final opacity = (0.18 * gather + 0.34 * halo + 0.18 * pulse).clamp(
+      0.0,
+      1.0,
+    );
     return Positioned(
       left: _cx,
       top: _cy,
@@ -130,7 +134,11 @@ class _DawerSplashScreenState extends State<DawerSplashScreen>
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
               gradient: RadialGradient(
-                colors: [Color(0x8C5ED0B4), Color(0x472E8052), Color(0x0006402B)],
+                colors: [
+                  Color(0x8C5ED0B4),
+                  Color(0x472E8052),
+                  Color(0x0006402B),
+                ],
                 stops: [0.0, 0.38, 0.7],
               ),
             ),
@@ -310,5 +318,12 @@ class _Item {
   final double radius;
   final double size;
   final double delay;
-  const _Item(this.icon, this.color, this.angle, this.radius, this.size, this.delay);
+  const _Item(
+    this.icon,
+    this.color,
+    this.angle,
+    this.radius,
+    this.size,
+    this.delay,
+  );
 }

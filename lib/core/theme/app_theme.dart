@@ -76,7 +76,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         hintStyle: GoogleFonts.cairo(
           fontSize: 18,
           fontWeight: FontWeight.w400,
@@ -87,8 +90,10 @@ class AppTheme {
   }
 
   static ThemeData get darkTheme {
-    final baseTextTheme = GoogleFonts.cairoTextTheme(ThemeData.dark().textTheme);
-    
+    final baseTextTheme = GoogleFonts.cairoTextTheme(
+      ThemeData.dark().textTheme,
+    );
+
     const textPrimary = Color(0xFFF0F7F2);
     const textSecondary = Color(0xFF94A3B8);
 
@@ -169,7 +174,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         hintStyle: GoogleFonts.cairo(
           fontSize: 18,
           fontWeight: FontWeight.w400,
@@ -198,4 +206,3 @@ class AppTheme {
     return GoogleFonts.dmSans(textStyle: style);
   }
 }
-

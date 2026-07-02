@@ -26,33 +26,31 @@ Widget _wrap(Widget child, {MarketplaceViewModel? vm}) {
     home: ChangeNotifierProvider<MarketplaceViewModel>.value(
       value: viewModel,
       child: Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(child: child),
-        ),
+        body: SafeArea(child: SingleChildScrollView(child: child)),
       ),
     ),
   );
 }
 
 Order _sampleListing() => OrderMockData.skeletonOrders().first.copyWith(
-      status: OrderStatus.pending,
-      type: OrderType.pickup,
-      itemPrice: 35.0,
-      supplierName: 'محمد الزيد',
-      pickupAddress: 'عمّان - الجبيهة',
-      wasteTypes: [WasteType.paper, WasteType.plastic],
-    );
+  status: OrderStatus.pending,
+  type: OrderType.pickup,
+  itemPrice: 35.0,
+  supplierName: 'محمد الزيد',
+  pickupAddress: 'عمّان - الجبيهة',
+  wasteTypes: [WasteType.paper, WasteType.plastic],
+);
 
 Order _sampleJob() => OrderMockData.skeletonOrders().first.copyWith(
-      status: OrderStatus.pending,
-      type: OrderType.collection,
-      supplierName: 'شركة البيئة الخضراء',
-      pickupAddress: 'الزرقاء - المحطة',
-      wasteTypes: [WasteType.metal, WasteType.glass],
-      pricePerKg: 0.5,
-      paymentModel: PaymentModel.perKg,
-      jobDescription: 'نبحث عن معادن وزجاج بكميات كبيرة',
-    );
+  status: OrderStatus.pending,
+  type: OrderType.collection,
+  supplierName: 'شركة البيئة الخضراء',
+  pickupAddress: 'الزرقاء - المحطة',
+  wasteTypes: [WasteType.metal, WasteType.glass],
+  pricePerKg: 0.5,
+  paymentModel: PaymentModel.perKg,
+  jobDescription: 'نبحث عن معادن وزجاج بكميات كبيرة',
+);
 
 // ── Market Item Card Tests ────────────────────────────────────────────────────
 
@@ -60,9 +58,7 @@ void main() {
   group('MarketItemCard', () {
     testWidgets('renders seller name', (tester) async {
       final item = _sampleListing();
-      await tester.pumpWidget(
-        _wrap(MarketItemCard(item: item, onTap: () {})),
-      );
+      await tester.pumpWidget(_wrap(MarketItemCard(item: item, onTap: () {})));
       await tester.pumpAndSettle();
 
       expect(find.text('محمد الزيد'), findsOneWidget);
@@ -70,9 +66,7 @@ void main() {
 
     testWidgets('renders pickup address', (tester) async {
       final item = _sampleListing();
-      await tester.pumpWidget(
-        _wrap(MarketItemCard(item: item, onTap: () {})),
-      );
+      await tester.pumpWidget(_wrap(MarketItemCard(item: item, onTap: () {})));
       await tester.pumpAndSettle();
 
       expect(find.textContaining('عمّان'), findsAny);
@@ -80,9 +74,7 @@ void main() {
 
     testWidgets('renders price in amber color area', (tester) async {
       final item = _sampleListing();
-      await tester.pumpWidget(
-        _wrap(MarketItemCard(item: item, onTap: () {})),
-      );
+      await tester.pumpWidget(_wrap(MarketItemCard(item: item, onTap: () {})));
       await tester.pumpAndSettle();
 
       expect(find.textContaining('35'), findsOneWidget);
@@ -102,9 +94,7 @@ void main() {
 
     testWidgets('renders waste type chips', (tester) async {
       final item = _sampleListing();
-      await tester.pumpWidget(
-        _wrap(MarketItemCard(item: item, onTap: () {})),
-      );
+      await tester.pumpWidget(_wrap(MarketItemCard(item: item, onTap: () {})));
       await tester.pumpAndSettle();
 
       // Should show at least one waste type label
@@ -113,9 +103,7 @@ void main() {
 
     testWidgets('shows unknown seller when name is null', (tester) async {
       final item = _sampleListing().copyWith(supplierName: null);
-      await tester.pumpWidget(
-        _wrap(MarketItemCard(item: item, onTap: () {})),
-      );
+      await tester.pumpWidget(_wrap(MarketItemCard(item: item, onTap: () {})));
       await tester.pumpAndSettle();
 
       expect(find.textContaining('بائع'), findsAny);
@@ -127,9 +115,7 @@ void main() {
   group('CollectionJobCard', () {
     testWidgets('renders company name', (tester) async {
       final job = _sampleJob();
-      await tester.pumpWidget(
-        _wrap(CollectionJobCard(job: job)),
-      );
+      await tester.pumpWidget(_wrap(CollectionJobCard(job: job)));
       await tester.pumpAndSettle();
 
       expect(find.textContaining('البيئة الخضراء'), findsOneWidget);
@@ -137,9 +123,7 @@ void main() {
 
     testWidgets('renders pickup address', (tester) async {
       final job = _sampleJob();
-      await tester.pumpWidget(
-        _wrap(CollectionJobCard(job: job)),
-      );
+      await tester.pumpWidget(_wrap(CollectionJobCard(job: job)));
       await tester.pumpAndSettle();
 
       expect(find.textContaining('الزرقاء'), findsAny);
@@ -167,40 +151,36 @@ void main() {
 
     testWidgets('hides claim button by default', (tester) async {
       final job = _sampleJob();
-      await tester.pumpWidget(
-        _wrap(CollectionJobCard(job: job)),
-      );
+      await tester.pumpWidget(_wrap(CollectionJobCard(job: job)));
       await tester.pumpAndSettle();
 
       expect(find.byType(ElevatedButton), findsNothing);
     });
 
-    testWidgets('shows blue accent outer container for visual distinction',
-        (tester) async {
+    testWidgets('shows blue accent outer container for visual distinction', (
+      tester,
+    ) async {
       final job = _sampleJob();
-      await tester.pumpWidget(
-        _wrap(CollectionJobCard(job: job)),
-      );
+      await tester.pumpWidget(_wrap(CollectionJobCard(job: job)));
       await tester.pumpAndSettle();
 
       // Outer container has jobBlue background as accent strip
       final containers = tester
           .widgetList<Container>(find.byType(Container))
           .where((c) {
-        final deco = c.decoration;
-        if (deco is BoxDecoration) {
-          return deco.color == AppColors.jobBlue;
-        }
-        return false;
-      }).toList();
+            final deco = c.decoration;
+            if (deco is BoxDecoration) {
+              return deco.color == AppColors.jobBlue;
+            }
+            return false;
+          })
+          .toList();
       expect(containers, isNotEmpty);
     });
 
     testWidgets('renders job description when present', (tester) async {
       final job = _sampleJob();
-      await tester.pumpWidget(
-        _wrap(CollectionJobCard(job: job)),
-      );
+      await tester.pumpWidget(_wrap(CollectionJobCard(job: job)));
       await tester.pumpAndSettle();
 
       expect(find.textContaining('معادن'), findsAny);
@@ -314,10 +294,7 @@ void main() {
 
     testWidgets('dismiss button clears suggestions', (tester) async {
       final store = AppOrderStore();
-      final vm = MarketplaceViewModel(
-        store,
-        initialSuggestions: ['ورق'],
-      );
+      final vm = MarketplaceViewModel(store, initialSuggestions: ['ورق']);
       await tester.pumpWidget(
         _wrap(const MarketplaceSuggestionBanner(), vm: vm),
       );

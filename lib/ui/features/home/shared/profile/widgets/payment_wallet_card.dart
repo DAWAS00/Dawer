@@ -140,10 +140,7 @@ class PaymentWalletCard extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: body,
-          ),
+          Padding(padding: const EdgeInsets.all(16), child: body),
           // Divider + government payment row
           Divider(height: 1, color: theme.dividerColor),
           _EfawateercomRow(),
@@ -409,10 +406,7 @@ class _CompanyBody extends StatelessWidget {
             ),
             Container(width: 1, height: 32, color: theme.dividerColor),
             Expanded(
-              child: _MiniStat(
-                value: weightLabel,
-                label: l10n.walletWeightKg,
-              ),
+              child: _MiniStat(value: weightLabel, label: l10n.walletWeightKg),
             ),
           ],
         ),

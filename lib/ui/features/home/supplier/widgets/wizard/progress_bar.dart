@@ -30,8 +30,8 @@ class WizardProgressBar extends StatelessWidget {
                   color: isDone
                       ? WizardColors.success
                       : isActive
-                          ? WizardColors.primaryMid
-                          : WizardColors.border,
+                      ? WizardColors.primaryMid
+                      : WizardColors.border,
                 ),
               ),
             ),

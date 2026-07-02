@@ -55,9 +55,15 @@ class TrendChart extends StatelessWidget {
               ),
             ),
             titlesData: FlTitlesData(
-              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              topTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+              rightTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+              leftTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
@@ -127,8 +133,11 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.show_chart_rounded,
-                size: 36, color: AppColors.mutedText.withValues(alpha: 0.5)),
+            Icon(
+              Icons.show_chart_rounded,
+              size: 36,
+              color: AppColors.mutedText.withValues(alpha: 0.5),
+            ),
             const SizedBox(height: 8),
             Text(
               'لا يوجد بيانات كافية',

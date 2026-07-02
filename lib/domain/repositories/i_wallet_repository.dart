@@ -24,6 +24,8 @@ final class NoOpWalletRepository implements IWalletRepository {
       const Success(null);
 
   @override
-  Future<AppResult<void>> releaseForOrder(String orderId, double amount) async =>
-      const Success(null);
+  Future<AppResult<void>> releaseForOrder(
+    String orderId,
+    double amount,
+  ) async => const Success(null);
 }

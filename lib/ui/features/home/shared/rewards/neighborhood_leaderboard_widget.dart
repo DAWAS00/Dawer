@@ -40,11 +40,13 @@ class NeighborhoodLeaderboardPreview extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 10),
-        ...entries.asMap().entries.map((e) => _LeaderboardTile(
-              entry: e.value,
-              rank: e.key + 1,
-              maxKg: entries.first.kgCollected,
-            )),
+        ...entries.asMap().entries.map(
+          (e) => _LeaderboardTile(
+            entry: e.value,
+            rank: e.key + 1,
+            maxKg: entries.first.kgCollected,
+          ),
+        ),
       ],
     );
   }
@@ -73,7 +75,9 @@ class NeighborhoodLeaderboardPage extends StatelessWidget {
         title: Text(
           'لوحة الأحياء — عمان ♻️',
           style: GoogleFonts.cairo(
-              fontWeight: FontWeight.bold, color: Colors.white),
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
         centerTitle: true,
       ),
@@ -95,8 +99,9 @@ class NeighborhoodLeaderboardPage extends StatelessWidget {
                 Text(
                   'إجمالي كغ مجمّعة حسب الحي',
                   style: GoogleFonts.cairo(
-                      fontSize: 13,
-                      color: Colors.white.withValues(alpha: 0.80)),
+                    fontSize: 13,
+                    color: Colors.white.withValues(alpha: 0.80),
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -110,8 +115,9 @@ class NeighborhoodLeaderboardPage extends StatelessWidget {
                 Text(
                   'من 10 أحياء في عمان',
                   style: GoogleFonts.cairo(
-                      fontSize: 12,
-                      color: Colors.white.withValues(alpha: 0.70)),
+                    fontSize: 12,
+                    color: Colors.white.withValues(alpha: 0.70),
+                  ),
                 ),
               ],
             ),
@@ -158,14 +164,10 @@ class _LeaderboardTile extends StatelessWidget {
             : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
         border: isTop3
-            ? Border.all(
-                color: const Color(0xFF1E5C35).withValues(alpha: 0.20))
+            ? Border.all(color: const Color(0xFF1E5C35).withValues(alpha: 0.20))
             : null,
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 4,
-          ),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 4),
         ],
       ),
       child: Column(
@@ -206,8 +208,7 @@ class _LeaderboardTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: progress.clamp(0.0, 1.0),
-              backgroundColor:
-                  const Color(0xFF1E5C35).withValues(alpha: 0.10),
+              backgroundColor: const Color(0xFF1E5C35).withValues(alpha: 0.10),
               valueColor: AlwaysStoppedAnimation<Color>(
                 isTop3
                     ? const Color(0xFF1E5C35)

@@ -16,11 +16,11 @@ class ReportTemplateCard extends StatelessWidget {
   final bool isLoading;
 
   IconData get _icon => switch (template) {
-        ReportTemplate.weeklySummary => Icons.calendar_view_week_rounded,
-        ReportTemplate.monthlyInvoice => Icons.receipt_long_rounded,
-        ReportTemplate.co2Certificate => Icons.eco_rounded,
-        ReportTemplate.esgReport => Icons.bar_chart_rounded,
-      };
+    ReportTemplate.weeklySummary => Icons.calendar_view_week_rounded,
+    ReportTemplate.monthlyInvoice => Icons.receipt_long_rounded,
+    ReportTemplate.co2Certificate => Icons.eco_rounded,
+    ReportTemplate.esgReport => Icons.bar_chart_rounded,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +71,8 @@ class ReportTemplateCard extends StatelessWidget {
               backgroundColor: AppColors.primaryGreen.withValues(alpha: 0.08),
               foregroundColor: AppColors.primaryGreen,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: isLoading
                 ? const SizedBox(
@@ -82,7 +83,9 @@ class ReportTemplateCard extends StatelessWidget {
                 : Text(
                     'طلب',
                     style: GoogleFonts.cairo(
-                        fontSize: 12, fontWeight: FontWeight.bold),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
           ),
         ],

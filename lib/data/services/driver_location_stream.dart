@@ -22,15 +22,18 @@ class DriverLocationStream {
         .eq('order_id', orderId)
         .maybeSingle()
         .then((row) {
-      if (row != null && !ctrl.isClosed) {
-        ctrl.add(LatLng(
-          (row['lat'] as num).toDouble(),
-          (row['lng'] as num).toDouble(),
-        ));
-      }
-    }).catchError((e) {
-      debugPrint('[DriverLocationStream] initial fetch error: $e');
-    });
+          if (row != null && !ctrl.isClosed) {
+            ctrl.add(
+              LatLng(
+                (row['lat'] as num).toDouble(),
+                (row['lng'] as num).toDouble(),
+              ),
+            );
+          }
+        })
+        .catchError((e) {
+          debugPrint('[DriverLocationStream] initial fetch error: $e');
+        });
 
     // Realtime subscription — fires on INSERT or UPDATE to this order's row.
     final channel = Supabase.instance.client
@@ -56,10 +59,12 @@ class DriverLocationStream {
         .subscribe();
 
     ctrl.onCancel = () {
-      Supabase.instance.client
-          .removeChannel(channel)
-          // ignore: avoid_print
-          .catchError((Object e) { debugPrint('[DriverLocationStream] remove channel: $e'); return ''; });
+      Supabase.instance.client.removeChannel(channel)
+      // ignore: avoid_print
+      .catchError((Object e) {
+        debugPrint('[DriverLocationStream] remove channel: $e');
+        return '';
+      });
       ctrl.close();
     };
 
