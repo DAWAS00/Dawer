@@ -1,0 +1,88 @@
+# Continuous Integration for Dwaar.
+#
+# What this is: every time code is pushed to main/mohammad, or a PR is opened
+# against main, GitHub spins up a clean Ubuntu machine, checks out the code,
+# and runs the same checks you'd normally run by hand (format, analyze, test).
+# If any step fails, the run shows a red X on the commit/PR — that's the "gate."
+# A green check means: this code is formatted, lint-clean, and every test passes.
+#
+# To reproduce/fix a failure locally before pushing again, see the comment
+# above each step below — it names the exact local command.
+
+name: CI
+
+on:
+  push:
+    branches: [main, mohammad]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    name: Format, Analyze, Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          # Pinned to the version verified locally during the project's health
+          # audit (2026-07-02). There's no FVM/.fvmrc in this repo pinning a
+          # version, so CI needs an explicit one — otherwise a new Flutter
+          # release could silently break CI with zero code changes.
+          # Bump this manually whenever you intentionally upgrade Flutter
+          # locally, so CI stays in sync with what you actually run.
+          flutter-version: '3.44.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Verify formatting
+        # Local fix: dart format .
+        # This only checks style (spacing, line breaks) — never logic. It
+        # exists so every diff stays readable instead of accumulating
+        # personal formatting preferences. The codebase was reformatted to
+        # be 100% clean right before this workflow was added, so this step
+        # is safe to block on from day one.
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze
+        # Local fix: flutter analyze (read the reported file:line, fix, re-run)
+        # Catches real bugs and anti-patterns (unused code, missing null
+        # checks, etc.) before they reach a device. This step fails the build
+        # on errors/warnings; informational-only suggestions do not fail it.
+        run: flutter analyze
+
+      - name: Run tests with coverage
+        # Local fix: flutter test (add --coverage if you want the same
+        # coverage.info this step produces)
+        # Test failures are the one thing this workflow always blocks on —
+        # a red test means the app's actual behavior broke, not just style.
+        run: flutter test --coverage
+
+      - name: Strip generated code from coverage report
+        # lib/l10n/generated/** is auto-generated translation code (not
+        # hand-written), so it shouldn't count toward how well YOUR code is
+        # tested. This keeps the coverage number honest.
+        run: |
+          sudo apt-get update && sudo apt-get install -y lcov
+          lcov --remove coverage/lcov.info 'lib/l10n/generated/*' -o coverage/lcov.info
+
+      - name: Print coverage summary
+        # Shows the coverage percentage directly in this run's log — no
+        # external account or token needed. This is informational only for
+        # now (does not fail the build); see the audit report for why.
+        run: lcov --summary coverage/lcov.info
+
+      - name: Upload coverage report
+        # Lets you download and inspect the full per-file coverage report
+        # from this run's "Artifacts" section on GitHub, if you want more
+        # detail than the summary above.
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/lcov.info

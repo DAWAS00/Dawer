@@ -1,0 +1,19 @@
+# Dependabot opens a pull request automatically when a dependency has a
+# newer version available. It doesn't run any code itself — it just proposes
+# the version bump; the CI workflow (ci.yaml) then validates each of these
+# PRs the same way it validates any other PR.
+
+version: 2
+updates:
+  # Flutter/Dart packages declared in pubspec.yaml.
+  - package-ecosystem: "pub"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # Versions pinned inside .github/workflows/*.yaml (e.g. actions/checkout@v4).
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
