@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../data/models/user_role.dart';
+import '../../../../data/services/gemini_brand_profile_ai_service.dart';
 import '../../../../data/services/mock_ai_service.dart';
 import '../../../../data/services/user_signup_service.dart';
+import 'package:dwaar/data/models/signup_request.dart';
 import '../../../../domain/failures/app_failure.dart';
 import 'license_validation_viewmodel.dart';
 
 enum AiAnalysisStatus { none, analyzing, verified, failed }
 
 class RecyclingCoOnboardingViewModel extends ChangeNotifier {
-  RecyclingCoOnboardingViewModel({UserSignUpService? service})
-      : _service = service ?? UserSignUpService();
+  RecyclingCoOnboardingViewModel({required UserSignUpService service})
+      : _service = service;
 
   final UserSignUpService _service;
   final ImagePicker _picker = ImagePicker();
@@ -124,9 +126,6 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
   List<String> get allCategories => List.unmodifiable(_allCategories);
   Set<String> get selectedCategories => Set.unmodifiable(_selectedCategories);
 
-  /// Calls the mock AI to suggest categories and company highlights.
-  ///
-  /// TODO: Replace MockAiService with real AI API — see mock_ai_service.dart
   Future<void> triggerAiSuggestions() async {
     if (isAiLoading) return;
     isAiLoading = true;
@@ -134,7 +133,7 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final result = await MockAiService.generateBrandProfile(
+      final result = await GeminiBrandProfileAiService().generateBrandProfile(
         companyName: companyName,
         tagline: tagline,
       );
@@ -160,39 +159,6 @@ class RecyclingCoOnboardingViewModel extends ChangeNotifier {
     } else {
       _selectedCategories.add(category);
     }
-    notifyListeners();
-  }
-
-  // ── Marketplace Interests ─────────────────────────────────────────────────
-
-  final Set<String> _selectedInterests = {};
-  Set<String> get selectedInterests => Set.unmodifiable(_selectedInterests);
-
-  String? marketplaceContent;
-  bool isGeneratingMarketplace = false;
-
-  void toggleInterest(String interest) {
-    if (_selectedInterests.contains(interest)) {
-      _selectedInterests.remove(interest);
-    } else {
-      _selectedInterests.add(interest);
-    }
-    notifyListeners();
-  }
-
-  Future<void> generateMarketplaceContent() async {
-    if (_selectedInterests.isEmpty) return;
-    isGeneratingMarketplace = true;
-    notifyListeners();
-
-    // Simulating AI marketplace content generation
-    await Future<void>.delayed(const Duration(seconds: 2));
-    
-    final interestsStr = _selectedInterests.join(' و ');
-    marketplaceContent = 'بناءً على اهتماماتك في $interestsStr، قمنا بتجهيز عروض حصرية لك في السوق المحلي. '
-        'سوف تجد أفضل الفرص لتوسيع شبكة تدوير البلاستيك والورق في منطقتك.';
-
-    isGeneratingMarketplace = false;
     notifyListeners();
   }
 

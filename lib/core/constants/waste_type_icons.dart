@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../data/models/order.dart';
+import '../../data/models/order/order.dart';
 
 class WasteTypeIcons {
   WasteTypeIcons._();
@@ -8,21 +8,21 @@ class WasteTypeIcons {
   /// Single source of truth — used by MarketplaceTab, PostToMarketSheet,
   /// PostJobForm, and any other filter/selector that needs waste-type chips.
   static const List<(WasteType, IconData)> all = [
-    (WasteType.paper, Icons.newspaper_rounded),
-    (WasteType.plastic, Icons.local_drink_rounded),
-    (WasteType.metal, Icons.hardware_rounded),
-    (WasteType.glass, Icons.wine_bar_rounded),
-    (WasteType.electronics, Icons.devices_rounded),
-    (WasteType.organic, Icons.eco_rounded),
-    (WasteType.textile, Icons.checkroom_rounded),
-    (WasteType.wood, Icons.forest_rounded),
-    (WasteType.rubber, Icons.circle_rounded),
-    (WasteType.oil, Icons.water_drop_rounded),
-    (WasteType.chemicals, Icons.science_rounded),
-    (WasteType.batteries, Icons.battery_full_rounded),
-    (WasteType.furniture, Icons.chair_rounded),
-    (WasteType.tires, Icons.tire_repair_rounded),
-    (WasteType.construction, Icons.construction_rounded),
+    (WasteType.paper, Icons.description_outlined),
+    (WasteType.plastic, Icons.local_drink_outlined),
+    (WasteType.metal, Icons.handyman_outlined),
+    (WasteType.glass, Icons.wine_bar_outlined),
+    (WasteType.electronics, Icons.devices_outlined),
+    (WasteType.organic, Icons.eco_outlined),
+    (WasteType.textile, Icons.checkroom_outlined),
+    (WasteType.wood, Icons.forest_outlined),
+    (WasteType.rubber, Icons.circle_outlined),
+    (WasteType.oil, Icons.opacity_outlined),
+    (WasteType.chemicals, Icons.science_outlined),
+    (WasteType.batteries, Icons.battery_full_outlined),
+    (WasteType.furniture, Icons.chair_outlined),
+    (WasteType.tires, Icons.directions_car_outlined),
+    (WasteType.construction, Icons.construction_outlined),
   ];
 
   /// Returns the icon for a given [WasteType], falling back to

@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../viewmodels/login_viewmodel.dart';
-import '../../home/home_router.dart';
 import 'verification_view.dart';
-import 'forgot_password_otp_view.dart';
 import '../../../../l10n/l10n.dart';
 
-import 'widgets/role_selection_grid.dart';
 import 'widgets/login_form.dart';
 import 'widgets/footer.dart';
+import 'widgets/about_dwaar_sheet.dart';
 import '../../../../core/services/app_lang_notifier.dart';
 import '../../../common/lang_picker_sheet.dart';
-import 'restaurant_signup_view.dart';
+import 'signup_phone_screen.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -31,41 +30,20 @@ class _LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<LoginViewModel>();
 
-    if (viewModel.signedIn) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        viewModel.resetSignedIn();
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (_) => HomeRouter(
-              role: viewModel.selectedRole,
-              supplierType: viewModel.supplierType ?? SupplierType.individual,
-              userName: viewModel.profileName,
-              aiSuggestedCategories: viewModel.session?.categories ?? const [],
-            ),
-          ),
-        );
-      });
-    }
-
     if (viewModel.otpSent) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final phone = viewModel.phone;
+        final initialRole = viewModel.selectedRole;
+        final initialSupplierType = viewModel.supplierType;
+
         viewModel.resetOtpSent();
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => VerificationView(phoneNumber: phone),
-          ),
-        );
-      });
-    }
-
-    if (viewModel.passwordResetRequested) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final email = viewModel.email;
-        viewModel.resetPasswordResetRequested();
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => ForgotPasswordOtpView(email: email),
+            builder: (_) => VerificationView(
+              phoneNumber: phone,
+              initialRole: initialRole,
+              initialSupplierType: initialSupplierType,
+            ),
           ),
         );
       });
@@ -75,72 +53,97 @@ class _LoginScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF8FAF8),
       body: Stack(
         children: [
+          // Background soft shapes for a friendly feel
+          Positioned(
+            top: -80,
+            right: -80,
+            child: Container(
+              width: 260,
+              height: 260,
+              decoration: BoxDecoration(
+                color: const Color(0xFFC3EAC4).withValues(alpha: 0.3),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -100,
+            left: -100,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8F5E9).withValues(alpha: 0.4),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+
           SafeArea(
             child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Top Branding Section
-              SizedBox(
-                height: 250,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/images/LoginScreenPhoto.png',
-                      height: 140,
-                      errorBuilder: (context, error, stackTrace) => const SizedBox(
-                        height: 140,
-                        child: Center(
-                          child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      context.l10n.appSystemTitle,
-                      style: GoogleFonts.cairo(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF446649).withValues(alpha: 0.8),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Main Form Container
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  children: [
-                    const RoleSelectionGrid(),
-                    const SizedBox(height: 32),
-                    const LoginForm(),
-                    const SizedBox(height: 16),
-                    TextButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const RestaurantSignupView(),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 40),
+                  // Welcoming Header
+                  Center(
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'assets/images/LoginScreenPhoto.png',
+                          height: 160,
+                          errorBuilder: (context, error, stackTrace) => const Icon(
+                            Icons.eco_rounded,
+                            size: 80,
+                            color: Color(0xFF06402B),
                           ),
-                        );
-                      },
-                      icon: const Icon(Icons.storefront),
-                      label: const Text('Register as Restaurant / Company'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: const Color(0xFF06402B),
-                      ),
+                        ).animate().fadeIn(duration: 600.ms).scale(
+                              begin: const Offset(0.9, 0.9),
+                              curve: Curves.easeOutBack,
+                            ),
+                        const SizedBox(height: 24),
+                        Text(
+                          context.l10n.appTitle,
+                          style: GoogleFonts.cairo(
+                            fontSize: 36,
+                            fontWeight: FontWeight.w900,
+                            color: const Color(0xFF06402B),
+                            letterSpacing: -0.5,
+                          ),
+                        ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2, end: 0),
+                        Text(
+                          context.l10n.appTagline,
+                          style: GoogleFonts.cairo(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF446649),
+                          ),
+                        ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2, end: 0),
+                        const SizedBox(height: 16),
+                        const _AboutDwaarButton()
+                            .animate()
+                            .fadeIn(delay: 500.ms)
+                            .slideY(begin: 0.2, end: 0),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
+                  const SizedBox(height: 48),
 
-              // Footer
-              const LoginFooter(),
-            ],
+                  // Main Interaction Sections
+                  const LoginForm(),
+                  const SizedBox(height: 32),
+
+                  // Secondary actions
+                  const _DynamicRegisterButton(),
+
+                  const SizedBox(height: 40),
+                  const LoginFooter(),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
           const _LangToggleButton(),
         ],
       ),
@@ -148,6 +151,67 @@ class _LoginScreen extends StatelessWidget {
   }
 }
 
+class _AboutDwaarButton extends StatelessWidget {
+  const _AboutDwaarButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: OutlinedButton.icon(
+        onPressed: () => showAboutDwaarSheet(context),
+        icon: const Icon(Icons.info_outline_rounded, size: 18),
+        label: Text(
+          context.l10n.aboutDwaarButtonLabel,
+          style: GoogleFonts.cairo(fontSize: 13, fontWeight: FontWeight.w600),
+        ),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: const Color(0xFF06402B),
+          side: const BorderSide(color: Color(0xFF06402B), width: 1),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        ),
+      ),
+    );
+  }
+}
+
+class _DynamicRegisterButton extends StatelessWidget {
+  const _DynamicRegisterButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    // Phone-first signup: the user enters their phone, verifies via OTP, then
+    // picks their role + name on Screen 3. See docs/signup-redesign-plan.md.
+    final label = l10n.loginSignUpNow;
+    final icon = Icons.person_add_rounded;
+    const destination = SignupPhoneScreen();
+
+    return Center(
+      child: TextButton.icon(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => destination,
+            ),
+          );
+        },
+        icon: Icon(icon),
+        label: Text(
+          label,
+          style: GoogleFonts.dmSans(fontWeight: FontWeight.w600),
+        ),
+        style: TextButton.styleFrom(
+          foregroundColor: const Color(0xFF06402B),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          backgroundColor: const Color(0xFF06402B).withValues(alpha: 0.05),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
+    );
+  }
+}
 class _LangToggleButton extends StatelessWidget {
   const _LangToggleButton();
 

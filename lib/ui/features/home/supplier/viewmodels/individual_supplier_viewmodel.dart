@@ -1,5 +1,5 @@
 import '../../../../../data/models/user.dart';
-import 'base_supplier_viewmodel.dart';
+import '../../shared/viewmodels/base_supplier_viewmodel.dart';
 
 class IndividualSupplierViewModel extends BaseSupplierViewModel {
   IndividualSupplierViewModel(super.store);

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../data/models/order.dart';
+import '../../../../data/models/order/order.dart';
 import '../../../../l10n/l10n.dart';
+import '../../chat/views/chat_view.dart';
 
 class OrderTrackingCard extends StatelessWidget {
   final Order order;
@@ -243,6 +243,7 @@ class OrderTrackingCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   vehicle,
+                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.cairo(
                     fontSize: 11,
                     color: const Color(0xFF404943),
@@ -272,12 +273,16 @@ class OrderTrackingCard extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           // Name
-          Text(
-            name,
-            style: GoogleFonts.cairo(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF002819),
+          Flexible(
+            child: Text(
+              name,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: GoogleFonts.cairo(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF002819),
+              ),
             ),
           ),
           const SizedBox(width: 10),
@@ -355,28 +360,11 @@ class OrderTrackingCard extends StatelessWidget {
   Widget _buildActionButtons(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-      child: Row(
-        children: [
-          // Chat button
-          Expanded(
-            child: _ActionBtn(
-              label: context.l10n.orderChatButton,
-              icon: Icons.chat_bubble_outline_rounded,
-              color: const Color(0xFF06402B),
-              onTap: () => _openChat(context),
-            ),
-          ),
-          const SizedBox(width: 12),
-          // WhatsApp button
-          Expanded(
-            child: _ActionBtn(
-              label: context.l10n.orderWhatsAppButton,
-              icon: Icons.phone_rounded,
-              color: const Color(0xFF25D366),
-              onTap: () => _openWhatsApp(context),
-            ),
-          ),
-        ],
+      child: _ActionBtn(
+        label: context.l10n.orderChatButton,
+        icon: Icons.chat_bubble_outline_rounded,
+        color: const Color(0xFF06402B),
+        onTap: () => ChatView.push(context, orderId: order.id, order: order),
       ),
     );
   }
@@ -388,45 +376,6 @@ class OrderTrackingCard extends StatelessWidget {
         color: const Color(0xFFF0F2F1),
         margin: const EdgeInsets.symmetric(horizontal: 16),
       );
-
-  void _openChat(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          context.l10n.orderChatComingSoon,
-          textAlign: TextAlign.right,
-          style: GoogleFonts.cairo(color: Colors.white),
-        ),
-        backgroundColor: const Color(0xFF06402B),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
-  }
-
-  Future<void> _openWhatsApp(BuildContext context) async {
-    final phone = order.driverPhone;
-    if (phone == null) return;
-    final cleaned = phone.replaceAll(RegExp(r'[^0-9]'), '');
-    final intl = cleaned.startsWith('0') ? '962${cleaned.substring(1)}' : cleaned;
-    final uri = Uri.parse('https://wa.me/$intl?text=${Uri.encodeComponent('مرحباً، أنا في انتظار استلامي.')}');
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            context.l10n.orderWhatsAppFailed,
-            textAlign: TextAlign.right,
-            style: GoogleFonts.cairo(color: Colors.white),
-          ),
-          backgroundColor: Colors.red.shade700,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
-    }
-  }
 }
 
 // ── Sub-widgets ───────────────────────────────────────────────────────────────

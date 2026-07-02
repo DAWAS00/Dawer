@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' show Random;
 
 import 'package:flutter/foundation.dart';
 import '../../backend_integration_locally/local_store.dart';
@@ -8,10 +9,13 @@ import '../../domain/repositories/i_order_repository.dart';
 import '../../domain/repositories/i_wallet_repository.dart';
 import '../../domain/requests/create_pickup_request.dart';
 import '../mock/order_mock_data.dart';
-import '../models/order.dart';
-import '../models/order_json.dart';
+import '../models/order/order.dart';
 import '../models/user.dart';
 import '../models/user_role.dart';
+import '../models/reward_transaction.dart';
+import '../mock/green_credits_mock_data.dart';
+import '../../domain/entities/green_level.dart';
+import 'green_credits_service.dart';
 import 'reward_service.dart';
 
 /// Singleton shared order store — the single source of truth for all orders
@@ -26,10 +30,12 @@ class AppOrderStore extends ChangeNotifier {
     IOrderRepository? remote,
     IWalletRepository? wallet,
     RewardService? rewardService,
+    bool skipMockSeed = false,
   })  : _store = store,
         _remote = remote ?? const NoOpOrderRepository(),
         _wallet = wallet ?? const NoOpWalletRepository(),
-        _rewardService = rewardService ?? RewardService() {
+        _rewardService = rewardService ?? RewardService(),
+        _skipMockSeed = skipMockSeed {
     _bootstrap();
   }
 
@@ -37,7 +43,14 @@ class AppOrderStore extends ChangeNotifier {
   final IOrderRepository _remote;
   final IWalletRepository _wallet;
   final RewardService _rewardService;
+  final bool _skipMockSeed;
   StreamSubscription<List<Order>>? _remoteSub;
+
+  // ── Green Credits ─────────────────────────────────────────────────────────
+  String? _currentUserId;
+  final Map<String, int> _greenPointsMap = {};
+  final Map<String, List<RewardTransaction>> _rewardLedger = {};
+  final GreenCreditsService _greenCreditsService = const GreenCreditsService();
 
   // ── Error state ───────────────────────────────────────────────────────────
 
@@ -55,13 +68,22 @@ class AppOrderStore extends ChangeNotifier {
   /// All regular orders — pickup requests (from suppliers) and collection jobs
   /// (posted by recycling companies). This is the canonical list.
   late List<Order> _orders;
+  List<Order> get orders => List.unmodifiable(_orders);
 
 
   /// ID of the order currently active for our mock driver session.
   String? _activeOrderId;
 
   /// IDs of orders completed by our mock driver (their personal history).
-  final List<String> _driverCompletedIds = ['ORD-H01', 'ORD-H02'];
+  final List<String> _driverCompletedIds = [
+    'DRV-DONE-01',
+    'DRV-DONE-02',
+    'DRV-DONE-03',
+  ];
+
+  /// True until the first bootstrap completes. Used by home tabs to show skeleton UI.
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
 
   /// Last error captured by [_safeSupabaseInsert].
   AppFailure? _lastError;
@@ -72,23 +94,29 @@ class AppOrderStore extends ChangeNotifier {
 
   void _bootstrap() {
     final store = _store;
-    if (store == null) {
+
+    if (_skipMockSeed) {
+      // Live Supabase: start empty; realtime subscription fills _orders.
+      _orders = [];
+    } else if (store == null || store.isFirstLaunch) {
       _orders = [...OrderMockData.seedOrders(), ...OrderMockData.seedMarketItems()];
+      store?.writeOrders(_orders.map((o) => o.toJson()).toList());
+      store?.markFirstLaunchDone();
     } else {
-      if (store.isFirstLaunch) {
-        _orders = [...OrderMockData.seedOrders(), ...OrderMockData.seedMarketItems()];
-        store.writeOrders(_orders.map((o) => o.toJson()).toList());
-        store.markFirstLaunchDone();
-      } else {
-        _orders = store.readOrders().map(orderFromJson).toList();
-        final oldMarket = store.readMarket().map(orderFromJson).toList();
-        for (final m in oldMarket) {
-          if (!_orders.any((o) => o.id == m.id)) {
-            _orders.add(m.copyWith(isMarketplaceShared: true));
-          }
+      _orders = store.readOrders().map((e) => Order.fromJson(e)).toList();
+      final oldMarket = store.readMarket().map((e) => Order.fromJson(e)).toList();
+      for (final m in oldMarket) {
+        if (!_orders.any((o) => o.id == m.id)) {
+          _orders.add(m.copyWith(isMarketplaceShared: true));
         }
       }
     }
+
+    // Flip loading flag after one microtask so the UI renders one skeleton frame.
+    Future.microtask(() {
+      _isLoading = false;
+      notifyListeners();
+    });
 
     // Subscribe to remote order updates. The default NoOpOrderRepository
     // emits nothing, so seed-only / test paths are unaffected.
@@ -120,6 +148,8 @@ class AppOrderStore extends ChangeNotifier {
   /// Call this once from [HomeRouter] after the user's session is established.
   void configureForUser(String userId, UserRole role) {
     _remoteSub?.cancel();
+    _currentUserId = userId;
+    _seedGreenCreditsFor(userId);
     _remoteSub = _remote.watchOrdersForUser(userId, role).listen(
       (remoteOrders) {
         if (remoteOrders.isEmpty) return;
@@ -165,7 +195,7 @@ class AppOrderStore extends ChangeNotifier {
   }) {
     return _orders.where((o) {
       final statusOk =
-          (o.status == OrderStatus.pending && !o.isMarketplaceShared) ||
+          o.status == OrderStatus.pending ||
           (o.status == OrderStatus.accepted &&
               o.requiresRider &&
               o.driverName == null);
@@ -194,15 +224,151 @@ class AppOrderStore extends ChangeNotifier {
 
   bool get driverHasActiveOrder => _activeOrderId != null;
 
+  // ── Green Credits ─────────────────────────────────────────────────────────
+
+  /// Returns the current خُضَر balance for [userId].
+  /// Returns 0 if the user has not earned any credits yet.
+  int greenPointsFor(String userId) => _greenPointsMap[userId] ?? 0;
+
+  /// Returns the [GreenLevel] for [userId] based on their current balance.
+  GreenLevel greenLevelFor(String userId) =>
+      GreenLevelInfo.fromPoints(greenPointsFor(userId));
+
+  /// Reward transaction history (earned / bonus / redeemed) for [userId],
+  /// most recent first.
+  List<RewardTransaction> greenTransactionsFor(String userId) {
+    final list = _rewardLedger[userId] ?? const [];
+    final sorted = [...list]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return List.unmodifiable(sorted);
+  }
+
+  /// Loads persisted balance for [userId]. On first use (balance still 0) and
+  /// when seed data exists, seeds the demo balance + transaction history.
+  void _seedGreenCreditsFor(String userId) {
+    final persisted = _store?.readGreenPoints(userId) ?? 0;
+    if (persisted == 0 && GreenCreditsMockData.hasSeed(userId)) {
+      final seed = GreenCreditsMockData.pointsFor(userId);
+      _greenPointsMap[userId] = seed;
+      unawaited(_store?.writeGreenPoints(userId, seed) ?? Future.value());
+    } else {
+      _greenPointsMap[userId] = persisted;
+    }
+    // Seed the in-memory transaction history once per session.
+    _rewardLedger[userId] ??= [...GreenCreditsMockData.transactionsFor(userId)];
+  }
+
+  /// Redeems [cost] خُضَر from [userId] for the reward described by
+  /// [description]. Returns true on success, false if the balance is too low.
+  bool redeemGreenCredits(
+    String userId, {
+    required int cost,
+    required String description,
+  }) {
+    final balance = _greenPointsMap[userId] ?? 0;
+    if (cost <= 0 || balance < cost) return false;
+
+    _greenPointsMap[userId] = balance - cost;
+    unawaited(
+        _store?.writeGreenPoints(userId, _greenPointsMap[userId]!) ??
+            Future.value());
+
+    (_rewardLedger[userId] ??= []).add(RewardTransaction(
+      id: 'redeem-${DateTime.now().microsecondsSinceEpoch}',
+      type: RewardTransactionType.redeemed,
+      points: cost,
+      description: description,
+      createdAt: DateTime.now(),
+    ));
+
+    notifyListeners();
+    return true;
+  }
+
+  void _recordRewardTxn(String userId, RewardTransaction txn) {
+    (_rewardLedger[userId] ??= []).add(txn);
+  }
+
+  Future<void> _awardGreenCredits(Order order) async {
+    final uid = _currentUserId;
+    if (uid == null) return;
+
+    // Compute week streak from orders the current driver has completed.
+    final driverCompleted = _orders
+        .where((o) =>
+            _driverCompletedIds.contains(o.id) && o.completedAt != null)
+        .toList();
+    final streak = GreenCreditsService.weekStreakFrom(driverCompleted);
+
+    // Award credits to the driver (current user)
+    final driverEarned =
+        _greenCreditsService.creditsForOrder(order, weekStreak: streak);
+    _greenPointsMap[uid] = (_greenPointsMap[uid] ?? 0) + driverEarned;
+    unawaited(_store?.writeGreenPoints(uid, _greenPointsMap[uid]!) ??
+        Future.value());
+    _recordRewardTxn(
+      uid,
+      RewardTransaction(
+        id: 'earn-${order.id}-drv',
+        type: RewardTransactionType.earned,
+        points: driverEarned,
+        description: 'إكمال طلب · ${order.pickupAddress}',
+        createdAt: DateTime.now(),
+        linkedOrderId: order.id,
+      ),
+    );
+
+    // Also award credits to the supplier who recycled the waste.
+    final supplierId = order.supplierId;
+    if (supplierId != null && supplierId.isNotEmpty && supplierId != uid) {
+      if (!_greenPointsMap.containsKey(supplierId)) {
+        _greenPointsMap[supplierId] =
+            _store?.readGreenPoints(supplierId) ?? 0;
+      }
+      // Supplier earns base credits (no streak bonus — streak is driver-side)
+      final supplierEarned = _greenCreditsService.creditsForOrder(order);
+      _greenPointsMap[supplierId] =
+          _greenPointsMap[supplierId]! + supplierEarned;
+      unawaited(
+          _store?.writeGreenPoints(supplierId, _greenPointsMap[supplierId]!) ??
+              Future.value());
+      _recordRewardTxn(
+        supplierId,
+        RewardTransaction(
+          id: 'earn-${order.id}-sup',
+          type: RewardTransactionType.earned,
+          points: supplierEarned,
+          description: 'تدوير مواد · ${order.pickupAddress}',
+          createdAt: DateTime.now(),
+          linkedOrderId: order.id,
+        ),
+      );
+    }
+
+    notifyListeners();
+  }
+
   // ─────────────────────────────────────────────────────────────────────────
   // Supplier views
   // ─────────────────────────────────────────────────────────────────────────
 
-  /// All orders submitted by a specific supplier (by name, mock-only).
+  /// All orders submitted by a specific supplier (by name, mock/offline only).
   List<Order> supplierOrdersFor(String supplierName) => _orders
       .where((o) =>
           o.supplierName == supplierName && o.type == OrderType.pickup)
       .toList();
+
+  /// All orders submitted by a supplier identified by their auth ID (live mode).
+  List<Order> supplierOrdersForId(String userId) => _orders
+      .where((o) => o.type == OrderType.pickup && o.supplierId == userId)
+      .toList();
+
+  /// Completed pickup orders submitted by this supplier (by name, mock mode).
+  /// Used by the Analytics tab to compute earnings and history.
+  List<Order> supplierCompletedOrdersFor(String supplierName) =>
+      _orders.where((o) =>
+          o.type == OrderType.pickup &&
+          o.supplierName == supplierName &&
+          o.status == OrderStatus.completed).toList();
 
   // ─────────────────────────────────────────────────────────────────────────
   // Recycling Company views
@@ -221,6 +387,17 @@ class AppOrderStore extends ChangeNotifier {
   /// Collection jobs posted by the company.
   List<Order> get companyJobs =>
       _orders.where((o) => o.type == OrderType.collection).toList();
+
+  /// Completed deliveries received by the company — pickups dropped off and
+  /// collection-job sales fulfilled. [companyIncoming] only tracks orders
+  /// still in an active delivery state, so without this, completed history
+  /// never reaches the company's Analytics tab (it would only ever see
+  /// completed collection-job postings via [companyJobs]).
+  List<Order> get companyCompletedDeliveries => _orders
+      .where((o) =>
+          (o.type == OrderType.pickup || o.type == OrderType.collectionSale) &&
+          o.status == OrderStatus.completed)
+      .toList();
 
   // ─────────────────────────────────────────────────────────────────────────
   // Marketplace views
@@ -311,16 +488,17 @@ class AppOrderStore extends ChangeNotifier {
 
   /// Driver entered the 200m pickup geofence (server-verified). Sends customer
   /// notification and starts the 5-minute response window.
-  void markArrivedAtPickup(String orderId) {
+  void markArrivedAtPickup(String orderId, {OrderProof? pickupProof}) {
     final idx = _orders.indexWhere((o) => o.id == orderId);
     if (idx == -1) return;
     _orders[idx] = _orders[idx].copyWith(
       status: OrderStatus.arrivedAtPickup,
       arrivedAtPickupAt: DateTime.now(),
       arrivalConfirmationStatus: ArrivalConfirmationStatus.awaiting,
+      pickupProof: pickupProof,
     );
     notifyListeners();
-    unawaited(_pushRemote(_remote.markInTransit(orderId)));
+    unawaited(_pushRemote(_remote.markArrivedAtPickup(orderId, pickupProof: pickupProof)));
   }
 
   /// Supplier confirmed they are available. Advance order to inTransit.
@@ -380,7 +558,7 @@ class AppOrderStore extends ChangeNotifier {
       arrivedAtDropoffAt: DateTime.now(),
     );
     notifyListeners();
-    unawaited(_pushRemote(_remote.markInTransit(orderId)));
+    unawaited(_pushRemote(_remote.markArrivedAtDropoff(orderId)));
   }
 
   /// Record a blocked fraud attempt (driver tried to mark arrived while >200m away).
@@ -403,6 +581,11 @@ class AppOrderStore extends ChangeNotifier {
     unawaited(_pushRemote(_remote.markCancelled(orderId)));
   }
 
+  /// Verify driver arrival at destination.
+  Future<AppResult<bool>> verifyArrival(String orderId, double lat, double lng) async {
+    return _remote.verifyArrival(orderId, lat, lng);
+  }
+
   /// Complete the active order (driver marks delivered).
   void completeOrder(Order completedOrder) {
     final idx = _orders.indexWhere((o) => o.id == completedOrder.id);
@@ -419,6 +602,7 @@ class AppOrderStore extends ChangeNotifier {
 
     unawaited(_pushRemote(_remote.markCompleted(completedOrder.id, actualWeightKg: completedOrder.weightKg)));
     unawaited(_recordTransactionFor(completedOrder));
+    unawaited(_awardGreenCredits(completedOrder));
     if (completedOrder.reward > 0) {
       unawaited(_wallet.releaseForOrder(completedOrder.id, completedOrder.reward));
     }
@@ -477,8 +661,7 @@ class AppOrderStore extends ChangeNotifier {
     double? dropoffLat,
     double? dropoffLng,
   }) {
-    final orderId =
-        'ORD-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final orderId = _uuid();
     final fee = _calculateFee(weightCategory);
     final hasChemicals = wasteTypes.contains(WasteType.chemicals);
     final order = Order(
@@ -528,8 +711,17 @@ class AppOrderStore extends ChangeNotifier {
         supplierName: supplierName,
         pickupAddress: request.pickupAddress,
         notes: request.notes,
+        images: request.images,
+        estimatedWeightKg: request.estimatedWeightKg,
         wasteForm: request.wasteForm,
         weightCategory: request.weightCategory,
+        pickupTarget: request.pickupTarget,
+        itemPrice: request.itemPrice,
+        scheduledAt: request.scheduledAt,
+        pickupLat: request.pickupLat,
+        pickupLng: request.pickupLng,
+        dropoffLat: request.dropoffLat,
+        dropoffLng: request.dropoffLng,
       );
       return Success(order);
     } catch (e) {
@@ -576,8 +768,7 @@ class AppOrderStore extends ChangeNotifier {
     double? pickupLng,
     DateTime? expiresAt,
   }) {
-    final orderId =
-        'JOB-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final orderId = _uuid();
     final order = Order(
       id: orderId,
       type: OrderType.collection,
@@ -729,8 +920,7 @@ class AppOrderStore extends ChangeNotifier {
     if (hasAcceptedJob(jobId, acceptorName)) {
       return 'لقد قبلت هذه الوظيفة مسبقاً';
     }
-    final saleId =
-        'SALE-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final saleId = _uuid();
     final sale = Order(
       id: saleId,
       type: OrderType.collectionSale,
@@ -944,8 +1134,145 @@ class AppOrderStore extends ChangeNotifier {
   }
 
   // ─────────────────────────────────────────────────────────────────────────
+  // Reservation actions (10 % escrow)
+  // ─────────────────────────────────────────────────────────────────────────
+
+  static const double _reservationDepositPct = 0.10;
+
+  /// All marketplace items that have a pending reservation for [sellerName]
+  /// (i.e. items the seller listed that someone wants to reserve).
+  List<Order> pendingReservationsForSeller(String sellerName) => _orders
+      .where((o) =>
+          o.isMarketplaceShared &&
+          o.supplierName == sellerName &&
+          o.reservationStatus == ReservationStatus.pending)
+      .toList();
+
+  /// Buyer reserves a marketplace item.
+  /// Locks [_reservationDepositPct] of [itemPrice] from the buyer's wallet.
+  /// Returns an error string on failure, null on success.
+  String? reserveMarketItem({
+    required String orderId,
+    required String reserverName,
+    required String reserverId,
+    required DateTime pickupDate,
+  }) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1 || !_orders[idx].isMarketplaceShared) return 'العنصر غير موجود';
+    final order = _orders[idx];
+    if (order.status != OrderStatus.pending) return 'هذا العنصر لم يعد متاحاً';
+    if (order.reservationStatus != null) return 'هذا العنصر محجوز بالفعل';
+    if (order.supplierName == reserverName) return 'لا يمكنك حجز منتجك الخاص';
+
+    final price = order.itemPrice ?? 0;
+    final deposit = (price * _reservationDepositPct);
+
+    _orders[idx] = order.copyWith(
+      reservationStatus: ReservationStatus.pending,
+      reservationPickupDate: pickupDate,
+      reservedByName: reserverName,
+      reservedById: reserverId,
+      buyerDepositAmount: deposit,
+    );
+    notifyListeners();
+    return null;
+  }
+
+  /// Seller responds to a pending reservation.
+  /// [accept] = true  → seller also commits 10% deposit; status → accepted.
+  /// [accept] = false → reservation rejected; buyer deposit released; status → rejected.
+  String? respondToReservation({
+    required String orderId,
+    required String sellerName,
+    required bool accept,
+  }) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return 'العنصر غير موجود';
+    final order = _orders[idx];
+    if (order.supplierName != sellerName) return 'ليس لديك صلاحية للرد على هذا الحجز';
+    if (order.reservationStatus != ReservationStatus.pending) return 'لا يوجد حجز بانتظار ردّك';
+
+    if (accept) {
+      final price = order.itemPrice ?? 0;
+      final sellerDeposit = (price * _reservationDepositPct);
+      _orders[idx] = order.copyWith(
+        reservationStatus: ReservationStatus.accepted,
+        sellerDepositAmount: sellerDeposit,
+      );
+    } else {
+      _orders[idx] = order.copyWith(
+        reservationStatus: ReservationStatus.rejected,
+        // Return buyer's deposit — clear it
+        buyerDepositAmount: null,
+        reservedByName: null,
+        reservedById: null,
+        reservationPickupDate: null,
+      );
+    }
+    notifyListeners();
+    return null;
+  }
+
+  /// Cancel a confirmed reservation. Fraud penalty logic:
+  /// • Buyer cancels → buyer forfeits their 10% deposit to the seller.
+  /// • Seller cancels → seller forfeits their 10% deposit to the buyer.
+  /// Either way the order reverts to [pending] (available for others to buy).
+  String? cancelReservation({
+    required String orderId,
+    required String cancellerName,
+    required bool isBuyer,
+  }) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return 'العنصر غير موجود';
+    final order = _orders[idx];
+
+    final isReserved = order.reservationStatus == ReservationStatus.pending ||
+        order.reservationStatus == ReservationStatus.accepted;
+    if (!isReserved) return 'لا يوجد حجز نشط على هذا العنصر';
+
+    // Determine new status
+    final newStatus = isBuyer
+        ? ReservationStatus.cancelledByBuyer
+        : ReservationStatus.cancelledBySeller;
+
+    _orders[idx] = order.copyWith(
+      reservationStatus: newStatus,
+      // Keep deposit amounts for audit; UI can show who was penalised.
+    );
+    notifyListeners();
+    return null;
+  }
+
+  /// Complete a reserved order (buyer picks up on the agreed date).
+  /// Releases both deposits. Order moves to accepted so the normal flow continues.
+  String? completeReservation(String orderId) {
+    final idx = _orders.indexWhere((o) => o.id == orderId);
+    if (idx == -1) return 'العنصر غير موجود';
+    final order = _orders[idx];
+    if (order.reservationStatus != ReservationStatus.accepted) {
+      return 'يجب أن يكون الحجز مؤكداً لإتمامه';
+    }
+    _orders[idx] = order.copyWith(
+      reservationStatus: ReservationStatus.completedByReservation,
+      status: OrderStatus.accepted,
+      acceptedAt: DateTime.now(),
+    );
+    notifyListeners();
+    return null;
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
   // Helpers
   // ─────────────────────────────────────────────────────────────────────────
+
+  static String _uuid() {
+    final r = Random.secure();
+    final b = List<int>.generate(16, (_) => r.nextInt(256));
+    b[6] = (b[6] & 0x0f) | 0x40;
+    b[8] = (b[8] & 0x3f) | 0x80;
+    final h = b.map((x) => x.toRadixString(16).padLeft(2, '0')).join();
+    return '${h.substring(0, 8)}-${h.substring(8, 12)}-${h.substring(12, 16)}-${h.substring(16, 20)}-${h.substring(20)}';
+  }
 
   static double _calculateFee(WeightCategory? cat) {
     const base = 2.0;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../../../data/models/order.dart';
+import '../../../../../../data/models/order/order.dart';
 
 class MarketItemPriceCard extends StatelessWidget {
   final Order item;

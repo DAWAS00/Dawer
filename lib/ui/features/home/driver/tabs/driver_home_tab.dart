@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../../core/constants/app_colors.dart';
-import '../../../../../data/models/order.dart';
-import 'package:dwaar/ui/common/map/route_map_placeholder.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
-import '../../shared/order_card.dart';
-import '../../shared/order_details_view.dart';
-import '../../shared/viewmodels/marketplace_viewmodel.dart';
-import '../../shared/widgets/market_listing_card.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../data/mock/order_mock_data.dart';
+import '../../../../../data/models/hub.dart';
+import '../../../../../data/models/order/order.dart';
+import '../../../../../l10n/l10n.dart';
 import '../viewmodels/driver_home_viewmodel.dart';
-import '../widgets/driver_stat_card.dart';
-import '../../../../../../l10n/l10n.dart';
+import '../../shared/viewmodels/marketplace_viewmodel.dart';
+import '../widgets/driver_home_header.dart';
+import '../widgets/driver_kpi_row.dart';
+import '../widgets/driver_active_order_card.dart';
+import '../widgets/driver_available_order_card.dart';
+import '../widgets/driver_listing_card.dart';
+import '../../shared/widgets/home/section_header.dart';
+import '../../shared/order_details_view.dart';
+import '../../../../core/components/dwaar_skeleton.dart';
+import '../views/order_preview_view.dart';
 
 class DriverHomeTab extends StatelessWidget {
   final String userName;
@@ -19,8 +27,10 @@ class DriverHomeTab extends StatelessWidget {
   final List<Order> available;
   final List<Order> history;
   final Order? active;
-  final ValueChanged<Order> onAcceptOrder;
+  final Future<String?> Function(Order) onAcceptOrder;
   final ValueChanged<Order>? onCompleteOrder;
+  final Future<String?> Function(Order)? onMarkArrivedAtPickup;
+  final Future<String?> Function(Order)? onMarkArrivedAtDropoff;
 
   const DriverHomeTab({
     super.key,
@@ -32,160 +42,224 @@ class DriverHomeTab extends StatelessWidget {
     required this.active,
     required this.onAcceptOrder,
     this.onCompleteOrder,
+    this.onMarkArrivedAtPickup,
+    this.onMarkArrivedAtDropoff,
   });
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final driverVm = context.watch<DriverHomeViewModel>();
     final marketVm = context.watch<MarketplaceViewModel>();
     final myListings = marketVm.myListings(driverVm.user.name);
+    final activeOrders = [if (driverVm.active != null) driverVm.active!];
+    final loading = driverVm.isLoading;
+    final displayAvailable = loading ? OrderMockData.skeletonOrders() : available;
 
     return CustomScrollView(
       slivers: [
-        SliverToBoxAdapter(child: _buildHeader(context)),
-        SliverToBoxAdapter(child: _buildStatsRow(context)),
-        if (active != null)
-          SliverToBoxAdapter(child: _buildActiveBanner(context)),
-        if (myListings.isNotEmpty) ..._buildMyListingsSection(context, myListings, marketVm),
+        SliverToBoxAdapter(
+          child: DriverHomeHeader(
+            userName: userName,
+            isOnline: isAvailable,
+            onStatusToggle: (val) {
+              // Handle toggle here — context is inside the Scaffold subtree so
+              // ScaffoldMessenger finds the right messenger for the snackbar.
+              final error = driverVm.toggleAvailability(val, context.l10n);
+              if (error != null && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(error, style: GoogleFonts.cairo()),
+                    backgroundColor: Colors.orange.shade700,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
+            totalEarnings: driverVm.totalEarnings,
+          ),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 12)),
+
+        // KPI row
+        SliverToBoxAdapter(
+          child: DwaarSkeleton(
+            enabled: loading,
+            child: DriverKpiRow(
+              earnings: driverVm.totalEarnings,
+              completedCount: driverVm.totalCompletedRides,
+              rating: 5.0,
+            ),
+          ),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+        // ── Hubs ──
+        if (driverVm.hubsError != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: _HubsErrorBanner(message: driverVm.hubsError!),
+            ),
+          )
+        else if (driverVm.hubs.isNotEmpty) ...[
+          SliverToBoxAdapter(
+            child: HomeSectionHeader(
+              title: l10n.driverDeliveryHubs,
+              count: driverVm.hubs.length,
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 8)),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 80,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: driverVm.hubs.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 10),
+                itemBuilder: (_, i) => _HubChip(hub: driverVm.hubs[i]),
+              ),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 12)),
+        ],
+
+        // ── Active Orders ──
+        SliverToBoxAdapter(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            child: activeOrders.isNotEmpty
+                ? Column(
+                    key: const ValueKey('active_orders_list'),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: HomeSectionHeader(
+                          title: l10n.driverActiveOrderTitle,
+                          count: 1,
+                        ),
+                      ),
+                      ...activeOrders.map((order) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: Hero(
+                              tag: 'order_${order.id}',
+                              child: DriverActiveOrderCard(
+                                order: order,
+                                onConfirmArrival: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => OrderDetailsView(
+                                        order: order,
+                                        onCompleteOrder: onCompleteOrder,
+                                        onMarkArrivedAtPickup: onMarkArrivedAtPickup,
+                                        onMarkArrivedAtDropoff: onMarkArrivedAtDropoff,
+                                        hideStatus: true,
+                                        isDriverView: true,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ).animate().scale(
+                              begin: const Offset(0.95, 0.95),
+                              duration: 400.ms,
+                              curve: Curves.easeOutCubic)),
+                      const SizedBox(height: 16),
+                    ],
+                  )
+                : const SizedBox.shrink(),
+          ),
+        ),
+
+        // ── My Listings ──
+        if (myListings.isNotEmpty) ...[
+          SliverToBoxAdapter(
+            child: HomeSectionHeader(
+              title: l10n.driverMyListings,
+              count: myListings.length,
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 10)),
+          SliverList.separated(
+            itemCount: myListings.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            itemBuilder: (context, i) => DriverListingCard(
+              order: myListings[i],
+              onDelete: myListings[i].status == OrderStatus.pending
+                  ? () => _confirmDeleteListing(context, myListings[i].id, marketVm)
+                  : null,
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => OrderDetailsView(order: myListings[i], isDriverView: true),
+                ),
+              ),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        ],
+
+        // ── Offline / Available orders ──
         if (!isAvailable)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.cloud_off_rounded, size: 64, color: Color(0xFFC0C9C1)),
-                  const SizedBox(height: 16),
-                  Text(
-                    context.l10n.driverUnavailableTitle,
-                    style: GoogleFonts.cairo(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF404943),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    context.l10n.driverUnavailableSubtitle,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(
-                      fontSize: 14,
-                      color: const Color(0xFF717973),
-                    ),
-                  ),
-                ],
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
+              child: _OfflineStateCard(onEnable: () => onToggleAvailability(true)),
             ),
           )
         else ...[
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-              child: Text(
-                context.l10n.driverAvailableOrders,
-                textAlign: TextAlign.right,
-                style: GoogleFonts.cairo(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819),
+            child: HomeSectionHeader(
+              title: context.l10n.driverAvailableOrders,
+              count: loading ? 0 : available.length,
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 10)),
+          if (!loading && available.isEmpty)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: _EmptyOrdersCard(),
+              ),
+            )
+          else
+            SliverToBoxAdapter(
+              child: DwaarSkeleton(
+                enabled: loading,
+                child: Column(
+                  children: [
+                    for (int i = 0; i < displayAvailable.length; i++) ...[
+                      if (i > 0) const SizedBox(height: 10),
+                      loading
+                          ? DriverAvailableOrderCard(
+                              order: displayAvailable[i],
+                              onAccept: () async => null,
+                            )
+                          : Hero(
+                              tag: 'order_${displayAvailable[i].id}',
+                              child: DriverAvailableOrderCard(
+                                order: displayAvailable[i],
+                                onAccept: () => onAcceptOrder(displayAvailable[i]),
+                                onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => OrderPreviewView(
+                                      order: displayAvailable[i],
+                                      onAccept: onAcceptOrder,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                    ],
+                  ],
                 ),
               ),
             ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
-            sliver: available.isEmpty
-                ? SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(40),
-                      child: Center(
-                        child: Text(
-                          context.l10n.driverNoAvailableOrders,
-                          style: GoogleFonts.cairo(
-                            fontSize: 14,
-                            color: const Color(0xFF717973),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                : SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, i) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: OrderCard(
-                          order: available[i],
-                          mode: OrderCardMode.driverAvailable,
-                          onAction: () => onAcceptOrder(available[i]),
-                        ),
-                      ),
-                      childCount: available.length,
-                    ),
-                  ),
-          ),
         ],
+        const SliverToBoxAdapter(child: SizedBox(height: 120)),
       ],
     );
-  }
-
-  List<Widget> _buildMyListingsSection(
-    BuildContext context,
-    List<Order> listings,
-    MarketplaceViewModel marketVm,
-  ) {
-    return [
-      SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E40AF).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  '${listings.length}',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF1E40AF),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Text(
-                context.l10n.driverMyListings,
-                textAlign: TextAlign.right,
-                style: GoogleFonts.cairo(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      SliverPadding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-        sliver: SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (ctx, i) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: MarketListingCard(
-                order: listings[i],
-                onDelete: listings[i].status == OrderStatus.pending
-                    ? () => _confirmDeleteListing(context, listings[i].id, marketVm)
-                    : null,
-              ),
-            ),
-            childCount: listings.length,
-          ),
-        ),
-      ),
-    ];
   }
 
   void _confirmDeleteListing(
@@ -197,279 +271,292 @@ class DriverHomeTab extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(context.l10n.withdrawListing, textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        content: Text(context.l10n.withdrawListingConfirm, textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+        title: Text(context.l10n.withdrawListing,
+            textAlign: TextAlign.right,
+            style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        content: Text(context.l10n.withdrawListingConfirm,
+            textAlign: TextAlign.right, style: GoogleFonts.cairo()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(context.l10n.no, style: GoogleFonts.cairo(color: const Color(0xFF717973))),
+            child: Text(context.l10n.no,
+                style: GoogleFonts.cairo(color: AppColors.mutedText)),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               marketVm.removeListing(orderId);
             },
-            child: Text(context.l10n.yesWithdraw, style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
+            child: Text(context.l10n.yesWithdraw,
+                style: GoogleFonts.cairo(
+                    color: Colors.red, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildHeader(BuildContext context) {
+// ── Hub widgets ──
+
+class _HubsErrorBanner extends StatelessWidget {
+  const _HubsErrorBanner({required this.message});
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF06402B), Color(0xFF0A5E3E)],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-        ),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.statusCancelledBg,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.statusCancelledText.withAlpha(60)),
       ),
-      padding: EdgeInsets.fromLTRB(
-          20, MediaQuery.of(context).padding.top + 20, 20, 24),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.white.withValues(alpha: 0.15),
-                child: Text(
-                  userName.isNotEmpty ? userName[0] : 'س',
-                  style: GoogleFonts.cairo(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    context.l10n.greeting(userName.split(' ').first),
-                    style: GoogleFonts.cairo(
-                      fontSize: 14,
-                      color: Colors.white.withValues(alpha: 0.8),
-                    ),
-                  ),
-                  Text(
-                    context.l10n.driverTitle,
-                    style: GoogleFonts.cairo(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () => onToggleAvailability(!isAvailable),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: isAvailable
-                        ? Colors.green.shade300
-                        : Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isAvailable ? Colors.white : Colors.white54,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        isAvailable ? context.l10n.available : context.l10n.unavailable,
-                        style: GoogleFonts.cairo(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  int _getActiveOrdersCount() {
-    int count = active != null ? 1 : 0;
-    count += history.where((o) => o.status == OrderStatus.accepted).length;
-    return count;
-  }
-
-  int _getCompletedOrdersCount() {
-    return history.where((o) => o.status == OrderStatus.completed).length;
-  }
-
-  double _getTotalEarnings() {
-    double total = 0.0;
-    for (final order in history) {
-      if (order.status == OrderStatus.completed) {
-        total += order.reward;
-      }
-    }
-    return total;
-  }
-
-  Widget _buildStatsRow(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: Row(
         children: [
+          const Icon(LucideIcons.triangleAlert,
+              size: 16, color: AppColors.statusCancelledText),
+          const SizedBox(width: 8),
           Expanded(
-              child: DriverStatCard(
-                  value: _getActiveOrdersCount().toString(),
-                  label: context.l10n.driverActiveOrdersLabel,
-                  icon: Icons.local_shipping_rounded,
-                  color: AppColors.statusInTransitText)),
-          const SizedBox(width: 10),
-          Expanded(
-              child: DriverStatCard(
-                  value: _getCompletedOrdersCount().toString(),
-                  label: context.l10n.driverCompletedOrdersLabel,
-                  icon: Icons.check_circle_rounded,
-                  color: AppColors.statusCompletedText)),
-          const SizedBox(width: 10),
-          Expanded(
-              child: DriverStatCard(
-                  value: _getTotalEarnings().toStringAsFixed(1),
-                  label: context.l10n.driverEarningsLabel,
-                  icon: Icons.account_balance_wallet_rounded,
-                  color: AppColors.accentAmber)),
+            child: Text(
+              context.l10n.driverHubsUnavailable,
+              style: GoogleFonts.cairo(
+                fontSize: 12,
+                color: AppColors.statusCancelledText,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildActiveBanner(BuildContext context) {
-    final order = active!;
+class _HubChip extends StatelessWidget {
+  const _HubChip({required this.hub});
+  final Hub hub;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final statusColor = switch (hub.status) {
+      'ready' => AppColors.statusActiveText,
+      'collecting' => AppColors.statusInTransitText,
+      _ => AppColors.mutedText,
+    };
+    final statusBg = switch (hub.status) {
+      'ready' => AppColors.statusActiveBg,
+      'collecting' => AppColors.statusInTransitBg,
+      _ => AppColors.borderSubtle,
+    };
+
     return Container(
-      margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      width: 160,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1E40AF), Color(0xFF2563EB)],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-        ),
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.borderSubtle),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x08000000),
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
-      padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
-              Text(
-                context.l10n.driverCurrentTrip,
-                style: GoogleFonts.cairo(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const Spacer(),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.timer_rounded,
-                        size: 12, color: Colors.white),
-                    const SizedBox(width: 4),
-                    Text(
-                      order.eta ?? '--',
-                      style: GoogleFonts.cairo(
-                        fontSize: 12,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            order.pickupAddress,
-            textAlign: TextAlign.right,
-            style: GoogleFonts.cairo(fontSize: 13, color: Colors.white),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const SizedBox(width: 6),
-              Container(width: 1, height: 16, color: Colors.white38),
-            ],
-          ),
-          Text(
-            order.dropoffAddress,
-            textAlign: TextAlign.right,
-            style: GoogleFonts.cairo(fontSize: 13, color: Colors.white70),
-          ),
-          const SizedBox(height: 12),
-          if (order.pickupLat != null && order.dropoffLat != null)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: RouteMapPlaceholder(
-                pickupLat: order.pickupLat!,
-                pickupLng: order.pickupLng!,
-                dropoffLat: order.dropoffLat!,
-                dropoffLng: order.dropoffLng!,
-                height: 120,
-                showLabels: false,
-              ),
-            ),
-          if (order.pickupLat != null && order.dropoffLat != null)
-            const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: TextButton(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => OrderDetailsView(
-                    order: order,
-                    onCompleteOrder: onCompleteOrder,
-                    hideStatus: true,
+              const Icon(LucideIcons.warehouse,
+                  size: 13, color: AppColors.primaryGreen),
+              const SizedBox(width: 5),
+              Expanded(
+                child: Text(
+                  hub.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.cairo(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textMain,
                   ),
                 ),
               ),
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.white.withValues(alpha: 0.15),
+            ],
+          ),
+          Text(
+            hub.address,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.cairo(
+              fontSize: 10,
+              color: AppColors.mutedText,
+            ),
+          ),
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+            decoration: BoxDecoration(
+              color: statusBg,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              hub.status == 'ready'
+                  ? l10n.driverStatusReady
+                  : hub.status == 'collecting'
+                      ? l10n.driverStatusCollecting
+                      : hub.status,
+              style: GoogleFonts.cairo(
+                fontSize: 9,
+                fontWeight: FontWeight.w700,
+                color: statusColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Empty / Offline state cards ──
+
+class _OfflineStateCard extends StatelessWidget {
+  const _OfflineStateCard({required this.onEnable});
+  final VoidCallback onEnable;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppColors.borderSubtle,
+          style: BorderStyle.solid,
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: AppColors.amberContainer,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Icon(
+              LucideIcons.wifiOff,
+              size: 30,
+              color: AppColors.accentAmber,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            l10n.driverUnavailableBottomTitle,
+            style: GoogleFonts.cairo(
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textMain,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            l10n.driverUnavailableBottomSubtitle,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              color: AppColors.mutedText,
+            ),
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: onEnable,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryGreen,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 10),
               ),
               child: Text(
-                context.l10n.driverViewDetails,
+                l10n.driverEnableNow,
                 style: GoogleFonts.cairo(
-                  color: Colors.white,
                   fontWeight: FontWeight.bold,
+                  fontSize: 14,
                 ),
               ),
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.05, end: 0, duration: 300.ms);
+  }
+}
+
+class _EmptyOrdersCard extends StatelessWidget {
+  const _EmptyOrdersCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.borderSubtle, width: 1),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: AppColors.primaryGreen.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Icon(
+              LucideIcons.inbox,
+              size: 26,
+              color: AppColors.primaryGreen,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            l10n.driverNoOrdersAvailable,
+            style: GoogleFonts.cairo(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textMain,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            l10n.driverNewOrderNotifications,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.cairo(
+              fontSize: 12,
+              color: AppColors.mutedText,
             ),
           ),
         ],

@@ -26,6 +26,11 @@ migrate_working_dir/
 # launch.json contains the Gemini API key via --dart-define; never commit it.
 .vscode/launch.json
 
+# Firebase / GCP service account keys — store in Secret Manager, never commit
+*firebase-adminsdk*.json
+*service-account*.json
+*-sa-key*.json
+
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
@@ -64,3 +69,27 @@ android/local.properties
 
 node_modules/
 package-lock.json
+
+# Agent / IDE tooling artifacts (local skill caches, MCP config, etc.)
+# These are per-developer tooling state, not project source.
+.agents/
+.claude/
+.junie/
+.trae/
+.windsurf/
+.zai/
+.zcode/
+.mcp.json
+
+# Temp / debug artifacts
+NUL
+%TEMP*
+all_diffs.txt
+graphify-out/
+bugreport-*.zip
+Usersdawas*
+
+# Screenshots / reports (regenerate locally)
+screenShots/
+reports/
+

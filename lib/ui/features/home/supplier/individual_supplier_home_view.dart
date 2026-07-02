@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../data/models/order.dart';
+import '../../../../data/models/order/order.dart';
 import '../../../../data/services/app_order_store.dart';
+import '../../../../domain/repositories/i_auth_repository.dart';
+import '../../../../domain/repositories/i_report_request_repository.dart';
 import '../../../features/auth/viewmodels/login_viewmodel.dart';
+import '../../analytics/analytics_tab.dart';
 import 'viewmodels/individual_supplier_viewmodel.dart';
 import 'tabs/individual_supplier_home_tab.dart';
 import 'tabs/supplier_orders_tab.dart';
@@ -11,9 +15,12 @@ import 'tabs/supplier_profile_tab.dart';
 import 'widgets/supplier_bottom_nav.dart';
 import '../shared/tabs/marketplace_tab.dart';
 import '../shared/views/collection_sale_detail_view.dart';
+import '../shared/viewmodels/base_supplier_viewmodel.dart';
 import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../shared/widgets/pickup_fab.dart';
-import '../shared/widgets/post_to_market_sheet.dart';
+import 'views/new_pickup_request_view.dart';
+import 'package:dwaar/ui/common/widgets/dev_testing_panel.dart';
+import 'widgets/pending_reservations_dialog.dart';
 
 class IndividualSupplierHomeView extends StatelessWidget {
   final String userName;
@@ -29,8 +36,13 @@ class IndividualSupplierHomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (ctx) => IndividualSupplierViewModel(ctx.read<AppOrderStore>()),
+        ChangeNotifierProvider<BaseSupplierViewModel>(
+          create: (ctx) {
+            final vm = IndividualSupplierViewModel(ctx.read<AppOrderStore>());
+            final session = ctx.read<IAuthRepository>().currentSession;
+            if (session != null) vm.setAuthUserId(session.userId);
+            return vm;
+          },
         ),
         ChangeNotifierProvider(
           create: (ctx) => MarketplaceViewModel(
@@ -45,14 +57,33 @@ class IndividualSupplierHomeView extends StatelessWidget {
   }
 }
 
-class _IndividualSupplierHomeBody extends StatelessWidget {
+class _IndividualSupplierHomeBody extends StatefulWidget {
   final String userName;
 
   const _IndividualSupplierHomeBody({required this.userName});
 
   @override
+  State<_IndividualSupplierHomeBody> createState() =>
+      _IndividualSupplierHomeBodyState();
+}
+
+class _IndividualSupplierHomeBodyState
+    extends State<_IndividualSupplierHomeBody> {
+  @override
+  void initState() {
+    super.initState();
+    // Show reservation popup after first frame so Providers are ready
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        PendingReservationsDialog.showIfNeeded(context, widget.userName);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final vm = context.watch<IndividualSupplierViewModel>();
+    final userName = widget.userName;
+    final vm = context.watch<BaseSupplierViewModel>();
 
     final tabs = [
       IndividualSupplierHomeTab(userName: userName),
@@ -81,8 +112,21 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
         onStartTransit: vm.startCollectionSaleTransit,
         onComplete: vm.completeCollectionSale,
       ),
+      AnalyticsTab(
+        userId: context.read<IAuthRepository>().currentSession?.userId ?? '',
+        allOrders: context.read<AppOrderStore>().supplierCompletedOrdersFor(vm.user.name),
+        reportRepository: context.read<IReportRequestRepository>(),
+        showMilestones: true,
+        showReportCenter: true,
+        showProfitability: true,
+        showGreenCredits: true,
+        greenPoints: context.read<AppOrderStore>().greenPointsFor(
+              context.read<IAuthRepository>().currentSession?.userId ?? '',
+            ),
+      ),
       SupplierProfileTab(
         user: vm.user,
+        userId: context.read<IAuthRepository>().currentSession?.userId ?? '',
         totalPoints: vm.totalPoints,
         totalOrders: vm.totalOrders,
         supplierType: SupplierType.individual,
@@ -94,9 +138,14 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: IndexedStack(
-        index: vm.currentTab,
-        children: tabs,
+      body: Stack(
+        children: [
+          IndexedStack(
+            index: vm.currentTab,
+            children: tabs,
+          ),
+          if (kDebugMode) const DevTestingPanel(),
+        ],
       ),
       floatingActionButton: vm.currentTab == 0
           ? PickupFab(onPressed: () {
@@ -123,43 +172,40 @@ class _IndividualSupplierHomeBody extends StatelessWidget {
 
   void _showPostToMarketSheet(
     BuildContext context,
-    IndividualSupplierViewModel vm,
+    BaseSupplierViewModel vm,
     MarketplaceViewModel marketVm,
   ) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) => PostToMarketSheet(
-        role: UserRole.supplier,
-        supplierType: SupplierType.individual,
-        onSubmit: ({
-          required List<WasteType> wasteTypes,
-          required String pickupAddress,
-          List<String> images = const [],
-          String? notes,
-          WasteForm? wasteForm,
-          WeightCategory? weightCategory,
-          double? itemPrice,
-          double? pickupLat,
-          double? pickupLng,
-        }) {
-          final order = vm.createListing(
-            wasteTypes: wasteTypes,
-            pickupAddress: pickupAddress,
-            images: images,
-            notes: notes,
-            wasteForm: wasteForm,
-            weightCategory: weightCategory,
-            itemPrice: itemPrice,
-            pickupLat: pickupLat,
-            pickupLng: pickupLng,
-          );
-          marketVm.addListing(order);
-        },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => NewPickupRequestView(
+          role: UserRole.supplier,
+          initialMode: OrderMode.marketplace,
+          onSubmit: ({
+            required List<WasteType> wasteTypes,
+            required String pickupAddress,
+            List<String> images = const [],
+            String? notes,
+            WasteForm? wasteForm,
+            WeightCategory? weightCategory,
+            double? itemPrice,
+            double? pickupLat,
+            double? pickupLng,
+          }) {
+            final order = vm.createListing(
+              wasteTypes: wasteTypes,
+              pickupAddress: pickupAddress,
+              images: images,
+              notes: notes,
+              wasteForm: wasteForm,
+              weightCategory: weightCategory,
+              itemPrice: itemPrice,
+              pickupLat: pickupLat,
+              pickupLng: pickupLng,
+            );
+            marketVm.addListing(order);
+          },
+        ),
       ),
     );
   }

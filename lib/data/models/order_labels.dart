@@ -1,5 +1,5 @@
 import 'dart:ui' show Locale;
-import 'order.dart';
+import 'order/order.dart';
 
 extension WasteTypeLabelEn on WasteType {
   String get englishLabel => switch (this) {

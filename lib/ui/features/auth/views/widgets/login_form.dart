@@ -5,14 +5,9 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../common/green_button.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../viewmodels/login_viewmodel.dart';
-import '../signup_view.dart';
-import '../individual_supplier_onboarding_view.dart';
-import '../recycling_co_onboarding_view.dart';
-import '../store_onboarding_view.dart';
 import 'supplier_portal_selector.dart';
 
 class LoginForm extends StatelessWidget {
-  // [CHANGE] Login validation has been disabled in the ViewModel to allow bypassing checks.
   const LoginForm({super.key});
 
   @override
@@ -41,36 +36,81 @@ class LoginForm extends StatelessWidget {
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _EmailField(
-                      label: l10n.loginEmailLabel,
-                      hint: l10n.loginEmailHint,
-                      onChanged: viewModel.setEmail,
+                    Text(
+                      l10n.loginPhoneLabel,
+                      style: GoogleFonts.cairo(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF404943),
+                      ),
                     ),
-                    const SizedBox(height: 16),
-                    _PasswordField(
-                      onChanged: viewModel.setPassword,
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.loginPhoneHelp,
+                      style: GoogleFonts.cairo(
+                        fontSize: 12,
+                        color: const Color(0xFF717973),
+                      ),
                     ),
-                    Align(
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: TextButton(
-                        onPressed: viewModel.isLoading
-                            ? null
-                            : () => viewModel.requestPasswordReset(),
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 4, vertical: 4),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: Text(
-                          l10n.forgotPasswordLink,
-                          style: GoogleFonts.cairo(
-                            fontSize: 13,
-                            color: const Color(0xFF06402B),
-                            fontWeight: FontWeight.w600,
-                            decoration: TextDecoration.underline,
-                            decorationColor: const Color(0xFF06402B),
+                    const SizedBox(height: 12),
+                    Directionality(
+                      textDirection: TextDirection.ltr,
+                      child: Row(
+                        children: [
+                          // Jordan country-code badge (fixed, non-editable)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE6E9E7),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '🇯🇴 +962',
+                              style: GoogleFonts.dmSans(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF191C1B),
+                              ),
+                            ),
                           ),
-                        ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: TextFormField(
+                              key: const ValueKey('phone_input'),
+                              decoration: InputDecoration(
+                                hintText: '7XXXXXXXX',
+                                hintStyle: GoogleFonts.dmSans(
+                                  fontSize: 16,
+                                  color: const Color(0xFF6B7280)
+                                      .withValues(alpha: 0.5),
+                                ),
+                                filled: true,
+                                fillColor: const Color(0xFFE6E9E7),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide.none,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 16),
+                                counterText: '',
+                              ),
+                              keyboardType: TextInputType.phone,
+                              maxLength: 9,
+                              style: GoogleFonts.dmSans(
+                                fontSize: 16,
+                                color: const Color(0xFF191C1B),
+                              ),
+                              onChanged: (val) {
+                                // Normalize to 07XXXXXXXX before storing
+                                final normalized = val.startsWith('0')
+                                    ? val
+                                    : '0$val';
+                                viewModel.setPhone(normalized);
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     if (viewModel.error != null) ...[
@@ -87,45 +127,23 @@ class LoginForm extends StatelessWidget {
                     ],
                     const SizedBox(height: 24),
                     GreenButton(
-                      text: l10n.loginButton,
-                      onPressed: () => viewModel.signIn(),
+                      text: l10n.loginContinueButton,
+                      onPressed: () => viewModel.requestOtp(viewModel.phone),
                       isLoading: viewModel.isLoading,
                       borderRadius: 14,
                       leadingIcon: const Icon(
-                        Icons.login_rounded,
+                        Icons.arrow_forward_rounded,
                         color: Colors.white,
                         size: 18,
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    InkWell(
-                      onTap: () => _navigateToSignUp(context),
-                      borderRadius: BorderRadius.circular(8),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 24.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              l10n.loginNoAccount,
-                              style: GoogleFonts.cairo(
-                                fontSize: 16,
-                                color: const Color(0xFF717973),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              l10n.loginSignUpNow,
-                              style: GoogleFonts.cairo(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF06402B),
-                                decoration: TextDecoration.underline,
-                                decorationColor: const Color(0xFF06402B),
-                              ),
-                            ),
-                          ],
-                        ),
+                    const SizedBox(height: 24),
+                    Text(
+                      l10n.loginNewNumberHint,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.cairo(
+                        fontSize: 13,
+                        color: const Color(0xFF717973),
                       ),
                     ),
                   ],
@@ -135,161 +153,5 @@ class LoginForm extends StatelessWidget {
       ],
     );
   }
-
-  void _navigateToSignUp(BuildContext context) {
-    final vm = context.read<LoginViewModel>();
-    Widget destination;
-    if (vm.selectedRole == UserRole.recyclingCo) {
-      destination = const RecyclingCoOnboardingView();
-    } else if (vm.selectedRole == UserRole.supplier &&
-        vm.supplierType == SupplierType.individual) {
-      destination = const IndividualSupplierOnboardingView();
-    } else if (vm.selectedRole == UserRole.supplier &&
-        vm.supplierType == SupplierType.storeBusiness) {
-      destination = const StoreOnboardingView();
-    } else {
-      destination = SignUpView(
-        role: vm.selectedRole,
-        supplierType: vm.supplierType ?? SupplierType.individual,
-      );
-    }
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => destination));
-  }
 }
 
-class _EmailField extends StatelessWidget {
-  final String label;
-  final String hint;
-  final ValueChanged<String> onChanged;
-
-  const _EmailField({
-    required this.label,
-    required this.hint,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.cairo(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF404943),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFFE6E9E7),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: TextField(
-            key: const ValueKey('email_input'),
-            onChanged: onChanged,
-            keyboardType: TextInputType.emailAddress,
-            textAlign: isEnglish ? TextAlign.left : TextAlign.left,
-            textDirection: TextDirection.ltr,
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: GoogleFonts.dmSans(
-                fontSize: 16,
-                color: const Color(0xFF6B7280).withValues(alpha: 0.5),
-              ),
-              prefixIcon: const Icon(
-                Icons.email_outlined,
-                color: Color(0xFF9099A2),
-              ),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 16),
-            ),
-            style: GoogleFonts.dmSans(
-              fontSize: 16,
-              color: const Color(0xFF191C1B),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PasswordField extends StatefulWidget {
-  final ValueChanged<String> onChanged;
-  const _PasswordField({required this.onChanged});
-
-  @override
-  State<_PasswordField> createState() => _PasswordFieldState();
-}
-
-class _PasswordFieldState extends State<_PasswordField> {
-  bool _obscured = true;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(
-          l10n.loginPasswordLabel,
-          style: GoogleFonts.cairo(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF404943),
-          ),
-          textAlign: TextAlign.right,
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFFE6E9E7),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Row(
-            children: [
-              IconButton(
-                icon: Icon(
-                  _obscured
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                  color: const Color(0xFF6B7280),
-                ),
-                onPressed: () => setState(() => _obscured = !_obscured),
-              ),
-              Expanded(
-                child: TextField(
-                  onChanged: widget.onChanged,
-                  obscureText: _obscured,
-                  textAlign: isEnglish ? TextAlign.left : TextAlign.right,
-                  textDirection: isEnglish ? TextDirection.ltr : null,
-                  decoration: InputDecoration(
-                    hintText: l10n.loginPasswordHint,
-                    hintStyle: GoogleFonts.cairo(
-                      fontSize: 14,
-                      color: const Color(0xFF6B7280).withValues(alpha: 0.6),
-                    ),
-                    border: InputBorder.none,
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  style: GoogleFonts.dmSans(
-                    fontSize: 15,
-                    color: const Color(0xFF191C1B),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}

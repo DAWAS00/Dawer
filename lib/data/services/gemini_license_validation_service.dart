@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../../core/config/ai_config.dart';
 import '../../data/models/user_role.dart';
@@ -47,18 +48,29 @@ class GeminiLicenseValidationService implements IAiLicenseValidationService {
     for (var attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         final response = await _model.generateContent(content);
-        final text = response.text;
+        var text = response.text;
         if (text == null || text.isEmpty) {
           throw const FormatException('Empty response from Gemini');
         }
+
+        // Handle potential markdown wrapper
+        if (text.contains('```')) {
+          final lines = text.split('\n');
+          text = lines
+              .where((l) => !l.trim().startsWith('```'))
+              .join('\n')
+              .trim();
+        }
+
         final json = jsonDecode(text);
         if (json is! Map<String, dynamic>) {
           throw const FormatException('Gemini response was not a JSON object');
         }
         return _parseResult(json, role);
-      } on Exception catch (_) {
+      } on Exception catch (e) {
+        debugPrint('[GeminiLicenseService] Attempt $attempt failed: $e');
         if (attempt < maxAttempts) {
-          await Future<void>.delayed(Duration(seconds: attempt));
+          await Future.delayed(Duration(seconds: attempt));
         }
       }
     }
@@ -68,6 +80,7 @@ class GeminiLicenseValidationService implements IAiLicenseValidationService {
       confidenceScore: 0.0,
     );
   }
+
 
   AiLicenseValidationResult _parseResult(
       Map<String, dynamic> json, UserRole role) {

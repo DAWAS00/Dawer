@@ -1,0 +1,194 @@
+import 'package:flutter/material.dart';
+
+enum OrderType { pickup, collection, collectionSale }
+enum OrderMode { pickup, marketplace }
+
+/// Lifecycle of a marketplace reservation (10 % deposit escrow).
+///
+/// Transitions:
+///   pending → accepted (seller accepts; seller deposit locked)
+///   pending → rejected (seller rejects; buyer deposit released)
+///   accepted → completedByReservation (pickup confirmed; both deposits released)
+///   accepted → cancelledByBuyer   (buyer backs out → buyer deposit forfeited to seller)
+///   accepted → cancelledBySeller  (seller backs out → seller deposit forfeited to buyer)
+enum ReservationStatus {
+  pending,
+  accepted,
+  rejected,
+  cancelledByBuyer,
+  cancelledBySeller,
+  completedByReservation,
+}
+
+enum OrderStatus {
+  pending, accepted, arrivedAtPickup, inTransit, arrivedAtDropoff, completed, cancelled
+}
+
+enum ArrivalConfirmationStatus { awaiting, confirmed, unavailable, timedOut }
+
+enum PickupTarget { company, riderBuy }
+enum WasteType {
+  paper, plastic, metal, glass, electronics, organic,
+  textile, wood, rubber, oil, chemicals, batteries, furniture, tires, construction,
+  copperAluminium,
+}
+
+enum VehicleType { motorcycle, car, pickup, van, truck, heavyTruck }
+
+enum AdminApprovalStatus { notRequired, pendingApproval, approved, rejected }
+
+enum WasteForm { solid, liquid, gas, mixed }
+
+enum PaymentModel { perKg, flatFee }
+
+enum WeightCategory { light, medium, heavy, veryHeavy }
+
+enum CollectionDeliveryMethod { selfDelivery, assignRider }
+enum CollectionTransactionType { donate, sell }
+
+extension CollectionDeliveryMethodLabel on CollectionDeliveryMethod {
+  String get label => switch (this) {
+    CollectionDeliveryMethod.selfDelivery => 'أوصّل بنفسي',
+    CollectionDeliveryMethod.assignRider  => 'أعيّن سائقاً',
+  };
+  String get description => switch (this) {
+    CollectionDeliveryMethod.selfDelivery => 'ستوصل المواد بنفسك',
+    CollectionDeliveryMethod.assignRider  => 'سيتم تعيين سائق لك',
+  };
+}
+
+extension CollectionTransactionTypeLabel on CollectionTransactionType {
+  String get label => switch (this) {
+    CollectionTransactionType.donate => 'تبرع للشركة',
+    CollectionTransactionType.sell   => 'بيع للشركة',
+  };
+  String get description => switch (this) {
+    CollectionTransactionType.donate => 'رسوم التوصيل على الشركة، بدون مقابل مالي',
+    CollectionTransactionType.sell   => 'رسوم التوصيل عليك، وتحصل على المبلغ المتفق عليه',
+  };
+}
+
+extension WasteTypeLabel on WasteType {
+  String get label => switch (this) {
+    WasteType.paper => 'ورق',
+    WasteType.plastic => 'بلاستيك',
+    WasteType.metal => 'معادن',
+    WasteType.glass => 'زجاج',
+    WasteType.electronics => 'إلكترونيات',
+    WasteType.organic => 'عضوي',
+    WasteType.textile => 'أقمشة',
+    WasteType.wood => 'خشب',
+    WasteType.rubber => 'مطاط',
+    WasteType.oil => 'زيوت',
+    WasteType.chemicals => 'كيميائيات',
+    WasteType.batteries => 'بطاريات',
+    WasteType.furniture => 'أثاث',
+    WasteType.tires => 'إطارات',
+    WasteType.construction => 'مخلفات بناء',
+    WasteType.copperAluminium => 'نحاس وألومنيوم',
+  };
+}
+
+extension VehicleTypeLabel on VehicleType {
+  String get label => switch (this) {
+    VehicleType.motorcycle => 'دراجة نارية',
+    VehicleType.car       => 'سيارة خاصة',
+    VehicleType.pickup    => 'بيك آب',
+    VehicleType.van       => 'فان / ونيت',
+    VehicleType.truck     => 'شاحنة',
+    VehicleType.heavyTruck => 'شاحنة ثقيلة',
+  };
+}
+
+extension WasteFormLabel on WasteForm {
+  String get label => switch (this) {
+    WasteForm.solid => 'صلب',
+    WasteForm.liquid => 'سائل',
+    WasteForm.gas => 'غاز',
+    WasteForm.mixed => 'مختلط',
+  };
+}
+
+extension PickupTargetLabel on PickupTarget {
+  String get label => switch (this) {
+    PickupTarget.company => 'إرسال لشركة التدوير',
+    PickupTarget.riderBuy => 'بيع للسائق في السوق',
+  };
+
+  String get shortLabel => switch (this) {
+    PickupTarget.company => 'شركة التدوير',
+    PickupTarget.riderBuy => 'بيع للسائق',
+  };
+}
+
+extension PaymentModelLabel on PaymentModel {
+  String get label => switch (this) {
+    PaymentModel.perKg => 'لكل كيلوغرام',
+    PaymentModel.flatFee => 'أجر ثابت',
+  };
+
+  String get unitLabel => switch (this) {
+    PaymentModel.perKg => 'د.أ / كغ',
+    PaymentModel.flatFee => 'د.أ',
+  };
+}
+
+extension WeightCategoryLabel on WeightCategory {
+  String get label => switch (this) {
+    WeightCategory.light => 'خفيف (أقل من ٥ كغ)',
+    WeightCategory.medium => 'متوسط (٥ - ٢٠ كغ)',
+    WeightCategory.heavy => 'ثقيل (٢٠ - ١٠٠ كغ)',
+    WeightCategory.veryHeavy => 'ثقيل جداً (أكثر من ١٠٠ كغ)',
+  };
+
+  String get shortLabel => switch (this) {
+    WeightCategory.light => 'خفيف',
+    WeightCategory.medium => 'متوسط',
+    WeightCategory.heavy => 'ثقيل',
+    WeightCategory.veryHeavy => 'ثقيل جداً',
+  };
+}
+
+extension OrderStatusLabel on OrderStatus {
+  String get label => switch (this) {
+        OrderStatus.pending => 'قيد الانتظار',
+        OrderStatus.accepted => 'تم القبول',
+        OrderStatus.arrivedAtPickup => 'وصل للاستلام',
+        OrderStatus.inTransit => 'في الطريق',
+        OrderStatus.arrivedAtDropoff => 'وصل للتسليم',
+        OrderStatus.completed => 'مكتمل',
+        OrderStatus.cancelled => 'ملغي',
+      };
+}
+
+extension ReservationStatusLabel on ReservationStatus {
+  String get label => switch (this) {
+    ReservationStatus.pending                => 'بانتظار موافقة البائع',
+    ReservationStatus.accepted               => 'محجوز ومؤكد',
+    ReservationStatus.rejected               => 'مرفوض من البائع',
+    ReservationStatus.cancelledByBuyer       => 'ألغاه المشتري',
+    ReservationStatus.cancelledBySeller      => 'ألغاه البائع',
+    ReservationStatus.completedByReservation => 'اكتمل',
+  };
+}
+
+extension WasteTypeColor on WasteType {
+  Color get ganttColor => switch (this) {
+        WasteType.oil => const Color(0xFFD97706),
+        WasteType.plastic => const Color(0xFF2563EB),
+        WasteType.paper => const Color(0xFF16A34A),
+        WasteType.electronics => const Color(0xFF7C3AED),
+        WasteType.batteries => const Color(0xFFDC2626),
+        WasteType.metal => const Color(0xFF64748B),
+        WasteType.glass => const Color(0xFF0891B2),
+        WasteType.organic => const Color(0xFF65A30D),
+        WasteType.chemicals => const Color(0xFFEA580C),
+        WasteType.textile => const Color(0xFFDB2777),
+        WasteType.wood => const Color(0xFF92400E),
+        WasteType.rubber => const Color(0xFF374151),
+        WasteType.furniture => const Color(0xFF6D28D9),
+        WasteType.tires => const Color(0xFF111827),
+        WasteType.construction => const Color(0xFF9CA3AF),
+        WasteType.copperAluminium => const Color(0xFFB45309),
+      };
+}

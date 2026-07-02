@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../../../l10n/l10n.dart';
 import 'supplier_nav_item.dart';
 
@@ -22,6 +22,7 @@ class SupplierBottomNav extends StatelessWidget {
       (Icons.home_rounded, l10n.navHome),
       (Icons.storefront_rounded, l10n.navMarket),
       (Icons.receipt_long_rounded, l10n.navMyOrders),
+      (Icons.bar_chart_rounded, 'تقاريري'),
       (Icons.person_rounded, l10n.navProfile),
     ];
     return Container(

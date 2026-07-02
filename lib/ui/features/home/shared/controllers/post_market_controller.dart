@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import '../../../../../data/services/market_ai_service.dart';
+import '../../../../../data/services/mock_market_ai_service.dart';
+import '../../../../../core/config/ai_config.dart';
 
 /// Owns all AI-analysis state for the PostToMarket form.
 ///
@@ -15,7 +17,10 @@ import '../../../../../data/services/market_ai_service.dart';
 /// testable.
 class PostMarketController extends ChangeNotifier {
   PostMarketController({IMarketAiService? aiService})
-      : _aiService = aiService ?? MarketAiService();
+      : _aiService = aiService ??
+            (AiConfig.hasGeminiKey
+                ? MarketAiService()
+                : MockMarketAiService());
 
   final IMarketAiService _aiService;
 
@@ -39,6 +44,20 @@ class PostMarketController extends ChangeNotifier {
   bool get hasLowConfidence => _confidence > 0 && _confidence < _kLowConfidenceThreshold;
 
   static const double _kLowConfidenceThreshold = 0.70;
+
+  // ── Multi-step state ─────────────────────────────────────────────────────
+
+  int get currentStep => _currentStep;
+  int _currentStep = 0;
+
+  void setStep(int step) {
+    if (_disposed) return;
+    _currentStep = step;
+    _safeNotify();
+  }
+
+  void nextStep() => setStep(_currentStep + 1);
+  void prevStep() => setStep(_currentStep - 1);
 
   // ── Lifecycle guard ──────────────────────────────────────────────────────
 

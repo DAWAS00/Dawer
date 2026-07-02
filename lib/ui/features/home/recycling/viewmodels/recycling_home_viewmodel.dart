@@ -1,22 +1,49 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import '../../../../../data/models/order.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/user.dart';
+import '../../../../../data/services/all_drivers_location_stream.dart';
 import '../../../../../data/services/app_order_store.dart';
 
 class RecyclingHomeViewModel extends ChangeNotifier {
   final AppOrderStore _store;
+  StreamSubscription<Map<String, LatLng>>? _driversSub;
+
+  Map<String, LatLng> _driverPositions = {};
+  bool _driverStreamError = false;
 
   RecyclingHomeViewModel(this._store) {
     _store.addListener(_onStoreChanged);
+    _subscribeToDrivers();
+  }
+
+  void _subscribeToDrivers() {
+    _driversSub = AllDriversLocationStream.watch().listen(
+      (positions) {
+        _driverPositions = positions;
+        _driverStreamError = false;
+        notifyListeners();
+      },
+      onError: (_) {
+        _driverStreamError = true;
+        notifyListeners();
+      },
+    );
   }
 
   @override
   void dispose() {
+    _driversSub?.cancel();
     _store.removeListener(_onStoreChanged);
     super.dispose();
   }
 
   void _onStoreChanged() => notifyListeners();
+
+  Map<String, LatLng> get driverPositions => _driverPositions;
+  bool get driverStreamError => _driverStreamError;
 
   // ── Local state ───────────────────────────────────────────────────────────
 
@@ -43,6 +70,7 @@ class RecyclingHomeViewModel extends ChangeNotifier {
 
   int get currentTab => _currentTab;
   bool get isOpen => _isOpen;
+  bool get isLoading => _store.isLoading;
   User get company => _company;
   String get companyName => _company.name;
   String get serviceArea => _serviceArea;
@@ -52,6 +80,11 @@ class RecyclingHomeViewModel extends ChangeNotifier {
 
   List<Order> get incoming => _store.companyIncoming;
   List<Order> get jobs => _store.companyJobs;
+
+  /// Completed deliveries (pickups + collection-job sales) — feeds Analytics
+  /// with the company's actual recycling history, which [incoming] alone
+  /// excludes (it only tracks orders still in an active delivery state).
+  List<Order> get completedDeliveries => _store.companyCompletedDeliveries;
 
   /// All collectionSale orders linked to this company's jobs.
   /// Used to show who accepted which job and their status.

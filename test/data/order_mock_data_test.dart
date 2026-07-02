@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dwaar/data/mock/order_mock_data.dart';
-import 'package:dwaar/data/models/order.dart';
+import 'package:dwaar/data/models/order/order.dart';
 
 void main() {
   group('OrderMockData.seedOrders', () {
@@ -16,16 +16,16 @@ void main() {
 
     test('supplier seed orders are present', () {
       final ids = OrderMockData.seedOrders().map((o) => o.id).toSet();
-      expect(ids.contains('ORD-S01'), isTrue);
-      expect(ids.contains('ORD-S02'), isTrue);
+      expect(ids.contains('SUP-IND-PENDING-01'), isTrue);
+      expect(ids.contains('SUP-STORE-PENDING-01'), isTrue);
     });
 
-    test('history seeds have completed status', () {
-      final history = OrderMockData.seedOrders()
-          .where((o) => o.id.startsWith('ORD-H'))
+    test('completed seeds have completed status', () {
+      final completed = OrderMockData.seedOrders()
+          .where((o) => o.id.contains('-DONE-'))
           .toList();
-      expect(history.isNotEmpty, isTrue);
-      for (final o in history) {
+      expect(completed.isNotEmpty, isTrue);
+      for (final o in completed) {
         expect(o.status, OrderStatus.completed);
       }
     });

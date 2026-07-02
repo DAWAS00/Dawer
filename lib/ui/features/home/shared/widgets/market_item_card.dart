@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/constants/waste_type_icons.dart';
 import '../../../../../core/theme/app_tokens.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/order_labels.dart';
 import '../../../../../l10n/l10n.dart';
 
@@ -19,6 +21,8 @@ class MarketItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context);
+    final dt = context.dt;
+
     final timeDiff = DateTime.now().difference(item.createdAt);
     final timeLabel = timeDiff.inDays > 0
         ? l10n.timeAgoDays(timeDiff.inDays)
@@ -26,147 +30,239 @@ class MarketItemCard extends StatelessWidget {
             ? l10n.timeAgoHours(timeDiff.inHours)
             : l10n.timeAgoMinutes(timeDiff.inMinutes);
 
-    final dt = context.dt;
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
+        margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           color: dt.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: dt.shadow.withValues(alpha: 0.06),
-              blurRadius: 8,
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 6,
               offset: const Offset(0, 2),
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
+            // ── Top: seller + time ──
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Seller avatar circle
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFEF3C7),
+                      color: AppColors.surfaceAlt,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: const Color(0xFFFDE68A)),
                     ),
-                    child: Text(
-                      '${item.itemPrice?.toStringAsFixed(1) ?? '0'} د.أ',
-                      style: GoogleFonts.dmSans(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFFC8860A),
-                      ),
+                    child: const Icon(
+                      Icons.store_outlined,
+                      size: 18,
+                      color: AppColors.primaryGreen,
                     ),
                   ),
-                  const Spacer(),
-                  Flexible(
-                    child: Wrap(
-                      spacing: 4,
-                      runSpacing: 4,
-                      alignment: WrapAlignment.end,
-                      children: item.wasteTypes.map((type) {
-                        return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF06402B).withValues(alpha: 0.08),
-                            borderRadius: BorderRadius.circular(20),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.supplierName ?? l10n.marketItemUnknownSeller,
+                          style: GoogleFonts.cairo(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: dt.onSurface,
                           ),
-                          child: Text(
+                        ),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.location_on_outlined,
+                              size: 12,
+                              color: AppColors.primaryGreen,
+                            ),
+                            const SizedBox(width: 2),
+                            Flexible(
+                              child: Text(
+                                item.pickupAddress,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.cairo(
+                                  fontSize: 11,
+                                  color: dt.onSurfaceMuted,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Time ago
+                  Text(
+                    timeLabel,
+                    style: GoogleFonts.cairo(
+                      fontSize: 11,
+                      color: dt.onSurfaceMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ── Reservation badge ──
+            if (item.reservationStatus != null) ...[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 0, 14, 6),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFEF3C7),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: const Color(0xFFFCD34D)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            item.reservationStatus!.label,
+                            style: GoogleFonts.cairo(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF92400E),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.lock_clock_rounded,
+                              color: Color(0xFFD97706), size: 11),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
+            // ── Waste type chips ──
+            if (item.wasteTypes.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  children: item.wasteTypes.map((type) {
+                    final iconData = WasteTypeIcons.all
+                        .where((e) => e.$1 == type)
+                        .map((e) => e.$2)
+                        .firstOrNull;
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceAlt,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (iconData != null) ...[
+                            Icon(
+                              iconData,
+                              size: 12,
+                              color: AppColors.primaryGreen,
+                            ),
+                            const SizedBox(width: 4),
+                          ],
+                          Text(
                             type.labelFor(locale),
                             style: GoogleFonts.cairo(
                               fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF06402B),
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryGreen,
                             ),
                           ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    item.supplierName ?? l10n.marketItemUnknownSeller,
-                    style: GoogleFonts.cairo(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: dt.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        item.pickupAddress,
-                        style: GoogleFonts.cairo(
-                          fontSize: 12,
-                          color: dt.onSurfaceMuted,
-                        ),
+                        ],
                       ),
-                      const SizedBox(width: 4),
-                      Icon(Icons.location_on_rounded, size: 14, color: dt.onSurfaceMuted),
-                    ],
-                  ),
-                  if (item.supplierNotes != null && item.supplierNotes!.isNotEmpty) ...[
-                    const SizedBox(height: 6),
-                    Text(
-                      item.supplierNotes!,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.cairo(
-                        fontSize: 12,
-                        color: dt.onSurfaceMuted,
-                      ),
-                    ),
-                  ],
-                ],
+                    );
+                  }).toList(),
+                ),
               ),
-            ),
 
+            // ── Optional notes ──
+            if (item.supplierNotes != null &&
+                item.supplierNotes!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+                child: Text(
+                  item.supplierNotes!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.cairo(
+                    fontSize: 12,
+                    color: dt.onSurfaceMuted,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+
+            // ── Footer: weight/form + price ──
             Container(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
               decoration: BoxDecoration(
-                color: dt.surfaceVariant,
-                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+                color: AppColors.surfaceAlt.withValues(alpha: 0.5),
+                borderRadius: const BorderRadius.vertical(
+                    bottom: Radius.circular(16)),
               ),
               child: Row(
                 children: [
-                  Text(
-                    timeLabel,
-                    style: GoogleFonts.cairo(fontSize: 11, color: dt.onSurfaceMuted),
-                  ),
-                  const Spacer(),
-                  if (item.weightCategory != null) ...[
-                    Icon(Icons.fitness_center_rounded, size: 13, color: dt.onSurfaceVariant),
-                    const SizedBox(width: 3),
-                    Text(
-                      item.weightCategory!.shortLabelFor(locale),
-                      style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: dt.onSurfaceVariant),
+                  // Weight + form tags
+                  if (item.weightCategory != null)
+                    _MetaTag(
+                      icon: Icons.fitness_center_rounded,
+                      label: item.weightCategory!.shortLabelFor(locale),
+                      color: dt.onSurfaceMuted,
                     ),
-                    const SizedBox(width: 12),
-                  ],
-                  if (item.wasteForm != null) ...[
-                    Icon(Icons.category_rounded, size: 13, color: dt.onSurfaceVariant),
+                  if (item.weightCategory != null && item.wasteForm != null)
+                    const SizedBox(width: 8),
+                  if (item.wasteForm != null)
+                    _MetaTag(
+                      icon: Icons.category_outlined,
+                      label: item.wasteForm!.labelFor(locale),
+                      color: dt.onSurfaceMuted,
+                    ),
+                  const Spacer(),
+                  // Price
+                  if (item.itemPrice != null) ...[
+                    Text(
+                      'د.أ',
+                      style: GoogleFonts.cairo(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.accentAmber,
+                      ),
+                    ),
                     const SizedBox(width: 3),
                     Text(
-                      item.wasteForm!.labelFor(locale),
-                      style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: dt.onSurfaceVariant),
+                      item.itemPrice!.toStringAsFixed(1),
+                      style: GoogleFonts.dmSans(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.accentAmber,
+                      ),
                     ),
                   ],
                 ],
@@ -175,6 +271,37 @@ class MarketItemCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _MetaTag extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  const _MetaTag({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 12, color: color),
+        const SizedBox(width: 3),
+        Text(
+          label,
+          style: GoogleFonts.cairo(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: color,
+          ),
+        ),
+      ],
     );
   }
 }

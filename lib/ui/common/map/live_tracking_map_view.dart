@@ -1,19 +1,27 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:dwaar/core/config/maps_config.dart';
 import 'package:dwaar/core/constants/app_colors.dart';
+import 'package:dwaar/data/services/directions_service.dart';
 
-/// Full-map live tracking view with two markers:
-///   • Green pin  — static pickup point
-///   • Blue marker — rider position, updated via [driverStream]
+/// Full-map live tracking view with two markers and an optional route polyline:
+///   • Green pin   — static pickup point
+///   • Blue marker — driver position, updated via [driverStream]
+///   • Green line  — driving route fetched from Directions API (requires
+///                   MAPS_API_KEY in .env.local; absent → no polyline drawn)
 ///
 /// [initialDriverLat]/[initialDriverLng] seed the driver marker immediately.
-/// When null (real-backend mode), the driver marker is hidden until the first
-/// stream event arrives. Camera fits both markers once both are known.
+/// When null (real-backend mode) the driver marker is hidden until the first
+/// stream event arrives; camera fits both markers on first emission.
+///
+/// ETA is computed from the Directions API response and supersedes the
+/// [etaMinutes] parameter when a valid route is returned. [etaMinutes] acts
+/// as a fallback when Directions API is unavailable.
 class LiveTrackingMapView extends StatefulWidget {
   final double pickupLat;
   final double pickupLng;
@@ -44,6 +52,15 @@ class _LiveTrackingMapViewState extends State<LiveTrackingMapView> {
   StreamSubscription<LatLng>? _sub;
   bool _didFitBounds = false;
 
+  // Route overlay state
+  Set<Polyline> _polylines = const {};
+  int? _liveEta;
+  LatLng? _lastRouteFetchPos;
+  bool _isFetchingRoute = false;
+
+  // Re-fetch the route when driver has moved at least this far (metres).
+  static const _refetchThresholdM = 150.0;
+
   @override
   void initState() {
     super.initState();
@@ -63,13 +80,15 @@ class _LiveTrackingMapViewState extends State<LiveTrackingMapView> {
   void _onDriverMoved(LatLng pos) {
     if (!mounted) return;
     setState(() => _driverPos = pos);
+
     if (!_didFitBounds) {
-      // First position received — fit both markers in view.
       _fitBounds(pos);
       _didFitBounds = true;
     } else {
       _controller?.animateCamera(CameraUpdate.newLatLng(pos));
     }
+
+    _maybeRefetchRoute(pos);
   }
 
   void _fitBounds(LatLng driver) {
@@ -85,9 +104,66 @@ class _LiveTrackingMapViewState extends State<LiveTrackingMapView> {
       ),
     );
     Future.delayed(const Duration(milliseconds: 350), () {
-      if (mounted) _controller?.animateCamera(CameraUpdate.newLatLngBounds(bounds, 64));
+      if (mounted) {
+        _controller?.animateCamera(CameraUpdate.newLatLngBounds(bounds, 64));
+      }
     });
   }
+
+  // ── Route / ETA ─────────────────────────────────────────────────────────────
+
+  void _maybeRefetchRoute(LatLng pos) {
+    if (!MapsConfig.hasDirectionsKey || _isFetchingRoute) return;
+    final last = _lastRouteFetchPos;
+    if (last == null || _metersApart(last, pos) > _refetchThresholdM) {
+      _fetchRoute(pos);
+    }
+  }
+
+  Future<void> _fetchRoute(LatLng driverPos) async {
+    _isFetchingRoute = true;
+    _lastRouteFetchPos = driverPos;
+
+    final result = await DirectionsService.fetchRoute(
+      origin: driverPos,
+      destination: LatLng(widget.pickupLat, widget.pickupLng),
+      apiKey: MapsConfig.directionsKey,
+    );
+
+    if (!mounted) return;
+    _isFetchingRoute = false;
+
+    if (result == null) return;
+
+    setState(() {
+      _polylines = {
+        Polyline(
+          polylineId: const PolylineId('route'),
+          points: result.polylinePoints,
+          color: AppColors.mapRouteLine,
+          width: 4,
+          jointType: JointType.round,
+          endCap: Cap.roundCap,
+          startCap: Cap.roundCap,
+        ),
+      };
+      _liveEta = result.etaMinutes;
+    });
+  }
+
+  /// Haversine distance in metres between two lat/lng points.
+  double _metersApart(LatLng a, LatLng b) {
+    const r = 6371000.0;
+    final dLat = _rad(b.latitude - a.latitude);
+    final dLng = _rad(b.longitude - a.longitude);
+    final h = pow(sin(dLat / 2), 2) +
+        cos(_rad(a.latitude)) * cos(_rad(b.latitude)) * pow(sin(dLng / 2), 2);
+    return 2 * r * asin(sqrt(h));
+  }
+
+  double _rad(double deg) => deg * (pi / 180);
+
+  // ── Build ────────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +184,9 @@ class _LiveTrackingMapViewState extends State<LiveTrackingMapView> {
         ),
     };
 
+    // Prefer live-computed ETA; fall back to parent-supplied value.
+    final displayEta = _liveEta ?? widget.etaMinutes;
+
     return SizedBox(
       height: widget.height,
       child: Stack(
@@ -118,27 +197,29 @@ class _LiveTrackingMapViewState extends State<LiveTrackingMapView> {
               zoom: driver != null ? 14 : 15,
             ),
             markers: markers,
+            polylines: _polylines,
             zoomControlsEnabled: false,
             myLocationButtonEnabled: false,
             onMapCreated: (ctrl) {
               _controller = ctrl;
-              // If we already have both positions (mock mode), fit immediately.
               if (driver != null && !_didFitBounds) {
                 _fitBounds(driver);
                 _didFitBounds = true;
               }
             },
           ),
+
           // ETA chip or locating indicator
           PositionedDirectional(
             top: 12,
             start: 12,
             child: driver == null
                 ? const _LocatingChip()
-                : widget.etaMinutes != null
-                    ? _EtaChip(minutes: widget.etaMinutes!)
+                : displayEta != null
+                    ? _EtaChip(minutes: displayEta)
                     : const SizedBox.shrink(),
           ),
+
           const Positioned(
             bottom: 0,
             left: 0,

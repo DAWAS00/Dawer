@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../../data/models/order.dart';
-import 'package:dwaar/ui/common/map/route_map_placeholder.dart';
+import '../../../../../core/theme/app_tokens.dart';
+import '../../../../../data/models/order/order.dart';
+import 'package:dwaar/ui/common/map/route_map_view.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Full-screen detail view for a [OrderType.collectionSale] commitment.
 /// Shows drop-off location, delivery method, transaction type, and status.
@@ -15,15 +17,16 @@ class CollectionSaleDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F5),
+      backgroundColor: context.dt.scaffold,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF06402B),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'تفاصيل الالتزام',
+          l10n.collectionSaleDetailTitle,
           style: GoogleFonts.cairo(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -33,26 +36,26 @@ class CollectionSaleDetailView extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _buildStatusRow(),
+          _buildStatusRow(context),
           const SizedBox(height: 16),
           if (sale.pickupLat != null && sale.dropoffLat != null) ...[
             _buildMapSection(),
             const SizedBox(height: 12),
           ],
-          _buildDropoffCard(),
+          _buildDropoffCard(context),
           const SizedBox(height: 12),
           if (sale.collectionDeliveryMethod != null ||
               sale.collectionTransactionType != null) ...[
-            _buildChoicesCard(),
+            _buildChoicesCard(context),
             const SizedBox(height: 12),
           ],
-          _buildWasteCard(),
+          _buildWasteCard(context),
           if (sale.pricePerKg != null || sale.itemPrice != null) ...[
             const SizedBox(height: 12),
-            _buildPricingCard(),
+            _buildPricingCard(context),
           ],
           const SizedBox(height: 12),
-          _buildMetaCard(),
+          _buildMetaCard(context),
         ],
       ),
     );
@@ -61,7 +64,7 @@ class CollectionSaleDetailView extends StatelessWidget {
   Widget _buildMapSection() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
-      child: RouteMapPlaceholder(
+      child: RouteMapView(
         pickupLat: sale.pickupLat!,
         pickupLng: sale.pickupLng!,
         dropoffLat: sale.dropoffLat!,
@@ -71,7 +74,8 @@ class CollectionSaleDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusRow() {
+  Widget _buildStatusRow(BuildContext context) {
+    final l10n = context.l10n;
     final isNew = _isNew;
     return Row(
       children: [
@@ -83,7 +87,7 @@ class CollectionSaleDetailView extends StatelessWidget {
               color: const Color(0xFF14401F),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text('جديد',
+            child: Text(l10n.collectionSaleNew,
                 style: GoogleFonts.cairo(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -110,14 +114,15 @@ class CollectionSaleDetailView extends StatelessWidget {
           style: GoogleFonts.dmSans(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF717973)),
+              color: context.dt.onSurfaceMuted),
         ),
       ],
     );
   }
 
-  Widget _buildDropoffCard() {
-    return _card(
+  Widget _buildDropoffCard(BuildContext context) {
+    final l10n = context.l10n;
+    return _card(context,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -127,11 +132,11 @@ class CollectionSaleDetailView extends StatelessWidget {
                   color: Color(0xFF14401F), size: 20),
               const Spacer(),
               Text(
-                'موقع التسليم',
+                l10n.collectionSaleDeliveryLocationNoColon,
                 style: GoogleFonts.cairo(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF002819)),
+                    color: context.dt.onSurface),
               ),
             ],
           ),
@@ -149,7 +154,7 @@ class CollectionSaleDetailView extends StatelessWidget {
               style: GoogleFonts.cairo(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819)),
+                  color: context.dt.onSurface),
             ),
           ),
           if (sale.supplierNotes != null) ...[
@@ -157,9 +162,9 @@ class CollectionSaleDetailView extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                'الشركة: ${sale.supplierNotes}',
+                l10n.collectionSaleCompanyNote(sale.supplierNotes!),
                 style: GoogleFonts.cairo(
-                    fontSize: 12, color: const Color(0xFF717973)),
+                    fontSize: 12, color: context.dt.onSurfaceMuted),
               ),
             ),
           ],
@@ -168,24 +173,26 @@ class CollectionSaleDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildChoicesCard() {
-    return _card(
+  Widget _buildChoicesCard(BuildContext context) {
+    final l10n = context.l10n;
+    return _card(context,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text('تفاصيل الاتفاق',
+          Text(l10n.collectionSaleAgreementTitle,
               style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819))),
+                  color: context.dt.onSurface)),
           const SizedBox(height: 12),
           if (sale.collectionDeliveryMethod != null) ...[
             _infoRow(
+              context,
               icon: sale.collectionDeliveryMethod ==
                       CollectionDeliveryMethod.selfDelivery
                   ? Icons.directions_car_rounded
                   : Icons.local_shipping_rounded,
-              label: 'طريقة التوصيل',
+              label: l10n.collectionSaleDeliveryMethodLabel,
               value: sale.collectionDeliveryMethod!.label,
               subtitle: sale.collectionDeliveryMethod!.description,
             ),
@@ -193,11 +200,12 @@ class CollectionSaleDetailView extends StatelessWidget {
           ],
           if (sale.collectionTransactionType != null)
             _infoRow(
+              context,
               icon: sale.collectionTransactionType ==
                       CollectionTransactionType.donate
                   ? Icons.volunteer_activism_rounded
                   : Icons.sell_rounded,
-              label: 'نوع المعاملة',
+              label: l10n.collectionSaleTransactionTypeLabel,
               value: sale.collectionTransactionType!.label,
               subtitle: sale.collectionTransactionType!.description,
               valueColor: sale.collectionTransactionType ==
@@ -210,16 +218,17 @@ class CollectionSaleDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildWasteCard() {
-    return _card(
+  Widget _buildWasteCard(BuildContext context) {
+    final l10n = context.l10n;
+    return _card(context,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text('أنواع النفايات',
+          Text(l10n.collectionSaleWasteTypesLabel,
               style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819))),
+                  color: context.dt.onSurface)),
           const SizedBox(height: 10),
           Wrap(
             spacing: 6,
@@ -248,7 +257,7 @@ class CollectionSaleDetailView extends StatelessWidget {
               sale.jobDescription!,
               textAlign: TextAlign.right,
               style: GoogleFonts.cairo(
-                  fontSize: 12, color: const Color(0xFF717973)),
+                  fontSize: 12, color: context.dt.onSurfaceMuted),
             ),
           ],
         ],
@@ -256,10 +265,14 @@ class CollectionSaleDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildPricingCard() {
+  Widget _buildPricingCard(BuildContext context) {
+    final l10n = context.l10n;
     final isPerKg = sale.paymentModel == PaymentModel.perKg;
     final price = sale.pricePerKg ?? sale.itemPrice ?? 0;
-    return _card(
+    final priceUnit = isPerKg
+        ? '${l10n.currencyJodShort} / ${l10n.unitKg}'
+        : l10n.currencyJodShort;
+    return _card(context,
       child: Row(
         children: [
           Container(
@@ -270,7 +283,7 @@ class CollectionSaleDetailView extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              '${price.toStringAsFixed(2)} ${isPerKg ? 'د.أ / كغ' : 'د.أ'}',
+              '${price.toStringAsFixed(2)} $priceUnit',
               style: GoogleFonts.dmSans(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -278,39 +291,41 @@ class CollectionSaleDetailView extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          Text('السعر المتفق عليه',
+          Text(l10n.collectionSaleAgreedPriceNoColon,
               style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819))),
+                  color: context.dt.onSurface)),
         ],
       ),
     );
   }
 
-  Widget _buildMetaCard() {
+  Widget _buildMetaCard(BuildContext context) {
+    final l10n = context.l10n;
     final diff = DateTime.now().difference(sale.createdAt);
     final ageStr = diff.inDays > 0
-        ? 'منذ ${diff.inDays} يوم'
+        ? l10n.timeAgoDays(diff.inDays)
         : diff.inHours > 0
-            ? 'منذ ${diff.inHours} ساعة'
-            : 'منذ ${diff.inMinutes} دقيقة';
-    return _card(
+            ? l10n.timeAgoHours(diff.inHours)
+            : l10n.timeAgoMinutes(diff.inMinutes);
+    return _card(context,
       child: Column(
         children: [
-          _metaRow('رقم الالتزام', sale.id),
+          _metaRow(context, l10n.collectionSaleCommitmentNumber, sale.id),
           if (sale.linkedJobId != null) ...[
             const SizedBox(height: 6),
-            _metaRow('رقم الوظيفة', sale.linkedJobId!),
+            _metaRow(context, l10n.collectionSaleJobNumberLabel, sale.linkedJobId!),
           ],
           const SizedBox(height: 6),
-          _metaRow('تاريخ القبول', ageStr),
+          _metaRow(context, l10n.collectionSaleAcceptedAt, ageStr),
         ],
       ),
     );
   }
 
-  Widget _infoRow({
+  Widget _infoRow(
+    BuildContext context, {
     required IconData icon,
     required String label,
     required String value,
@@ -327,49 +342,49 @@ class CollectionSaleDetailView extends StatelessWidget {
           children: [
             Text(label,
                 style: GoogleFonts.cairo(
-                    fontSize: 11, color: const Color(0xFF717973))),
+                    fontSize: 11, color: context.dt.onSurfaceMuted)),
             Text(value,
                 style: GoogleFonts.cairo(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: valueColor ?? const Color(0xFF002819))),
+                    color: valueColor ?? context.dt.onSurface)),
             if (subtitle != null)
               Text(subtitle,
                   textAlign: TextAlign.right,
                   style: GoogleFonts.cairo(
-                      fontSize: 10, color: const Color(0xFF9CA3AF))),
+                      fontSize: 10, color: context.dt.onSurfaceMuted)),
           ],
         ),
       ],
     );
   }
 
-  Widget _metaRow(String label, String value) {
+  Widget _metaRow(BuildContext context, String label, String value) {
     return Row(
       children: [
         Text(value,
             style: GoogleFonts.dmSans(
-                fontSize: 12, color: const Color(0xFF717973))),
+                fontSize: 12, color: context.dt.onSurfaceMuted)),
         const Spacer(),
         Text(label,
             style: GoogleFonts.cairo(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF404943))),
+                color: context.dt.onSurfaceVariant)),
       ],
     );
   }
 
-  Widget _card({required Widget child}) {
+  Widget _card(BuildContext context, {required Widget child}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.dt.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
+              color: context.dt.shadow.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2)),
         ],

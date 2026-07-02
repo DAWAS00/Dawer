@@ -2,7 +2,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:dwaar/data/models/user.dart';
 import 'package:dwaar/data/services/app_order_store.dart';
 import 'package:dwaar/domain/services/i_location_publisher.dart';
+import 'package:dwaar/l10n/generated/app_localizations_en.dart';
 import 'package:dwaar/ui/features/home/driver/viewmodels/driver_home_viewmodel.dart';
+
+final _testL10n = AppLocalizationsEn();
 
 // ── Fake location publisher ───────────────────────────────────────────────────
 
@@ -43,7 +46,7 @@ void main() {
       addTearDown(vm.dispose);
 
       final order = store.driverFeedFor().first;
-      final error = await vm.acceptOrder(order);
+      final error = await vm.acceptOrder(order, _testL10n);
 
       expect(error, isNull);
       expect(vm.currentTab, 2);
@@ -58,11 +61,11 @@ void main() {
       final vm = DriverHomeViewModel(store, publisher: publisher);
       addTearDown(vm.dispose);
 
-      vm.toggleAvailability(false);
+      vm.toggleAvailability(false, _testL10n);
       expect(vm.isAvailable, isFalse);
 
       final order = store.driverFeedFor().first;
-      final error = await vm.acceptOrder(order);
+      final error = await vm.acceptOrder(order, _testL10n);
 
       expect(error, isNotNull);
       expect(vm.currentTab, 0);
@@ -76,11 +79,11 @@ void main() {
       addTearDown(vm.dispose);
 
       final firstOrder = store.driverFeedFor().first;
-      await vm.acceptOrder(firstOrder);
+      await vm.acceptOrder(firstOrder, _testL10n);
       expect(publisher.startCallCount, 1);
 
       final secondOrder = store.driverFeedFor().first;
-      final error = await vm.acceptOrder(secondOrder);
+      final error = await vm.acceptOrder(secondOrder, _testL10n);
 
       expect(error, isNotNull);
       expect(publisher.startCallCount, 1); // no second start
@@ -95,7 +98,7 @@ void main() {
       addTearDown(vm.dispose);
 
       final order = store.driverFeedFor().first;
-      await vm.acceptOrder(order);
+      await vm.acceptOrder(order, _testL10n);
       expect(vm.active, isNotNull);
 
       await vm.completeOrder(vm.active!);
@@ -113,9 +116,9 @@ void main() {
       addTearDown(vm.dispose);
 
       final order = store.driverFeedFor().first;
-      await vm.acceptOrder(order);
+      await vm.acceptOrder(order, _testL10n);
 
-      final error = vm.toggleAvailability(false);
+      final error = vm.toggleAvailability(false, _testL10n);
       expect(error, isNotNull);
       expect(vm.isAvailable, isTrue);
     });
@@ -124,7 +127,7 @@ void main() {
       final vm = _buildVm();
       addTearDown(vm.dispose);
 
-      expect(vm.toggleAvailability(false), isNull);
+      expect(vm.toggleAvailability(false, _testL10n), isNull);
       expect(vm.isAvailable, isFalse);
     });
   });

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/services/app_order_store.dart';
 
@@ -31,6 +31,8 @@ class MarketplaceViewModel extends ChangeNotifier {
 
   void _onStoreChanged() => notifyListeners();
 
+  bool get isLoading => _store.isLoading;
+
   // ── User categories (persisted from signup/login) ─────────────────────────
 
   List<String> _userCategories = const [];
@@ -41,18 +43,22 @@ class MarketplaceViewModel extends ChangeNotifier {
 
   // Keep legacy getters for any widgets that still reference them.
   List<String> get aiSuggestedCategories => _userCategories;
-  bool get showSuggestionBanner => false;
+  bool get showSuggestionBanner => _userCategories.isNotEmpty;
 
   void setAiSuggestions(List<String> categories) {
     _userCategories = categories;
     notifyListeners();
   }
 
-  void dismissSuggestions() {}
+  void dismissSuggestions() {
+    _userCategories = [];
+    notifyListeners();
+  }
 
   void showAllOrders() {
     _searchQuery = '';
     _selectedCategory = null;
+    _userCategories = [];
     notifyListeners();
   }
 
@@ -138,6 +144,54 @@ class MarketplaceViewModel extends ChangeNotifier {
 
   Order? receiveAtFacility(String orderId, String facilityAddress) =>
       _store.receiveAtFacility(orderId, facilityAddress);
+
+  // ── Reservation (10 % escrow) ─────────────────────────────────────────────
+
+  /// Items in the marketplace that are still available (not actively reserved).
+  bool isAvailableForReservation(Order item) =>
+      item.status == OrderStatus.pending && item.reservationStatus == null;
+
+  /// Reserve a marketplace item. Returns an error string or null on success.
+  String? reserveItem({
+    required String orderId,
+    required String reserverName,
+    required String reserverId,
+    required DateTime pickupDate,
+  }) =>
+      _store.reserveMarketItem(
+        orderId: orderId,
+        reserverName: reserverName,
+        reserverId: reserverId,
+        pickupDate: pickupDate,
+      );
+
+  /// Seller accepts or rejects a reservation.
+  String? respondToReservation({
+    required String orderId,
+    required String sellerName,
+    required bool accept,
+  }) =>
+      _store.respondToReservation(
+        orderId: orderId,
+        sellerName: sellerName,
+        accept: accept,
+      );
+
+  /// Cancel a reservation (buyer or seller).
+  String? cancelReservation({
+    required String orderId,
+    required String cancellerName,
+    required bool isBuyer,
+  }) =>
+      _store.cancelReservation(
+        orderId: orderId,
+        cancellerName: cancellerName,
+        isBuyer: isBuyer,
+      );
+
+  /// Pending reservation requests for items listed by [sellerName].
+  List<Order> pendingReservationsForSeller(String sellerName) =>
+      _store.pendingReservationsForSeller(sellerName);
 
   // ── Collection jobs (recycling company postings) ───────────────────────────
 

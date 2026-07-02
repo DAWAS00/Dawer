@@ -7,8 +7,10 @@ import 'package:provider/provider.dart';
 import '../../viewmodels/vehicle_registration_viewmodel.dart';
 import '../../../../common/ai_shimmer_loader.dart';
 import '../../../../common/animated_status_text.dart';
-import '../../../../../data/models/order.dart' show VehicleTypeLabel;
+import '../../../../../data/models/order/order.dart' show VehicleTypeLabel;
 import '../../../../../domain/services/i_ai_vehicle_registration_service.dart';
+import '../../../../../l10n/l10n.dart';
+import 'photo_source_picker.dart';
 
 /// Reuses the same scanning UX as [LicenseScanSection] but targets vehicle
 /// registration documents. On confirmation, calls [onConfirm] with the
@@ -27,47 +29,20 @@ class VehicleRegistrationScanSection extends StatelessWidget {
     required this.onConfirm,
   });
 
-  void _showSourceSheet(BuildContext context) {
-    showModalBottomSheet<void>(
+  Future<void> _showSourceSheet(BuildContext context) async {
+    final l10n = context.l10n;
+    final source = await showPhotoSourceSheet(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40, height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD1D5DB),
-                  borderRadius: BorderRadius.circular(9999),
-                ),
-              ),
-              const SizedBox(height: 16),
-              _SheetTile(
-                icon: Icons.camera_alt_rounded,
-                label: 'الكاميرا',
-                onTap: () { Navigator.pop(context); onPick(ImageSource.camera); },
-              ),
-              _SheetTile(
-                icon: Icons.photo_library_rounded,
-                label: 'معرض الصور',
-                onTap: () { Navigator.pop(context); onPick(ImageSource.gallery); },
-              ),
-            ],
-          ),
-        ),
-      ),
+      cameraLabel: l10n.imagePickerCamera,
+      galleryLabel: l10n.imagePickerGallery,
     );
+    if (source != null) await onPick(source);
   }
 
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<VehicleRegistrationViewModel>();
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -77,7 +52,7 @@ class VehicleRegistrationScanSection extends StatelessWidget {
             const Icon(Icons.directions_car_rounded, size: 16, color: Color(0xFF06402B)),
             const SizedBox(width: 6),
             Text(
-              'مسح استمارة المركبة',
+              l10n.vehicleScanTitle,
               style: GoogleFonts.cairo(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -93,7 +68,7 @@ class VehicleRegistrationScanSection extends StatelessWidget {
                 border: Border.all(color: const Color(0xFF86EFAC)),
               ),
               child: Text(
-                'اختياري',
+                l10n.vehicleScanOptional,
                 style: GoogleFonts.cairo(fontSize: 10, color: const Color(0xFF166534)),
               ),
             ),
@@ -137,6 +112,7 @@ class _IdleZone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -167,14 +143,14 @@ class _IdleZone extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'امسح الاستمارة لملء البيانات تلقائياً',
+                  l10n.vehicleScanPrompt,
                   style: GoogleFonts.cairo(
                     fontSize: 13, fontWeight: FontWeight.w600,
                     color: const Color(0xFF404943),
                   ),
                 ),
                 Text(
-                  'يُحدَّد نوع المركبة من الوثيقة',
+                  l10n.vehicleScanTypeHint,
                   style: GoogleFonts.cairo(fontSize: 11, color: const Color(0xFF717973)),
                 ),
               ],
@@ -215,6 +191,7 @@ class _AnalyzingZoneState extends State<_AnalyzingZone>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       children: [
         Stack(
@@ -231,11 +208,11 @@ class _AnalyzingZoneState extends State<_AnalyzingZone>
             _sparkle(),
             const SizedBox(width: 8),
             AnimatedStatusText(
-              phrases: const [
-                'فحص نوع المركبة...',
-                'قراءة رقم اللوحة...',
-                'تحليل موديل السيارة...',
-                'التحقق من تاريخ الانتهاء...',
+              phrases: [
+                l10n.vehicleScanStepType,
+                l10n.vehicleScanStepPlate,
+                l10n.vehicleScanStepModel,
+                l10n.vehicleScanStepExpiry,
               ],
               style: GoogleFonts.cairo(
                 fontSize: 14,
@@ -295,15 +272,7 @@ class _VehiclePulseOverlay extends StatefulWidget {
 class _VehiclePulseOverlayState extends State<_VehiclePulseOverlay> {
   final List<(String, Alignment, int)> _pulses = [];
   Timer? _timer;
-
-  static const _phrases = [
-    'نوع المركبة ✓',
-    'رقم اللوحة...',
-    'الموديل ✓',
-    'تاريخ الانتهاء...',
-    'اللون ✓',
-    'الاستمارة سارية',
-  ];
+  List<String> _phrases = const [];
 
   @override
   void initState() {
@@ -322,6 +291,20 @@ class _VehiclePulseOverlayState extends State<_VehiclePulseOverlay> {
         if (mounted) setState(() => _pulses.removeWhere((p) => p.$3 == t.tick));
       });
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final l10n = context.l10n;
+    _phrases = [
+      l10n.vehicleScanPulseType,
+      l10n.vehicleScanPulsePlate,
+      l10n.vehicleScanPulseModel,
+      l10n.vehicleScanPulseExpiry,
+      l10n.vehicleScanPulseColor,
+      l10n.vehicleScanPulseValid,
+    ];
   }
 
   @override
@@ -379,6 +362,7 @@ class _ValidZone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -401,12 +385,12 @@ class _ValidZone extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('تم قراءة الوثيقة بنجاح',
+                    Text(l10n.vehicleScanReadSuccess,
                       style: GoogleFonts.cairo(
                         fontSize: 15, fontWeight: FontWeight.bold,
                         color: const Color(0xFF166534),
                       )),
-                    Text('راجع البيانات وأكّد',
+                    Text(l10n.vehicleScanReviewPrompt,
                       style: GoogleFonts.cairo(fontSize: 12, color: const Color(0xFF4ADE80))),
                   ],
                 ),
@@ -414,7 +398,7 @@ class _ValidZone extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.refresh_rounded, color: Color(0xFF166534)),
                 onPressed: onReset,
-                tooltip: 'إعادة المسح',
+                tooltip: l10n.vehicleScanRescanTooltip,
               ),
             ],
           ),
@@ -427,7 +411,7 @@ class _ValidZone extends StatelessWidget {
           child: ElevatedButton.icon(
             onPressed: onConfirm,
             icon: const Icon(Icons.check_circle_outline_rounded, size: 20),
-            label: Text('تأكيد وملء البيانات تلقائياً',
+            label: Text(l10n.vehicleScanConfirmAutoFill,
               style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold)),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF06402B),
@@ -448,6 +432,7 @@ class _ExtractedVehicleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final expiry = data.registrationExpiry;
     return Container(
       padding: const EdgeInsets.all(16),
@@ -467,7 +452,7 @@ class _ExtractedVehicleCard extends StatelessWidget {
               const Icon(Icons.analytics_outlined, size: 18, color: Color(0xFF06402B)),
               const SizedBox(width: 8),
               Expanded(
-                child: Text('البيانات المستخرجة',
+                child: Text(l10n.vehicleScanExtractedData,
                   style: GoogleFonts.cairo(fontSize: 13, fontWeight: FontWeight.bold, color: const Color(0xFF191C1B))),
               ),
               _ConfidenceBadge(score: data.confidenceScore),
@@ -497,13 +482,13 @@ class _ExtractedVehicleCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           if (data.make != null || data.model != null)
-            _Row('الموديل', '${data.make ?? ''} ${data.model ?? ''}'.trim()),
+            _Row(l10n.vehicleScanRowModel, '${data.make ?? ''} ${data.model ?? ''}'.trim()),
           if (data.color != null)
-            _Row('اللون', data.color!),
+            _Row(l10n.vehicleScanRowColor, data.color!),
           if (data.plateNumber != null)
-            _Row('رقم اللوحة', data.plateNumber!),
+            _Row(l10n.vehicleScanRowPlate, data.plateNumber!),
           if (expiry != null)
-            _Row('تاريخ انتهاء الاستمارة',
+            _Row(l10n.vehicleScanRowExpiry,
               '${expiry.day}/${expiry.month}/${expiry.year}'),
           if (data.hasChemicalPermit) ...[
             const Divider(height: 20),
@@ -511,7 +496,7 @@ class _ExtractedVehicleCard extends StatelessWidget {
               children: [
                 const Icon(Icons.verified_rounded, size: 14, color: Color(0xFF059669)),
                 const SizedBox(width: 6),
-                Text('تصريح نقل مواد كيميائية',
+                Text(l10n.vehicleScanChemicalPermit,
                   style: GoogleFonts.cairo(
                     fontSize: 11, color: const Color(0xFF059669), fontWeight: FontWeight.w600)),
               ],
@@ -523,7 +508,7 @@ class _ExtractedVehicleCard extends StatelessWidget {
               const Icon(Icons.auto_awesome_outlined, size: 14, color: Color(0xFF059669)),
               const SizedBox(width: 6),
               Expanded(
-                child: Text('سيتم تصفية الطلبات تلقائياً بناءً على نوع مركبتك',
+                child: Text(l10n.vehicleScanChemicalPermitHint,
                   style: GoogleFonts.cairo(
                     fontSize: 10, color: const Color(0xFF059669), fontWeight: FontWeight.w600)),
               ),
@@ -568,6 +553,7 @@ class _ConfidenceBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -578,7 +564,7 @@ class _ConfidenceBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('دقة', style: GoogleFonts.cairo(fontSize: 9, fontWeight: FontWeight.bold, color: const Color(0xFF065F46))),
+          Text(l10n.vehicleScanAccuracy, style: GoogleFonts.cairo(fontSize: 9, fontWeight: FontWeight.bold, color: const Color(0xFF065F46))),
           const SizedBox(width: 4),
           Text('${(score * 100).toStringAsFixed(1)}%',
             style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.w900, color: const Color(0xFF059669))),
@@ -597,6 +583,7 @@ class _InvalidZone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -615,7 +602,7 @@ class _InvalidZone extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('تعذّر قراءة الوثيقة',
+                    Text(l10n.vehicleScanReadFailed,
                       style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.red.shade800)),
                     if (reason != null)
                       Text(reason!,
@@ -630,7 +617,7 @@ class _InvalidZone extends StatelessWidget {
         OutlinedButton.icon(
           onPressed: onRetry,
           icon: const Icon(Icons.upload_file_rounded),
-          label: Text('حاول مرة أخرى', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+          label: Text(l10n.aiValidationRetryButton, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -651,20 +638,3 @@ Widget _sparkle() => Container(
   ),
   child: const Center(child: Text('✨', style: TextStyle(fontSize: 10))),
 );
-
-class _SheetTile extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  const _SheetTile({required this.icon, required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon, color: const Color(0xFF191C1B)),
-      title: Text(label,
-        style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.w600, color: const Color(0xFF191C1B))),
-      onTap: onTap,
-    );
-  }
-}

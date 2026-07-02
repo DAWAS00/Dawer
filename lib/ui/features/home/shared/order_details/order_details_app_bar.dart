@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 
 class OrderDetailsAppBar extends StatelessWidget {
   final Order order;
@@ -17,7 +17,7 @@ class OrderDetailsAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       pinned: true,
-      backgroundColor: const Color(0xFF06402B),
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       foregroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.arrow_forward_ios_rounded, size: 18),

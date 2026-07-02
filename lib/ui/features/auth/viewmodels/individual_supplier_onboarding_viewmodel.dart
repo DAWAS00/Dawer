@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../data/models/user_role.dart';
+import '../../../../data/services/gemini_brand_profile_ai_service.dart';
 import '../../../../data/services/mock_ai_service.dart';
 import '../../../../data/services/user_signup_service.dart';
+import 'package:dwaar/data/models/signup_request.dart';
 import '../../../../domain/failures/app_failure.dart';
 import 'license_validation_viewmodel.dart';
 
 class IndividualSupplierOnboardingViewModel extends ChangeNotifier {
-  IndividualSupplierOnboardingViewModel({UserSignUpService? service})
-      : _service = service ?? UserSignUpService();
+  IndividualSupplierOnboardingViewModel({required UserSignUpService service})
+      : _service = service;
 
   final UserSignUpService _service;
   final ImagePicker _picker = ImagePicker();
@@ -112,13 +114,12 @@ class IndividualSupplierOnboardingViewModel extends ChangeNotifier {
   List<String> get allCategories => List.unmodifiable(_allCategories);
   Set<String> get selectedCategories => Set.unmodifiable(_selectedCategories);
 
-  /// TODO: Replace MockAiService with real AI API — see mock_ai_service.dart
   Future<void> triggerAiSuggestions() async {
     if (isAiLoading) return;
     isAiLoading = true;
     notifyListeners();
 
-    final result = await MockAiService.generateBrandProfile(
+    final result = await GeminiBrandProfileAiService().generateBrandProfile(
       companyName: fullName,
       tagline: tagline,
     );

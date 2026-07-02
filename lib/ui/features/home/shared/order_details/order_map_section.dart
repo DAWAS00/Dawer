@@ -1,16 +1,16 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:dwaar/core/constants/app_colors.dart';
-import 'package:dwaar/data/models/order.dart';
+import 'package:dwaar/data/models/order/order.dart';
 import 'package:dwaar/data/services/driver_location_stream.dart';
 import 'package:dwaar/l10n/l10n.dart';
 import 'package:dwaar/ui/common/map/live_tracking_map_view.dart';
 import 'package:dwaar/ui/common/map/pickup_map_view.dart';
-import 'package:dwaar/ui/common/map/route_map_placeholder.dart';
+import 'package:dwaar/ui/common/map/route_map_view.dart';
 
 class OrderMapSection extends StatelessWidget {
   final Order order;
@@ -32,46 +32,62 @@ class OrderMapSection extends StatelessWidget {
     final dLat = order.dropoffLat;
     final dLng = order.dropoffLng;
 
-    // Live tracking: driver accepted and is en-route — show moving driver marker.
+    Widget mapContent;
+
+    // Live tracking: driver accepted and is en-route â€” show moving driver marker.
     if (hasDriver &&
         order.status == OrderStatus.inTransit &&
         pLat != null &&
         pLng != null) {
-      return _isUuid(order.id)
+      mapContent = _isUuid(order.id)
           ? _RealTrackingWrapper(
               orderId: order.id,
               pickupLat: pLat,
               pickupLng: pLng,
               etaMinutes: order.etaMinutes,
-              height: 240,
+              height: 232,
             )
           : _MockTrackingWrapper(
               pickupLat: pLat,
               pickupLng: pLng,
               etaMinutes: order.etaMinutes,
-              height: 240,
+              height: 232,
             );
-    }
-
-    if (pLat != null && dLat != null) {
-      return RouteMapPlaceholder(
+    } else if (pLat != null && dLat != null) {
+      mapContent = RouteMapView(
         pickupLat: pLat,
         pickupLng: pLng!,
         dropoffLat: dLat,
         dropoffLng: dLng!,
-        height: 240,
+        height: 232,
       );
+    } else if (pLat != null) {
+      mapContent = PickupMapView(lat: pLat, lng: pLng!, height: 232);
+    } else {
+      mapContent = const _MapPlaceholder();
     }
 
-    if (pLat != null) {
-      return PickupMapView(lat: pLat, lng: pLng!, height: 240);
-    }
-
-    return const _MapPlaceholder();
+    return Container(
+      margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: mapContent,
+      ),
+    );
   }
 }
 
-// ── Real tracking — Supabase Realtime (Phase 3) ───────────────────────────────
+// â”€â”€ Real tracking â€” Supabase Realtime (Phase 3) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _RealTrackingWrapper extends StatefulWidget {
   final String orderId;
@@ -106,7 +122,7 @@ class _RealTrackingWrapperState extends State<_RealTrackingWrapper> {
     return LiveTrackingMapView(
       pickupLat: widget.pickupLat,
       pickupLng: widget.pickupLng,
-      // No initial position — LiveTrackingMapView shows "جاري تحديد الموقع"
+      // No initial position â€” LiveTrackingMapView shows "Ø¬Ø§Ø±ÙŠ ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ù…ÙˆÙ‚Ø¹"
       // until the stream emits the first event from Supabase.
       driverStream: _stream,
       etaMinutes: widget.etaMinutes,
@@ -115,7 +131,7 @@ class _RealTrackingWrapperState extends State<_RealTrackingWrapper> {
   }
 }
 
-// ── Phase-1 mock driver stream (used for local / non-Supabase orders) ─────────
+// â”€â”€ Phase-1 mock driver stream (used for local / non-Supabase orders) â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _MockTrackingWrapper extends StatefulWidget {
   final double pickupLat;
@@ -175,7 +191,7 @@ class _MockTrackingWrapperState extends State<_MockTrackingWrapper> {
   }
 }
 
-// ── Fallback placeholder (used when coords are null) ─────────────────────────
+// â”€â”€ Fallback placeholder (used when coords are null) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _MapPlaceholder extends StatelessWidget {
   const _MapPlaceholder();
@@ -183,7 +199,7 @@ class _MapPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 240,
+      height: 232,
       color: AppColors.mapSurface,
       child: Center(
         child: Column(
@@ -206,3 +222,4 @@ class _MapPlaceholder extends StatelessWidget {
     );
   }
 }
+

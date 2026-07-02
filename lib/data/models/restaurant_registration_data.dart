@@ -51,11 +51,6 @@ class RestaurantRegistrationData {
       'selectedCategories': selectedCategories,
       'address': address,
       'isCertificationVerified': isCertificationVerified,
-      'metadata': {
-        // [FUTURE IMPLEMENTATION: AI API Integration]
-        // Provide the real API key or references here later.
-        'aiApiKeyUsed': '[PLACEHOLDER_FOR_FUTURE_API_KEY]'
-      }
     };
   }
 }

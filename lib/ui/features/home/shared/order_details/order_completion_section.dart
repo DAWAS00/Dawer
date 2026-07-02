@@ -1,11 +1,9 @@
-import 'dart:io';
-import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../data/models/order.dart';
-import '../../../../../data/services/location_service.dart';
+import '../../../../../data/models/order/order.dart';
+import '../../../../../data/services/proof_builder.dart';
 import '../../../../../l10n/l10n.dart';
 
 class OrderCompletionSection extends StatefulWidget {
@@ -24,36 +22,36 @@ class OrderCompletionSection extends StatefulWidget {
 
 class _OrderCompletionSectionState extends State<OrderCompletionSection> {
   XFile? _proofImage;
-  OrderProof? _proof;
-  bool _capturingProof = false;
+  bool _submitting = false;
+  String? _uploadError;
   final ImagePicker _picker = ImagePicker();
-  final LocationService _locationService = LocationService();
+  final _weightController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _weightController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _weightController.dispose();
+    super.dispose();
+  }
+
+  double? get _parsedWeight {
+    final text = _weightController.text.trim();
+    if (text.isEmpty) return null;
+    final val = double.tryParse(text);
+    if (val == null || val <= 0) return null;
+    return val;
+  }
 
   bool get _canComplete =>
-      _proof != null &&
+      _proofImage != null &&
+      _parsedWeight != null &&
       (widget.order.status == OrderStatus.arrivedAtDropoff ||
           widget.order.arrivedAtDropoffAt != null);
-
-  Future<void> _buildProof(XFile image) async {
-    setState(() => _capturingProof = true);
-    try {
-      final pos = await _locationService.getCurrentLocation();
-      final bytes = await File(image.path).readAsBytes();
-      final checksum = sha256.convert(bytes).toString();
-      setState(() {
-        _proofImage = image;
-        _proof = OrderProof(
-          imagePath: image.path,
-          capturedAt: DateTime.now(),
-          lat: pos?.lat ?? 0.0,
-          lng: pos?.lng ?? 0.0,
-          checksum: checksum,
-        );
-      });
-    } finally {
-      setState(() => _capturingProof = false);
-    }
-  }
 
   Future<void> _pickImage() async {
     showModalBottomSheet(
@@ -69,21 +67,27 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
-                  leading: const Icon(Icons.camera_alt_rounded, color: Color(0xFF06402B)),
-                  title: Text(context.l10n.orderPhotoCamera, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                  leading: const Icon(Icons.camera_alt_rounded,
+                      color: AppColors.primaryGreen),
+                  title: Text(context.l10n.orderPhotoCamera,
+                      style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
                   onTap: () async {
                     Navigator.pop(context);
-                    final picked = await _picker.pickImage(source: ImageSource.camera, imageQuality: 80);
-                    if (picked != null) await _buildProof(picked);
+                    final picked = await _picker.pickImage(
+                        source: ImageSource.camera, imageQuality: 80);
+                    if (picked != null) setState(() => _proofImage = picked);
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.photo_library_rounded, color: Color(0xFF06402B)),
-                  title: Text(context.l10n.orderPhotoGallery, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                  leading: const Icon(Icons.photo_library_rounded,
+                      color: AppColors.primaryGreen),
+                  title: Text(context.l10n.orderPhotoGallery,
+                      style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
                   onTap: () async {
                     Navigator.pop(context);
-                    final picked = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
-                    if (picked != null) await _buildProof(picked);
+                    final picked = await _picker.pickImage(
+                        source: ImageSource.gallery, imageQuality: 80);
+                    if (picked != null) setState(() => _proofImage = picked);
                   },
                 ),
               ],
@@ -94,80 +98,110 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
     );
   }
 
-  void _showCompletionDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          context.l10n.orderCompleteDialogTitle,
-          textAlign: TextAlign.right,
-          style: GoogleFonts.cairo(
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF002819),
-          ),
-        ),
-        content: Text(
-          context.l10n.orderCompleteDialogMsg,
-          textAlign: TextAlign.right,
-          style: GoogleFonts.cairo(
-            fontSize: 14,
-            color: const Color(0xFF404943),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(
-              context.l10n.cancel,
-              style: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF717973),
-              ),
+  Future<void> _submit() async {
+    final image = _proofImage;
+    final weight = _parsedWeight;
+    if (image == null || weight == null || _submitting) return;
+
+    setState(() {
+      _submitting = true;
+      _uploadError = null;
+    });
+
+    try {
+      // Build local proof (GPS + SHA256).
+      final localProof =
+          await ProofBuilder.build(imageFile: image, weightKg: weight);
+
+      // Upload photo to Supabase Storage; fall back to local path on error.
+      String photoUrl;
+      try {
+        photoUrl = await ProofBuilder.upload(
+          imageFile: image,
+          orderId: widget.order.id,
+          proofType: 'dropoff',
+        );
+      } catch (_) {
+        photoUrl = localProof.imagePath;
+      }
+
+      final finalProof = localProof.copyWith(imagePath: photoUrl);
+
+      if (!mounted) return;
+
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(
+            context.l10n.orderCompleteDialogTitle,
+            textAlign: TextAlign.right,
+            style: GoogleFonts.cairo(
+              fontWeight: FontWeight.bold,
+              color: AppColors.textMain,
             ),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              final updatedOrder = widget.order.copyWith(
-                status: OrderStatus.completed,
-                completedAt: DateTime.now(),
-                proofImagePath: _proof?.imagePath ?? _proofImage?.path,
-                paidAmount: widget.order.reward,
-                proof: _proof,
-              );
-              widget.onComplete(updatedOrder);
-            },
-            child: Text(
-              context.l10n.orderConfirmComplete,
-              style: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF06402B),
-              ),
+          content: Text(
+            context.l10n.orderCompleteDialogMsg,
+            textAlign: TextAlign.right,
+            style: GoogleFonts.cairo(
+              fontSize: 14,
+              color: AppColors.mutedText,
             ),
           ),
-        ],
-      ),
-    );
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(
+                context.l10n.cancel,
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.mutedText,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(
+                context.l10n.orderConfirmComplete,
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryGreen,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+
+      if (!mounted) return;
+      if (confirmed != true) {
+        setState(() => _submitting = false);
+        return;
+      }
+
+      final updatedOrder = widget.order.copyWith(
+        status: OrderStatus.completed,
+        completedAt: DateTime.now(),
+        proofImagePath: photoUrl,
+        paidAmount: widget.order.reward,
+        proof: finalProof,
+      );
+      widget.onComplete(updatedOrder);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _submitting = false;
+        _uploadError = e.toString();
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF06402B).withValues(alpha: 0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -176,22 +210,68 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
             style: GoogleFonts.cairo(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF002819),
+              color: AppColors.textMain,
             ),
           ),
           const SizedBox(height: 12),
-          
-          // Image Upload
+
+          // Weight input (TD2 specs: LTR, numberWithOptions, minHeight 48)
+          Text(
+            'وزن الشحنة عند التسليم (كغ)',
+            style: GoogleFonts.cairo(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textMain,
+            ),
+          ),
+          const SizedBox(height: 6),
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48),
+            child: Directionality(
+              textDirection: TextDirection.ltr,
+              child: TextField(
+                controller: _weightController,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                  signed: false,
+                ),
+                textAlign: TextAlign.left,
+                enabled: !_submitting,
+                style: GoogleFonts.dmSans(fontSize: 15),
+                decoration: InputDecoration(
+                  hintText: '0.0',
+                  hintStyle: GoogleFonts.dmSans(color: AppColors.mutedText),
+                  suffixText: 'كغ',
+                  suffixStyle: GoogleFonts.cairo(color: AppColors.mutedText),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.primaryGreen,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Photo upload
           GestureDetector(
-            onTap: _pickImage,
+            onTap: _submitting ? null : _pickImage,
             child: Container(
               height: 120,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: const Color(0xFFF4F6F5),
+                color: Colors.grey.shade50,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: _proofImage != null ? const Color(0xFF06402B) : const Color(0xFFD0EAD6),
+                  color: _proofImage != null
+                      ? AppColors.primaryGreen
+                      : AppColors.primaryGreen.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),
@@ -201,9 +281,13 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
-                          Image.file(
-                            File(_proofImage!.path),
+                          Image.network(
+                            _proofImage!.path.startsWith('http')
+                                ? _proofImage!.path
+                                : Uri.file(_proofImage!.path).toString(),
                             fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) =>
+                                _buildPhotoPlaceholder(),
                           ),
                           Positioned(
                             bottom: 8,
@@ -214,35 +298,18 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
                                 color: Colors.black.withValues(alpha: 0.6),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.edit_rounded, color: Colors.white, size: 18),
+                              child: const Icon(Icons.edit_rounded,
+                                  color: Colors.white, size: 18),
                             ),
                           ),
                         ],
                       ),
                     )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.camera_alt_rounded,
-                          color: Color(0xFF717973),
-                          size: 32,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          context.l10n.orderProofPhotoHint,
-                          style: GoogleFonts.cairo(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF717973),
-                          ),
-                        ),
-                      ],
-                    ),
+                  : _buildPhotoPlaceholder(),
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // Cash details
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -251,7 +318,7 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
                 context.l10n.orderAmountLabel,
                 style: GoogleFonts.cairo(
                   fontSize: 14,
-                  color: const Color(0xFF404943),
+                  color: AppColors.mutedText,
                 ),
               ),
               Row(
@@ -278,8 +345,8 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
             ],
           ),
           const SizedBox(height: 16),
-          
-          if (!_canComplete && _proof != null)
+
+          if (!_canComplete && _proofImage != null && _parsedWeight != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Text(
@@ -287,48 +354,106 @@ class _OrderCompletionSectionState extends State<OrderCompletionSection> {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.cairo(
                   fontSize: 12,
-                  color: const Color(0xFF991B1B),
+                  color: Colors.red.shade800,
                 ),
               ),
             ),
-          // Complete Button
+          if (_uploadError != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.red.shade200),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.error_outline,
+                        color: Colors.red.shade700, size: 18),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _uploadError!,
+                        style: GoogleFonts.cairo(
+                          fontSize: 12,
+                          color: Colors.red.shade800,
+                        ),
+                        textDirection: TextDirection.rtl,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+          // Complete button
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _capturingProof
+              onPressed: _submitting
                   ? null
-                  : (_canComplete ? _showCompletionDialog : null),
+                  : (_canComplete ? _submit : null),
               style: ElevatedButton.styleFrom(
-                backgroundColor: _canComplete
-                    ? const Color(0xFF06402B)
-                    : const Color(0xFFB0B8B4),
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                backgroundColor: _uploadError != null
+                    ? Colors.red
+                    : (_canComplete
+                        ? AppColors.primaryGreen
+                        : AppColors.mutedText.withValues(alpha: 0.4)),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 elevation: 0,
+                minimumSize: const Size(double.infinity, 56),
               ),
-              child: _capturingProof
+              child: _submitting
                   ? const SizedBox(
-                      height: 18,
-                      width: 18,
+                      height: 20,
+                      width: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         color: Colors.white,
                       ),
                     )
                   : Text(
-                      context.l10n.orderFinishButton,
+                      _uploadError != null
+                          ? 'إعادة المحاولة'
+                          : context.l10n.orderFinishButton,
                       style: GoogleFonts.cairo(
-                        fontSize: 15,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
+                        height: 1.1,
                       ),
                     ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildPhotoPlaceholder() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(
+          Icons.camera_alt_rounded,
+          color: AppColors.mutedText,
+          size: 32,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          context.l10n.orderProofPhotoHint,
+          style: GoogleFonts.cairo(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: AppColors.mutedText,
+          ),
+        ),
+      ],
     );
   }
 }

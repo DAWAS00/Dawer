@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../l10n/l10n.dart';
 import 'package:provider/provider.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../features/auth/viewmodels/login_viewmodel.dart';
 import '../viewmodels/marketplace_viewmodel.dart';
@@ -70,7 +70,7 @@ class CollectionJobsSection extends StatelessWidget {
             padding:
                 const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: const Color(0xFF14401F).withValues(alpha: 0.1),
+              color: const Color(0xFFDBEAFE),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -78,7 +78,7 @@ class CollectionJobsSection extends StatelessWidget {
               style: GoogleFonts.dmSans(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF14401F),
+                color: const Color(0xFF1E40AF),
               ),
             ),
           ),
@@ -87,15 +87,16 @@ class CollectionJobsSection extends StatelessWidget {
             padding:
                 const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
-              color: const Color(0xFFD4EBAB),
+              color: const Color(0xFFEFF6FF),
               borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFFBFDBFE)),
             ),
             child: Text(
               l10n.marketJobsFromCompanies,
               style: GoogleFonts.cairo(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF14401F),
+                color: const Color(0xFF1E40AF),
               ),
             ),
           ),
@@ -119,22 +120,44 @@ class CollectionJobsSection extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 24),
+        padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 24),
         decoration: BoxDecoration(
-          color: const Color(0xFFF8FAF8),
-          borderRadius: BorderRadius.circular(14),
+          color: const Color(0xFFF8FBFF),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFDBEAFE)),
         ),
         child: Column(
           children: [
-            const Icon(Icons.work_off_rounded,
-                size: 36, color: Color(0xFFD1D5DB)),
-            const SizedBox(height: 8),
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: const Color(0xFFDBEAFE),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Icon(
+                Icons.work_outline_rounded,
+                size: 32,
+                color: Color(0xFF1E40AF),
+              ),
+            ),
+            const SizedBox(height: 14),
             Text(
               l10n.marketNoJobs,
               style: GoogleFonts.cairo(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF374151),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              l10n.marketNoJobsBody,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cairo(
+                fontSize: 13,
                 color: const Color(0xFF9CA3AF),
+                height: 1.4,
               ),
             ),
           ],

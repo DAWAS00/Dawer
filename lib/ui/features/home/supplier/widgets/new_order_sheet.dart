@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../../../../core/config/maps_config.dart';
 import '../../../../../core/theme/app_tokens.dart';
-import '../../../../../data/models/order.dart';
+import '../../../../../data/models/order/order_enums.dart';
+import '../../../../../data/services/directions_service.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../common/map/location_picker_screen.dart';
 import 'image_picker_grid.dart';
@@ -42,6 +45,8 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
   final _priceCtrl = TextEditingController();
   double? _pickedLat;
   double? _pickedLng;
+  String? _pickedAddress;
+  bool _isGeocoding = false;
 
   static const List<(WasteType, IconData)> _wasteCategories = [
     (WasteType.paper, Icons.newspaper_rounded),
@@ -109,17 +114,33 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
         ),
       ),
     );
-    if (result != null && mounted) {
-      setState(() {
-        _pickedLat = result.$1;
-        _pickedLng = result.$2;
-      });
+    if (result == null || !mounted) return;
+
+    setState(() {
+      _pickedLat = result.$1;
+      _pickedLng = result.$2;
+      _pickedAddress = null;
+      _isGeocoding = MapsConfig.hasDirectionsKey;
+    });
+
+    if (MapsConfig.hasDirectionsKey) {
+      final address = await DirectionsService.reverseGeocode(
+        point: LatLng(result.$1, result.$2),
+        apiKey: MapsConfig.directionsKey,
+      );
+      if (mounted) {
+        setState(() {
+          _pickedAddress = address;
+          _isGeocoding = false;
+        });
+      }
     }
   }
 
   String get _locationLabel {
+    if (_pickedAddress != null) return _pickedAddress!;
     if (_pickedLat != null && _pickedLng != null) {
-      return 'خط العرض: ${_pickedLat!.toStringAsFixed(4)} | خط الطول: ${_pickedLng!.toStringAsFixed(4)}';
+      return '${_pickedLat!.toStringAsFixed(5)}, ${_pickedLng!.toStringAsFixed(5)}';
     }
     return context.l10n.newOrderCurrentAddress;
   }
@@ -131,6 +152,17 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
         SnackBar(
           content: Text('يرجى تحديد موقع الاستلام', style: GoogleFonts.cairo()),
           backgroundColor: const Color(0xFFB91C1C),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      return;
+    }
+    if (_isGeocoding) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('جارٍ تحديد العنوان، يرجى الانتظار...', style: GoogleFonts.cairo()),
+          backgroundColor: const Color(0xFFC8860A),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
@@ -391,27 +423,50 @@ class _NewOrderSheetState extends State<NewOrderSheet> {
                       ),
                     ),
                     const Spacer(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          _pickedLat != null
-                              ? '${_pickedLat!.toStringAsFixed(4)}, ${_pickedLng!.toStringAsFixed(4)}'
-                              : context.l10n.newOrderCurrentAddress,
-                          style: GoogleFonts.cairo(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: _pickedLat != null
-                                ? const Color(0xFF06402B)
-                                : dt.onSurface,
+                    if (_isGeocoding)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Color(0xFF06402B),
+                            ),
                           ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'جارٍ تحديد العنوان...',
+                            style: GoogleFonts.cairo(fontSize: 12, color: dt.onSurfaceMuted),
+                          ),
+                        ],
+                      )
+                    else
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              _locationLabel,
+                              textAlign: TextAlign.right,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.cairo(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: _pickedLat != null
+                                    ? const Color(0xFF06402B)
+                                    : dt.onSurface,
+                              ),
+                            ),
+                            Text(
+                              context.l10n.newOrderTapToSelectLocation,
+                              style: GoogleFonts.cairo(fontSize: 11, color: dt.onSurfaceMuted),
+                            ),
+                          ],
                         ),
-                        Text(
-                          context.l10n.newOrderTapToSelectLocation,
-                          style: GoogleFonts.cairo(fontSize: 11, color: dt.onSurfaceMuted),
-                        ),
-                      ],
-                    ),
+                      ),
                     const SizedBox(width: 12),
                     Container(
                       width: 36,

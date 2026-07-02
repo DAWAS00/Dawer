@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../../l10n/l10n.dart';
 
 class MarketItemPurchaseChoiceSheet extends StatelessWidget {
   final VoidCallback onSelfPickup;
@@ -13,6 +14,7 @@ class MarketItemPurchaseChoiceSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
       child: Column(
@@ -31,7 +33,7 @@ class MarketItemPurchaseChoiceSheet extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'اختر طريقة الاستلام',
+            l10n.marketPurchaseChoiceTitle,
             style: GoogleFonts.cairo(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -40,21 +42,21 @@ class MarketItemPurchaseChoiceSheet extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'يمكنك الاستلام بنفسك أو تعيين سائق للتوصيل',
+            l10n.marketPurchaseChoiceSubtitle,
             style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF717973)),
           ),
           const SizedBox(height: 16),
           _PurchaseOptionTile(
             icon: Icons.storefront_rounded,
-            title: 'استلام من السوق',
-            subtitle: 'بدون رسوم توصيل',
+            title: l10n.marketPurchaseSelfPickup,
+            subtitle: l10n.marketPurchaseNoFee,
             onTap: onSelfPickup,
           ),
           const SizedBox(height: 10),
           _PurchaseOptionTile(
             icon: Icons.local_shipping_rounded,
-            title: 'تعيين سائق للتوصيل',
-            subtitle: 'حساب رسوم التوصيل حسب المسافة والوزن',
+            title: l10n.marketPurchaseAssignRider,
+            subtitle: l10n.marketPurchaseRiderFeeNote,
             onTap: onAssignRider,
           ),
         ],

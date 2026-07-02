@@ -18,7 +18,10 @@ class LocalStore {
   static const String _currentUserCategoriesKey = 'dwaar_current_user_categories';
   static const String _ordersKey = 'dwaar_orders';
   static const String _marketKey = 'dwaar_market';
+  static const String _marketDraftKey = 'dwaar_market_draft';
+  static const String _pickupDraftKey = 'dwaar_pickup_draft';
   static const String _firstLaunchKey = 'dwaar_first_launch_done';
+  static const String _greenPointsKeyPrefix = 'dwaar_green_points_';
 
   /// Async factory. Must be awaited exactly once during app bootstrap.
   static Future<LocalStore> init() async {
@@ -36,6 +39,17 @@ class LocalStore {
 
   Future<void> clearAllUsers() async {
     await _prefs.remove(_usersKey);
+  }
+
+  // ── Green Credits ─────────────────────────────────────────────────────────
+
+  /// Reads the cached خُضَر balance for [userId]. Returns 0 if never written.
+  int readGreenPoints(String userId) =>
+      _prefs.getInt('$_greenPointsKeyPrefix$userId') ?? 0;
+
+  /// Persists [points] as the خُضَر balance for [userId].
+  Future<void> writeGreenPoints(String userId, int points) async {
+    await _prefs.setInt('$_greenPointsKeyPrefix$userId', points);
   }
 
   // ── Orders ───────────────────────────────────────────────────────────────
@@ -129,5 +143,45 @@ class LocalStore {
 
   Future<void> clearCurrentUserCategories() async {
     await _prefs.remove(_currentUserCategoriesKey);
+  }
+
+  // ── Marketplace Drafts ──────────────────────────────────────────────────
+
+  Map<String, dynamic>? readMarketDraft() {
+    final raw = _prefs.getString(_marketDraftKey);
+    if (raw == null || raw.isEmpty) return null;
+    try {
+      return Map<String, dynamic>.from(jsonDecode(raw));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> writeMarketDraft(Map<String, dynamic> draft) async {
+    await _prefs.setString(_marketDraftKey, jsonEncode(draft));
+  }
+
+  Future<void> clearMarketDraft() async {
+    await _prefs.remove(_marketDraftKey);
+  }
+
+  // ── Pickup Drafts ──────────────────────────────────────────────────────
+
+  Map<String, dynamic>? readPickupDraft() {
+    final raw = _prefs.getString(_pickupDraftKey);
+    if (raw == null || raw.isEmpty) return null;
+    try {
+      return Map<String, dynamic>.from(jsonDecode(raw));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> writePickupDraft(Map<String, dynamic> draft) async {
+    await _prefs.setString(_pickupDraftKey, jsonEncode(draft));
+  }
+
+  Future<void> clearPickupDraft() async {
+    await _prefs.remove(_pickupDraftKey);
   }
 }

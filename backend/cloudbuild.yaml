@@ -1,0 +1,164 @@
+substitutions:
+  _REGION: me-west1
+  _PROJECT: dawer-prod
+  _REGISTRY: me-west1-docker.pkg.dev/dawer-prod/dawer-images
+  _CONN_NAME: dawer-prod:me-west1:dawer-db
+  _VPC_CONNECTOR: projects/dawer-prod/locations/me-west1/connectors/dawer-connector
+
+steps:
+  # Build all 5 service images
+  - id: build-order-svc
+    name: gcr.io/cloud-builders/docker
+    args: [build, -t, $_REGISTRY/order-svc:latest, -f, dockerfiles/order-svc.Dockerfile, .]
+
+  - id: build-auth-svc
+    name: gcr.io/cloud-builders/docker
+    args: [build, -t, $_REGISTRY/auth-svc:latest, -f, dockerfiles/auth-svc.Dockerfile, .]
+
+  - id: build-reward-svc
+    name: gcr.io/cloud-builders/docker
+    args: [build, -t, $_REGISTRY/reward-svc:latest, -f, dockerfiles/reward-svc.Dockerfile, .]
+
+  - id: build-geo-svc
+    name: gcr.io/cloud-builders/docker
+    args: [build, -t, $_REGISTRY/geo-svc:latest, -f, dockerfiles/geo-svc.Dockerfile, .]
+
+  - id: build-notif-svc
+    name: gcr.io/cloud-builders/docker
+    args: [build, -t, $_REGISTRY/notif-svc:latest, -f, dockerfiles/notif-svc.Dockerfile, .]
+
+  # Push images
+  - id: push-images
+    name: gcr.io/cloud-builders/docker
+    waitFor: [build-order-svc, build-auth-svc, build-reward-svc, build-geo-svc, build-notif-svc]
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        for SVC in order-svc auth-svc reward-svc geo-svc notif-svc; do
+          docker push $_REGISTRY/$$SVC:latest
+        done
+
+  # Deploy all services in parallel
+  - id: deploy-order-svc
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    waitFor: [push-images]
+    args:
+      - gcloud
+      - run
+      - deploy
+      - order-svc
+      - --image=$_REGISTRY/order-svc:latest
+      - --region=$_REGION
+      - --project=$_PROJECT
+      - --service-account=order-svc@$_PROJECT.iam.gserviceaccount.com
+      - --vpc-connector=$_VPC_CONNECTOR
+      - --vpc-egress=private-ranges-only
+      - --min-instances=1
+      - --max-instances=10
+      - --memory=512Mi
+      - --cpu=1
+      - --timeout=30
+      - --no-allow-unauthenticated
+      - --set-env-vars=GCP_PROJECT=$_PROJECT,CLOUD_SQL_CONNECTION_NAME=$_CONN_NAME,DB_NAME=dawer,DB_USER=postgres
+      - --set-secrets=DB_PASSWORD=cloudsql-db-password:latest
+
+  - id: deploy-auth-svc
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    waitFor: [push-images]
+    args:
+      - gcloud
+      - run
+      - deploy
+      - auth-svc
+      - --image=$_REGISTRY/auth-svc:latest
+      - --region=$_REGION
+      - --project=$_PROJECT
+      - --service-account=auth-svc@$_PROJECT.iam.gserviceaccount.com
+      - --vpc-connector=$_VPC_CONNECTOR
+      - --vpc-egress=private-ranges-only
+      - --min-instances=0
+      - --max-instances=5
+      - --memory=512Mi
+      - --cpu=1
+      - --timeout=30
+      - --no-allow-unauthenticated
+      - --set-env-vars=GCP_PROJECT=$_PROJECT,CLOUD_SQL_CONNECTION_NAME=$_CONN_NAME,DB_NAME=dawer,DB_USER=postgres
+      - --set-secrets=DB_PASSWORD=cloudsql-db-password:latest
+
+  - id: deploy-reward-svc
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    waitFor: [push-images]
+    args:
+      - gcloud
+      - run
+      - deploy
+      - reward-svc
+      - --image=$_REGISTRY/reward-svc:latest
+      - --region=$_REGION
+      - --project=$_PROJECT
+      - --service-account=reward-svc@$_PROJECT.iam.gserviceaccount.com
+      - --min-instances=0
+      - --max-instances=3
+      - --memory=256Mi
+      - --cpu=1
+      - --timeout=10
+      - --no-allow-unauthenticated
+      - --set-env-vars=GCP_PROJECT=$_PROJECT
+
+  - id: deploy-geo-svc
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    waitFor: [push-images]
+    args:
+      - gcloud
+      - run
+      - deploy
+      - geo-svc
+      - --image=$_REGISTRY/geo-svc:latest
+      - --region=$_REGION
+      - --project=$_PROJECT
+      - --service-account=geo-svc@$_PROJECT.iam.gserviceaccount.com
+      - --vpc-connector=$_VPC_CONNECTOR
+      - --vpc-egress=private-ranges-only
+      - --min-instances=0
+      - --max-instances=5
+      - --memory=256Mi
+      - --cpu=1
+      - --timeout=10
+      - --no-allow-unauthenticated
+      - --set-env-vars=GCP_PROJECT=$_PROJECT,CLOUD_SQL_CONNECTION_NAME=$_CONN_NAME,DB_NAME=dawer,DB_USER=postgres
+      - --set-secrets=DB_PASSWORD=cloudsql-db-password:latest
+
+  - id: deploy-notif-svc
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    waitFor: [push-images]
+    args:
+      - gcloud
+      - run
+      - deploy
+      - notif-svc
+      - --image=$_REGISTRY/notif-svc:latest
+      - --region=$_REGION
+      - --project=$_PROJECT
+      - --service-account=notif-svc@$_PROJECT.iam.gserviceaccount.com
+      - --vpc-connector=$_VPC_CONNECTOR
+      - --vpc-egress=private-ranges-only
+      - --min-instances=0
+      - --max-instances=3
+      - --memory=512Mi
+      - --cpu=1
+      - --timeout=60
+      - --allow-unauthenticated
+      - --set-env-vars=GCP_PROJECT=$_PROJECT,CLOUD_SQL_CONNECTION_NAME=$_CONN_NAME,DB_NAME=dawer,DB_USER=postgres
+      - --set-secrets=DB_PASSWORD=cloudsql-db-password:latest
+
+images:
+  - $_REGISTRY/order-svc:latest
+  - $_REGISTRY/auth-svc:latest
+  - $_REGISTRY/reward-svc:latest
+  - $_REGISTRY/geo-svc:latest
+  - $_REGISTRY/notif-svc:latest
+
+options:
+  machineType: E2_HIGHCPU_8
+  logging: CLOUD_LOGGING_ONLY

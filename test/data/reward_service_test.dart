@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:dwaar/data/models/order.dart' show WasteType;
+import 'package:dwaar/data/models/order/order.dart' show WasteType;
 import 'package:dwaar/data/services/reward_service.dart';
 
 void main() {

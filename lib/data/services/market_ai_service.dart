@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../../core/config/ai_config.dart';
-import '../models/order.dart';
+import '../models/order/order.dart';
 
 // ── Contract ──────────────────────────────────────────────────────────────────
 
@@ -150,10 +151,20 @@ class MarketAiService implements IMarketAiService {
     for (var attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         final response = await _model.generateContent(content);
-        final text = response.text;
+        var text = response.text;
         if (text == null || text.isEmpty) {
           throw const FormatException('Empty response from Gemini');
         }
+
+        // Handle potential markdown wrapper
+        if (text.contains('```')) {
+          final lines = text.split('\n');
+          text = lines
+              .where((l) => !l.trim().startsWith('```'))
+              .join('\n')
+              .trim();
+        }
+
         final decoded = jsonDecode(text);
         if (decoded is! Map<String, dynamic>) {
           throw const FormatException('Gemini response was not a JSON object');
@@ -161,6 +172,7 @@ class MarketAiService implements IMarketAiService {
         return MarketAiResult.fromJson(decoded);
       } on Exception catch (e) {
         lastError = e;
+        debugPrint('[MarketAiService] Attempt $attempt failed: $e');
         if (attempt < maxAttempts) {
           await Future.delayed(Duration(seconds: attempt));
         }

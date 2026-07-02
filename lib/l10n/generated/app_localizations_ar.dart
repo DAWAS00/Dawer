@@ -9,6 +9,40 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get chatbotTitle => 'مساعد دوّر الذكي';
+
+  @override
+  String get chatbotInputHint => 'اكتب سؤالك أو أرسل صورة...';
+
+  @override
+  String get chatbotThinking => 'داوة تفكر...';
+
+  @override
+  String get chatbotScanningImage => 'جاري تحليل الصورة...';
+
+  @override
+  String get chatbotAnalyzingOil =>
+      'جاري تحليل جودة الزيت بالذكاء الاصطناعي...';
+
+  @override
+  String get chatbotTakePhoto => 'التقاط صورة بالكاميرا';
+
+  @override
+  String get chatbotPickFromGallery => 'اختيار من المعرض';
+
+  @override
+  String get chatbotImageScanResult => 'نتيجة تحليل الصورة';
+
+  @override
+  String get chatbotOpenAssistant => 'افتح مساعد دوّر';
+
+  @override
+  String get chatbotOnlineNow => 'متصل الآن • يرد فوراً';
+
+  @override
+  String get chatbotSendImageTooltip => 'إرسال صورة للتحليل';
+
+  @override
   String get appTitle => 'دوّر';
 
   @override
@@ -135,6 +169,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get loginSignUpNow => 'سجّل الآن';
+
+  @override
+  String get registerAsDriver => 'سجل كسائق';
+
+  @override
+  String get registerAsIndividual => 'سجل كمورد فردي';
+
+  @override
+  String get registerAsStore => 'سجل كمتجر / شركة';
+
+  @override
+  String get registerAsRecyclingCo => 'سجل كشركة إعادة تدوير';
 
   @override
   String get loginCountrySearch => 'بحث';
@@ -295,6 +341,66 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get loginPasswordHint => 'أدخل كلمة المرور';
+
+  @override
+  String get roleDriverTitle => 'سائق';
+
+  @override
+  String get roleDriverSubtitle => 'قم بجمع ونقل النفايات لكسب المال';
+
+  @override
+  String get roleSupplierTitle => 'مورد';
+
+  @override
+  String get roleSupplierSubtitle => 'قم ببيع نفاياتك وساهم في حماية البيئة';
+
+  @override
+  String get roleRecyclingCoTitle => 'شركة إعادة تدوير';
+
+  @override
+  String get roleRecyclingCoSubtitle => 'استقبل المواد مباشرة في منشأتك';
+
+  @override
+  String get loginPhoneHelp =>
+      'سنرسل لك رمزاً قصيراً لهذا الرقم للتحقق من هويتك';
+
+  @override
+  String get loginPhoneHint => '7X XXX XXXX';
+
+  @override
+  String get loginContinueButton => 'متابعة';
+
+  @override
+  String get loginPhoneEmptyError => 'الرجاء إدخال رقم الهاتف';
+
+  @override
+  String get loginNewNumberHint => 'رقم جديد؟ سيتم إنشاء حسابك بعد التحقق';
+
+  @override
+  String get otpTitle => 'رمز التحقق';
+
+  @override
+  String otpSubtitle(String phone) {
+    return 'أدخل الرمز المكون من 6 أرقام المرسل إلى $phone';
+  }
+
+  @override
+  String get otpVerifyButton => 'تحقق';
+
+  @override
+  String get otpResendButton => 'إعادة إرسال الرمز';
+
+  @override
+  String get otpResentMessage => 'تم إرسال الرمز مرة أخرى';
+
+  @override
+  String get otpErrorIncomplete => 'الرجاء إدخال الرمز كاملاً';
+
+  @override
+  String get otpErrorInvalid => 'الرمز غير صحيح، حاول مرة أخرى';
+
+  @override
+  String get otpSimulatedHint => 'سيتم إرسال رمز التحقق إلى رقمك عبر SMS';
 
   @override
   String get signupRoleDriver => 'تسجيل سائق';
@@ -472,10 +578,77 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverCollectionCommitments => 'التزامات التجميع';
 
   @override
+  String get driverToggleOnline => 'متاح';
+
+  @override
+  String get driverToggleOffline => 'غير متاح';
+
+  @override
+  String get driverStatusOnline => 'متصل الآن';
+
+  @override
+  String get driverStatusOffline => 'غير متصل';
+
+  @override
+  String get driverActiveMission => 'مهمة نشطة';
+
+  @override
+  String get driverHeadingToPickup => 'متجه للاستلام';
+
+  @override
+  String get driverHeadingToDelivery => 'متجه للتسليم';
+
+  @override
+  String get driverOrderAccepted => 'تم قبول الطلب';
+
+  @override
+  String get driverNewOrderBadge => 'طلب جديد';
+
+  @override
+  String get driverActivateNow => 'تفعيل الآن';
+
+  @override
+  String get driverNoOrdersNotifySubtitle =>
+      'ستصلك إشعارات عند توفر طلبات جديدة';
+
+  @override
+  String get driverOrdersTabAll => 'الكل';
+
+  @override
+  String get driverOrdersTabActive => 'النشطة';
+
+  @override
+  String get driverOrdersTabCompleted => 'المكتملة';
+
+  @override
+  String get driverPickupLabel => 'الاستلام';
+
+  @override
+  String get driverDeliveryLabel => 'التسليم';
+
+  @override
+  String get driverViewPickupDetails => 'عرض تفاصيل الاستلام';
+
+  @override
+  String get driverViewDeliveryDetails => 'عرض تفاصيل التسليم';
+
+  @override
+  String get driverRewardLabel => 'العائد';
+
+  @override
+  String get driverDistanceLabel => 'المسافة';
+
+  @override
+  String get driverTimeLabel => 'الوقت';
+
+  @override
+  String get driverWasteTypeLabel => 'نوع المواد';
+
+  @override
   String get withdrawListing => 'سحب الإعلان';
 
   @override
-  String get withdrawListingConfirm => 'هل تريد سحب هذا الإعلان من السوق؟';
+  String get withdrawListingConfirm => 'هل يريد سحب هذا الإعلان من السوق؟';
 
   @override
   String get yesWithdraw => 'نعم، سحب';
@@ -1074,6 +1247,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get marketNoJobs => 'لا توجد وظائف تجميع حالياً';
 
   @override
+  String get marketCategoryAll => 'الكل';
+
+  @override
+  String get marketNoOffersBody => 'سيظهر هنا ما يتم نشره من مواد للبيع';
+
+  @override
+  String get marketNoJobsBody => 'ستظهر هنا وظائف التجميع المتاحة';
+
+  @override
+  String get marketSuggestedByLicense => 'اقتراحات بناءً على رخصتك';
+
+  @override
+  String get marketShowAllOrders => 'عرض كل الطلبات';
+
+  @override
   String get collectionJobBadge => 'وظيفة تجميع';
 
   @override
@@ -1419,6 +1607,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get newOrderSubmitButton => 'إرسال الطلب';
+
+  @override
+  String get chatTitle => 'المحادثة';
+
+  @override
+  String get chatDevBanner => 'تنبيه: وضع التطوير — الرسائل محلية حالياً';
+
+  @override
+  String get chatEmpty => 'لا توجد رسائل بعد';
+
+  @override
+  String get chatInputHint => 'اكتب رسالة...';
 
   @override
   String get openInGoogleMaps => 'فتح في خرائط جوجل';
@@ -1839,4 +2039,1215 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get signupVehicleColorHint => 'مثال: أبيض';
+
+  @override
+  String get notificationsTitle => 'الإشعارات';
+
+  @override
+  String get notificationsEmpty => 'لا توجد إشعارات بعد';
+
+  @override
+  String get notificationsMarkAllRead => 'تحديد الكل كمقروء';
+
+  @override
+  String get orderSearchingDriver => 'جارٍ البحث عن أقرب سائق متاح...';
+
+  @override
+  String get orderSearchingDriverRetry => 'إعادة البحث عن سائق';
+
+  @override
+  String get vehicleScanTitle => 'مسح استمارة المركبة';
+
+  @override
+  String get vehicleScanOptional => 'اختياري';
+
+  @override
+  String get vehicleScanPrompt => 'امسح الاستمارة لملء البيانات تلقائياً';
+
+  @override
+  String get vehicleScanTypeHint => 'يُحدَّد نوع المركبة من الوثيقة';
+
+  @override
+  String get vehicleScanStepType => 'فحص نوع المركبة...';
+
+  @override
+  String get vehicleScanStepPlate => 'قراءة رقم اللوحة...';
+
+  @override
+  String get vehicleScanStepModel => 'تحليل موديل السيارة...';
+
+  @override
+  String get vehicleScanStepExpiry => 'التحقق من تاريخ الانتهاء...';
+
+  @override
+  String get vehicleScanPulseType => 'نوع المركبة ✓';
+
+  @override
+  String get vehicleScanPulsePlate => 'رقم اللوحة...';
+
+  @override
+  String get vehicleScanPulseModel => 'الموديل ✓';
+
+  @override
+  String get vehicleScanPulseExpiry => 'تاريخ الانتهاء...';
+
+  @override
+  String get vehicleScanPulseColor => 'اللون ✓';
+
+  @override
+  String get vehicleScanPulseValid => 'الاستمارة سارية';
+
+  @override
+  String get vehicleScanReadSuccess => 'تم قراءة الوثيقة بنجاح';
+
+  @override
+  String get vehicleScanReviewPrompt => 'راجع البيانات وأكّد';
+
+  @override
+  String get vehicleScanRescanTooltip => 'إعادة المسح';
+
+  @override
+  String get vehicleScanConfirmAutoFill => 'تأكيد وملء البيانات تلقائياً';
+
+  @override
+  String get vehicleScanExtractedData => 'البيانات المستخرجة';
+
+  @override
+  String get vehicleScanRowModel => 'الموديل';
+
+  @override
+  String get vehicleScanRowColor => 'اللون';
+
+  @override
+  String get vehicleScanRowPlate => 'رقم اللوحة';
+
+  @override
+  String get vehicleScanRowExpiry => 'تاريخ انتهاء الاستمارة';
+
+  @override
+  String get vehicleScanChemicalPermit => 'تصريح نقل مواد كيميائية';
+
+  @override
+  String get vehicleScanChemicalPermitHint =>
+      'سيتم تصفية الطلبات تلقائياً بناءً على نوع مركبتك';
+
+  @override
+  String get vehicleScanAccuracy => 'دقة';
+
+  @override
+  String get vehicleScanReadFailed => 'تعذّر قراءة الوثيقة';
+
+  @override
+  String get licenseScanUploadPrompt => 'انقر لرفع الوثيقة';
+
+  @override
+  String get licenseScanSourcesHint => 'كاميرا أو معرض الصور';
+
+  @override
+  String get licenseScanSuggestedCategories => 'فئات مقترحة في السوق';
+
+  @override
+  String get signupLocationPermissionDenied =>
+      'يرجى السماح بالوصول للموقع من إعدادات الجهاز';
+
+  @override
+  String signupLocationError(String error) {
+    return 'تعذّر تحديد الموقع: $error';
+  }
+
+  @override
+  String get signupLocating => 'جاري تحديد موقعك...';
+
+  @override
+  String get signupSkip => 'تخطي';
+
+  @override
+  String get signupIdentityLabel => 'هويتك';
+
+  @override
+  String get signupRoleDetailsLabel => 'تفاصيل الدور';
+
+  @override
+  String get signupVehicleInfoTitle => 'معلومات المركبة';
+
+  @override
+  String get signupYourWasteTypes => 'أنواع النفايات لديك';
+
+  @override
+  String get signupAcceptedWasteTypes => 'أنواع النفايات المقبولة';
+
+  @override
+  String get signupSelectOneOrMore => 'اختر واحداً أو أكثر';
+
+  @override
+  String get signupSaveAndComplete => 'حفظ وإكمال';
+
+  @override
+  String get signupSkipCompleteLater => 'تخطي الآن، سأكمل لاحقاً';
+
+  @override
+  String get signupUpdateAnytime =>
+      'يمكنك تحديث هذه البيانات في أي وقت من إعدادات حسابك.';
+
+  @override
+  String get signupRoleDriverHeading => 'معلومات مركبتك';
+
+  @override
+  String get signupRoleSupplierHeading => 'ما الذي تودّ تدويره؟';
+
+  @override
+  String get signupRoleRecyclingHeading => 'ما الذي تقبله منشأتك؟';
+
+  @override
+  String get signupRoleDriverBody =>
+      'أضف لوحة مركبتك لبدء استلام الطلبات. يمكنك مسح الاستمارة تلقائياً.';
+
+  @override
+  String get signupRoleSupplierBody =>
+      'حدد أنواع النفايات لديك لتلقي العروض المناسبة لك مباشرةً.';
+
+  @override
+  String get signupRoleRecyclingBody =>
+      'حدد ما تقبله منشأتك من مواد لمساعدة الموردين على إيجادك.';
+
+  @override
+  String get signupPlateNumberLabel => 'رقم لوحة المركبة';
+
+  @override
+  String get signupPlateNumberHint => 'مثال: 12 أ ب ج';
+
+  @override
+  String get signupWelcomeTo => 'أهلاً بك في دوّر!';
+
+  @override
+  String get signupCreateIdentityHeading => 'لنبدأ بإنشاء هويتك الرقمية';
+
+  @override
+  String get signupProfilePhotoLabel => 'الصورة الشخصية';
+
+  @override
+  String get signupAccountTypePrompt => 'ما نوع حسابك؟';
+
+  @override
+  String get signupPrivacyNotice =>
+      'سيتم استخدام بياناتك لإنشاء حسابك فقط، ولن تُشارك مع أي طرف ثالث.';
+
+  @override
+  String get signupSmsVerification => 'سنتحقق من رقمك عبر رسالة نصية';
+
+  @override
+  String get signupRoleIndividualLabel => 'فرد';
+
+  @override
+  String get signupRoleStoreLabel => 'متجر / مطعم';
+
+  @override
+  String recyclingIncomingShipmentsCount(int count) {
+    return 'الشحنات الواردة ($count)';
+  }
+
+  @override
+  String recyclingActiveJobsCount(int count) {
+    return 'الوظائف النشطة ($count)';
+  }
+
+  @override
+  String get recyclingTodayOperations => 'عمليات اليوم';
+
+  @override
+  String get recyclingNoActiveDrivers => 'لا يوجد سائقون نشطون الآن';
+
+  @override
+  String get recyclingReconnecting => 'إعادة الاتصال…';
+
+  @override
+  String get recyclingFacility => 'منشأة تدوير';
+
+  @override
+  String get recyclingReadyForReceipt => 'مستعد للاستلام';
+
+  @override
+  String get recyclingTotalWeightKg => 'إجمالي الوزن (كغ)';
+
+  @override
+  String get recyclingDriversEnRoute => 'سائقين بالطريق';
+
+  @override
+  String get recyclingResponses => 'استجابات';
+
+  @override
+  String get recyclingShowDetails => 'عرض التفاصيل';
+
+  @override
+  String recyclingCommittedCount(int count) {
+    return 'الملتزمون ($count)';
+  }
+
+  @override
+  String get recyclingFilterHasAcceptors => 'لديه ملتزمون';
+
+  @override
+  String get recyclingFilterNoAcceptors => 'لا يوجد ملتزمون';
+
+  @override
+  String get recyclingFilterFlatFee => 'مبلغ ثابت';
+
+  @override
+  String get recyclingFilterPerKg => 'بالكيلو';
+
+  @override
+  String get recyclingWithdrawAdTitle => 'سحب الإعلان';
+
+  @override
+  String get recyclingWithdrawAdBody =>
+      'هل أنت متأكد من سحب هذا الإعلان من السوق؟';
+
+  @override
+  String get recyclingWithdrawAdConfirm => 'نعم، اسحب الإعلان';
+
+  @override
+  String recyclingMaxListingsReached(int count) {
+    return 'وصلت للحد الأقصى ($count إعلانات نشطة)';
+  }
+
+  @override
+  String get collectionJobPaymentModelLabel => 'نموذج الدفع *';
+
+  @override
+  String collectionJobPriceLabel(String unit) {
+    return 'السعر * ($unit)';
+  }
+
+  @override
+  String get collectionJobPricePerKgHint => 'مثال: 2.5 د.أ لكل كغ';
+
+  @override
+  String get collectionJobPriceFlatHint => 'مثال: 25 د.أ للرحلة';
+
+  @override
+  String get collectionJobMinQtyLabel => 'الحد الأدنى للكمية (كغ) — اختياري';
+
+  @override
+  String get collectionJobMinQtyHint => 'مثال: 10';
+
+  @override
+  String get collectionJobAreaHint => 'مثال: الرابية، عمّان';
+
+  @override
+  String get collectionJobDescHint =>
+      'اشرح ما تحتاجه، المواصفات المطلوبة، وسبب الطلب...';
+
+  @override
+  String get collectionJobFlatFeeLabel => 'أجر ثابت';
+
+  @override
+  String get collectionJobPerKgLabel => 'لكل كيلوغرام';
+
+  @override
+  String get supplierMyOrdersCurrent => 'طلباتي الحالية';
+
+  @override
+  String get supplierNoActiveOrders => 'لا توجد طلبات نشطة';
+
+  @override
+  String get supplierStartRecyclingCta =>
+      'ابدأ بإضافة أول طلب إعادة تدوير الآن!';
+
+  @override
+  String get supplierStartMarketCta => 'أضف أول عرض للسوق الآن!';
+
+  @override
+  String supplierWelcome(String name) {
+    return 'مرحباً، $name';
+  }
+
+  @override
+  String get supplierAccountIndividual => 'حساب أفراد';
+
+  @override
+  String get supplierAccountBusiness => 'مورد تجاري';
+
+  @override
+  String get supplierMyPoints => 'نقاطي';
+
+  @override
+  String get supplierTotalWeight => 'إجمالي الوزن';
+
+  @override
+  String get supplierWeightZero => '0 كغ';
+
+  @override
+  String get supplierTreesSaved => 'أشجار أُنقذت';
+
+  @override
+  String get supplierOrderPendingDriver => 'بانتظار قبول سائق للطلب';
+
+  @override
+  String get supplierOrderAcceptedOnWay => 'تم قبول طلبك، السائق في طريقه إليك';
+
+  @override
+  String get supplierOrderDriverArrivedPickup => 'السائق وصل لموقع الاستلام';
+
+  @override
+  String get supplierOrderInTransitToDest => 'طلبك في الطريق إلى وجهته';
+
+  @override
+  String get supplierOrderDriverArrivedDropoff => 'السائق وصل لموقع التسليم';
+
+  @override
+  String get supplierOrderDeliveredSuccess => 'تم تسليم الطلب بنجاح';
+
+  @override
+  String get supplierOrderCancelledDone => 'تم إلغاء الطلب';
+
+  @override
+  String get driverDeliveryHubs => 'مراكز التسليم المتاحة';
+
+  @override
+  String get driverActiveOrderTitle => 'الطلب النشط الحالي';
+
+  @override
+  String get driverHubsUnavailable =>
+      'مراكز التسليم غير متاحة — تحقق من الاتصال';
+
+  @override
+  String get driverStatusReady => 'جاهز';
+
+  @override
+  String get driverStatusCollecting => 'يجمع';
+
+  @override
+  String get driverUnavailableBottomTitle => 'غير متاح للعمل';
+
+  @override
+  String get driverUnavailableBottomSubtitle =>
+      'فعّل وضع التوفر لاستقبال الطلبات الجديدة';
+
+  @override
+  String get driverEnableNow => 'تفعيل الآن';
+
+  @override
+  String get driverNoOrdersAvailable => 'لا توجد طلبات متاحة حالياً';
+
+  @override
+  String get driverNewOrderNotifications =>
+      'ستصلك إشعارات عند توفر طلبات جديدة';
+
+  @override
+  String get profileAvatarFallback => 'س';
+
+  @override
+  String get profileEmailSupportSubject => 'مساعدة سائق';
+
+  @override
+  String get profileEnterManually => 'أو أدخل يدوياً';
+
+  @override
+  String get profilePlateLabel => 'رقم اللوحة';
+
+  @override
+  String profileVehicleTypeLabel(String type) {
+    return 'نوع المركبة: $type';
+  }
+
+  @override
+  String get driverOrderCardVehicleFallback => 'مركبة';
+
+  @override
+  String get currencyJodShort => 'د.أ';
+
+  @override
+  String get monthJanuary => 'يناير';
+
+  @override
+  String get monthFebruary => 'فبراير';
+
+  @override
+  String get monthMarch => 'مارس';
+
+  @override
+  String get monthApril => 'أبريل';
+
+  @override
+  String get monthMay => 'مايو';
+
+  @override
+  String get monthJune => 'يونيو';
+
+  @override
+  String get monthJuly => 'يوليو';
+
+  @override
+  String get monthAugust => 'أغسطس';
+
+  @override
+  String get monthSeptember => 'سبتمبر';
+
+  @override
+  String get monthOctober => 'أكتوبر';
+
+  @override
+  String get monthNovember => 'نوفمبر';
+
+  @override
+  String get monthDecember => 'ديسمبر';
+
+  @override
+  String get wizardStep1Title => 'ماذا تريد أن تبيع؟';
+
+  @override
+  String get wizardStep1Subtitle => 'أضف تفاصيل المواد التي تريد بيعها';
+
+  @override
+  String get wizardMaterialPhotosOptional => 'صور المواد — اختياري';
+
+  @override
+  String get wizardMaterialTypeRequired => 'نوع المواد *';
+
+  @override
+  String get wizardAiAnalyzing => 'يقوم الفريق الذكي بتحليل طلبك...';
+
+  @override
+  String wizardAiAnalysisFailed(String error) {
+    return 'فشل في تحليل الصورة: $error';
+  }
+
+  @override
+  String get wizardStep2Title => 'تفاصيل المادة';
+
+  @override
+  String get wizardStep2Subtitle => 'حدد الكمية والحالة والسعر المطلوب';
+
+  @override
+  String get wizardMaterialCondition => 'حالة المواد *';
+
+  @override
+  String get wizardQuantitySize => 'حجم الكمية *';
+
+  @override
+  String get wizardRequestedPrice => 'السعر المطلوب (د.أ) — اختياري';
+
+  @override
+  String get wizardStep3Title => 'آخر خطوة!';
+
+  @override
+  String get wizardStep3Subtitle => 'حدد موقع الاستلام وراجع الإعلان قبل النشر';
+
+  @override
+  String get wizardPickupAddress => 'عنوان الاستلام *';
+
+  @override
+  String get wizardTapToSetLocation => 'اضغط لتحديد الموقع على الخريطة';
+
+  @override
+  String get wizardNotesOptional => 'ملاحظات — اختياري';
+
+  @override
+  String get wizardNotesHint => 'مثال: المواد موجودة خلف المستودع...';
+
+  @override
+  String get wizardListingSummary => 'ملخص الإعلان والتأثير البيئي';
+
+  @override
+  String get wizardChangeLocation => 'تغيير الموقع';
+
+  @override
+  String get wizardUseCurrentLocation => 'استخدام موقعي الحالي';
+
+  @override
+  String get wizardSummaryMaterialType => 'نوع المواد';
+
+  @override
+  String get wizardSummaryCondition => 'الحالة';
+
+  @override
+  String get wizardSummaryQuantity => 'الكمية';
+
+  @override
+  String get wizardSummaryPrice => 'السعر';
+
+  @override
+  String get wizardPriceUndefined => 'غير محدد';
+
+  @override
+  String get wizardCo2Savings => 'توفير CO2';
+
+  @override
+  String get wizardWaterSavings => 'توفير مياه';
+
+  @override
+  String wizardWaterLiters(String liters) {
+    return '$liters لتر';
+  }
+
+  @override
+  String get wizardLocationDefined => 'موقع محدد';
+
+  @override
+  String get wizardPublishedToMarket => 'تم النشر في السوق بنجاح! ✓';
+
+  @override
+  String get wizardPickupRequestSent => 'تم إرسال طلب الاستلام بنجاح! ✓';
+
+  @override
+  String get wizardPickupRequestFailed => 'فشل في إرسال طلب الاستلام';
+
+  @override
+  String get wizardNewPickupTitle => 'طلب استلام جديد';
+
+  @override
+  String get wizardPublishToMarket => 'نشر في السوق';
+
+  @override
+  String get driverActiveOrderViewPickupDetails => 'عرض تفاصيل الاستلام';
+
+  @override
+  String get driverActiveOrderViewDeliveryDetails => 'عرض تفاصيل التسليم';
+
+  @override
+  String get driverActiveOrderStepAccepted => 'مقبول';
+
+  @override
+  String get driverActiveOrderStepArrivedPickup => 'وصلت\nللاستلام';
+
+  @override
+  String get driverActiveOrderStepInTransit => 'في\nالطريق';
+
+  @override
+  String get driverActiveOrderStepDelivered => 'تم\nالتسليم';
+
+  @override
+  String driverActiveOrderEtaMinutes(String minutes) {
+    return '$minutes د';
+  }
+
+  @override
+  String get proofCancelTitle => 'إلغاء توثيق الاستلام؟';
+
+  @override
+  String get proofCancelBody => 'ستُفقد الصورة والوزن المُدخل.';
+
+  @override
+  String get proofBack => 'تراجع';
+
+  @override
+  String get proofTitle => 'توثيق الاستلام';
+
+  @override
+  String get proofShipmentWeight => 'وزن الشحنة (كغ)';
+
+  @override
+  String get proofChangePhoto => 'تغيير الصورة';
+
+  @override
+  String get proofPhotoCaptured => 'صورة مُلتقطة ✓';
+
+  @override
+  String get proofCapturePhoto => 'التقط صورة الشحنة';
+
+  @override
+  String get proofRetry => 'إعادة المحاولة';
+
+  @override
+  String get proofConfirmPickup => 'تأكيد الاستلام';
+
+  @override
+  String get proofSuccessTitle => 'تم توثيق الاستلام';
+
+  @override
+  String get proofSuccessBody => 'سيتم إشعار المورّد الآن';
+
+  @override
+  String get driverErrorToggleOfflineWithActive =>
+      'لا يمكنك تغيير حالتك إلى غير متاح أثناء وجود طلب نشط.';
+
+  @override
+  String get driverErrorAcceptWhileOffline =>
+      'أنت غير متاح حالياً. لا يمكنك قبول الطلب.';
+
+  @override
+  String get driverErrorLocationUnavailable =>
+      'تعذّر تحديد موقعك. تحقق من صلاحية الموقع.';
+
+  @override
+  String driverErrorTooFarPickup(int meters) {
+    return 'أنت بعيد جداً عن موقع الاستلام ($meters م). يجب أن تكون ضمن 200 م.';
+  }
+
+  @override
+  String driverErrorTooFarDelivery(int meters) {
+    return 'أنت بعيد جداً عن موقع التسليم ($meters م). يجب أن تكون ضمن 200 م.';
+  }
+
+  @override
+  String get driverErrorServerGeofence =>
+      'التحقق من الموقع فشل على الخادم. يجب أن تكون ضمن 200 م.';
+
+  @override
+  String get earningsFilterMonth => 'شهر';
+
+  @override
+  String get earningsFilterWeek => 'أسبوع';
+
+  @override
+  String get earningsFilterDay => 'يوم';
+
+  @override
+  String get earningsTitle => 'الأرباح';
+
+  @override
+  String get earningsNetTotal => 'إجمالي الأرباح الصافية';
+
+  @override
+  String get earningsIncreaseVsPrev => 'زيادة عن الفترة السابقة';
+
+  @override
+  String get earningsFinancialDetails => 'تفاصيل العوائد المالية';
+
+  @override
+  String get earningsDistanceFees => 'رسوم المسافات';
+
+  @override
+  String get earningsNetTotalLabel => 'المجموع الصافي';
+
+  @override
+  String get earningsBestDay => 'يومك الأفضل';
+
+  @override
+  String get weekdayMonday => 'الإثنين';
+
+  @override
+  String get weekdayTuesday => 'الثلاثاء';
+
+  @override
+  String get weekdayWednesday => 'الأربعاء';
+
+  @override
+  String get weekdayThursday => 'الخميس';
+
+  @override
+  String get weekdayFriday => 'الجمعة';
+
+  @override
+  String get weekdaySaturday => 'السبت';
+
+  @override
+  String get weekdaySunday => 'الأحد';
+
+  @override
+  String get earningsMyEarnings => 'أرباحي';
+
+  @override
+  String get earningsRefresh => 'تحديث البيانات';
+
+  @override
+  String get earningsTrend => 'اتجاه الأرباح';
+
+  @override
+  String get earningsRecentActivity => 'النشاط الأخير';
+
+  @override
+  String get earningsDownloadReport => 'تحميل تقرير الأداء';
+
+  @override
+  String get earningsTotalEarnings => 'إجمالي الأرباح';
+
+  @override
+  String get earningsTripsCount => 'عدد الرحلات';
+
+  @override
+  String get earningsAverage => 'متوسط الأرباح';
+
+  @override
+  String get chatDateToday => 'اليوم';
+
+  @override
+  String get chatDateYesterday => 'أمس';
+
+  @override
+  String get chatTyping => 'يكتب الآن';
+
+  @override
+  String get unitKg => 'كغ';
+
+  @override
+  String get unitKm => 'كم';
+
+  @override
+  String get orderArrivalAtPickup => 'وصلت إلى موقع الاستلام؟';
+
+  @override
+  String get orderArrivalGeoNote => 'سيتم التحقق من موقعك (ضمن 200 م)';
+
+  @override
+  String get orderArrivalHerePickup => 'أنا هنا — الاستلام';
+
+  @override
+  String get orderArrivalAtDropoff => 'وصلت إلى موقع التسليم؟';
+
+  @override
+  String get orderArrivalHereDropoff => 'أنا هنا — التسليم';
+
+  @override
+  String get orderArrivalAwaitingSupplier => 'في انتظار تأكيد المورد';
+
+  @override
+  String get orderArrivalAwaitingSubtitle =>
+      'المورد لديه 5 دقائق للرد — سيُعوَّض السائق تلقائياً عند انتهاء المهلة';
+
+  @override
+  String get orderArrivalDriverArrived => 'السائق وصل!';
+
+  @override
+  String get orderArrivalDriverAtLocation =>
+      'السائق في موقعك الآن. هل أنت متاح لتسليم المواد؟';
+
+  @override
+  String get orderArrivalIAmAvailable => 'أنا متاح';
+
+  @override
+  String get acceptJobTitle => 'كيف تريد المتابعة؟';
+
+  @override
+  String get acceptJobSubtitle =>
+      'اختر طريقة التوصيل ونوع المعاملة لقبول الوظيفة';
+
+  @override
+  String get acceptJobDeliveryFeeCompany => 'رسوم التوصيل على الشركة';
+
+  @override
+  String get acceptJobDeliveryFeeYou => 'رسوم التوصيل عليك';
+
+  @override
+  String get acceptJobConfirmButton => 'تأكيد القبول';
+
+  @override
+  String get marketDeliveryConfirmTitle => 'تأكيد الشراء والتوصيل';
+
+  @override
+  String get marketDeliveryFeeNote => 'رسوم التوصيل محسوبة حسب المسافة والوزن';
+
+  @override
+  String get marketDeliverySellerLocation => 'موقع البائع';
+
+  @override
+  String get marketDeliveryAddressLabel => 'عنوان التوصيل';
+
+  @override
+  String marketDeliveryDistanceFeeRow(String distance) {
+    return 'رسوم المسافة ($distance كم × 0.2)';
+  }
+
+  @override
+  String marketDeliveryWeightFeeRow(String weight) {
+    return 'رسوم الوزن ($weight)';
+  }
+
+  @override
+  String get marketDeliveryBaseFee => 'رسوم التوصيل الأساسية';
+
+  @override
+  String get marketDeliveryTotal => 'الإجمالي';
+
+  @override
+  String marketDeliveryConfirmButton(String total) {
+    return 'تأكيد الشراء — $total';
+  }
+
+  @override
+  String get marketPurchaseChoiceTitle => 'اختر طريقة الاستلام';
+
+  @override
+  String get marketPurchaseChoiceSubtitle =>
+      'يمكنك الاستلام بنفسك أو تعيين سائق للتوصيل';
+
+  @override
+  String get marketPurchaseSelfPickup => 'استلام من السوق';
+
+  @override
+  String get marketPurchaseNoFee => 'بدون رسوم توصيل';
+
+  @override
+  String get marketPurchaseAssignRider => 'تعيين سائق للتوصيل';
+
+  @override
+  String get marketPurchaseRiderFeeNote =>
+      'حساب رسوم التوصيل حسب المسافة والوزن';
+
+  @override
+  String get walletTitle => 'محفظتي';
+
+  @override
+  String get walletPointsAndRewards => 'نقاطي ومكافآتي';
+
+  @override
+  String get walletBillingPayments => 'الفوترة والمدفوعات';
+
+  @override
+  String get walletAvailableBalance => 'الرصيد المتاح';
+
+  @override
+  String get walletHeldAmount => 'المحجوز';
+
+  @override
+  String get walletWithdrawButton => 'طلب صرف رصيد';
+
+  @override
+  String get walletPointUnit => 'نقطة';
+
+  @override
+  String walletPointsToNextReward(String n) {
+    return 'تبقّى $n نقطة للمكافأة القادمة';
+  }
+
+  @override
+  String get walletViewRewards => 'عرض المكافآت';
+
+  @override
+  String get walletCurrentPeriod => 'الفترة الحالية:';
+
+  @override
+  String get walletShipments => 'الشحنات';
+
+  @override
+  String get walletWeightKg => 'الوزن (كغ)';
+
+  @override
+  String get walletViewInvoice => 'عرض الفاتورة';
+
+  @override
+  String get walletEfawateerTitle => 'الدفع عبر فواتيركم';
+
+  @override
+  String get walletEfawateerSubtitle => 'منصة الدفع الإلكتروني الحكومية';
+
+  @override
+  String analyticsStreakChip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '🔥 # يوم متتالٍ',
+      many: '🔥 # يوماً متتالياً',
+      few: '🔥 # أيام متتالية',
+      two: '🔥 يومان متتاليان',
+      one: '🔥 يوم متتالٍ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get analyticsStreakSectionTitle => 'سلسلة النشاط';
+
+  @override
+  String analyticsStreakBest(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '# يوم',
+      many: '# يوماً',
+      few: '# أيام',
+      two: 'يومان',
+      one: 'يوم',
+    );
+    return 'أطول سلسلة: $_temp0';
+  }
+
+  @override
+  String get analyticsStreakEmpty => 'لا يوجد نشاط بعد — ابدأ أول طلب اليوم!';
+
+  @override
+  String get analyticsCycleSectionTitle => 'زمن دورة الطلب';
+
+  @override
+  String analyticsCycleAvgCaption(int minutes) {
+    return 'متوسط زمن الطلب الكامل: $minutes دقيقة';
+  }
+
+  @override
+  String get analyticsCycleStageAccept => 'الانتظار حتى القبول';
+
+  @override
+  String get analyticsCycleStagePickup => 'الوصول للالتقاط';
+
+  @override
+  String get analyticsCycleStageTransit => 'النقل';
+
+  @override
+  String get analyticsCycleStageDropoff => 'التسليم';
+
+  @override
+  String analyticsCycleMinutes(String minutes) {
+    return '$minutes دقيقة';
+  }
+
+  @override
+  String get analyticsCycleEmpty => 'لا توجد بيانات كافية لتحليل زمن الطلب';
+
+  @override
+  String get analyticsProfitabilitySectionTitle => 'أربح المواد';
+
+  @override
+  String analyticsProfitabilityPerKg(String value) {
+    return '$value د.أ/كغ';
+  }
+
+  @override
+  String get analyticsProfitabilityTopBadge => '🏆 الأعلى ربحًا';
+
+  @override
+  String get analyticsProfitabilityEmpty =>
+      'لا توجد بيانات كافية لتحليل ربحية المواد';
+
+  @override
+  String get analyticsEfficiencySectionTitle => 'كفاءة الأرباح';
+
+  @override
+  String get analyticsEfficiencyRatioCaption => 'متوسط ما تربحه لكل كيلومتر';
+
+  @override
+  String analyticsEfficiencyRatioValue(String value) {
+    return '$value د.أ/كم';
+  }
+
+  @override
+  String get analyticsEfficiencyTopJobs => 'أفضل الرحلات';
+
+  @override
+  String get analyticsEfficiencyEmpty => 'لا توجد بيانات مسافة لحساب الكفاءة';
+
+  @override
+  String get aboutDwaarButtonLabel => 'تعرّف على دوّر';
+
+  @override
+  String get aboutDwaarSheetTitle => 'من نحن وماذا نقدّم';
+
+  @override
+  String get aboutDwaarIntroBody =>
+      'دوّر (Dwaar) منصة أردنية تربط بين ثلاثة أطراف: الموردين الذين لديهم نفايات قابلة لإعادة التدوير، السائقين الذين ينقلونها، وشركات إعادة التدوير التي تشتريها. هدفنا تحويل النفايات إلى مورد ذو قيمة، وتسهيل الاقتصاد الدائري في الأردن بخطوات بسيطة من هاتفك.';
+
+  @override
+  String get aboutDwaarServicesTitle => 'خدماتنا لكل طرف';
+
+  @override
+  String get aboutDwaarServiceSupplierTitle => 'للموردين (أفراد ومتاجر)';
+
+  @override
+  String get aboutDwaarServiceSupplierBody =>
+      'اطلب استلام نفاياتك القابلة لإعادة التدوير من موقعك، اختر بيعها لشركة تدوير أو عرضها في السوق لأقرب سائق، واربح نقاط ومكافآت مقابل كل عملية.';
+
+  @override
+  String get aboutDwaarServiceDriverTitle => 'للسائقين';
+
+  @override
+  String get aboutDwaarServiceDriverBody =>
+      'تصفّح طلبات الاستلام القريبة منك حسب نوع مركبتك، اقبل الطلب المناسب، وتتبّع أرباحك لحظة بلحظة مع كل رحلة تُنجزها.';
+
+  @override
+  String get aboutDwaarServiceRecyclingTitle => 'لشركات إعادة التدوير';
+
+  @override
+  String get aboutDwaarServiceRecyclingBody =>
+      'انشر طلبات تجميع بحسب نوع المادة والكمية والمنطقة، واستقبل تدفقًا منظّمًا وموثّقًا من المواد الخام مباشرة من الموردين والسائقين.';
+
+  @override
+  String get aboutDwaarHowItWorksTitle => 'كيف تعمل دورة الطلب؟';
+
+  @override
+  String get aboutDwaarHowItWorksStep1 =>
+      '١. المورد يطلب استلام النفايات ويحدّد النوع والوزن التقريبي والموقع';
+
+  @override
+  String get aboutDwaarHowItWorksStep2 =>
+      '٢. سائق مناسب يقبل الطلب، ويظهر موقعه المباشر على الخريطة حتى الوصول';
+
+  @override
+  String get aboutDwaarHowItWorksStep3 =>
+      '٣. عند التسليم، يتم توثيق الوزن الفعلي وتأكيد الاستلام من الطرفين';
+
+  @override
+  String get aboutDwaarHowItWorksStep4 =>
+      '٤. تُصرف المكافآت والأرباح تلقائيًا، وتنتقل المواد إلى شركة إعادة التدوير أو المركز الأقرب';
+
+  @override
+  String get aboutDwaarRewardsTitle => 'نظام المكافآت (نقاط خُضَر)';
+
+  @override
+  String get aboutDwaarRewardsBody =>
+      'كل عملية تدوير مكتملة تمنحك نقاط خُضَر بحسب نوع المادة ووزنها. اجمع النقاط لترتقي في مستويات البطاقة الخضراء، واستبدلها بخصومات على الطلبات القادمة أو قسائم شراء من شركائنا. السائقون أيضًا يحصلون على أجرة لكل رحلة تُحتسب من الأجرة الأساسية والمسافة ونوع المادة المنقولة.';
+
+  @override
+  String get aboutDwaarHubsTitle => 'مراكز التجميع (Hubs)';
+
+  @override
+  String get aboutDwaarHubsBody =>
+      'مراكز التجميع نقاط استلام فعلية تديرها فرق دوّر، يستخدمها السائقون كوجهة تسليم قريبة بدل التوجه مباشرة لكل شركة تدوير. إذا كانت لديك منشأة أو أرض مناسبة وتودّ استضافة مركز تجميع جديد في منطقتك، تواصل معنا عبر النموذج أدناه وسيقيّم فريقنا الطلب.';
+
+  @override
+  String get aboutDwaarImpactTitle => 'أثرنا حتى الآن';
+
+  @override
+  String get aboutDwaarImpactSubtitle => 'لمحة حيّة عمّا حققه مجتمعنا معًا';
+
+  @override
+  String get aboutDwaarImpactOrders => 'طلبات مكتملة';
+
+  @override
+  String get aboutDwaarImpactWeight => 'وزن معاد تدويره';
+
+  @override
+  String get aboutDwaarImpactCo2 => 'CO₂ وُفِّر';
+
+  @override
+  String get aboutDwaarImpactWater => 'مياه وُفِّرت';
+
+  @override
+  String get aboutDwaarImpactEnergy => 'طاقة وُفِّرت';
+
+  @override
+  String get aboutDwaarImpactDownloadButton => 'تنزيل شهادة CO₂ (PDF)';
+
+  @override
+  String get aboutDwaarImpactDownloadGenerating => 'جاري الإنشاء...';
+
+  @override
+  String get aboutDwaarImpactDownloadError =>
+      'تعذّر إنشاء الشهادة. حاول مرة أخرى.';
+
+  @override
+  String get aboutDwaarDataTitle => 'هل تريد شراء بياناتنا أو الشراكة معنا؟';
+
+  @override
+  String get aboutDwaarDataBody =>
+      'نوفّر لبعض الجهات (بلديات، جهات بحثية، شركات استدامة) بيانات مجمّعة وغير شخصية حول أنماط التدوير. إن كنت مهتمًا بشراء بيانات أو ببناء شراكة، اترك بياناتك وسيتواصل معك فريقنا عبر البريد الإلكتروني.';
+
+  @override
+  String get aboutDwaarDataFormCompanyLabel => 'اسم الجهة / الشركة';
+
+  @override
+  String get aboutDwaarDataFormContactNameLabel => 'اسم الشخص المسؤول';
+
+  @override
+  String get aboutDwaarDataFormEmailLabel => 'البريد الإلكتروني للتواصل';
+
+  @override
+  String get aboutDwaarDataFormPhoneLabel => 'رقم الهاتف (اختياري)';
+
+  @override
+  String get aboutDwaarDataFormMessageLabel => 'تفاصيل طلبك';
+
+  @override
+  String get aboutDwaarDataFormMessageHint =>
+      'ما نوع البيانات أو الشراكة التي تبحث عنها؟';
+
+  @override
+  String get aboutDwaarDataFormSubmit => 'إرسال الطلب';
+
+  @override
+  String get aboutDwaarDataFormSubmitting => 'جاري الإرسال...';
+
+  @override
+  String get aboutDwaarDataFormRequired => 'هذا الحقل مطلوب';
+
+  @override
+  String get aboutDwaarDataFormEmailInvalid => 'أدخل بريدًا إلكترونيًا صحيحًا';
+
+  @override
+  String get aboutDwaarDataFormSuccess =>
+      'تم استلام طلبك، سيتواصل معك فريقنا عبر بريدك الإلكتروني قريبًا.';
+
+  @override
+  String get aboutDwaarDataFormError => 'تعذّر إرسال الطلب، حاول مرة أخرى';
+
+  @override
+  String get aboutDwaarCloseButton => 'إغلاق';
+
+  @override
+  String get reservationBookButton => 'حجز الآن';
+
+  @override
+  String get reservationFormTitle => 'إنشاء حجز جديد';
+
+  @override
+  String get reservationItemTitleLabel => 'وصف الطلب';
+
+  @override
+  String get reservationItemTitleHint => 'مثال: طاولة لأربعة أشخاص، ٧ مساءً';
+
+  @override
+  String get reservationBuyerPhoneLabel => 'رقم هاتف المشتري';
+
+  @override
+  String get reservationBuyerPhoneHint => '7XXXXXXXX';
+
+  @override
+  String get reservationBuyerNotFound => 'رقم الهاتف غير مسجل في التطبيق';
+
+  @override
+  String get reservationFieldsRequired =>
+      'يرجى تعبئة وصف الطلب ورقم الهاتف والمبلغ';
+
+  @override
+  String get reservationInvoiceAmountLabel => 'قيمة الفاتورة (د.أ)';
+
+  @override
+  String get reservationDurationLabel => 'مدة الحجز';
+
+  @override
+  String reservationDurationMinutes(int minutes) {
+    return '$minutes دقيقة';
+  }
+
+  @override
+  String reservationPenaltyBanner(String amount) {
+    return 'تنبيه: سيتم خصم ١٠٪ من قيمة الفاتورة ($amount د.أ) من الطرف المخالف لضمان حقوق التعامل';
+  }
+
+  @override
+  String get reservationSubmitButton => 'إنشاء الحجز';
+
+  @override
+  String get reservationCreateSuccess => 'تم إنشاء الحجز وإرساله للمشتري';
+
+  @override
+  String get reservationInboxTitle => 'طلبات الحجز';
+
+  @override
+  String get reservationEmptyInbox => 'لا توجد طلبات حجز حالياً';
+
+  @override
+  String get reservationInvoiceTotalLabel => 'المبلغ الإجمالي';
+
+  @override
+  String get reservationTimeRemainingLabel => 'الوقت المتبقي';
+
+  @override
+  String get reservationApproveButton => 'قبول وتثبيت الحجز';
+
+  @override
+  String get reservationApproveSuccess => 'تم تثبيت الحجز';
+
+  @override
+  String get reservationCompleteButton => 'تأكيد إتمام الشراء';
+
+  @override
+  String get reservationCancelButton => 'إلغاء الحجز';
+
+  @override
+  String get reservationCancelReasonTitle => 'سبب الإلغاء';
+
+  @override
+  String get reservationCancelReasonSoldElsewhere => 'تم بيع البضاعة لطرف آخر';
+
+  @override
+  String get reservationCancelReasonOther => 'سبب آخر';
+
+  @override
+  String get reservationCancelFraudWarning =>
+      'تحذير: اختيار هذا السبب سيؤدي لخصم ١٠٪ من حسابك فوراً كتعويض للمشتري';
+
+  @override
+  String get reservationSellerTag => 'أنت البائع';
+
+  @override
+  String get reservationBuyerTag => 'أنت المشتري';
 }

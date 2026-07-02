@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:dwaar/data/models/user_role.dart';
-import 'package:dwaar/data/services/user_signup_service.dart';
+import 'package:dwaar/data/models/signup_request.dart';
 
 SignUpRequest _driver({
   String name = 'أحمد',
-  String phone = '+962791234567',
+  String phone = '0791234567',
   String password = 'Passw0rd!',
   String? vehiclePlate = '12-34567',
   String? email,
@@ -22,7 +22,7 @@ SignUpRequest _driver({
 SignUpRequest _supplier({
   SupplierType? supplierType = SupplierType.individual,
   String name = 'متجر دوّار',
-  String phone = '+962791111111',
+  String phone = '0791111111',
   String password = 'Passw0rd!',
 }) =>
     SignUpRequest(
@@ -46,7 +46,7 @@ void main() {
     test('recyclingCo is valid without supplier_type or vehicle', () {
       final req = SignUpRequest(
         name: 'شركة التدوير',
-        phone: '+962792222222',
+        phone: '0792222222',
         password: 'Passw0rd!',
         role: UserRole.recyclingCo,
       );
@@ -132,7 +132,7 @@ void main() {
     test('non-supplier role cannot carry supplier_type', () {
       final req = SignUpRequest(
         name: 'Driver',
-        phone: '+962791234567',
+        phone: '0791234567',
         password: 'Passw0rd!',
         role: UserRole.driver,
         vehiclePlate: '12-34567',

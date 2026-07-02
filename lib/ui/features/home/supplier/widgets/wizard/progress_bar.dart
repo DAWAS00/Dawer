@@ -1,0 +1,43 @@
+import 'package:flutter/material.dart';
+import 'wizard_style_tokens.dart';
+
+class WizardProgressBar extends StatelessWidget {
+  final int currentStep;
+  final int totalSteps;
+
+  const WizardProgressBar({
+    super.key,
+    required this.currentStep,
+    required this.totalSteps,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      child: Row(
+        children: List.generate(totalSteps, (i) {
+          final isDone = i < currentStep;
+          final isActive = i == currentStep;
+          return Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: i < totalSteps - 1 ? 6 : 0),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                height: 4,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  color: isDone
+                      ? WizardColors.success
+                      : isActive
+                          ? WizardColors.primaryMid
+                          : WizardColors.border,
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}

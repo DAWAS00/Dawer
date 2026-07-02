@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../l10n/l10n.dart';
 import '../viewmodels/marketplace_viewmodel.dart';
 
-/// Animated banner shown at the top of the marketplace when AI-suggested
+/// Dismissible green banner shown at top of marketplace when AI-suggested
 /// categories are available from the signup license validation step.
-///
-/// Consumes [MarketplaceViewModel] from the widget tree.
 class MarketplaceSuggestionBanner extends StatelessWidget {
   const MarketplaceSuggestionBanner({super.key});
 
@@ -44,17 +44,18 @@ class _BannerContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      padding: const EdgeInsets.fromLTRB(14, 12, 8, 12),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFBEB),
+        color: AppColors.surfaceAlt,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFFCD34D)),
+        border: Border.all(color: AppColors.surfaceAltBorder),
         boxShadow: [
           BoxShadow(
-            color: Colors.amber.withValues(alpha: 0.08),
-            blurRadius: 8,
+            color: AppColors.primaryGreen.withValues(alpha: 0.06),
+            blurRadius: 10,
             offset: const Offset(0, 3),
           ),
         ],
@@ -62,58 +63,68 @@ class _BannerContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Header row
           Row(
             children: [
-              const Text('✨', style: TextStyle(fontSize: 16)),
-              const SizedBox(width: 6),
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryGreen.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  size: 15,
+                  color: AppColors.primaryGreen,
+                ),
+              ),
+              const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'اقتراحات بناءً على رخصتك', // TODO: localize
+                  l10n.marketSuggestedByLicense,
                   style: GoogleFonts.cairo(
                     fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF92400E),
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primaryGreen,
                   ),
                 ),
               ),
               GestureDetector(
                 onTap: onDismiss,
                 child: Container(
-                  width: 24,
-                  height: 24,
+                  width: 28,
+                  height: 28,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFCD34D).withValues(alpha: 0.4),
-                    shape: BoxShape.circle,
+                    color: AppColors.primaryGreen.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
                     Icons.close_rounded,
-                    size: 14,
-                    color: Color(0xFF92400E),
+                    size: 15,
+                    color: AppColors.primaryGreen,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 10),
+          // Category chips row
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             reverse: true,
             child: Row(
               children: [
-                ...categories.map((cat) => Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: _SuggestionChip(
-                        label: cat,
-                        onTap: () => onCategoryTap(cat),
-                      ),
-                    )),
                 Padding(
-                  padding: const EdgeInsets.only(left: 8),
+                  padding: const EdgeInsetsDirectional.only(start: 8),
                   child: OutlinedButton(
                     onPressed: onShowAll,
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                      side: const BorderSide(color: Color(0xFFC8860A), width: 1.5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 7),
+                      side: BorderSide(
+                          color: AppColors.primaryGreen.withValues(alpha: 0.5),
+                          width: 1.5),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -121,15 +132,22 @@ class _BannerContent extends StatelessWidget {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     child: Text(
-                      'عرض كل الطلبات', // TODO: localize "Show All Orders"
+                      l10n.marketShowAllOrders,
                       style: GoogleFonts.cairo(
                         fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF92400E),
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primaryGreen,
                       ),
                     ),
                   ),
                 ),
+                ...categories.map((cat) => Padding(
+                      padding: const EdgeInsetsDirectional.only(start: 8),
+                      child: _SuggestionChip(
+                        label: cat,
+                        onTap: () => onCategoryTap(cat),
+                      ),
+                    )),
               ],
             ),
           ),
@@ -150,13 +168,21 @@ class _SuggestionChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
-          color: const Color(0xFFC8860A).withValues(alpha: 0.12),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: const Color(0xFFC8860A).withValues(alpha: 0.35),
+            color: AppColors.surfaceAltBorder,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
+            ),
+          ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -165,15 +191,15 @@ class _SuggestionChip extends StatelessWidget {
               label,
               style: GoogleFonts.cairo(
                 fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF92400E),
+                fontWeight: FontWeight.w600,
+                color: AppColors.primaryGreen,
               ),
             ),
             const SizedBox(width: 4),
             const Icon(
               Icons.search_rounded,
               size: 13,
-              color: Color(0xFFC8860A),
+              color: AppColors.primaryGreen,
             ),
           ],
         ),

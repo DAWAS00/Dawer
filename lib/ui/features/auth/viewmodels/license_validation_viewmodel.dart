@@ -1,10 +1,8 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import '../../../../core/config/ai_config.dart';
-import '../../../../data/services/gemini_license_validation_service.dart';
 import '../../../../domain/services/i_ai_license_validation_service.dart';
 import '../../../../data/models/user_role.dart';
-import '../../../../data/services/mock_ai_license_validation_service.dart';
+import '../../../../data/services/gemini_ai_license_validation_service.dart';
 
 enum LicenseValidationState { idle, analyzing, valid, invalid }
 
@@ -12,10 +10,7 @@ class LicenseValidationViewModel extends ChangeNotifier {
   final IAiLicenseValidationService _service;
 
   LicenseValidationViewModel({IAiLicenseValidationService? service})
-      : _service = service ??
-            (AiConfig.hasGeminiKey
-                ? GeminiLicenseValidationService()
-                : MockAiLicenseValidationService());
+      : _service = service ?? GeminiAiLicenseValidationService();
 
   LicenseValidationState _state = LicenseValidationState.idle;
   LicenseValidationState get state => _state;
