@@ -34,22 +34,31 @@ class OrderMapSection extends StatelessWidget {
 
     Widget mapContent;
 
-    // Live tracking: driver accepted and is en-route â€” show moving driver marker.
-    if (hasDriver &&
-        order.status == OrderStatus.inTransit &&
-        pLat != null &&
-        pLng != null) {
+    // Live tracking: driver is active (accepted → arrivedAtPickup → inTransit).
+    // Destination pin = dropoff when inTransit (driver heading to dropoff),
+    // otherwise pickup (driver heading to pickup).
+    const _liveStatuses = {
+      OrderStatus.accepted,
+      OrderStatus.arrivedAtPickup,
+      OrderStatus.inTransit,
+    };
+    if (hasDriver && _liveStatuses.contains(order.status) && pLat != null && pLng != null) {
+      final destLat =
+          (order.status == OrderStatus.inTransit && dLat != null) ? dLat : pLat;
+      final destLng =
+          (order.status == OrderStatus.inTransit && dLng != null) ? dLng : pLng!;
+
       mapContent = _isUuid(order.id)
           ? _RealTrackingWrapper(
               orderId: order.id,
-              pickupLat: pLat,
-              pickupLng: pLng,
+              pickupLat: destLat,
+              pickupLng: destLng,
               etaMinutes: order.etaMinutes,
               height: 232,
             )
           : _MockTrackingWrapper(
-              pickupLat: pLat,
-              pickupLng: pLng,
+              pickupLat: destLat,
+              pickupLng: destLng,
               etaMinutes: order.etaMinutes,
               height: 232,
             );
