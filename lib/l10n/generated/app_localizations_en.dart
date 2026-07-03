@@ -21,7 +21,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatbotScanningImage => 'Analyzing image...';
 
   @override
-  String get chatbotAnalyzingOil => 'Analyzing oil quality with AI...';
+  String get chatbotAnalyzingMaterial =>
+      'Analyzing material quality with AI...';
 
   @override
   String get chatbotTakePhoto => 'Take a photo';

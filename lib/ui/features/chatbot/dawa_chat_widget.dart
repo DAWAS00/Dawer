@@ -193,7 +193,7 @@ class _DawaChatBodyState extends State<_DawaChatBody> {
             else if (vm.isAnalyzing)
               _BusyIndicator(
                 theme: theme,
-                label: context.l10n.chatbotAnalyzingOil,
+                label: context.l10n.chatbotAnalyzingMaterial,
               )
             else if (vm.isThinking)
               _BusyIndicator(theme: theme, label: context.l10n.chatbotThinking),

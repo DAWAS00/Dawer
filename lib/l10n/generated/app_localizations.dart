@@ -122,11 +122,11 @@ abstract class AppLocalizations {
   /// **'جاري تحليل الصورة...'**
   String get chatbotScanningImage;
 
-  /// No description provided for @chatbotAnalyzingOil.
+  /// No description provided for @chatbotAnalyzingMaterial.
   ///
   /// In ar, this message translates to:
-  /// **'جاري تحليل جودة الزيت بالذكاء الاصطناعي...'**
-  String get chatbotAnalyzingOil;
+  /// **'جاري تحليل جودة المادة بالذكاء الاصطناعي...'**
+  String get chatbotAnalyzingMaterial;
 
   /// No description provided for @chatbotTakePhoto.
   ///

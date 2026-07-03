@@ -21,8 +21,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chatbotScanningImage => 'جاري تحليل الصورة...';
 
   @override
-  String get chatbotAnalyzingOil =>
-      'جاري تحليل جودة الزيت بالذكاء الاصطناعي...';
+  String get chatbotAnalyzingMaterial =>
+      'جاري تحليل جودة المادة بالذكاء الاصطناعي...';
 
   @override
   String get chatbotTakePhoto => 'التقاط صورة بالكاميرا';

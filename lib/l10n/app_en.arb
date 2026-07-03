@@ -5,7 +5,7 @@
   "chatbotInputHint": "Type your question or send a photo...",
   "chatbotThinking": "Dawa is thinking...",
   "chatbotScanningImage": "Analyzing image...",
-  "chatbotAnalyzingOil": "Analyzing oil quality with AI...",
+  "chatbotAnalyzingMaterial": "Analyzing material quality with AI...",
   "chatbotTakePhoto": "Take a photo",
   "chatbotPickFromGallery": "Choose from gallery",
   "chatbotImageScanResult": "Image analysis result",

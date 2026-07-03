@@ -5,7 +5,7 @@
   "chatbotInputHint": "اكتب سؤالك أو أرسل صورة...",
   "chatbotThinking": "داوة تفكر...",
   "chatbotScanningImage": "جاري تحليل الصورة...",
-  "chatbotAnalyzingOil": "جاري تحليل جودة الزيت بالذكاء الاصطناعي...",
+  "chatbotAnalyzingMaterial": "جاري تحليل جودة المادة بالذكاء الاصطناعي...",
   "chatbotTakePhoto": "التقاط صورة بالكاميرا",
   "chatbotPickFromGallery": "اختيار من المعرض",
   "chatbotImageScanResult": "نتيجة تحليل الصورة",
