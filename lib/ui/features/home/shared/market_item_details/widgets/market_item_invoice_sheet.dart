@@ -65,11 +65,28 @@ class MarketItemInvoiceSheet extends StatelessWidget {
             ),
             child: Column(
               children: [
-                _InvoiceRow(
-                  label: item.wasteTypes.map((e) => e.label).join(' + '),
-                  value: '${total.toStringAsFixed(2)} د.أ',
-                  isBold: true,
-                ),
+                if (item.invoices != null && item.invoices!.isNotEmpty) ...[
+                  for (var i = 0; i < item.invoices!.length; i++) ...[
+                    if (i > 0)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Divider(height: 1),
+                      ),
+                    _InvoiceRow(
+                      label: item.invoices![i].name,
+                      value: item.invoices![i].price > 0
+                          ? '${(item.invoices![i].price * item.invoices![i].quantity).toStringAsFixed(2)} د.أ'
+                          : '-',
+                      isBold: item.invoices![i].price > 0,
+                    ),
+                  ],
+                ] else ...[
+                  _InvoiceRow(
+                    label: item.wasteTypes.map((e) => e.label).join(' + '),
+                    value: '${total.toStringAsFixed(2)} د.أ',
+                    isBold: true,
+                  ),
+                ],
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
                   child: Divider(height: 1),

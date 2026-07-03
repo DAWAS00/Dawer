@@ -380,6 +380,19 @@ class DriverHomeViewModel extends ChangeNotifier {
       adminApprovalStatus: hasChemicals
           ? AdminApprovalStatus.pendingApproval
           : AdminApprovalStatus.notRequired,
+      invoices: [
+        InvoiceItem(
+          name: wasteTypes.map((e) => e.label).join(' + '),
+          quantity: 1,
+          price: itemPrice ?? 0.0,
+        ),
+        if (weightCategory != null)
+          InvoiceItem(
+            name: 'فئة الوزن: ${weightCategory.label}',
+            quantity: 1,
+            price: 0.0,
+          ),
+      ],
     );
     notifyListeners();
     return order;

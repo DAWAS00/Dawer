@@ -163,6 +163,19 @@ abstract class BaseSupplierViewModel extends ChangeNotifier {
           : AdminApprovalStatus.notRequired,
       isVatApplicable: vatApplicable,
       vatAmountJd: vatApplicable ? (effectivePrice * vatRate) : null,
+      invoices: [
+        InvoiceItem(
+          name: wasteTypes.map((e) => e.label).join(' + '),
+          quantity: 1,
+          price: effectivePrice,
+        ),
+        if (weightCategory != null)
+          InvoiceItem(
+            name: 'فئة الوزن: ${weightCategory.label}',
+            quantity: 1,
+            price: 0.0,
+          ),
+      ],
     );
   }
 
