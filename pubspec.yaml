@@ -1,4 +1,4 @@
-﻿name: dwaar
+name: dwaar
 description: "A new Flutter project."
 publish_to: 'none'
 version: 0.1.0+1
@@ -22,7 +22,7 @@ dependencies:
   provider: ^6.1.5+1
   geolocator: ^13.0.2
   geocoding: ^3.0.0
-  google_maps_flutter: ^2.10.0
+  google_maps_flutter: ^2.17.1
   lottie: ^3.1.2
   flutter_animate: ^4.5.2
   shimmer: ^3.0.0
