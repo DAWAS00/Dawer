@@ -30,6 +30,17 @@ class AppColors {
   static const Color statusCancelledBg = Color(0xFFFEE2E2);
   static const Color statusCancelledText = Color(0xFF991B1B);
 
+  // Verification States (Screen 5 document review — reuses the status
+  // palette above rather than introducing a new color family).
+  static const Color verificationPendingBg = statusPendingBg;
+  static const Color verificationPendingText = statusPendingText;
+  static const Color verificationApprovedBg = statusActiveBg;
+  static const Color verificationApprovedText = statusActiveText;
+  static const Color verificationRejectedBg = statusCancelledBg;
+  static const Color verificationRejectedText = statusCancelledText;
+  static const Color aiScanLine = Color(0xFF60A5FA);
+  static const Color confidenceBadge = Color(0xFF059669);
+
   // Gradient Tokens
   static const Color ctaGradientStart = Color(0xFF0A4D2A);
   static const Color ctaGradientEnd = Color(0xFF127B45);

@@ -7,6 +7,8 @@ import '../../../../data/models/order/order.dart' show VehicleType;
 import '../../../../data/models/signup_request.dart';
 import '../../../../data/models/user_role.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
+import '../../../../domain/services/i_ai_simulation_service.dart'
+    show VerificationResult;
 import '../../../../domain/services/i_signup_orchestrator.dart';
 
 /// Clean state machine for the redesigned phone-first signup flow.
@@ -50,6 +52,18 @@ class SignupController extends ChangeNotifier {
   // ── Documents step (Screen 5) state ────────────────────────────────────────
   File? identityDocument;
   bool documentsUploaded = false;
+  File? businessLicenseDocument;
+  bool businessLicenseUploaded = false;
+  VerificationResult? documentVerification;
+  bool _isVerifying = false;
+  bool get isVerifying => _isVerifying;
+
+  /// Store-business suppliers and recycling companies upload a business
+  /// license/commercial registration instead of a personal ID (plan Section
+  /// 3.1: drivers and individual suppliers use the ID-document flow).
+  bool get requiresBusinessDocument =>
+      role == UserRole.recyclingCo ||
+      (role == UserRole.supplier && supplierType == SupplierType.storeBusiness);
 
   // ── UI state ───────────────────────────────────────────────────────────────
   bool _isSubmitting = false;
@@ -193,8 +207,34 @@ class SignupController extends ChangeNotifier {
 
   // ── Submission: documents step ─────────────────────────────────────────────
 
-  /// Uploads the identity document and marks the account as pending review.
-  /// Returns the storage object path on success, null on failure.
+  /// Runs the AI verification check inline (Screen 5's live "analyzing"
+  /// animation) and persists `is_verified` immediately — same
+  /// persist-as-soon-as-the-user-acts pattern as [submitDocuments] rather
+  /// than deferring the AI call to a final submit step.
+  Future<VerificationResult?> runDocumentCheck(File document) async {
+    _isVerifying = true;
+    notifyListeners();
+
+    final result = await _orchestrator.runVerificationCheck(
+      document: document,
+      isBusinessDocument: requiresBusinessDocument,
+    );
+
+    VerificationResult? verification;
+    result.fold(
+      onSuccess: (v) => verification = v,
+      onFailure: (f) => _error = f.message,
+    );
+    documentVerification = verification;
+
+    _isVerifying = false;
+    notifyListeners();
+    return verification;
+  }
+
+  /// Uploads the identity document (national ID / driving license) to
+  /// storage and marks the account as pending review. Returns the storage
+  /// object path on success, null on failure.
   Future<String?> submitDocuments() async {
     if (identityDocument == null) {
       _error = 'يرجى اختيار صورة الوثيقة';
@@ -215,6 +255,37 @@ class SignupController extends ChangeNotifier {
       onSuccess: (p) {
         path = p;
         documentsUploaded = true;
+      },
+      onFailure: (f) => _error = f.message,
+    );
+
+    _isSubmitting = false;
+    notifyListeners();
+    return path;
+  }
+
+  /// Uploads the business license / commercial registration document to
+  /// storage. Returns the storage object path on success, null on failure.
+  Future<String?> submitBusinessLicense() async {
+    if (businessLicenseDocument == null) {
+      _error = 'يرجى اختيار صورة الوثيقة';
+      notifyListeners();
+      return null;
+    }
+
+    _isSubmitting = true;
+    _error = null;
+    notifyListeners();
+
+    final result = await _orchestrator.uploadBusinessLicense(
+      businessLicenseDocument!,
+    );
+
+    String? path;
+    result.fold(
+      onSuccess: (p) {
+        path = p;
+        businessLicenseUploaded = true;
       },
       onFailure: (f) => _error = f.message,
     );

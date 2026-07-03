@@ -1,5 +1,29 @@
 # TODOS
 
+## Both-sides ID capture on Screen 5 document verification (V2)
+**What:** Capture front AND back of national ID / driving license, not just front, on the new signup document-verification screen.
+**Why:** `docs/design/partner-signup-verification-research-plan.md` Section 3.1 calls for both-sides capture (matches Talabat Oman and industry KYC norms). The current backend only supports one stored image per document type (`uploadIdentityDocument`/`uploadBusinessLicense` each take a single `File`).
+**Pros:** Matches the research plan and reduces rejected verifications caused by missing back-side data (signature, issue authority, etc).
+**Cons:** Requires a second storage path/column and a second AI-verification pass (or a decision to store-only for the back side without re-running AI on it) — a real interface/schema change, not just UI.
+**Context:** Screen 5 (`lib/ui/features/auth/views/signup_documents_screen.dart`) currently captures a single front-side photo per document, matching what the storage/orchestrator layer can persist today. Building a fake "back" capture UI with nowhere to persist it would be worse than not having it.
+**Depends on:** New `identity_doc_back_path` (or similar) column + `IFileStorageRepository`/`ISignupOrchestrator` method additions.
+
+## Map picker for Screen 4 location (V2)
+**What:** Replace the GPS-detect + free-text address field on the signup role-details screen with a draggable-pin map sheet (Google Maps, already a dependency).
+**Why:** `docs/design/partner-signup-verification-research-plan.md` Section 4.1 — competitors (Careem, Talabat) let users see and adjust the pin rather than trusting a geocoded string.
+**Pros:** More accurate facility/work-area locations; fewer support tickets from bad reverse-geocode results.
+**Cons:** New full-screen map UI + sheet, more surface area to test; not required for Screen 5 (document verification) which was this pass's focus.
+**Context:** Deferred from the same implementation pass that shipped Screen 5 document verification, to keep that change reviewable on its own.
+**Depends on:** None — can be picked up independently.
+
+## Reuse waste-type chip selector in profile settings (V2)
+**What:** Make the signup waste-type chip multi-select (`_WasteTypeChips` in `signup_role_details_screen.dart`) reusable from a profile/settings screen, with role-aware default ordering (a recycling company sees what it's licensed to *process* first; a supplier sees what it *generates* first).
+**Why:** `docs/design/partner-signup-verification-research-plan.md` Section 4.2 — Careem treats working-area/category as an ongoing preference, not a one-time signup field; Dwaar currently only lets you set it once at signup.
+**Pros:** Users can correct/update categories without contacting support; matches competitor UX.
+**Cons:** Requires extracting `_WasteTypeChips` into a shared widget and adding a profile-settings entry point + backend update call — no such settings screen exists yet for this field.
+**Context:** Deferred from the same pass that shipped Screen 5 document verification.
+**Depends on:** A profile/account-settings screen to host it (may not exist yet — check `lib/ui/features/home/*/tabs/*_profile_tab.dart` first).
+
 ## Supplier weight confirmation (V2)
 **What:** Supplier sees the driver's entered pickup weight and can accept or dispute it before the order moves to `inTransit`.
 **Why:** Prevents weight disputes from being invisible until delivery. Currently driver self-reports, no cross-check.

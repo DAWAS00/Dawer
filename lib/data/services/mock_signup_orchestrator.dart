@@ -3,6 +3,7 @@ import '../../core/result/result.dart';
 import '../../data/models/signup_request.dart';
 import '../../domain/repositories/i_auth_repository.dart';
 import '../../domain/repositories/i_file_storage_repository.dart';
+import '../../domain/services/i_ai_simulation_service.dart';
 import '../../domain/services/i_signup_orchestrator.dart';
 
 /// Mock-mode [ISignupOrchestrator] for offline/test runs. Delegates account
@@ -38,4 +39,19 @@ class MockSignupOrchestrator implements ISignupOrchestrator {
   @override
   Future<AppResult<String>> uploadIdentityDocument(File document) async =>
       fileStorage.uploadIdentityDocument(userId: 'mock-user', file: document);
+
+  @override
+  Future<AppResult<String>> uploadBusinessLicense(File document) async =>
+      fileStorage.uploadBusinessLicense(userId: 'mock-user', file: document);
+
+  @override
+  Future<AppResult<VerificationResult>> runVerificationCheck({
+    required File document,
+    required bool isBusinessDocument,
+  }) async => const Success(
+    VerificationResult(
+      isVerified: true,
+      statusMessage: 'signupDocsStatusApproved',
+    ),
+  );
 }

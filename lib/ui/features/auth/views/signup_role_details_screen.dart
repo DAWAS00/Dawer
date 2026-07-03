@@ -16,9 +16,9 @@ import '../../../../domain/repositories/i_auth_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../common/green_button.dart';
 import '../../../core/components/dwaar_snackbar.dart';
-import '../../home/home_router.dart';
 import '../controllers/signup_controller.dart';
 import '../viewmodels/vehicle_registration_viewmodel.dart';
+import 'signup_documents_screen.dart';
 import 'widgets/onboarding_shared_widgets.dart';
 import 'widgets/vehicle_registration_scan_section.dart';
 
@@ -130,40 +130,25 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
     }
   }
 
-  void _navigateHome() {
-    Navigator.of(context).pushAndRemoveUntil(
+  /// Moves on to Screen 5 (documents) — reached either by "Save & Continue"
+  /// or by skipping Screen 4 entirely; Screen 5 has its own independent
+  /// skip that leads to HomeRouter, per the non-blocking signup flow
+  /// (`docs/design/partner-signup-verification-research-plan.md` Section 3.2).
+  void _navigateToDocuments() {
+    Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (_) => HomeRouter(
-          role: widget.session.role,
-          supplierType: widget.session.supplierType ?? SupplierType.individual,
-          userName: widget.session.userName,
-        ),
+        builder: (_) =>
+            SignupDocumentsScreen(controller: _ctrl, session: widget.session),
       ),
-      (route) => false,
     );
   }
 
   Future<void> _submit() async {
     _ctrl.setCategories(_selectedTypes.map((t) => t.name).toList());
 
-    // Capture navigator before the async gap.
-    final navigator = Navigator.of(context);
-    final session = widget.session;
-
     final ok = await _ctrl.submitRoleDetails();
     if (!mounted) return;
-    if (ok) {
-      navigator.pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (_) => HomeRouter(
-            role: session.role,
-            supplierType: session.supplierType ?? SupplierType.individual,
-            userName: session.userName,
-          ),
-        ),
-        (route) => false,
-      );
-    }
+    if (ok) _navigateToDocuments();
   }
 
   Future<void> _pickRegistrationDoc(ImageSource source) async {
@@ -192,14 +177,14 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
       // Disable back swipe/button — user has already created their account.
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _navigateHome();
+        if (!didPop) _navigateToDocuments();
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_forward_ios_rounded),
-            onPressed: _navigateHome,
+            onPressed: _navigateToDocuments,
             tooltip: l10n.navHome,
           ),
           title: Text(l10n.signupTitle, style: GoogleFonts.cairo()),
@@ -208,7 +193,7 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
           foregroundColor: context.dt.onSurface,
           actions: [
             TextButton(
-              onPressed: _navigateHome,
+              onPressed: _navigateToDocuments,
               child: Text(
                 l10n.signupSkip,
                 style: GoogleFonts.cairo(
@@ -440,7 +425,9 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
                 ),
                 const SizedBox(height: 12),
                 TextButton(
-                  onPressed: controller.isSubmitting ? null : _navigateHome,
+                  onPressed: controller.isSubmitting
+                      ? null
+                      : _navigateToDocuments,
                   child: Text(
                     l10n.signupSkipCompleteLater,
                     style: GoogleFonts.cairo(

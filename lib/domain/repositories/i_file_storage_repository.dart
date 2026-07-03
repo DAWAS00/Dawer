@@ -28,6 +28,23 @@ abstract class IFileStorageRepository {
     required String objectPath,
     Duration validity = const Duration(minutes: 5),
   });
+
+  /// Uploads [file] to the private `user-documents` bucket under
+  /// `{userId}/business_license.<ext>` and returns the storage object path
+  /// (NOT a URL). Used by Screen 5 for store-business suppliers and
+  /// recycling companies uploading a business license / commercial
+  /// registration document.
+  Future<AppResult<String>> uploadBusinessLicense({
+    required String userId,
+    required File file,
+  });
+
+  /// Creates a short-lived signed URL for a private business-license object
+  /// stored under the `user-documents` bucket. Mirrors [signedIdentityUrl].
+  Future<AppResult<String>> signedBusinessLicenseUrl({
+    required String objectPath,
+    Duration validity = const Duration(minutes: 5),
+  });
 }
 
 /// No-op stub for tests / mock mode.
@@ -48,6 +65,18 @@ class NoOpFileStorageRepository implements IFileStorageRepository {
 
   @override
   Future<AppResult<String>> signedIdentityUrl({
+    required String objectPath,
+    Duration validity = const Duration(minutes: 5),
+  }) async => Success('mock://signed/$objectPath');
+
+  @override
+  Future<AppResult<String>> uploadBusinessLicense({
+    required String userId,
+    required File file,
+  }) async => Success('$userId/business_license.jpg');
+
+  @override
+  Future<AppResult<String>> signedBusinessLicenseUrl({
     required String objectPath,
     Duration validity = const Duration(minutes: 5),
   }) async => Success('mock://signed/$objectPath');

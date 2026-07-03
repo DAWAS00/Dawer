@@ -4388,6 +4388,144 @@ abstract class AppLocalizations {
   /// **'متجر / مطعم'**
   String get signupRoleStoreLabel;
 
+  /// No description provided for @signupDocsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'توثيق المستندات'**
+  String get signupDocsTitle;
+
+  /// No description provided for @signupDocsIdHeading.
+  ///
+  /// In ar, this message translates to:
+  /// **'وثّق هويتك'**
+  String get signupDocsIdHeading;
+
+  /// No description provided for @signupDocsBusinessHeading.
+  ///
+  /// In ar, this message translates to:
+  /// **'وثّق نشاطك التجاري'**
+  String get signupDocsBusinessHeading;
+
+  /// No description provided for @signupDocsIdSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ارفع صورة بطاقتك الشخصية أو رخصة القيادة للتحقق من هويتك.'**
+  String get signupDocsIdSubtitle;
+
+  /// No description provided for @signupDocsBusinessSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ارفع رخصة العمل أو السجل التجاري للتحقق من نشاطك.'**
+  String get signupDocsBusinessSubtitle;
+
+  /// No description provided for @signupDocsIdSectionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'بطاقتك الشخصية'**
+  String get signupDocsIdSectionTitle;
+
+  /// No description provided for @signupDocsBusinessSectionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'رخصة العمل'**
+  String get signupDocsBusinessSectionTitle;
+
+  /// No description provided for @signupDocsIdScanPrompt.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط لالتقاط صورة بطاقتك'**
+  String get signupDocsIdScanPrompt;
+
+  /// No description provided for @signupDocsIdScanHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكد من وضوح الصورة وجميع التفاصيل'**
+  String get signupDocsIdScanHint;
+
+  /// No description provided for @signupDocsBusinessScanPrompt.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط لالتقاط صورة رخصة العمل'**
+  String get signupDocsBusinessScanPrompt;
+
+  /// No description provided for @signupDocsBusinessScanHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'السجل التجاري أو رخصة الصحة أو التصريح البلدي'**
+  String get signupDocsBusinessScanHint;
+
+  /// No description provided for @signupDocsAnalyzingIdStep1.
+  ///
+  /// In ar, this message translates to:
+  /// **'نتحقق من الاسم...'**
+  String get signupDocsAnalyzingIdStep1;
+
+  /// No description provided for @signupDocsAnalyzingIdStep2.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم الوطني...'**
+  String get signupDocsAnalyzingIdStep2;
+
+  /// No description provided for @signupDocsAnalyzingIdStep3.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الانتهاء...'**
+  String get signupDocsAnalyzingIdStep3;
+
+  /// No description provided for @signupDocsAnalyzingBusinessStep1.
+  ///
+  /// In ar, this message translates to:
+  /// **'نتحقق من الترخيص...'**
+  String get signupDocsAnalyzingBusinessStep1;
+
+  /// No description provided for @signupDocsAnalyzingBusinessStep2.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم الشركة...'**
+  String get signupDocsAnalyzingBusinessStep2;
+
+  /// No description provided for @signupDocsAnalyzingBusinessStep3.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الإصدار...'**
+  String get signupDocsAnalyzingBusinessStep3;
+
+  /// No description provided for @signupDocsPendingTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الاستلام'**
+  String get signupDocsPendingTitle;
+
+  /// No description provided for @signupDocsPendingSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'وثائقك قيد المراجعة، عادة خلال 24 ساعة'**
+  String get signupDocsPendingSubtitle;
+
+  /// No description provided for @signupDocsRejectedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصورة غير واضحة، حاول مرة أخرى'**
+  String get signupDocsRejectedTitle;
+
+  /// No description provided for @signupDocsTrustNoticeId.
+  ///
+  /// In ar, this message translates to:
+  /// **'نستخدم هذه الصورة للتحقق من هويتك فقط، ولا نشاركها مع أي طرف ثالث.'**
+  String get signupDocsTrustNoticeId;
+
+  /// No description provided for @signupDocsTrustNoticeBusiness.
+  ///
+  /// In ar, this message translates to:
+  /// **'نتحقق من الترخيص للتأكد من أن نشاطك مسجل رسمياً في الأردن.'**
+  String get signupDocsTrustNoticeBusiness;
+
+  /// No description provided for @signupDocsContinue.
+  ///
+  /// In ar, this message translates to:
+  /// **'متابعة'**
+  String get signupDocsContinue;
+
   /// No description provided for @recyclingIncomingShipmentsCount.
   ///
   /// In ar, this message translates to:

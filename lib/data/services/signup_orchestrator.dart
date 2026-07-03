@@ -7,6 +7,7 @@ import '../../core/result/result.dart';
 import '../../domain/failures/app_failure.dart';
 import '../../domain/repositories/i_auth_repository.dart';
 import '../../domain/repositories/i_file_storage_repository.dart';
+import '../../domain/services/i_ai_simulation_service.dart';
 import '../../domain/services/i_signup_orchestrator.dart';
 import '../models/signup_request.dart';
 
@@ -19,13 +20,16 @@ final class SupabaseSignupOrchestrator implements ISignupOrchestrator {
   SupabaseSignupOrchestrator({
     required IAuthRepository authRepository,
     required IFileStorageRepository fileStorage,
+    required IAiSimulationService aiService,
     required SupabaseClient client,
   }) : _auth = authRepository,
        _files = fileStorage,
+       _ai = aiService,
        _client = client;
 
   final IAuthRepository _auth;
   final IFileStorageRepository _files;
+  final IAiSimulationService _ai;
   final SupabaseClient _client;
 
   @override
@@ -113,6 +117,59 @@ final class SupabaseSignupOrchestrator implements ISignupOrchestrator {
       },
       onFailure: (f) => Failure(f),
     );
+  }
+
+  @override
+  Future<AppResult<String>> uploadBusinessLicense(File document) async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) {
+      return const Failure(
+        AuthFailure(message: 'انتهت الجلسة. سجّل الدخول مجدداً.'),
+      );
+    }
+
+    final upload = await _files.uploadBusinessLicense(
+      userId: userId,
+      file: document,
+    );
+    return upload.fold(
+      onSuccess: (objectPath) async {
+        // Write the path back only — unlike uploadIdentityDocument, this
+        // does not touch is_verified: the AI check is a separate step
+        // (runVerificationCheck) so the two documents (ID + business
+        // license) can each run their own check independently.
+        final writeBack = await _writeProfileFields(userId, {
+          'commercial_reg_path': objectPath,
+        });
+        return writeBack.fold(
+          onSuccess: (_) => Success(objectPath),
+          onFailure: (f) => Failure(f),
+        );
+      },
+      onFailure: (f) => Failure(f),
+    );
+  }
+
+  @override
+  Future<AppResult<VerificationResult>> runVerificationCheck({
+    required File document,
+    required bool isBusinessDocument,
+  }) async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) {
+      return const Failure(
+        AuthFailure(message: 'انتهت الجلسة. سجّل الدخول مجدداً.'),
+      );
+    }
+
+    final result = await _ai.verifyIdentityOrBusinessDocument(
+      document,
+      isBusinessDocument: isBusinessDocument,
+    );
+    // Persist regardless of outcome — pending/rejected still needs is_verified
+    // = false written so Screen 5 can show the correct badge on next launch.
+    await _writeProfileFields(userId, {'is_verified': result.isVerified});
+    return Success(result);
   }
 
   /// Low-level: runs `UPDATE profiles SET <fields> WHERE auth_id = <userId>`.

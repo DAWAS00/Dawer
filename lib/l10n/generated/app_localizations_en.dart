@@ -2281,6 +2281,83 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signupRoleStoreLabel => 'Store / Restaurant';
 
   @override
+  String get signupDocsTitle => 'Document Verification';
+
+  @override
+  String get signupDocsIdHeading => 'Verify your identity';
+
+  @override
+  String get signupDocsBusinessHeading => 'Verify your business';
+
+  @override
+  String get signupDocsIdSubtitle =>
+      'Upload your national ID or driving license to verify your identity.';
+
+  @override
+  String get signupDocsBusinessSubtitle =>
+      'Upload your business license or commercial registration to verify your business.';
+
+  @override
+  String get signupDocsIdSectionTitle => 'Your ID';
+
+  @override
+  String get signupDocsBusinessSectionTitle => 'Business License';
+
+  @override
+  String get signupDocsIdScanPrompt => 'Tap to capture your ID';
+
+  @override
+  String get signupDocsIdScanHint =>
+      'Make sure the photo is clear and all details are visible';
+
+  @override
+  String get signupDocsBusinessScanPrompt =>
+      'Tap to capture your business license';
+
+  @override
+  String get signupDocsBusinessScanHint =>
+      'Commercial registration, health permit, or municipal permit';
+
+  @override
+  String get signupDocsAnalyzingIdStep1 => 'Checking name...';
+
+  @override
+  String get signupDocsAnalyzingIdStep2 => 'National ID number...';
+
+  @override
+  String get signupDocsAnalyzingIdStep3 => 'Expiry date...';
+
+  @override
+  String get signupDocsAnalyzingBusinessStep1 => 'Checking license...';
+
+  @override
+  String get signupDocsAnalyzingBusinessStep2 => 'Company name...';
+
+  @override
+  String get signupDocsAnalyzingBusinessStep3 => 'Issue date...';
+
+  @override
+  String get signupDocsPendingTitle => 'Received';
+
+  @override
+  String get signupDocsPendingSubtitle =>
+      'Your documents are under review, usually within 24 hours';
+
+  @override
+  String get signupDocsRejectedTitle => 'Image unclear, please try again';
+
+  @override
+  String get signupDocsTrustNoticeId =>
+      'We use this photo only to verify your identity — it\'s never shared with third parties.';
+
+  @override
+  String get signupDocsTrustNoticeBusiness =>
+      'We verify the license to confirm your business is officially registered in Jordan.';
+
+  @override
+  String get signupDocsContinue => 'Continue';
+
+  @override
   String recyclingIncomingShipmentsCount(int count) {
     return 'Incoming shipments ($count)';
   }

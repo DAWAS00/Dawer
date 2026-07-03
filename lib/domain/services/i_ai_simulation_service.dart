@@ -1,3 +1,5 @@
+import 'dart:io';
+
 abstract class IAiSimulationService {
   /// Simulates generating a rich profile story and suggested categories from a short tagline.
   /// [FUTURE IMPLEMENTATION: AI API Integration]
@@ -11,6 +13,20 @@ abstract class IAiSimulationService {
     String address,
     String documentPath,
   );
+
+  /// Verifies a Screen 5 signup document (national ID/driving license for
+  /// individuals, or business license/commercial registration/municipal
+  /// permit for store-business suppliers and recycling companies).
+  ///
+  /// Unlike [verifyDocumentAndAddress] (restaurant-specific, requires an
+  /// address), this is scoped purely to document authenticity and doesn't
+  /// require an address. Callers must treat any error/failure result as
+  /// "pending" (not verified), never as an implicit approval — Screen 5's
+  /// entire purpose is triage, so failing open would defeat it.
+  Future<VerificationResult> verifyIdentityOrBusinessDocument(
+    File document, {
+    required bool isBusinessDocument,
+  });
 }
 
 class AiGenerationResult {

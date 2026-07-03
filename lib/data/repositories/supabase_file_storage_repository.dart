@@ -13,6 +13,7 @@ import '../../domain/repositories/i_file_storage_repository.dart';
 /// `add_user_media_columns_and_profile_photos_bucket`):
 ///   • `profile-photos` (public)  → `{userId}/profile.<ext>`
 ///   • `user-documents` (private) → `{userId}/identity.<ext>`
+///   • `user-documents` (private) → `{userId}/business_license.<ext>`
 class SupabaseFileStorageRepository implements IFileStorageRepository {
   SupabaseFileStorageRepository({SupabaseClient? client})
     : _client = client ?? Supabase.instance.client;
@@ -63,6 +64,38 @@ class SupabaseFileStorageRepository implements IFileStorageRepository {
 
   @override
   Future<AppResult<String>> signedIdentityUrl({
+    required String objectPath,
+    Duration validity = const Duration(minutes: 5),
+  }) async {
+    try {
+      final url = await _client.storage
+          .from(_docsBucket)
+          .createSignedUrl(objectPath, validity.inSeconds);
+      return Success(url);
+    } on StorageException catch (e) {
+      return Failure(StorageFailure(message: e.message, code: e.statusCode));
+    } catch (e) {
+      return Failure(UnknownFailure.fromException(e));
+    }
+  }
+
+  @override
+  Future<AppResult<String>> uploadBusinessLicense({
+    required String userId,
+    required File file,
+  }) {
+    return _upload(
+      bucket: _docsBucket,
+      userId: userId,
+      file: file,
+      baseName: 'business_license',
+      allowedExts: _docExts,
+      returnPublicUrl: false,
+    );
+  }
+
+  @override
+  Future<AppResult<String>> signedBusinessLicenseUrl({
     required String objectPath,
     Duration validity = const Duration(minutes: 5),
   }) async {

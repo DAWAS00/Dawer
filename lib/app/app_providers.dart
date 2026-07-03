@@ -2,6 +2,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../backend_integration_locally/local_store.dart';
+import '../core/config/ai_config.dart';
 import '../core/services/app_lang_notifier.dart';
 import '../core/services/app_theme_notifier.dart';
 import '../core/services/supabase_service.dart';
@@ -16,6 +17,8 @@ import '../data/repositories/supabase_reservation_repository.dart';
 import '../data/repositories/supabase_wallet_repository.dart';
 import '../data/services/app_order_store.dart';
 import '../data/services/fcm_notification_service.dart';
+import '../data/services/gemini_ai_simulation_service.dart';
+import '../data/services/mock_ai_simulation_service.dart';
 import '../data/services/mock_signup_orchestrator.dart';
 import '../data/services/signup_orchestrator.dart';
 import '../data/services/user_signup_service.dart';
@@ -26,6 +29,7 @@ import '../domain/repositories/i_hub_repository.dart';
 import '../domain/repositories/i_order_repository.dart';
 import '../domain/repositories/i_reservation_repository.dart';
 import '../domain/repositories/i_wallet_repository.dart';
+import '../domain/services/i_ai_simulation_service.dart';
 import '../domain/services/i_notification_service.dart';
 import '../domain/services/i_signup_orchestrator.dart';
 import '../domain/repositories/i_report_request_repository.dart';
@@ -121,11 +125,18 @@ List buildProviders({
       ),
     ),
 
+    Provider<IAiSimulationService>(
+      create: (_) => (useSupabase && AiConfig.hasGeminiKey)
+          ? GeminiAiSimulationService()
+          : const MockAiSimulationService(),
+    ),
+
     Provider<ISignupOrchestrator>(
       create: (ctx) => (useSupabase && !mockAuth)
           ? SupabaseSignupOrchestrator(
               authRepository: ctx.read<IAuthRepository>(),
               fileStorage: ctx.read<IFileStorageRepository>(),
+              aiService: ctx.read<IAiSimulationService>(),
               client: SupabaseService.client,
             )
           : MockSignupOrchestrator(

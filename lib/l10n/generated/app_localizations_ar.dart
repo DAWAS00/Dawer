@@ -2255,6 +2255,81 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signupRoleStoreLabel => 'متجر / مطعم';
 
   @override
+  String get signupDocsTitle => 'توثيق المستندات';
+
+  @override
+  String get signupDocsIdHeading => 'وثّق هويتك';
+
+  @override
+  String get signupDocsBusinessHeading => 'وثّق نشاطك التجاري';
+
+  @override
+  String get signupDocsIdSubtitle =>
+      'ارفع صورة بطاقتك الشخصية أو رخصة القيادة للتحقق من هويتك.';
+
+  @override
+  String get signupDocsBusinessSubtitle =>
+      'ارفع رخصة العمل أو السجل التجاري للتحقق من نشاطك.';
+
+  @override
+  String get signupDocsIdSectionTitle => 'بطاقتك الشخصية';
+
+  @override
+  String get signupDocsBusinessSectionTitle => 'رخصة العمل';
+
+  @override
+  String get signupDocsIdScanPrompt => 'اضغط لالتقاط صورة بطاقتك';
+
+  @override
+  String get signupDocsIdScanHint => 'تأكد من وضوح الصورة وجميع التفاصيل';
+
+  @override
+  String get signupDocsBusinessScanPrompt => 'اضغط لالتقاط صورة رخصة العمل';
+
+  @override
+  String get signupDocsBusinessScanHint =>
+      'السجل التجاري أو رخصة الصحة أو التصريح البلدي';
+
+  @override
+  String get signupDocsAnalyzingIdStep1 => 'نتحقق من الاسم...';
+
+  @override
+  String get signupDocsAnalyzingIdStep2 => 'الرقم الوطني...';
+
+  @override
+  String get signupDocsAnalyzingIdStep3 => 'تاريخ الانتهاء...';
+
+  @override
+  String get signupDocsAnalyzingBusinessStep1 => 'نتحقق من الترخيص...';
+
+  @override
+  String get signupDocsAnalyzingBusinessStep2 => 'اسم الشركة...';
+
+  @override
+  String get signupDocsAnalyzingBusinessStep3 => 'تاريخ الإصدار...';
+
+  @override
+  String get signupDocsPendingTitle => 'تم الاستلام';
+
+  @override
+  String get signupDocsPendingSubtitle =>
+      'وثائقك قيد المراجعة، عادة خلال 24 ساعة';
+
+  @override
+  String get signupDocsRejectedTitle => 'الصورة غير واضحة، حاول مرة أخرى';
+
+  @override
+  String get signupDocsTrustNoticeId =>
+      'نستخدم هذه الصورة للتحقق من هويتك فقط، ولا نشاركها مع أي طرف ثالث.';
+
+  @override
+  String get signupDocsTrustNoticeBusiness =>
+      'نتحقق من الترخيص للتأكد من أن نشاطك مسجل رسمياً في الأردن.';
+
+  @override
+  String get signupDocsContinue => 'متابعة';
+
+  @override
   String recyclingIncomingShipmentsCount(int count) {
     return 'الشحنات الواردة ($count)';
   }

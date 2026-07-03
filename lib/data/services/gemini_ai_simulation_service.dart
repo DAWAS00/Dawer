@@ -99,6 +99,58 @@ class GeminiAiSimulationService implements IAiSimulationService {
     }
   }
 
+  @override
+  Future<VerificationResult> verifyIdentityOrBusinessDocument(
+    File document, {
+    required bool isBusinessDocument,
+  }) async {
+    final prompt = isBusinessDocument
+        ? 'Analyze this document image.\n'
+              'Is this a valid business license, commercial registration, or '
+              'municipal permit for a recycling/waste-collection business in '
+              'Jordan?\n'
+              'Respond ONLY as JSON with no markdown: '
+              '{"isVerified": true, "reason": "brief reason"}'
+        : 'Analyze this document image.\n'
+              'Is this a valid Jordanian national ID card or driving license?\n'
+              'Respond ONLY as JSON with no markdown: '
+              '{"isVerified": true, "reason": "brief reason"}';
+
+    // Screen 5 documents never block signup — any AI-side failure (parse
+    // error, network error, unexpected response) must resolve to "pending",
+    // never a silent auto-approval. This intentionally diverges from
+    // verifyDocumentAndAddress's fail-open-to-true behavior above: that
+    // method's caller doesn't exist in the live app today, whereas this one
+    // backs a real review flag — flagging unverified as pending preserves
+    // the flag's meaning.
+    const pendingResult = VerificationResult(
+      isVerified: false,
+      statusMessage: 'signupDocsStatusPending',
+    );
+
+    try {
+      final bytes = await document.readAsBytes();
+      final mime = document.path.toLowerCase().endsWith('.png')
+          ? 'image/png'
+          : 'image/jpeg';
+      final response = await GeminiService.instance.model().generateContent([
+        Content.multi([DataPart(mime, bytes), TextPart(prompt)]),
+      ]);
+      final parsed = _parseJson(response.text);
+      if (parsed == null) return pendingResult;
+
+      final isVerified = parsed['isVerified'] as bool? ?? false;
+      return VerificationResult(
+        isVerified: isVerified,
+        statusMessage: isVerified
+            ? 'signupDocsStatusApproved'
+            : 'signupDocsStatusRejected',
+      );
+    } catch (_) {
+      return pendingResult;
+    }
+  }
+
   Map<String, dynamic>? _parseJson(String? text) {
     if (text == null || text.isEmpty) return null;
     try {
