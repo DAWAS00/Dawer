@@ -160,8 +160,9 @@ void main() {
           .widgetList<Container>(find.byType(Container))
           .where((c) {
             final deco = c.decoration;
-            if (deco is BoxDecoration)
+            if (deco is BoxDecoration) {
               return deco.color == AppColors.accentAmber;
+            }
             return false;
           })
           .toList();
@@ -193,8 +194,9 @@ void main() {
           .widgetList<Container>(find.byType(Container))
           .where((c) {
             final deco = c.decoration;
-            if (deco is BoxDecoration)
+            if (deco is BoxDecoration) {
               return deco.color == AppColors.statusActiveBg;
+            }
             return false;
           })
           .toList();
@@ -230,8 +232,9 @@ void main() {
           .widgetList<Container>(find.byType(Container))
           .where((c) {
             final deco = c.decoration;
-            if (deco is BoxDecoration)
+            if (deco is BoxDecoration) {
               return deco.color == AppColors.statusCompletedText;
+            }
             return false;
           })
           .toList();
@@ -375,8 +378,9 @@ void main() {
           .widgetList<Container>(find.byType(Container))
           .where((c) {
             final deco = c.decoration;
-            if (deco is BoxDecoration)
+            if (deco is BoxDecoration) {
               return deco.color == AppColors.statusActiveText;
+            }
             return false;
           })
           .toList();

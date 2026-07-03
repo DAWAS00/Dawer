@@ -196,7 +196,7 @@ void main() {
           : (lat: order.pickupLat!, lng: order.pickupLng!);
     }
 
-    Order _order(OrderStatus status) => Order(
+    Order makeOrder(OrderStatus status) => Order(
       id: 'TEST-TRACK',
       type: OrderType.pickup,
       wasteTypes: [WasteType.paper],
@@ -213,26 +213,26 @@ void main() {
     );
 
     test('supplier sees live map when driver accepted', () {
-      expect(shouldShowLiveTracking(_order(OrderStatus.accepted)), isTrue);
+      expect(shouldShowLiveTracking(makeOrder(OrderStatus.accepted)), isTrue);
     });
 
     test('supplier sees live map when driver arrived at pickup', () {
       expect(
-        shouldShowLiveTracking(_order(OrderStatus.arrivedAtPickup)),
+        shouldShowLiveTracking(makeOrder(OrderStatus.arrivedAtPickup)),
         isTrue,
       );
     });
 
     test('supplier sees live map when order in transit', () {
-      expect(shouldShowLiveTracking(_order(OrderStatus.inTransit)), isTrue);
+      expect(shouldShowLiveTracking(makeOrder(OrderStatus.inTransit)), isTrue);
     });
 
     test('no live map for pending (no driver yet)', () {
-      expect(shouldShowLiveTracking(_order(OrderStatus.pending)), isFalse);
+      expect(shouldShowLiveTracking(makeOrder(OrderStatus.pending)), isFalse);
     });
 
     test('no live map for completed order', () {
-      expect(shouldShowLiveTracking(_order(OrderStatus.completed)), isFalse);
+      expect(shouldShowLiveTracking(makeOrder(OrderStatus.completed)), isFalse);
     });
 
     test('no live map when driver not assigned', () {
@@ -253,13 +253,13 @@ void main() {
     });
 
     test('destination pin = pickup when status is accepted', () {
-      final dest = resolveDestination(_order(OrderStatus.accepted));
+      final dest = resolveDestination(makeOrder(OrderStatus.accepted));
       expect(dest.lat, pickupLat);
       expect(dest.lng, pickupLng);
     });
 
     test('destination pin = pickup when driver arrived at pickup', () {
-      final dest = resolveDestination(_order(OrderStatus.arrivedAtPickup));
+      final dest = resolveDestination(makeOrder(OrderStatus.arrivedAtPickup));
       expect(dest.lat, pickupLat);
       expect(dest.lng, pickupLng);
     });
@@ -267,7 +267,7 @@ void main() {
     test(
       'destination pin = dropoff when in transit (Uber Eats / Kareem style)',
       () {
-        final dest = resolveDestination(_order(OrderStatus.inTransit));
+        final dest = resolveDestination(makeOrder(OrderStatus.inTransit));
         expect(dest.lat, dropoffLat);
         expect(dest.lng, dropoffLng);
       },

@@ -144,10 +144,12 @@ class RecyclingProfileTab extends StatelessWidget {
                 Consumer<AppThemeNotifier>(
                   builder: (context, themeNotifier, _) {
                     String modeLabel = context.l10n.themeAutoShort;
-                    if (themeNotifier.mode == ThemeMode.light)
+                    if (themeNotifier.mode == ThemeMode.light) {
                       modeLabel = context.l10n.themeLight;
-                    if (themeNotifier.mode == ThemeMode.dark)
+                    }
+                    if (themeNotifier.mode == ThemeMode.dark) {
                       modeLabel = context.l10n.themeDark;
+                    }
                     return ProfileTile(
                       icon: Icons.dark_mode_rounded,
                       label: context.l10n.profileTheme,
