@@ -17,6 +17,12 @@ class AppTheme {
         surface: AppColors.surface,
         error: AppColors.statusCancelledBg,
       ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.primaryGreen,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+      ),
       textTheme: baseTextTheme.copyWith(
         displayLarge: GoogleFonts.cairo(
           fontSize: 32,
@@ -86,6 +92,21 @@ class AppTheme {
           color: const Color(0xFF6B7280),
         ),
       ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: AppTokens.light.surface,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: AppTokens.light.surface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: AppTokens.light.border, width: 1),
+        ),
+      ),
+      extensions: const [AppTokens.light],
     );
   }
 

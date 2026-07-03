@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../data/models/order/order.dart';
 import 'package:dwaar/ui/common/map/route_map_view.dart';
 import '../../../../../l10n/l10n.dart';
@@ -17,9 +18,9 @@ class CollectionSaleDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F5),
+      backgroundColor: context.dt.scaffold,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF06402B),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -117,7 +118,7 @@ class CollectionSaleDetailView extends StatelessWidget {
           style: GoogleFonts.dmSans(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF717973),
+            color: context.dt.onSurfaceMuted,
           ),
         ),
       ],
@@ -127,6 +128,7 @@ class CollectionSaleDetailView extends StatelessWidget {
   Widget _buildDropoffCard(BuildContext context) {
     final l10n = context.l10n;
     return _card(
+      context,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -143,7 +145,7 @@ class CollectionSaleDetailView extends StatelessWidget {
                 style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819),
+                  color: context.dt.onSurface,
                 ),
               ),
             ],
@@ -162,7 +164,7 @@ class CollectionSaleDetailView extends StatelessWidget {
               style: GoogleFonts.cairo(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF002819),
+                color: context.dt.onSurface,
               ),
             ),
           ),
@@ -174,7 +176,7 @@ class CollectionSaleDetailView extends StatelessWidget {
                 l10n.collectionSaleCompanyNote(sale.supplierNotes!),
                 style: GoogleFonts.cairo(
                   fontSize: 12,
-                  color: const Color(0xFF717973),
+                  color: context.dt.onSurfaceMuted,
                 ),
               ),
             ),
@@ -187,6 +189,7 @@ class CollectionSaleDetailView extends StatelessWidget {
   Widget _buildChoicesCard(BuildContext context) {
     final l10n = context.l10n;
     return _card(
+      context,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -195,12 +198,13 @@ class CollectionSaleDetailView extends StatelessWidget {
             style: GoogleFonts.cairo(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF002819),
+              color: context.dt.onSurface,
             ),
           ),
           const SizedBox(height: 12),
           if (sale.collectionDeliveryMethod != null) ...[
             _infoRow(
+              context,
               icon:
                   sale.collectionDeliveryMethod ==
                       CollectionDeliveryMethod.selfDelivery
@@ -214,6 +218,7 @@ class CollectionSaleDetailView extends StatelessWidget {
           ],
           if (sale.collectionTransactionType != null)
             _infoRow(
+              context,
               icon:
                   sale.collectionTransactionType ==
                       CollectionTransactionType.donate
@@ -236,6 +241,7 @@ class CollectionSaleDetailView extends StatelessWidget {
   Widget _buildWasteCard(BuildContext context) {
     final l10n = context.l10n;
     return _card(
+      context,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -244,7 +250,7 @@ class CollectionSaleDetailView extends StatelessWidget {
             style: GoogleFonts.cairo(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF002819),
+              color: context.dt.onSurface,
             ),
           ),
           const SizedBox(height: 10),
@@ -283,7 +289,7 @@ class CollectionSaleDetailView extends StatelessWidget {
               textAlign: TextAlign.right,
               style: GoogleFonts.cairo(
                 fontSize: 12,
-                color: const Color(0xFF717973),
+                color: context.dt.onSurfaceMuted,
               ),
             ),
           ],
@@ -300,6 +306,7 @@ class CollectionSaleDetailView extends StatelessWidget {
         ? '${l10n.currencyJodShort} / ${l10n.unitKg}'
         : l10n.currencyJodShort;
     return _card(
+      context,
       child: Row(
         children: [
           Container(
@@ -323,7 +330,7 @@ class CollectionSaleDetailView extends StatelessWidget {
             style: GoogleFonts.cairo(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF002819),
+              color: context.dt.onSurface,
             ),
           ),
         ],
@@ -340,21 +347,27 @@ class CollectionSaleDetailView extends StatelessWidget {
         ? l10n.timeAgoHours(diff.inHours)
         : l10n.timeAgoMinutes(diff.inMinutes);
     return _card(
+      context,
       child: Column(
         children: [
-          _metaRow(l10n.collectionSaleCommitmentNumber, sale.id),
+          _metaRow(context, l10n.collectionSaleCommitmentNumber, sale.id),
           if (sale.linkedJobId != null) ...[
             const SizedBox(height: 6),
-            _metaRow(l10n.collectionSaleJobNumberLabel, sale.linkedJobId!),
+            _metaRow(
+              context,
+              l10n.collectionSaleJobNumberLabel,
+              sale.linkedJobId!,
+            ),
           ],
           const SizedBox(height: 6),
-          _metaRow(l10n.collectionSaleAcceptedAt, ageStr),
+          _metaRow(context, l10n.collectionSaleAcceptedAt, ageStr),
         ],
       ),
     );
   }
 
-  Widget _infoRow({
+  Widget _infoRow(
+    BuildContext context, {
     required IconData icon,
     required String label,
     required String value,
@@ -373,7 +386,7 @@ class CollectionSaleDetailView extends StatelessWidget {
               label,
               style: GoogleFonts.cairo(
                 fontSize: 11,
-                color: const Color(0xFF717973),
+                color: context.dt.onSurfaceMuted,
               ),
             ),
             Text(
@@ -381,7 +394,7 @@ class CollectionSaleDetailView extends StatelessWidget {
               style: GoogleFonts.cairo(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
-                color: valueColor ?? const Color(0xFF002819),
+                color: valueColor ?? context.dt.onSurface,
               ),
             ),
             if (subtitle != null)
@@ -390,7 +403,7 @@ class CollectionSaleDetailView extends StatelessWidget {
                 textAlign: TextAlign.right,
                 style: GoogleFonts.cairo(
                   fontSize: 10,
-                  color: const Color(0xFF9CA3AF),
+                  color: context.dt.onSurfaceMuted,
                 ),
               ),
           ],
@@ -399,14 +412,14 @@ class CollectionSaleDetailView extends StatelessWidget {
     );
   }
 
-  Widget _metaRow(String label, String value) {
+  Widget _metaRow(BuildContext context, String label, String value) {
     return Row(
       children: [
         Text(
           value,
           style: GoogleFonts.dmSans(
             fontSize: 12,
-            color: const Color(0xFF717973),
+            color: context.dt.onSurfaceMuted,
           ),
         ),
         const Spacer(),
@@ -415,23 +428,23 @@ class CollectionSaleDetailView extends StatelessWidget {
           style: GoogleFonts.cairo(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: const Color(0xFF404943),
+            color: context.dt.onSurfaceVariant,
           ),
         ),
       ],
     );
   }
 
-  Widget _card({required Widget child}) {
+  Widget _card(BuildContext context, {required Widget child}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.dt.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: context.dt.shadow.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

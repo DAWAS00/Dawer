@@ -161,6 +161,131 @@ void main() {
       }
     });
   });
+
+  // ── Live tracking visibility logic (mirrors OrderMapSection conditions) ──────
+
+  group('Live tracking: receiving party sees driver location', () {
+    const pickupLat = 31.95;
+    const pickupLng = 35.91;
+    const dropoffLat = 32.00;
+    const dropoffLng = 36.00;
+
+    // Mirrors the _liveStatuses set in OrderMapSection.
+    const liveStatuses = {
+      OrderStatus.accepted,
+      OrderStatus.arrivedAtPickup,
+      OrderStatus.inTransit,
+    };
+
+    bool shouldShowLiveTracking(Order order) {
+      return order.driverName != null &&
+          liveStatuses.contains(order.status) &&
+          order.pickupLat != null &&
+          order.pickupLng != null;
+    }
+
+    // Destination pin logic: dropoff when inTransit (driver → dropoff),
+    // otherwise pickup (driver → pickup).
+    ({double lat, double lng}) resolveDestination(Order order) {
+      final useDropoff = order.status == OrderStatus.inTransit &&
+          order.dropoffLat != null &&
+          order.dropoffLng != null;
+      return useDropoff
+          ? (lat: order.dropoffLat!, lng: order.dropoffLng!)
+          : (lat: order.pickupLat!, lng: order.pickupLng!);
+    }
+
+    Order _order(OrderStatus status) => Order(
+          id: 'TEST-TRACK',
+          type: OrderType.pickup,
+          wasteTypes: [WasteType.paper],
+          pickupAddress: 'Amman',
+          dropoffAddress: 'Zarqa',
+          status: status,
+          reward: 5,
+          createdAt: DateTime.now(),
+          driverName: 'أحمد',
+          pickupLat: pickupLat,
+          pickupLng: pickupLng,
+          dropoffLat: dropoffLat,
+          dropoffLng: dropoffLng,
+        );
+
+    test('supplier sees live map when driver accepted', () {
+      expect(shouldShowLiveTracking(_order(OrderStatus.accepted)), isTrue);
+    });
+
+    test('supplier sees live map when driver arrived at pickup', () {
+      expect(shouldShowLiveTracking(_order(OrderStatus.arrivedAtPickup)), isTrue);
+    });
+
+    test('supplier sees live map when order in transit', () {
+      expect(shouldShowLiveTracking(_order(OrderStatus.inTransit)), isTrue);
+    });
+
+    test('no live map for pending (no driver yet)', () {
+      expect(shouldShowLiveTracking(_order(OrderStatus.pending)), isFalse);
+    });
+
+    test('no live map for completed order', () {
+      expect(shouldShowLiveTracking(_order(OrderStatus.completed)), isFalse);
+    });
+
+    test('no live map when driver not assigned', () {
+      final order = Order(
+        id: 'NO-DRIVER',
+        type: OrderType.pickup,
+        wasteTypes: [WasteType.paper],
+        pickupAddress: 'A',
+        dropoffAddress: 'B',
+        status: OrderStatus.accepted,
+        reward: 0,
+        createdAt: DateTime.now(),
+        // driverName intentionally null
+        pickupLat: pickupLat,
+        pickupLng: pickupLng,
+      );
+      expect(shouldShowLiveTracking(order), isFalse);
+    });
+
+    test('destination pin = pickup when status is accepted', () {
+      final dest = resolveDestination(_order(OrderStatus.accepted));
+      expect(dest.lat, pickupLat);
+      expect(dest.lng, pickupLng);
+    });
+
+    test('destination pin = pickup when driver arrived at pickup', () {
+      final dest = resolveDestination(_order(OrderStatus.arrivedAtPickup));
+      expect(dest.lat, pickupLat);
+      expect(dest.lng, pickupLng);
+    });
+
+    test('destination pin = dropoff when in transit (Uber Eats / Kareem style)', () {
+      final dest = resolveDestination(_order(OrderStatus.inTransit));
+      expect(dest.lat, dropoffLat);
+      expect(dest.lng, dropoffLng);
+    });
+
+    test('destination falls back to pickup when inTransit but no dropoff coords', () {
+      final order = Order(
+        id: 'NO-DROP',
+        type: OrderType.pickup,
+        wasteTypes: [WasteType.paper],
+        pickupAddress: 'A',
+        dropoffAddress: 'B',
+        status: OrderStatus.inTransit,
+        reward: 0,
+        createdAt: DateTime.now(),
+        driverName: 'خالد',
+        pickupLat: pickupLat,
+        pickupLng: pickupLng,
+        // dropoffLat / dropoffLng intentionally null
+      );
+      final dest = resolveDestination(order);
+      expect(dest.lat, pickupLat);
+      expect(dest.lng, pickupLng);
+    });
+  });
 }
 
 List<String> _buildSeedOrderIds() {

@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:dwaar/core/result/result.dart';
+import 'package:dwaar/data/chat/mock_chat_repository.dart';
 import 'package:dwaar/data/models/user_role.dart';
 import 'package:dwaar/data/repositories/mock_auth_repository.dart';
 import 'package:dwaar/domain/chat/entities/chat_message.dart';
@@ -18,7 +19,9 @@ import 'package:dwaar/ui/features/chat/widgets/chat_input_bar.dart';
 
 // ── Fake repo ─────────────────────────────────────────────────────────────────
 
-class _FakeChatRepository implements IChatRepository {
+// Implements MockChatRepository (not just IChatRepository) so ChatView's
+// dev-only banner check `repo is MockChatRepository` passes in tests.
+class _FakeChatRepository implements MockChatRepository {
   final StreamController<List<ChatMessage>> _ctrl =
       StreamController<List<ChatMessage>>.broadcast();
 
@@ -82,6 +85,7 @@ class _FakeChatRepository implements IChatRepository {
   Stream<void> watchTyping(String orderId, String excludeUserId) =>
       const Stream.empty();
 
+  @override
   void dispose() => _ctrl.close();
 }
 

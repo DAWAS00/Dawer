@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../data/models/eco_badge.dart';
 
 /// Displays all earned + locked badges in a horizontal scroll row.
@@ -67,7 +68,7 @@ class _BadgeChip extends StatelessWidget {
         width: 100,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
-          color: earned ? badge.surface : const Color(0xFFF2F4F2),
+          color: earned ? badge.surface : context.dt.surfaceVariant,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: earned
@@ -96,7 +97,7 @@ class _BadgeChip extends StatelessWidget {
               style: GoogleFonts.cairo(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: earned ? badge.color : const Color(0xFF9099A2),
+                color: earned ? badge.color : context.dt.onSurfaceMuted,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -108,7 +109,7 @@ class _BadgeChip extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.cairo(
                   fontSize: 9,
-                  color: const Color(0xFF9099A2),
+                  color: context.dt.onSurfaceMuted,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

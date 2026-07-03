@@ -118,7 +118,7 @@ void main() {
 
       await _pumpLoginForm(tester, repo: repo);
 
-      // Type valid phone number.
+      // Type valid phone number (field takes 9 digits without the leading 0).
       await tester.enterText(
         find.byKey(const ValueKey('phone_input')),
         '790000001',

@@ -71,7 +71,7 @@ void main() {
 
     test('verifyOtp normalizes phone number properly', () async {
       final result = await repo.verifyOtp(
-        '0791234567',
+        '079-123-4567',
         MockAuthRepository.simulatedOtp,
       );
 

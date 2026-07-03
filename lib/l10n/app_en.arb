@@ -1217,6 +1217,7 @@
   "reservationBuyerPhoneLabel": "Buyer's phone number",
   "reservationBuyerPhoneHint": "7XXXXXXXX",
   "reservationBuyerNotFound": "This phone number is not registered in the app",
+  "reservationFieldsRequired": "Please fill in the item description, phone number, and amount",
   "reservationInvoiceAmountLabel": "Invoice amount (JOD)",
   "reservationDurationLabel": "Reservation duration",
   "reservationDurationMinutes": "{minutes} minutes",

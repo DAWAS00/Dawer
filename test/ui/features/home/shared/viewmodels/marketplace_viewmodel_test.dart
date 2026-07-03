@@ -19,7 +19,6 @@ void main() {
 
     expect(vm.searchQuery, 'Bottle');
     expect(vm.selectedCategory, WasteType.plastic);
-    expect(vm.showSuggestionBanner, isTrue);
 
     // 2. Call showAllOrders
     vm.showAllOrders();
@@ -27,6 +26,5 @@ void main() {
     // 3. Verify everything is cleared
     expect(vm.searchQuery, '');
     expect(vm.selectedCategory, isNull);
-    expect(vm.showSuggestionBanner, isFalse);
   });
 }

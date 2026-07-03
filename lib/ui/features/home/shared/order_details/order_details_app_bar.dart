@@ -18,7 +18,8 @@ class OrderDetailsAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isActive = order.status == OrderStatus.accepted ||
+    final isActive =
+        order.status == OrderStatus.accepted ||
         order.status == OrderStatus.inTransit ||
         order.status == OrderStatus.arrivedAtPickup ||
         order.status == OrderStatus.arrivedAtDropoff;
@@ -30,10 +31,7 @@ class OrderDetailsAppBar extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              AppColors.ctaGradientStart,
-              AppColors.headerGradientEnd,
-            ],
+            colors: [AppColors.ctaGradientStart, AppColors.headerGradientEnd],
           ),
         ),
       ),
@@ -93,8 +91,9 @@ class OrderDetailsAppBar extends StatelessWidget {
             padding: const EdgeInsets.only(left: 16, top: 10, bottom: 10),
             child: DwaarStatusBadge(
               label: order.status.label,
-              backgroundColor:
-                  _statusColor(order.status).withValues(alpha: 0.2),
+              backgroundColor: _statusColor(
+                order.status,
+              ).withValues(alpha: 0.2),
               textColor: Colors.white,
               pulsing: isActive,
             ),

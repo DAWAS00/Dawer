@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../data/services/eco_points_engine.dart';
 
 /// Grid of partner discount coupons. Locked coupons show the points
@@ -143,7 +144,7 @@ class _CouponCard extends StatelessWidget {
                   '${coupon.pointsRequired} نقطة',
                   style: GoogleFonts.cairo(
                     fontSize: 10,
-                    color: const Color(0xFF9099A2),
+                    color: context.dt.onSurfaceMuted,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

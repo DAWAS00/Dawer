@@ -250,64 +250,67 @@ class _DriverStatusStepper extends StatelessWidget {
   Widget build(BuildContext context) {
     final step = _currentStep;
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Row(
-        children: List.generate(_steps.length * 2 - 1, (i) {
-          if (i.isOdd) {
-            final connectorIdx = i ~/ 2;
-            final active = connectorIdx < step;
-            return Expanded(
-              child: Container(
-                height: 2.5,
-                decoration: BoxDecoration(
-                  gradient: active
-                      ? const LinearGradient(
-                          colors: [
-                            AppColors.ctaGradientStart,
-                            AppColors.ctaGradientEnd,
-                          ],
-                        )
-                      : null,
-                  color: active ? null : const Color(0xFFE2E8E5),
-                  borderRadius: BorderRadius.circular(1.25),
-                ),
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
-            );
-          }
-          final idx = i ~/ 2;
-          final done = idx < step;
-          final current = idx == step;
-          return _StepDot(
-            label: _steps[idx].label,
-            icon: _steps[idx].icon,
-            done: done,
-            current: current,
-          );
-        }),
-      ),
-    ).animate().fadeIn(duration: 400.ms).slideY(
-      begin: 0.04,
-      end: 0,
-      duration: 400.ms,
-      curve: Curves.easeOutCubic,
-    );
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.02),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Row(
+            children: List.generate(_steps.length * 2 - 1, (i) {
+              if (i.isOdd) {
+                final connectorIdx = i ~/ 2;
+                final active = connectorIdx < step;
+                return Expanded(
+                  child: Container(
+                    height: 2.5,
+                    decoration: BoxDecoration(
+                      gradient: active
+                          ? const LinearGradient(
+                              colors: [
+                                AppColors.ctaGradientStart,
+                                AppColors.ctaGradientEnd,
+                              ],
+                            )
+                          : null,
+                      color: active ? null : const Color(0xFFE2E8E5),
+                      borderRadius: BorderRadius.circular(1.25),
+                    ),
+                  ),
+                );
+              }
+              final idx = i ~/ 2;
+              final done = idx < step;
+              final current = idx == step;
+              return _StepDot(
+                label: _steps[idx].label,
+                icon: _steps[idx].icon,
+                done: done,
+                current: current,
+              );
+            }),
+          ),
+        )
+        .animate()
+        .fadeIn(duration: 400.ms)
+        .slideY(
+          begin: 0.04,
+          end: 0,
+          duration: 400.ms,
+          curve: Curves.easeOutCubic,
+        );
   }
 }
 

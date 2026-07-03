@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../data/models/order/order.dart';
 import '../../../../../data/models/order_labels.dart';
 import '../../../../../data/models/user.dart';
@@ -13,9 +14,9 @@ import 'accept_collection_job_sheet.dart';
 
 /// Full-screen detail page for a collection job.
 /// Roles:
-///   - driver        → "قبول الوظيفة" button
-///   - job owner     → "تعديل" + "حذف" buttons
-///   - all others    → read-only
+///   - driver        â†’ "Ù‚Ø¨ÙˆÙ„ Ø§Ù„ÙˆØ¸ÙŠÙØ©" button
+///   - job owner     â†’ "ØªØ¹Ø¯ÙŠÙ„" + "Ø­Ø°Ù" buttons
+///   - all others    â†’ read-only
 class CollectionJobDetailView extends StatefulWidget {
   final Order job;
   final UserRole role;
@@ -65,7 +66,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F4),
+      backgroundColor: context.dt.scaffold,
       body: CustomScrollView(
         slivers: [
           _buildAppBar(context),
@@ -114,7 +115,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
     return SliverAppBar(
       expandedHeight: 130,
       pinned: true,
-      backgroundColor: const Color(0xFF14401F),
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
         onPressed: () => Navigator.pop(context),
@@ -204,14 +205,14 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
                 _formatAge(context, _job.createdAt),
                 style: GoogleFonts.cairo(
                   fontSize: 11,
-                  color: const Color(0xFF9CA3AF),
+                  color: context.dt.onSurfaceMuted,
                 ),
               ),
               Text(
                 _job.id,
                 style: GoogleFonts.dmSans(
                   fontSize: 11,
-                  color: const Color(0xFFBBBFBD),
+                  color: context.dt.onSurfaceMuted,
                 ),
               ),
             ],
@@ -225,7 +226,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
                 style: GoogleFonts.cairo(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819),
+                  color: context.dt.onSurface,
                 ),
               ),
               Container(
@@ -300,17 +301,17 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
           const SizedBox(height: 12),
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.location_on_rounded,
                 size: 14,
-                color: Color(0xFF9CA3AF),
+                color: context.dt.onSurfaceMuted,
               ),
               const SizedBox(width: 4),
               Text(
                 _job.pickupAddress,
                 style: GoogleFonts.cairo(
                   fontSize: 12,
-                  color: const Color(0xFF717973),
+                  color: context.dt.onSurfaceMuted,
                 ),
               ),
               const Spacer(),
@@ -319,7 +320,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
                 style: GoogleFonts.cairo(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF404943),
+                  color: context.dt.onSurfaceVariant,
                 ),
               ),
             ],
@@ -410,7 +411,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
             textAlign: TextAlign.right,
             style: GoogleFonts.cairo(
               fontSize: 14,
-              color: const Color(0xFF404943),
+              color: context.dt.onSurfaceVariant,
               height: 1.6,
             ),
           ),
@@ -430,7 +431,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
         20,
         MediaQuery.of(context).padding.bottom + 14,
       ),
-      color: Colors.white,
+      color: context.dt.surface,
       child: Row(
         children: [
           if (_isOwner) ...[
@@ -518,7 +519,6 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -680,7 +680,7 @@ class _CollectionJobDetailViewState extends State<CollectionJobDetailView> {
   }
 }
 
-// ── Private helper widgets ────────────────────────────────────────────────────
+// â”€â”€ Private helper widgets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _DetailCard extends StatelessWidget {
   final Widget child;
@@ -692,11 +692,11 @@ class _DetailCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.dt.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: context.dt.shadow.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -722,11 +722,11 @@ class _SectionTitle extends StatelessWidget {
           style: GoogleFonts.cairo(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF404943),
+            color: context.dt.onSurfaceVariant,
           ),
         ),
         const SizedBox(width: 6),
-        Icon(icon, size: 16, color: const Color(0xFF14401F)),
+        Icon(icon, size: 16, color: Theme.of(context).primaryColor),
       ],
     );
   }

@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../common/theme_mode_sheet.dart';
 import '../../../../common/lang_picker_sheet.dart';
 import '../../../../../core/services/app_theme_notifier.dart';
+import '../../../../../core/theme/app_tokens.dart';
 import '../../../../../core/services/app_lang_notifier.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../data/models/order/order.dart'
@@ -409,9 +410,9 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).bottomSheetTheme.backgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: EdgeInsets.fromLTRB(
         24,
@@ -427,7 +428,7 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: const Color(0xFFE6E9E7),
+                color: context.dt.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -437,7 +438,7 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
               style: GoogleFonts.cairo(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF002819),
+                color: context.dt.onSurface,
               ),
             ),
             const SizedBox(height: 24),
@@ -493,7 +494,7 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
                     context.l10n.profileEnterManually,
                     style: GoogleFonts.cairo(
                       fontSize: 12,
-                      color: const Color(0xFF9099A2),
+                      color: context.dt.onSurfaceMuted,
                     ),
                   ),
                 ),
@@ -527,7 +528,7 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
                 style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF404943),
+                  color: context.dt.onSurfaceVariant,
                 ),
               ),
             ),
@@ -538,9 +539,9 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
                 height: 120,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF2F4F2),
+                  color: context.dt.surfaceVariant,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFE6E9E7)),
+                  border: Border.all(color: context.dt.border),
                 ),
                 child: _photoPath != null && _photoPath!.isNotEmpty
                     ? ClipRRect(
@@ -550,16 +551,16 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
                     : Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.add_a_photo_rounded,
-                            color: Color(0xFF717973),
+                            color: context.dt.onSurfaceMuted,
                             size: 32,
                           ),
                           const SizedBox(height: 8),
                           Text(
                             context.l10n.profileTapToAddPhoto,
                             style: GoogleFonts.cairo(
-                              color: const Color(0xFF717973),
+                              color: context.dt.onSurfaceMuted,
                               fontSize: 14,
                             ),
                           ),
@@ -610,13 +611,13 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
           style: GoogleFonts.cairo(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF404943),
+            color: context.dt.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFFF2F4F2),
+            color: context.dt.surfaceVariant,
             borderRadius: BorderRadius.circular(12),
           ),
           child: TextField(
@@ -624,17 +625,14 @@ class _EditVehicleBottomSheetState extends State<_EditVehicleBottomSheet> {
             textDirection: textDirection,
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: GoogleFonts.cairo(color: const Color(0xFF9099A2)),
+              hintStyle: GoogleFonts.cairo(color: context.dt.onSurfaceMuted),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 14,
               ),
             ),
-            style: GoogleFonts.cairo(
-              fontSize: 16,
-              color: const Color(0xFF002819),
-            ),
+            style: GoogleFonts.cairo(fontSize: 16, color: context.dt.onSurface),
           ),
         ),
       ],

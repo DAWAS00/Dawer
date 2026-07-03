@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/theme/app_tokens.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../common/green_button.dart';
 import '../viewmodels/login_viewmodel.dart';
@@ -56,7 +57,7 @@ class _SignupPhoneScreenState extends State<SignupPhoneScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_forward_ios_rounded),
@@ -65,7 +66,7 @@ class _SignupPhoneScreenState extends State<SignupPhoneScreen> {
         title: Text(l10n.signupTitle, style: GoogleFonts.cairo()),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: const Color(0xFF191C1B),
+        foregroundColor: context.dt.onSurface,
       ),
       body: SafeArea(
         child: SingleChildScrollView(

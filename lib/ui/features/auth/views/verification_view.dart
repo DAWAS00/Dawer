@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/theme/app_tokens.dart';
 import '../../../../data/models/user_role.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
 import '../../../../l10n/l10n.dart';
@@ -91,13 +92,13 @@ class _VerificationScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAF8),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(l10n.otpTitle, style: GoogleFonts.cairo()),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: context.dt.onSurface,
       ),
       body: SafeArea(
         child: Padding(
