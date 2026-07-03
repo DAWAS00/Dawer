@@ -168,9 +168,7 @@ class OrderEarningsSection extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: AppColors.background,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: AppColors.borderSubtle,
-                        ),
+                        border: Border.all(color: AppColors.borderSubtle),
                       ),
                       child: Column(
                         children: [

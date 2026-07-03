@@ -13,7 +13,11 @@ import '../../../../../l10n/l10n.dart';
 /// `pending` (no driver yet) and `arrivedAtDropoff`/`completed`/`cancelled`
 /// (arrival already happened or the order is over).
 class OrderEtaSection extends StatelessWidget {
-  const OrderEtaSection({super.key, required this.order, this.isDriverView = false});
+  const OrderEtaSection({
+    super.key,
+    required this.order,
+    this.isDriverView = false,
+  });
 
   final Order order;
   final bool isDriverView;
@@ -37,78 +41,81 @@ class OrderEtaSection extends StatelessWidget {
     };
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 6, 20, 0),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
-            begin: Alignment.centerRight,
-            end: Alignment.centerLeft,
-          ),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primaryGreen.withValues(alpha: 0.25),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Row(
-          textDirection: TextDirection.rtl,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
-                shape: BoxShape.circle,
+          padding: const EdgeInsets.fromLTRB(20, 6, 20, 0),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
               ),
-              child: const Icon(
-                LucideIcons.navigation,
-                color: Colors.white,
-                size: 20,
-              ),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primaryGreen.withValues(alpha: 0.25),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    l10n.orderDriverArrives(
-                      '$etaMinutes ${l10n.orderEtaMinutesUnit}',
-                    ),
-                    textAlign: TextAlign.end,
-                    style: GoogleFonts.cairo(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+            child: Row(
+              textDirection: TextDirection.rtl,
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
                   ),
-                  if (subtitle.isNotEmpty) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      textAlign: TextAlign.end,
-                      style: GoogleFonts.cairo(
-                        fontSize: 12,
-                        color: Colors.white.withValues(alpha: 0.85),
+                  child: const Icon(
+                    LucideIcons.navigation,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        l10n.orderDriverArrives(
+                          '$etaMinutes ${l10n.orderEtaMinutesUnit}',
+                        ),
+                        textAlign: TextAlign.end,
+                        style: GoogleFonts.cairo(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                  ],
-                ],
-              ),
+                      if (subtitle.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle,
+                          textAlign: TextAlign.end,
+                          style: GoogleFonts.cairo(
+                            fontSize: 12,
+                            color: Colors.white.withValues(alpha: 0.85),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    ).animate().fadeIn(duration: 350.ms).slideY(
-      begin: 0.06,
-      end: 0,
-      duration: 400.ms,
-      curve: Curves.easeOutCubic,
-    );
+          ),
+        )
+        .animate()
+        .fadeIn(duration: 350.ms)
+        .slideY(
+          begin: 0.06,
+          end: 0,
+          duration: 400.ms,
+          curve: Curves.easeOutCubic,
+        );
   }
 }

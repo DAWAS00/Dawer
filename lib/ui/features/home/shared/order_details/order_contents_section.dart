@@ -130,9 +130,7 @@ class _MetaBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.primaryGreen.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: AppColors.borderSubtle,
-        ),
+        border: Border.all(color: AppColors.borderSubtle),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

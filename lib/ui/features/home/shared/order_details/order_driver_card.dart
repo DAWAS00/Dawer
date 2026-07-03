@@ -100,8 +100,9 @@ class OrderDriverCard extends StatelessWidget {
                   backgroundColor: Colors.white,
                   child: CircleAvatar(
                     radius: 33,
-                    backgroundColor:
-                        AppColors.primaryGreen.withValues(alpha: 0.08),
+                    backgroundColor: AppColors.primaryGreen.withValues(
+                      alpha: 0.08,
+                    ),
                     child: Text(
                       initials,
                       style: GoogleFonts.cairo(
@@ -260,10 +261,7 @@ class _ActionButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
 
-  const _ActionButton({
-    required this.icon,
-    required this.onPressed,
-  });
+  const _ActionButton({required this.icon, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -284,16 +282,9 @@ class _ActionButton extends StatelessWidget {
       ),
       child: IconButton(
         onPressed: onPressed,
-        icon: Icon(
-          icon,
-          color: AppColors.primaryGreen,
-          size: 22,
-        ),
+        icon: Icon(icon, color: AppColors.primaryGreen, size: 22),
         padding: const EdgeInsets.all(8),
-        constraints: const BoxConstraints(
-          minWidth: 40,
-          minHeight: 40,
-        ),
+        constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
       ),
     );
   }

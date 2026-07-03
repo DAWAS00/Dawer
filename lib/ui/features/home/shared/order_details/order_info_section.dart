@@ -70,9 +70,7 @@ class OrderInfoSection extends StatelessWidget {
               if (order.distanceKm != null) ...[
                 DwaarMetricTile(
                   icon: Icons.straighten_rounded,
-                  value: l10n.orderDistKm(
-                    order.distanceKm!.toStringAsFixed(1),
-                  ),
+                  value: l10n.orderDistKm(order.distanceKm!.toStringAsFixed(1)),
                   label: '',
                   color: const Color(0xFF717973),
                 ),
@@ -92,9 +90,7 @@ class OrderInfoSection extends StatelessWidget {
               if (order.reward > 0)
                 DwaarMetricTile(
                   icon: Icons.monetization_on_outlined,
-                  value: l10n.orderRewardJD(
-                    order.reward.toStringAsFixed(1),
-                  ),
+                  value: l10n.orderRewardJD(order.reward.toStringAsFixed(1)),
                   label: '',
                   color: AppColors.statusActiveText,
                   bold: true,

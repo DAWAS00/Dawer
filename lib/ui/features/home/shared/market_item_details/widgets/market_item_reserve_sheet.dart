@@ -294,7 +294,10 @@ class _MarketItemReserveSheetState extends State<MarketItemReserveSheet> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                 ),
                 child: FittedBox(
                   fit: BoxFit.scaleDown,

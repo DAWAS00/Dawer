@@ -140,66 +140,69 @@ class _ArrivalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Spacer(),
+              Row(
+                children: [
+                  const Spacer(),
+                  Text(
+                    title,
+                    style: GoogleFonts.cairo(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF002819),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: iconBg,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: iconColor.withValues(alpha: 0.2),
+                          blurRadius: 12,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Icon(icon, color: iconColor, size: 22),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
               Text(
-                title,
+                subtitle,
+                textAlign: TextAlign.right,
                 style: GoogleFonts.cairo(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819),
+                  fontSize: 13,
+                  color: AppColors.mutedText,
                 ),
               ),
-              const SizedBox(width: 10),
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: iconBg,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: iconColor.withValues(alpha: 0.2),
-                      blurRadius: 12,
-                      spreadRadius: 2,
-                    ),
-                  ],
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: _GradientButton(
+                  gradient: buttonGradient,
+                  loading: loading,
+                  label: buttonLabel,
+                  onTap: onTap,
                 ),
-                child: Icon(icon, color: iconColor, size: 22),
               ),
             ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            subtitle,
-            textAlign: TextAlign.right,
-            style: GoogleFonts.cairo(
-              fontSize: 13,
-              color: AppColors.mutedText,
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: _GradientButton(
-              gradient: buttonGradient,
-              loading: loading,
-              label: buttonLabel,
-              onTap: onTap,
-            ),
-          ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 300.ms).slideY(
-      begin: 0.05,
-      end: 0,
-      duration: 400.ms,
-      curve: Curves.easeOutCubic,
-    );
+        )
+        .animate()
+        .fadeIn(duration: 300.ms)
+        .slideY(
+          begin: 0.05,
+          end: 0,
+          duration: 400.ms,
+          curve: Curves.easeOutCubic,
+        );
   }
 }
 
@@ -323,17 +326,17 @@ class _AwaitingBanner extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: AppColors.accentAmber.withValues(alpha: 0.15),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.hourglass_top_rounded,
-                color: Color(0xFF92400E),
-                size: 22,
-              ),
-            )
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.accentAmber.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.hourglass_top_rounded,
+                    color: Color(0xFF92400E),
+                    size: 22,
+                  ),
+                )
                 .animate(onPlay: (c) => c.repeat(reverse: true))
                 .rotate(
                   begin: -0.05,
@@ -358,134 +361,139 @@ class _SupplierConfirmCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                l10n.orderArrivalDriverArrived,
-                style: GoogleFonts.cairo(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.statusActiveBg,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primaryGreen.withValues(alpha: 0.2),
-                      blurRadius: 8,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.directions_car_rounded,
-                  color: AppColors.primaryGreen,
-                  size: 22,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            l10n.orderArrivalDriverAtLocation,
-            textAlign: TextAlign.right,
-            style: GoogleFonts.cairo(
-              fontSize: 14,
-              color: const Color(0xFF404943),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () => onConfirm(false),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.statusCancelledText,
-                    side: BorderSide(
-                      color: AppColors.statusCancelledText.withValues(
-                        alpha: 0.5,
-                      ),
-                      width: 1.5,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    minimumSize: const Size(0, 56),
-                  ),
-                  child: Text(
-                    l10n.unavailable,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    l10n.orderArrivalDriverArrived,
                     style: GoogleFonts.cairo(
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      height: 1.1,
+                      color: const Color(0xFF002819),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [
-                        AppColors.ctaGradientStart,
-                        AppColors.ctaGradientEnd,
+                  const SizedBox(width: 10),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppColors.statusActiveBg,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primaryGreen.withValues(alpha: 0.2),
+                          blurRadius: 8,
+                          spreadRadius: 1,
+                        ),
                       ],
                     ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primaryGreen.withValues(alpha: 0.25),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
+                    child: const Icon(
+                      Icons.directions_car_rounded,
+                      color: AppColors.primaryGreen,
+                      size: 22,
+                    ),
                   ),
-                  child: Material(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(16),
-                    child: InkWell(
-                      onTap: () => onConfirm(true),
-                      borderRadius: BorderRadius.circular(16),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: Center(
-                          child: Text(
-                            l10n.orderArrivalIAmAvailable,
-                            style: GoogleFonts.cairo(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                              color: Colors.white,
-                              height: 1.1,
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                l10n.orderArrivalDriverAtLocation,
+                textAlign: TextAlign.right,
+                style: GoogleFonts.cairo(
+                  fontSize: 14,
+                  color: const Color(0xFF404943),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => onConfirm(false),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.statusCancelledText,
+                        side: BorderSide(
+                          color: AppColors.statusCancelledText.withValues(
+                            alpha: 0.5,
+                          ),
+                          width: 1.5,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        minimumSize: const Size(0, 56),
+                      ),
+                      child: Text(
+                        l10n.unavailable,
+                        style: GoogleFonts.cairo(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          height: 1.1,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            AppColors.ctaGradientStart,
+                            AppColors.ctaGradientEnd,
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primaryGreen.withValues(
+                              alpha: 0.25,
+                            ),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(16),
+                        child: InkWell(
+                          onTap: () => onConfirm(true),
+                          borderRadius: BorderRadius.circular(16),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            child: Center(
+                              child: Text(
+                                l10n.orderArrivalIAmAvailable,
+                                style: GoogleFonts.cairo(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                  color: Colors.white,
+                                  height: 1.1,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 300.ms).slideY(
-      begin: 0.05,
-      end: 0,
-      duration: 400.ms,
-      curve: Curves.easeOutCubic,
-    );
+        )
+        .animate()
+        .fadeIn(duration: 300.ms)
+        .slideY(
+          begin: 0.05,
+          end: 0,
+          duration: 400.ms,
+          curve: Curves.easeOutCubic,
+        );
   }
 }

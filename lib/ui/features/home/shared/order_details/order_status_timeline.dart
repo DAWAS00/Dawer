@@ -59,9 +59,7 @@ class OrderStatusTimeline extends StatelessWidget {
             children: List.generate(steps.length * 2 - 1, (i) {
               if (i.isOdd) {
                 final filled = (i ~/ 2) < currentIndex;
-                return Expanded(
-                  child: _AnimatedConnector(filled: filled),
-                );
+                return Expanded(child: _AnimatedConnector(filled: filled));
               }
               final stepIdx = i ~/ 2;
               return _TimelineStep(
@@ -98,17 +96,14 @@ class _AnimatedConnector extends StatelessWidget {
     }
 
     return Container(
-      height: 2.5,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(2),
-        gradient: const LinearGradient(
-          colors: [
-            AppColors.ctaGradientStart,
-            AppColors.ctaGradientEnd,
-          ],
-        ),
-      ),
-    )
+          height: 2.5,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(2),
+            gradient: const LinearGradient(
+              colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
+            ),
+          ),
+        )
         .animate(onPlay: (c) => c.repeat(reverse: true))
         .shimmer(
           duration: 2000.ms,
@@ -164,25 +159,26 @@ class _TimelineStep extends StatelessWidget {
 
     // Ring effect for current step
     if (active) {
-      dot = Container(
-        width: dotSize + 8,
-        height: dotSize + 8,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: AppColors.primaryGreen.withValues(alpha: 0.2),
-            width: 3,
-          ),
-        ),
-        child: Center(child: dot),
-      )
-          .animate(onPlay: (c) => c.repeat(reverse: true))
-          .scaleXY(
-            begin: 0.95,
-            end: 1.05,
-            duration: 1200.ms,
-            curve: Curves.easeInOut,
-          );
+      dot =
+          Container(
+                width: dotSize + 8,
+                height: dotSize + 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.primaryGreen.withValues(alpha: 0.2),
+                    width: 3,
+                  ),
+                ),
+                child: Center(child: dot),
+              )
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .scaleXY(
+                begin: 0.95,
+                end: 1.05,
+                duration: 1200.ms,
+                curve: Curves.easeInOut,
+              );
     }
 
     return Column(

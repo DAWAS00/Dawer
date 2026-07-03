@@ -74,58 +74,58 @@ class DwaarDetailCard extends StatelessWidget {
 
     final BoxDecoration decoration = switch (elevation) {
       DwaarCardElevation.flat => BoxDecoration(
-          color: Colors.white,
-          borderRadius: br,
-          border: Border.all(color: AppColors.borderSubtle),
-        ),
+        color: Colors.white,
+        borderRadius: br,
+        border: Border.all(color: AppColors.borderSubtle),
+      ),
       DwaarCardElevation.raised => BoxDecoration(
-          color: Colors.white,
-          borderRadius: br,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-      DwaarCardElevation.highlighted => BoxDecoration(
-          color: Colors.white,
-          borderRadius: br,
-          border: Border.all(color: accent.withValues(alpha: 0.2), width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: accent.withValues(alpha: 0.08),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-      DwaarCardElevation.glass => BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.95),
-          borderRadius: br,
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.6),
-            width: 1.5,
+        color: Colors.white,
+        borderRadius: br,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-            BoxShadow(
-              color: accent.withValues(alpha: 0.04),
-              blurRadius: 40,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      DwaarCardElevation.highlighted => BoxDecoration(
+        color: Colors.white,
+        borderRadius: br,
+        border: Border.all(color: accent.withValues(alpha: 0.2), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: accent.withValues(alpha: 0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      DwaarCardElevation.glass => BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.95),
+        borderRadius: br,
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.6),
+          width: 1.5,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: accent.withValues(alpha: 0.04),
+            blurRadius: 40,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
     };
 
     Widget card = Container(
@@ -136,8 +136,7 @@ class DwaarDetailCard extends StatelessWidget {
         borderRadius: br,
         child: InkWell(
           onTap: onTap,
-          borderRadius:
-              br is BorderRadius ? br : BorderRadius.circular(20),
+          borderRadius: br is BorderRadius ? br : BorderRadius.circular(20),
           child: Padding(padding: padding, child: child),
         ),
       ),
@@ -234,10 +233,12 @@ class DwaarDetailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final valueColor =
-        isHighlighted ? AppColors.statusActiveText : const Color(0xFF404943);
-    final labelColor =
-        isBold ? const Color(0xFF374151) : const Color(0xFF6B7280);
+    final valueColor = isHighlighted
+        ? AppColors.statusActiveText
+        : const Color(0xFF404943);
+    final labelColor = isBold
+        ? const Color(0xFF374151)
+        : const Color(0xFF6B7280);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -332,11 +333,7 @@ class DwaarDetailDivider extends StatelessWidget {
   final double verticalPadding;
   final Color? color;
 
-  const DwaarDetailDivider({
-    super.key,
-    this.verticalPadding = 12,
-    this.color,
-  });
+  const DwaarDetailDivider({super.key, this.verticalPadding = 12, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -462,9 +459,7 @@ class DwaarStatusBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: textColor.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: textColor.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -497,20 +492,20 @@ class _PulsingDot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 7,
-      height: 7,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.4),
-            blurRadius: 4,
-            spreadRadius: 1,
+          width: 7,
+          height: 7,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: color.withValues(alpha: 0.4),
+                blurRadius: 4,
+                spreadRadius: 1,
+              ),
+            ],
           ),
-        ],
-      ),
-    )
+        )
         .animate(onPlay: (c) => c.repeat(reverse: true))
         .scaleXY(end: 1.3, duration: 800.ms, curve: Curves.easeInOut)
         .then()

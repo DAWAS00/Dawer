@@ -187,7 +187,8 @@ void main() {
     // Destination pin logic: dropoff when inTransit (driver → dropoff),
     // otherwise pickup (driver → pickup).
     ({double lat, double lng}) resolveDestination(Order order) {
-      final useDropoff = order.status == OrderStatus.inTransit &&
+      final useDropoff =
+          order.status == OrderStatus.inTransit &&
           order.dropoffLat != null &&
           order.dropoffLng != null;
       return useDropoff
@@ -196,27 +197,30 @@ void main() {
     }
 
     Order _order(OrderStatus status) => Order(
-          id: 'TEST-TRACK',
-          type: OrderType.pickup,
-          wasteTypes: [WasteType.paper],
-          pickupAddress: 'Amman',
-          dropoffAddress: 'Zarqa',
-          status: status,
-          reward: 5,
-          createdAt: DateTime.now(),
-          driverName: 'أحمد',
-          pickupLat: pickupLat,
-          pickupLng: pickupLng,
-          dropoffLat: dropoffLat,
-          dropoffLng: dropoffLng,
-        );
+      id: 'TEST-TRACK',
+      type: OrderType.pickup,
+      wasteTypes: [WasteType.paper],
+      pickupAddress: 'Amman',
+      dropoffAddress: 'Zarqa',
+      status: status,
+      reward: 5,
+      createdAt: DateTime.now(),
+      driverName: 'أحمد',
+      pickupLat: pickupLat,
+      pickupLng: pickupLng,
+      dropoffLat: dropoffLat,
+      dropoffLng: dropoffLng,
+    );
 
     test('supplier sees live map when driver accepted', () {
       expect(shouldShowLiveTracking(_order(OrderStatus.accepted)), isTrue);
     });
 
     test('supplier sees live map when driver arrived at pickup', () {
-      expect(shouldShowLiveTracking(_order(OrderStatus.arrivedAtPickup)), isTrue);
+      expect(
+        shouldShowLiveTracking(_order(OrderStatus.arrivedAtPickup)),
+        isTrue,
+      );
     });
 
     test('supplier sees live map when order in transit', () {
@@ -260,31 +264,37 @@ void main() {
       expect(dest.lng, pickupLng);
     });
 
-    test('destination pin = dropoff when in transit (Uber Eats / Kareem style)', () {
-      final dest = resolveDestination(_order(OrderStatus.inTransit));
-      expect(dest.lat, dropoffLat);
-      expect(dest.lng, dropoffLng);
-    });
+    test(
+      'destination pin = dropoff when in transit (Uber Eats / Kareem style)',
+      () {
+        final dest = resolveDestination(_order(OrderStatus.inTransit));
+        expect(dest.lat, dropoffLat);
+        expect(dest.lng, dropoffLng);
+      },
+    );
 
-    test('destination falls back to pickup when inTransit but no dropoff coords', () {
-      final order = Order(
-        id: 'NO-DROP',
-        type: OrderType.pickup,
-        wasteTypes: [WasteType.paper],
-        pickupAddress: 'A',
-        dropoffAddress: 'B',
-        status: OrderStatus.inTransit,
-        reward: 0,
-        createdAt: DateTime.now(),
-        driverName: 'خالد',
-        pickupLat: pickupLat,
-        pickupLng: pickupLng,
-        // dropoffLat / dropoffLng intentionally null
-      );
-      final dest = resolveDestination(order);
-      expect(dest.lat, pickupLat);
-      expect(dest.lng, pickupLng);
-    });
+    test(
+      'destination falls back to pickup when inTransit but no dropoff coords',
+      () {
+        final order = Order(
+          id: 'NO-DROP',
+          type: OrderType.pickup,
+          wasteTypes: [WasteType.paper],
+          pickupAddress: 'A',
+          dropoffAddress: 'B',
+          status: OrderStatus.inTransit,
+          reward: 0,
+          createdAt: DateTime.now(),
+          driverName: 'خالد',
+          pickupLat: pickupLat,
+          pickupLng: pickupLng,
+          // dropoffLat / dropoffLng intentionally null
+        );
+        final dest = resolveDestination(order);
+        expect(dest.lat, pickupLat);
+        expect(dest.lng, pickupLng);
+      },
+    );
   });
 }
 
