@@ -1216,8 +1216,9 @@ class AppOrderStore extends ChangeNotifier {
     required DateTime pickupDate,
   }) {
     final idx = _orders.indexWhere((o) => o.id == orderId);
-    if (idx == -1 || !_orders[idx].isMarketplaceShared)
+    if (idx == -1 || !_orders[idx].isMarketplaceShared) {
       return 'العنصر غير موجود';
+    }
     final order = _orders[idx];
     if (order.status != OrderStatus.pending) return 'هذا العنصر لم يعد متاحاً';
     if (order.reservationStatus != null) return 'هذا العنصر محجوز بالفعل';
@@ -1248,10 +1249,12 @@ class AppOrderStore extends ChangeNotifier {
     final idx = _orders.indexWhere((o) => o.id == orderId);
     if (idx == -1) return 'العنصر غير موجود';
     final order = _orders[idx];
-    if (order.supplierName != sellerName)
+    if (order.supplierName != sellerName) {
       return 'ليس لديك صلاحية للرد على هذا الحجز';
-    if (order.reservationStatus != ReservationStatus.pending)
+    }
+    if (order.reservationStatus != ReservationStatus.pending) {
       return 'لا يوجد حجز بانتظار ردّك';
+    }
 
     if (accept) {
       final price = order.itemPrice ?? 0;

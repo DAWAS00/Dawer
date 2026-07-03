@@ -35,6 +35,7 @@ import '../domain/repositories/i_partner_data_request_repository.dart';
 import '../data/repositories/mock_partner_data_request_repository.dart';
 import '../data/repositories/supabase_partner_data_request_repository.dart';
 import '../ui/features/auth/viewmodels/login_viewmodel.dart';
+import '../ui/common/widgets/hubs/viewmodels/hubs_viewmodel.dart';
 
 /// Builds the full provider list for [DawerApp].
 ///
@@ -149,9 +150,12 @@ List buildProviders({
 
     // ── ViewModels ──────────────────────────────────────────────────────────
     ChangeNotifierProvider<LoginViewModel>(
-      create: (ctx) => LoginViewModel(
-        authRepository: ctx.read<IAuthRepository>(),
-      ),
+      create: (ctx) =>
+          LoginViewModel(authRepository: ctx.read<IAuthRepository>()),
+    ),
+
+    ChangeNotifierProvider<HubsViewModel>(
+      create: (ctx) => HubsViewModel(ctx.read<IHubRepository>()),
     ),
   ];
 }

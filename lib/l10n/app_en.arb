@@ -579,6 +579,8 @@
       "eta": { "type": "String" }
     }
   },
+  "orderEtaEnRouteToDropoff": "You're on the way to the dropoff location",
+  "orderEtaMinutesUnit": "min",
 
   "orderCompletionTitle": "Complete Trip",
   "orderPhotoCamera": "Take Photo",
@@ -598,6 +600,8 @@
   "marketItemPriceLabel": "Material Price",
   "marketItemNegotiable": "Negotiable",
   "marketItemDescriptionLabel": "Product Description",
+  "marketItemReserveNowButton": "Reserve Now for 10%",
+  "marketItemReservationSent": "Reservation request sent — awaiting seller approval",
   "marketListingPrice": "{price} JD",
   "@marketListingPrice": {
     "placeholders": {
@@ -945,6 +949,17 @@
   "driverHubsUnavailable": "Delivery hubs unavailable — check your connection",
   "driverStatusReady": "Ready",
   "driverStatusCollecting": "Collecting",
+  "hubCapacity": "Hub Capacity",
+  "hubBreakdown": "Material Breakdown",
+  "openInGoogleMaps": "Open in Google Maps",
+  "cookingOilLabel": "Cooking Oil",
+  "plasticLabel": "Plastic",
+  "paperLabel": "Paper",
+  "electronicsLabel": "Electronics",
+  "weekly": "Weekly",
+  "monthly": "Monthly",
+  "nextShipment": "Next Shipment",
+  "lastShipment": "Last Shipment",
   "driverUnavailableBottomTitle": "Unavailable for work",
   "driverUnavailableBottomSubtitle": "Enable availability mode to receive new orders",
   "driverEnableNow": "Enable now",
@@ -1221,5 +1236,14 @@
   "reservationCancelReasonOther": "Other reason",
   "reservationCancelFraudWarning": "Warning: choosing this reason will immediately deduct 10% from your account as compensation to the buyer",
   "reservationSellerTag": "You are the seller",
-  "reservationBuyerTag": "You are the buyer"
+  "reservationBuyerTag": "You are the buyer",
+  "errorConnectionFailed": "Network connection failed. Please check your internet connection and try again.",
+  "errorPermissionDenied": "Sorry, you do not have sufficient permissions to perform this action.",
+  "errorUniqueViolation": "The data you are trying to enter already exists in the system.",
+  "errorForeignKeyViolation": "The associated data is invalid or no longer exists.",
+  "errorTimeout": "Server connection timed out. Please try again later.",
+  "errorPhoneNotRegistered": "Phone number is not registered. Please create a new account.",
+  "errorInvalidOtp": "The verification code is incorrect. Please try again.",
+  "errorOtpLimitExceeded": "You have exceeded the OTP request limit. Please try again in a few minutes.",
+  "errorUnknown": "An unexpected system error occurred. Please try again later."
 }

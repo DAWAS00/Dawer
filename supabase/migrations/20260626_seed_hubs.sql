@@ -5,9 +5,10 @@
 ALTER TABLE public.hubs DISABLE ROW LEVEL SECURITY;
 
 INSERT INTO public.hubs
-  (name, address, lat, lng, active, capacity_kg, current_load, schedule, next_shipment_date, last_shipment_date, status)
+  (id, name, address, lat, lng, active, capacity_kg, current_load, schedule, next_shipment_date, last_shipment_date, status)
 VALUES
   (
+    'c0000000-0000-0000-0000-000000000001',
     'Hub Al-Sweifieh',
     'Sweifieh Commercial District, Amman',
     31.944000, 35.871000,
@@ -16,6 +17,7 @@ VALUES
     'weekly', '2026-06-27', '2026-06-20', 'collecting'
   ),
   (
+    'c0000000-0000-0000-0000-000000000002',
     'Hub Downtown',
     'Al-Balad, Downtown Amman',
     31.952000, 35.934000,
@@ -24,6 +26,7 @@ VALUES
     'weekly', '2026-06-27', '2026-06-20', 'ready'
   ),
   (
+    'c0000000-0000-0000-0000-000000000003',
     'Hub Jubaiha',
     'Jubaiha University District',
     32.001000, 35.868000,
@@ -32,6 +35,7 @@ VALUES
     'monthly', '2026-07-01', '2026-06-01', 'collecting'
   ),
   (
+    'c0000000-0000-0000-0000-000000000004',
     'Hub Tabarbour',
     'Tabarbour Industrial Zone',
     32.015000, 35.922000,
@@ -39,6 +43,17 @@ VALUES
     '{"cookingOil":0,"plastic":0,"paper":0,"electronics":0}'::jsonb,
     'monthly', NULL, NULL, 'collecting'
   )
-ON CONFLICT DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  address = EXCLUDED.address,
+  lat = EXCLUDED.lat,
+  lng = EXCLUDED.lng,
+  active = EXCLUDED.active,
+  capacity_kg = EXCLUDED.capacity_kg,
+  current_load = EXCLUDED.current_load,
+  schedule = EXCLUDED.schedule,
+  next_shipment_date = EXCLUDED.next_shipment_date,
+  last_shipment_date = EXCLUDED.last_shipment_date,
+  status = EXCLUDED.status;
 
 ALTER TABLE public.hubs ENABLE ROW LEVEL SECURITY;

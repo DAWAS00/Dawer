@@ -34,7 +34,7 @@ class OrderMapSection extends StatelessWidget {
 
     Widget mapContent;
 
-    // Live tracking: driver accepted and is en-route â€” show moving driver marker.
+    // Live tracking: driver accepted and is en-route — show moving driver marker.
     if (hasDriver &&
         order.status == OrderStatus.inTransit &&
         pLat != null &&
@@ -67,27 +67,67 @@ class OrderMapSection extends StatelessWidget {
       mapContent = const _MapPlaceholder();
     }
 
+    // DwaarDetailCard-style glass container with gradient overlay
     return Container(
-      margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
+        color: Colors.white.withValues(alpha: 0.95),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.6),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 16,
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 20,
             offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: AppColors.primaryGreen.withValues(alpha: 0.04),
+            blurRadius: 40,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: mapContent,
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          children: [
+            // ── Map content ──
+            mapContent,
+
+            // ── Bottom gradient overlay for label readability ──
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 48,
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withValues(alpha: 0.0),
+                        Colors.black.withValues(alpha: 0.04),
+                        Colors.black.withValues(alpha: 0.12),
+                      ],
+                      stops: const [0.0, 0.5, 1.0],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-// â”€â”€ Real tracking â€” Supabase Realtime (Phase 3) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Real tracking — Supabase Realtime (Phase 3) ─────────────────────────────
 
 class _RealTrackingWrapper extends StatefulWidget {
   final String orderId;
@@ -122,7 +162,7 @@ class _RealTrackingWrapperState extends State<_RealTrackingWrapper> {
     return LiveTrackingMapView(
       pickupLat: widget.pickupLat,
       pickupLng: widget.pickupLng,
-      // No initial position â€” LiveTrackingMapView shows "Ø¬Ø§Ø±ÙŠ ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ù…ÙˆÙ‚Ø¹"
+      // No initial position — LiveTrackingMapView shows "جاري تحديد الموقع"
       // until the stream emits the first event from Supabase.
       driverStream: _stream,
       etaMinutes: widget.etaMinutes,
@@ -131,7 +171,7 @@ class _RealTrackingWrapperState extends State<_RealTrackingWrapper> {
   }
 }
 
-// â”€â”€ Phase-1 mock driver stream (used for local / non-Supabase orders) â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Phase-1 mock driver stream (used for local / non-Supabase orders) ─────────
 
 class _MockTrackingWrapper extends StatefulWidget {
   final double pickupLat;
@@ -191,7 +231,7 @@ class _MockTrackingWrapperState extends State<_MockTrackingWrapper> {
   }
 }
 
-// â”€â”€ Fallback placeholder (used when coords are null) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Fallback placeholder (used when coords are null) ─────────────────────────
 
 class _MapPlaceholder extends StatelessWidget {
   const _MapPlaceholder();

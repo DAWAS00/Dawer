@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../data/services/app_order_store.dart';
 import '../../../domain/failures/app_failure.dart';
 import '../../../domain/repositories/i_auth_repository.dart';
+import '../../core/components/dwaar_snackbar.dart';
 import '../auth/viewmodels/login_viewmodel.dart';
 import '../chatbot/dawa_assistant_host.dart';
 import 'driver/driver_home_view.dart';
@@ -66,20 +67,9 @@ class _HomeRouterState extends State<HomeRouter> {
   }
 
   void _showErrorSnackBar(AppFailure failure) {
-    final messenger = ScaffoldMessenger.maybeOf(context);
-    if (messenger == null) return;
-    final message = failure.message;
     // Clear so the same error isn't re-shown on the next notifyListeners().
     context.read<AppOrderStore>().clearError();
-    messenger
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text('تعذّر حفظ التغيير: $message'),
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 4),
-        ),
-      );
+    DwaarSnackBar.showErrorFailure(context, failure);
   }
 
   @override

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order/order.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../chat/views/chat_view.dart';
@@ -18,7 +20,6 @@ class OrderActionButtons extends StatelessWidget {
       child: _ActionBtn(
         label: context.l10n.orderChatButton,
         icon: Icons.chat_bubble_outline_rounded,
-        color: const Color(0xFF06402B),
         onTap: () => ChatView.push(context, orderId: order.id, order: order),
       ),
     );
@@ -30,13 +31,11 @@ class OrderActionButtons extends StatelessWidget {
 class _ActionBtn extends StatelessWidget {
   final String label;
   final IconData icon;
-  final Color color;
   final VoidCallback onTap;
 
   const _ActionBtn({
     required this.label,
     required this.icon,
-    required this.color,
     required this.onTap,
   });
 
@@ -47,8 +46,27 @@ class _ActionBtn extends StatelessWidget {
       child: Container(
         height: 56,
         decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(14),
+          gradient: const LinearGradient(
+            colors: [
+              AppColors.ctaGradientStart,
+              AppColors.ctaGradientEnd,
+            ],
+            begin: Alignment.centerRight,
+            end: Alignment.centerLeft,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.ctaGradientStart.withValues(alpha: 0.25),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: AppColors.ctaGradientEnd.withValues(alpha: 0.10),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
+            ),
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -66,6 +84,15 @@ class _ActionBtn extends StatelessWidget {
           ],
         ),
       ),
-    );
+    )
+        .animate()
+        .fadeIn(duration: 400.ms, delay: 100.ms)
+        .slideY(
+          begin: 0.08,
+          end: 0,
+          duration: 400.ms,
+          delay: 100.ms,
+          curve: Curves.easeOutCubic,
+        );
   }
 }

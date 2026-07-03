@@ -363,7 +363,7 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'كل الفئات',
+                    l10n.marketCategoryAll,
                     style: GoogleFonts.cairo(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
@@ -494,19 +494,22 @@ class _MarketplaceTabState extends State<MarketplaceTab> {
     );
 
     if (layout.isWide) {
+      // Wrap instead of a fixed-extent GridView: card height varies with
+      // optional content (reservation badge, notes, chip count), and a
+      // fixed mainAxisExtent clips/overflows whenever all of those stack up.
       return Padding(
         padding: edgePad,
-        child: GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: layout.marketMaxExtent,
-            mainAxisExtent: 200,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-          ),
-          itemCount: items.length,
-          itemBuilder: (_, i) => buildCard(items[i]),
+        child: Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: items
+              .map(
+                (item) => SizedBox(
+                  width: layout.marketMaxExtent,
+                  child: buildCard(item),
+                ),
+              )
+              .toList(),
         ),
       );
     }

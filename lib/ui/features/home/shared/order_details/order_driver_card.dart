@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order/order.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../chat/views/chat_view.dart';
+import '../../../../../ui/core/components/dwaar_detail_card.dart';
 
 class OrderDriverCard extends StatelessWidget {
   final Order order;
@@ -43,82 +45,71 @@ class OrderDriverCard extends StatelessWidget {
     final hasVehicleInfo =
         vehicleType != null || vehicleModel != null || licensePlate != null;
 
-    return Container(
+    // ETA trailing widget
+    Widget? etaTrailing;
+    if (order.eta != null &&
+        (order.status == OrderStatus.accepted ||
+            order.status == OrderStatus.inTransit)) {
+      etaTrailing = DwaarDetailChip(
+        label: l10n.orderDriverArrives(order.eta!),
+        icon: Icons.access_time_rounded,
+        color: AppColors.primaryGreen,
+      );
+    }
+
+    return DwaarDetailCard(
+      elevation: DwaarCardElevation.highlighted,
       margin: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+      animationIndex: 2,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                l10n.orderDriverSection,
-                style: GoogleFonts.cairo(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF002819),
-                ),
-              ),
-              if (order.eta != null &&
-                  (order.status == OrderStatus.accepted ||
-                      order.status == OrderStatus.inTransit))
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF06402B).withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.access_time_rounded,
-                        size: 12,
-                        color: Color(0xFF06402B),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        l10n.orderDriverArrives(order.eta!),
-                        style: GoogleFonts.cairo(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF06402B),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
+          DwaarDetailHeader(
+            icon: LucideIcons.userCheck,
+            title: l10n.orderDriverSection,
+            trailing: etaTrailing,
+            iconColor: AppColors.primaryGreen,
           ),
           const SizedBox(height: 14),
           Row(
             children: [
-              CircleAvatar(
-                radius: 28,
-                backgroundColor: const Color(
-                  0xFF06402B,
-                ).withValues(alpha: 0.12),
-                child: Text(
-                  initials,
-                  style: GoogleFonts.cairo(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF06402B),
+              // Avatar with gradient ring
+              Container(
+                padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppColors.ctaGradientStart,
+                      AppColors.headerGradientEnd,
+                    ],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primaryGreen.withValues(alpha: 0.15),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: CircleAvatar(
+                  radius: 36,
+                  backgroundColor: Colors.white,
+                  child: CircleAvatar(
+                    radius: 33,
+                    backgroundColor:
+                        AppColors.primaryGreen.withValues(alpha: 0.08),
+                    child: Text(
+                      initials,
+                      style: GoogleFonts.cairo(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryGreen,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -158,42 +149,20 @@ class OrderDriverCard extends StatelessWidget {
                 ),
               ),
               if (order.driverPhone != null) ...[
-                IconButton(
+                _ActionButton(
+                  icon: Icons.chat_bubble_outline_rounded,
                   onPressed: () => _openChat(context),
-                  icon: const Icon(
-                    Icons.chat_bubble_outline_rounded,
-                    color: Color(0xFF06402B),
-                    size: 22,
-                  ),
-                  style: IconButton.styleFrom(
-                    backgroundColor: const Color(
-                      0xFF06402B,
-                    ).withValues(alpha: 0.1),
-                    padding: const EdgeInsets.all(8),
-                  ),
                 ),
                 const SizedBox(width: 8),
-                IconButton(
+                _ActionButton(
+                  icon: Icons.phone_rounded,
                   onPressed: () => _makeCall(order.driverPhone!),
-                  icon: const Icon(
-                    Icons.phone_rounded,
-                    color: Color(0xFF06402B),
-                    size: 22,
-                  ),
-                  style: IconButton.styleFrom(
-                    backgroundColor: const Color(
-                      0xFF06402B,
-                    ).withValues(alpha: 0.1),
-                    padding: const EdgeInsets.all(8),
-                  ),
                 ),
               ],
             ],
           ),
           if (hasVehicleInfo) ...[
-            const SizedBox(height: 16),
-            const Divider(height: 1, color: Color(0xFFE6E9E7)),
-            const SizedBox(height: 16),
+            const DwaarDetailDivider(verticalPadding: 14),
             Row(
               children: [
                 Expanded(
@@ -204,7 +173,7 @@ class OrderDriverCard extends StatelessWidget {
                         l10n.profileVehicle,
                         style: GoogleFonts.cairo(
                           fontSize: 11,
-                          color: const Color(0xFF717973),
+                          color: AppColors.mutedText,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -236,7 +205,17 @@ class OrderDriverCard extends StatelessWidget {
                   Container(
                     width: 1,
                     height: 30,
-                    color: const Color(0xFFE6E9E7),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          AppColors.borderSubtle.withValues(alpha: 0),
+                          AppColors.borderSubtle,
+                          AppColors.borderSubtle.withValues(alpha: 0),
+                        ],
+                      ),
+                    ),
                   ),
                   Expanded(
                     child: Padding(
@@ -248,7 +227,7 @@ class OrderDriverCard extends StatelessWidget {
                             l10n.profileLicensePlate,
                             style: GoogleFonts.cairo(
                               fontSize: 11,
-                              color: const Color(0xFF717973),
+                              color: AppColors.mutedText,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -270,6 +249,51 @@ class OrderDriverCard extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+// ── Action Button ─────────────────────────────────────────────────────────────
+
+class _ActionButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const _ActionButton({
+    required this.icon,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primaryGreen.withValues(alpha: 0.08),
+            AppColors.primaryGreen.withValues(alpha: 0.14),
+          ],
+        ),
+        border: Border.all(
+          color: AppColors.primaryGreen.withValues(alpha: 0.1),
+        ),
+      ),
+      child: IconButton(
+        onPressed: onPressed,
+        icon: Icon(
+          icon,
+          color: AppColors.primaryGreen,
+          size: 22,
+        ),
+        padding: const EdgeInsets.all(8),
+        constraints: const BoxConstraints(
+          minWidth: 40,
+          minHeight: 40,
+        ),
       ),
     );
   }

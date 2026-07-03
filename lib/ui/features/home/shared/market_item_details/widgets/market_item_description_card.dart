@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../../l10n/l10n.dart';
 
 class MarketItemDescriptionCard extends StatelessWidget {
   final String? notes;
@@ -9,6 +10,7 @@ class MarketItemDescriptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (notes == null || notes!.isEmpty) return const SizedBox.shrink();
+    final l10n = context.l10n;
 
     return Container(
       width: double.infinity,
@@ -31,7 +33,7 @@ class MarketItemDescriptionCard extends StatelessWidget {
             children: [
               const Spacer(),
               Text(
-                'وصف المنتج',
+                l10n.marketItemDescriptionLabel,
                 style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,

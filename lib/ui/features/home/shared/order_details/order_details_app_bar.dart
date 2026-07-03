@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order/order.dart';
+import '../../../../../ui/core/components/dwaar_detail_card.dart';
 
 class OrderDetailsAppBar extends StatelessWidget {
   final Order order;
@@ -15,13 +18,53 @@ class OrderDetailsAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isActive = order.status == OrderStatus.accepted ||
+        order.status == OrderStatus.inTransit ||
+        order.status == OrderStatus.arrivedAtPickup ||
+        order.status == OrderStatus.arrivedAtDropoff;
+
     return SliverAppBar(
       pinned: true,
-      backgroundColor: const Color(0xFF06402B),
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.ctaGradientStart,
+              AppColors.headerGradientEnd,
+            ],
+          ),
+        ),
+      ),
+      backgroundColor: Colors.transparent,
       foregroundColor: Colors.white,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_forward_ios_rounded, size: 18),
-        onPressed: () => Navigator.of(context).pop(),
+      leading: Center(
+        child: GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+              child: Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.25),
+                  ),
+                ),
+                child: const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,23 +89,14 @@ class OrderDetailsAppBar extends StatelessWidget {
       ),
       actions: [
         if (!hideStatus)
-          Container(
-            margin: const EdgeInsets.only(left: 16, top: 10, bottom: 10),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: _statusColor(order.status).withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: _statusColor(order.status).withValues(alpha: 0.5),
-              ),
-            ),
-            child: Text(
-              order.status.label,
-              style: GoogleFonts.cairo(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, top: 10, bottom: 10),
+            child: DwaarStatusBadge(
+              label: order.status.label,
+              backgroundColor:
+                  _statusColor(order.status).withValues(alpha: 0.2),
+              textColor: Colors.white,
+              pulsing: isActive,
             ),
           ),
       ],

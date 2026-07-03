@@ -78,8 +78,9 @@ class WasteAnalysisResult {
   static String _parseUnit(String v) {
     final s = v.trim().toLowerCase();
     if (s == 'liter' || s == 'liters' || s == 'l' || s == 'لتر') return 'لتر';
-    if (s == 'piece' || s == 'pieces' || s == 'قطعة' || s == 'قطع')
+    if (s == 'piece' || s == 'pieces' || s == 'قطعة' || s == 'قطع') {
       return 'قطعة';
+    }
     return 'كغ'; // default for solids
   }
 

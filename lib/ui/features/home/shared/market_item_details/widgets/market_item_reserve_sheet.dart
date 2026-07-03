@@ -279,7 +279,7 @@ class _MarketItemReserveSheetState extends State<MarketItemReserveSheet> {
             // Confirm button
             SizedBox(
               width: double.infinity,
-              height: 48,
+              height: 56,
               child: ElevatedButton(
                 onPressed: _canAfford
                     ? () {
@@ -294,15 +294,19 @@ class _MarketItemReserveSheetState extends State<MarketItemReserveSheet> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 ),
-                child: Text(
-                  _canAfford
-                      ? 'تأكيد الحجز — ${_depositAmount.toStringAsFixed(2)} د.أ'
-                      : 'رصيد غير كافٍ',
-                  style: GoogleFonts.cairo(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    _canAfford
+                        ? 'تأكيد الحجز — ${_depositAmount.toStringAsFixed(2)} د.أ'
+                        : 'رصيد غير كافٍ',
+                    style: GoogleFonts.cairo(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),

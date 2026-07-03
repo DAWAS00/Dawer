@@ -14,6 +14,7 @@ import '../../../../data/models/user_role.dart';
 import '../../../../domain/repositories/i_auth_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../common/green_button.dart';
+import '../../../core/components/dwaar_snackbar.dart';
 import '../../home/home_router.dart';
 import '../controllers/signup_controller.dart';
 import '../viewmodels/vehicle_registration_viewmodel.dart';
@@ -76,13 +77,8 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
       if (permission == LocationPermission.deniedForever ||
           permission == LocationPermission.denied) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                context.l10n.signupLocationPermissionDenied,
-                style: GoogleFonts.cairo(),
-              ),
-            ),
+          context.showWarningSnackBar(
+            context.l10n.signupLocationPermissionDenied,
           );
         }
         return;
@@ -124,13 +120,8 @@ class _RoleDetailsBodyState extends State<_RoleDetailsBody> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              context.l10n.signupLocationError(e.toString()),
-              style: GoogleFonts.cairo(),
-            ),
-          ),
+        context.showErrorSnackBar(
+          context.l10n.signupLocationError(e.toString()),
         );
       }
     } finally {

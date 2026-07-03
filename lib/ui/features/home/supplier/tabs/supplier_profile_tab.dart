@@ -3,8 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../data/models/user.dart';
 import '../../../../../data/models/user_role.dart';
 import '../../../../../core/services/app_theme_notifier.dart';
+import '../../../../../core/services/app_lang_notifier.dart';
 import 'package:provider/provider.dart';
 import '../../../../common/theme_mode_sheet.dart';
+import '../../../../common/lang_picker_sheet.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../shared/profile/profile_actions.dart';
 import '../../shared/profile/widgets/profile_header.dart';
@@ -131,12 +133,19 @@ class SupplierProfileTab extends StatelessWidget {
 
               const SizedBox(height: 24),
               ProfileSectionHeader(title: context.l10n.profileAppSettings),
-              ProfileTile(
-                icon: Icons.language_rounded,
-                label: context.l10n.profileLanguage,
-                value: Localizations.localeOf(context).languageCode == 'ar'
-                    ? context.l10n.languageArabic
-                    : context.l10n.languageEnglish,
+              Consumer<AppLangNotifier>(
+                builder: (context, langNotifier, _) {
+                  final langLabel = langNotifier.locale.languageCode == 'ar'
+                      ? context.l10n.languageArabic
+                      : context.l10n.languageEnglish;
+                  return ProfileTile(
+                    icon: Icons.language_rounded,
+                    label: context.l10n.profileLanguage,
+                    value: langLabel,
+                    showArrow: true,
+                    onTap: () => showLangPickerSheet(context),
+                  );
+                },
               ),
               Consumer<AppThemeNotifier>(
                 builder: (context, themeNotifier, _) {

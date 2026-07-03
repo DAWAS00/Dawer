@@ -60,27 +60,33 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(child: _buildHeader(context)),
-          
+
           if (tracked != null)
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.only(top: 24, bottom: 8),
-                child: OrderTrackingCard(order: tracked).animate().slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuart),
+                child: OrderTrackingCard(order: tracked).animate().slideY(
+                  begin: 0.1,
+                  end: 0,
+                  curve: Curves.easeOutQuart,
+                ),
               ),
             ),
-            
+
           SliverToBoxAdapter(child: _buildStatsRow(context)),
           SliverToBoxAdapter(child: _buildActionCards(context)),
           SliverToBoxAdapter(child: _buildOpsSection(context, vm)),
 
-          if (myListings.isNotEmpty) ..._buildMyListingsSection(context, myListings, marketVm),
-          
+          if (myListings.isNotEmpty)
+            ..._buildMyListingsSection(context, myListings, marketVm),
+
           // Segmented Control for Lists
           SliverToBoxAdapter(
             child: LayoutBuilder(
               builder: (context, constraints) {
                 const padding = EdgeInsets.fromLTRB(16, 32, 16, 16);
-                final availableWidth = constraints.maxWidth - (padding.left + padding.right);
+                final availableWidth =
+                    constraints.maxWidth - (padding.left + padding.right);
                 final tabWidth = (availableWidth / 2) - 4;
                 final textWidth = tabWidth - 12;
 
@@ -92,15 +98,23 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
                     indicatorSize: Size.fromWidth(tabWidth),
                     customIconBuilder: (context, local, global) {
                       final text = local.value == 0
-                          ? l10n.recyclingIncomingShipmentsCount(widget.incoming.length)
+                          ? l10n.recyclingIncomingShipmentsCount(
+                              widget.incoming.length,
+                            )
                           : l10n.recyclingActiveJobsCount(widget.jobs.length);
-                      final color = Color.lerp(AppColors.mutedText, AppColors.surface, local.animationValue);
+                      final color = Color.lerp(
+                        AppColors.mutedText,
+                        AppColors.surface,
+                        local.animationValue,
+                      );
                       return SizedBox(
                         width: textWidth,
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4.0,
+                            ),
                             child: Text(
                               text,
                               style: GoogleFonts.cairo(
@@ -119,14 +133,14 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
                       backgroundColor: AppColors.surface,
                       borderColor: AppColors.borderSubtle,
                       borderRadius: BorderRadius.circular(100),
-                ),
-                onChanged: (val) => setState(() => _viewMode = val),
+                    ),
+                    onChanged: (val) => setState(() => _viewMode = val),
                   ),
                 );
               },
             ).animate().fadeIn(duration: 300.ms),
           ),
-          
+
           // Dynamic List Content
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 100),
@@ -148,17 +162,36 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 16),
                             child: loading
-                                ? OrderCard(order: displayList[i], mode: OrderCardMode.companyIncoming)
+                                ? OrderCard(
+                                    order: displayList[i],
+                                    mode: OrderCardMode.companyIncoming,
+                                  )
                                 : _viewMode == 0
-                                    ? OrderCard(order: displayList[i], mode: OrderCardMode.companyIncoming)
-                                        .animate().fadeIn(delay: (i * 50).ms).slideX(begin: 0.05, end: 0)
-                                    : Column(
+                                ? OrderCard(
+                                        order: displayList[i],
+                                        mode: OrderCardMode.companyIncoming,
+                                      )
+                                      .animate()
+                                      .fadeIn(delay: (i * 50).ms)
+                                      .slideX(begin: 0.05, end: 0)
+                                : Column(
                                         children: [
-                                          OrderCard(order: displayList[i], mode: OrderCardMode.companyJob),
-                                          if (vm.salesForJob(displayList[i].id).isNotEmpty)
-                                            _buildAcceptorRow(context, vm.salesForJob(displayList[i].id)),
+                                          OrderCard(
+                                            order: displayList[i],
+                                            mode: OrderCardMode.companyJob,
+                                          ),
+                                          if (vm
+                                              .salesForJob(displayList[i].id)
+                                              .isNotEmpty)
+                                            _buildAcceptorRow(
+                                              context,
+                                              vm.salesForJob(displayList[i].id),
+                                            ),
                                         ],
-                                      ).animate().fadeIn(delay: (i * 50).ms).slideX(begin: -0.05, end: 0),
+                                      )
+                                      .animate()
+                                      .fadeIn(delay: (i * 50).ms)
+                                      .slideX(begin: -0.05, end: 0),
                           ),
                       ],
                     ),
@@ -195,7 +228,10 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
               ),
               const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 2,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.statusInTransitBg,
                   borderRadius: BorderRadius.circular(20),
@@ -233,25 +269,46 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
     ];
   }
 
-  void _confirmDelete(BuildContext context, String orderId, MarketplaceViewModel marketVm) {
+  void _confirmDelete(
+    BuildContext context,
+    String orderId,
+    MarketplaceViewModel marketVm,
+  ) {
     final l10n = context.l10n;
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(l10n.recyclingWithdrawAdTitle, textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        content: Text(l10n.recyclingWithdrawAdBody, textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+        title: Text(
+          l10n.recyclingWithdrawAdTitle,
+          textAlign: TextAlign.right,
+          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          l10n.recyclingWithdrawAdBody,
+          textAlign: TextAlign.right,
+          style: GoogleFonts.cairo(),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(l10n.no, style: GoogleFonts.cairo(color: AppColors.mutedText)),
+            child: Text(
+              l10n.no,
+              style: GoogleFonts.cairo(color: AppColors.mutedText),
+            ),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               marketVm.removeListing(orderId);
             },
-            child: Text(l10n.recyclingWithdrawAdConfirm, style: GoogleFonts.cairo(color: AppColors.statusCancelledText, fontWeight: FontWeight.bold)),
+            child: Text(
+              l10n.recyclingWithdrawAdConfirm,
+              style: GoogleFonts.cairo(
+                color: AppColors.statusCancelledText,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -263,25 +320,27 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent, // Let the sheet provide its own styling
+      backgroundColor:
+          Colors.transparent, // Let the sheet provide its own styling
       builder: (_) => PostJobSheet(
-        onSubmit: ({
-          required List<WasteType> wasteTypes,
-          required PaymentModel paymentModel,
-          required double price,
-          required String collectionArea,
-          required String jobDescription,
-          double? minQuantityKg,
-        }) {
-          vm.postCollectionJob(
-            wasteTypes: wasteTypes,
-            collectionArea: collectionArea,
-            jobDescription: jobDescription,
-            paymentModel: paymentModel,
-            price: price,
-            minQuantityKg: minQuantityKg,
-          );
-        },
+        onSubmit:
+            ({
+              required List<WasteType> wasteTypes,
+              required PaymentModel paymentModel,
+              required double price,
+              required String collectionArea,
+              required String jobDescription,
+              double? minQuantityKg,
+            }) {
+              vm.postCollectionJob(
+                wasteTypes: wasteTypes,
+                collectionArea: collectionArea,
+                jobDescription: jobDescription,
+                paymentModel: paymentModel,
+                price: price,
+                minQuantityKg: minQuantityKg,
+              );
+            },
       ),
     );
   }
@@ -289,19 +348,23 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
   Widget _buildAcceptorRow(BuildContext context, List<Order> sales) {
     final l10n = context.l10n;
     Color chipBg(OrderStatus s) => switch (s) {
-          OrderStatus.pending => AppColors.statusPendingBg,
-          OrderStatus.accepted || OrderStatus.arrivedAtPickup => AppColors.statusActiveBg,
-          OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => AppColors.statusInTransitBg,
-          OrderStatus.completed => AppColors.statusCompletedBg,
-          OrderStatus.cancelled => AppColors.statusCancelledBg,
-        };
+      OrderStatus.pending => AppColors.statusPendingBg,
+      OrderStatus.accepted ||
+      OrderStatus.arrivedAtPickup => AppColors.statusActiveBg,
+      OrderStatus.inTransit ||
+      OrderStatus.arrivedAtDropoff => AppColors.statusInTransitBg,
+      OrderStatus.completed => AppColors.statusCompletedBg,
+      OrderStatus.cancelled => AppColors.statusCancelledBg,
+    };
     Color chipText(OrderStatus s) => switch (s) {
-          OrderStatus.pending => AppColors.statusPendingText,
-          OrderStatus.accepted || OrderStatus.arrivedAtPickup => AppColors.statusActiveText,
-          OrderStatus.inTransit || OrderStatus.arrivedAtDropoff => AppColors.statusInTransitText,
-          OrderStatus.completed => AppColors.statusCompletedText,
-          OrderStatus.cancelled => AppColors.statusCancelledText,
-        };
+      OrderStatus.pending => AppColors.statusPendingText,
+      OrderStatus.accepted ||
+      OrderStatus.arrivedAtPickup => AppColors.statusActiveText,
+      OrderStatus.inTransit ||
+      OrderStatus.arrivedAtDropoff => AppColors.statusInTransitText,
+      OrderStatus.completed => AppColors.statusCompletedText,
+      OrderStatus.cancelled => AppColors.statusCancelledText,
+    };
 
     const maxChips = 3;
     final shown = sales.length <= maxChips ? sales : sales.sublist(0, maxChips);
@@ -345,27 +408,31 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
                     child: Text(
                       l10n.recyclingAndOthers(overflow),
                       style: GoogleFonts.cairo(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.mutedText),
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.mutedText,
+                      ),
                     ),
                   ),
-                ...shown.map((s) => Container(
-                      height: 24,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        color: chipBg(s.status),
-                        borderRadius: BorderRadius.circular(6),
+                ...shown.map(
+                  (s) => Container(
+                    height: 24,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: chipBg(s.status),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      s.status.label,
+                      style: GoogleFonts.cairo(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: chipText(s.status),
                       ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        s.status.label,
-                        style: GoogleFonts.cairo(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: chipText(s.status)),
-                      ),
-                    )),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -396,7 +463,9 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
         markerId: MarkerId(e.key),
         position: e.value,
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-        infoWindow: InfoWindow(title: '${l10n.orderDriverSection} ${e.key.substring(0, 6)}'),
+        infoWindow: InfoWindow(
+          title: '${l10n.orderDriverSection} ${e.key.substring(0, 6)}',
+        ),
       );
     }).toSet();
 
@@ -418,7 +487,10 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
               ),
               const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 2,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.statusInTransitBg,
                   borderRadius: BorderRadius.circular(20),
@@ -510,7 +582,9 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
             height: 14,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.statusPendingText),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                AppColors.statusPendingText,
+              ),
             ),
           ),
           const SizedBox(width: 8),
@@ -527,7 +601,10 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
     );
   }
 
-  Widget _buildDriverChips(BuildContext context, Map<String, LatLng> positions) {
+  Widget _buildDriverChips(
+    BuildContext context,
+    Map<String, LatLng> positions,
+  ) {
     final l10n = context.l10n;
     final ids = positions.keys.toList();
     return SizedBox(
@@ -562,8 +639,11 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(LucideIcons.navigation,
-                      size: 13, color: AppColors.statusInTransitText),
+                  const Icon(
+                    LucideIcons.navigation,
+                    size: 13,
+                    color: AppColors.statusInTransitText,
+                  ),
                   const SizedBox(width: 5),
                   Text(
                     '${l10n.orderDriverSection} ${id.length > 6 ? id.substring(0, 6) : id}',
@@ -612,7 +692,11 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
                 width: 1,
               ),
             ),
-            child: const Icon(LucideIcons.factory, color: AppColors.surface, size: 28),
+            child: const Icon(
+              LucideIcons.factory,
+              color: AppColors.surface,
+              size: 28,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -644,7 +728,9 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
               duration: const Duration(milliseconds: 250),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: widget.isOpen ? AppColors.shamrock600 : Colors.white.withValues(alpha: 0.1),
+                color: widget.isOpen
+                    ? AppColors.shamrock600
+                    : Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(100),
               ),
               child: Row(
@@ -655,16 +741,22 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
                     height: 8,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: widget.isOpen ? AppColors.primaryDark : Colors.white54,
+                      color: widget.isOpen
+                          ? AppColors.primaryDark
+                          : Colors.white54,
                     ),
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    widget.isOpen ? l10n.recyclingReadyForReceipt : l10n.recyclingClosedTemp,
+                    widget.isOpen
+                        ? l10n.recyclingReadyForReceipt
+                        : l10n.recyclingClosedTemp,
                     style: GoogleFonts.cairo(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: widget.isOpen ? AppColors.primaryDark : Colors.white,
+                      color: widget.isOpen
+                          ? AppColors.primaryDark
+                          : Colors.white,
                     ),
                   ),
                 ],
@@ -678,86 +770,109 @@ class _RecyclingHomeTabState extends State<RecyclingHomeTab> {
 
   Widget _buildStatsRow(BuildContext context) {
     final l10n = context.l10n;
-    final inTransitCount = widget.incoming.where((o) => o.status == OrderStatus.inTransit).length;
-    final totalWeight = widget.incoming.fold<double>(0, (sum, o) => sum + (o.weightKg ?? 0));
+    final inTransitCount = widget.incoming
+        .where((o) => o.status == OrderStatus.inTransit)
+        .length;
+    final totalWeight = widget.incoming.fold<double>(
+      0,
+      (sum, o) => sum + (o.weightKg ?? 0),
+    );
 
     return Padding(
       padding: const EdgeInsets.only(top: 32),
-      child: KpiStrip(items: [
-        KpiItem(
-          value: '${widget.incoming.length}',
-          label: l10n.recyclingTodayShipments,
-          icon: LucideIcons.truck,
-          color: AppColors.statusInTransitText,
-        ),
-        KpiItem(
-          value: totalWeight.toStringAsFixed(0),
-          label: l10n.recyclingTotalWeightKg,
-          icon: LucideIcons.scale,
-          color: AppColors.accentAmber,
-        ),
-        KpiItem(
-          value: '${widget.jobs.length}',
-          label: l10n.recyclingActiveJobsLabel,
-          icon: LucideIcons.briefcase,
-          color: AppColors.primaryGreen,
-        ),
-        KpiItem(
-          value: '$inTransitCount',
-          label: l10n.recyclingDriversEnRoute,
-          icon: LucideIcons.navigation,
-          color: const Color(0xFF7C3AED),
-        ),
-      ]),
-    ).animate().slideY(begin: 0.1, end: 0, duration: 400.ms, curve: Curves.easeOutBack);
+      child: KpiStrip(
+        items: [
+          KpiItem(
+            value: '${widget.incoming.length}',
+            label: l10n.recyclingTodayShipments,
+            icon: LucideIcons.truck,
+            color: AppColors.statusInTransitText,
+          ),
+          KpiItem(
+            value: totalWeight.toStringAsFixed(0),
+            label: l10n.recyclingTotalWeightKg,
+            icon: LucideIcons.scale,
+            color: AppColors.accentAmber,
+          ),
+          KpiItem(
+            value: '${widget.jobs.length}',
+            label: l10n.recyclingActiveJobsLabel,
+            icon: LucideIcons.briefcase,
+            color: AppColors.primaryGreen,
+          ),
+          KpiItem(
+            value: '$inTransitCount',
+            label: l10n.recyclingDriversEnRoute,
+            icon: LucideIcons.navigation,
+            color: const Color(0xFF7C3AED),
+          ),
+        ],
+      ),
+    ).animate().slideY(
+      begin: 0.1,
+      end: 0,
+      duration: 400.ms,
+      curve: Curves.easeOutBack,
+    );
   }
 
   Widget _buildActionCards(BuildContext context) {
     final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-      child: DwaarElevatedCard(
-        onTap: () => _showPostJobSheet(context),
-        padding: const EdgeInsets.all(24),
-        child: Row(
-          textDirection: TextDirection.rtl,
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: AppColors.primaryGreen.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(LucideIcons.circlePlus, color: AppColors.primaryGreen, size: 28),
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                textDirection: TextDirection.rtl,
-                children: [
-                  Text(
-                    l10n.recyclingPostJob,
-                    style: GoogleFonts.cairo(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textMain,
-                    ),
+      child:
+          DwaarElevatedCard(
+            onTap: () => _showPostJobSheet(context),
+            padding: const EdgeInsets.all(24),
+            child: Row(
+              textDirection: TextDirection.rtl,
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryGreen.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  Text(
-                    l10n.recyclingPostJobSubtitle,
-                    style: GoogleFonts.cairo(
-                      fontSize: 13,
-                      color: AppColors.mutedText,
-                    ),
+                  child: Icon(
+                    LucideIcons.circlePlus,
+                    color: AppColors.primaryGreen,
+                    size: 28,
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    textDirection: TextDirection.rtl,
+                    children: [
+                      Text(
+                        l10n.recyclingPostJob,
+                        style: GoogleFonts.cairo(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.textMain,
+                        ),
+                      ),
+                      Text(
+                        l10n.recyclingPostJobSubtitle,
+                        style: GoogleFonts.cairo(
+                          fontSize: 13,
+                          color: AppColors.mutedText,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ).animate().slideY(begin: 0.1, end: 0, delay: 100.ms, duration: 400.ms, curve: Curves.easeOutBack),
+          ).animate().slideY(
+            begin: 0.1,
+            end: 0,
+            delay: 100.ms,
+            duration: 400.ms,
+            curve: Curves.easeOutBack,
+          ),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:dwaar/ui/common/widgets/dev_testing_panel.dart';
+import '../../../core/components/dwaar_snackbar.dart';
 
 import '../../../../../data/models/order/order.dart';
 import '../../../../../data/services/app_order_store.dart';
@@ -108,13 +109,7 @@ class _DriverHomeBody extends StatelessWidget {
   ) {
     final error = vm.toggleAvailability(value, context.l10n);
     if (error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error, style: GoogleFonts.cairo()),
-          backgroundColor: Colors.orange.shade700,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      context.showWarningSnackBar(error);
     }
   }
 
@@ -217,15 +212,8 @@ class _DriverHomeBody extends StatelessWidget {
           ? FloatingActionButton.extended(
               onPressed: () {
                 if (!marketVm.canAddListing(vm.user.name)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
-                        style: GoogleFonts.cairo(),
-                      ),
-                      backgroundColor: const Color(0xFFB91C1C),
-                      behavior: SnackBarBehavior.floating,
-                    ),
+                  context.showErrorSnackBar(
+                    'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
                   );
                   return;
                 }

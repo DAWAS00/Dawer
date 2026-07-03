@@ -75,6 +75,8 @@ class MarketItemCard extends StatelessWidget {
                       children: [
                         Text(
                           item.supplierName ?? l10n.marketItemUnknownSeller,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.cairo(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
@@ -104,13 +106,42 @@ class MarketItemCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // Time ago
-                  Text(
-                    timeLabel,
-                    style: GoogleFonts.cairo(
-                      fontSize: 11,
-                      color: dt.onSurfaceMuted,
-                    ),
+                  // Price (promoted here so it's scannable without reading
+                  // the whole card) + time ago beneath it.
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      if (item.itemPrice != null)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              item.itemPrice!.toStringAsFixed(1),
+                              style: GoogleFonts.dmSans(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.accentAmber,
+                              ),
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              'د.أ',
+                              style: GoogleFonts.cairo(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.accentAmber,
+                              ),
+                            ),
+                          ],
+                        ),
+                      Text(
+                        timeLabel,
+                        style: GoogleFonts.cairo(
+                          fontSize: 11,
+                          color: dt.onSurfaceMuted,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -221,56 +252,35 @@ class MarketItemCard extends StatelessWidget {
                 ),
               ),
 
-            // ── Footer: weight/form + price ──
-            Container(
-              padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceAlt.withValues(alpha: 0.5),
-                borderRadius: const BorderRadius.vertical(
-                  bottom: Radius.circular(16),
+            // ── Footer: weight/form tags ──
+            if (item.weightCategory != null || item.wasteForm != null)
+              Container(
+                padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceAlt.withValues(alpha: 0.5),
+                  borderRadius: const BorderRadius.vertical(
+                    bottom: Radius.circular(16),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    if (item.weightCategory != null)
+                      _MetaTag(
+                        icon: Icons.fitness_center_rounded,
+                        label: item.weightCategory!.shortLabelFor(locale),
+                        color: dt.onSurfaceMuted,
+                      ),
+                    if (item.weightCategory != null && item.wasteForm != null)
+                      const SizedBox(width: 8),
+                    if (item.wasteForm != null)
+                      _MetaTag(
+                        icon: Icons.category_outlined,
+                        label: item.wasteForm!.labelFor(locale),
+                        color: dt.onSurfaceMuted,
+                      ),
+                  ],
                 ),
               ),
-              child: Row(
-                children: [
-                  // Weight + form tags
-                  if (item.weightCategory != null)
-                    _MetaTag(
-                      icon: Icons.fitness_center_rounded,
-                      label: item.weightCategory!.shortLabelFor(locale),
-                      color: dt.onSurfaceMuted,
-                    ),
-                  if (item.weightCategory != null && item.wasteForm != null)
-                    const SizedBox(width: 8),
-                  if (item.wasteForm != null)
-                    _MetaTag(
-                      icon: Icons.category_outlined,
-                      label: item.wasteForm!.labelFor(locale),
-                      color: dt.onSurfaceMuted,
-                    ),
-                  const Spacer(),
-                  // Price
-                  if (item.itemPrice != null) ...[
-                    Text(
-                      'د.أ',
-                      style: GoogleFonts.cairo(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.accentAmber,
-                      ),
-                    ),
-                    const SizedBox(width: 3),
-                    Text(
-                      item.itemPrice!.toStringAsFixed(1),
-                      style: GoogleFonts.dmSans(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.accentAmber,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
           ],
         ),
       ),

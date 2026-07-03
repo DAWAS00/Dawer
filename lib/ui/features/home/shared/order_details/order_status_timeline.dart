@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/date_formatter.dart';
 import '../../../../../data/models/order/order.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../ui/core/components/dwaar_detail_card.dart';
 
 class OrderStatusTimeline extends StatelessWidget {
   final Order order;
@@ -37,43 +40,27 @@ class OrderStatusTimeline extends StatelessWidget {
       currentIndex = steps.length - 1;
     }
 
-    return Container(
+    return DwaarDetailCard(
+      elevation: DwaarCardElevation.raised,
       margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      animationIndex: 1,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            l10n.orderStatusTitle,
-            style: GoogleFonts.cairo(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF002819),
-            ),
+          DwaarDetailHeader(
+            icon: LucideIcons.route,
+            title: l10n.orderStatusTitle,
+            iconColor: AppColors.primaryGreen,
           ),
-          const SizedBox(height: 16),
+          const DwaarDetailDivider(verticalPadding: 10),
+          const SizedBox(height: 4),
           Row(
             children: List.generate(steps.length * 2 - 1, (i) {
               if (i.isOdd) {
                 final filled = (i ~/ 2) < currentIndex;
                 return Expanded(
-                  child: Container(
-                    height: 2,
-                    color: filled
-                        ? const Color(0xFF06402B)
-                        : const Color(0xFFE0E6E1),
-                  ),
+                  child: _AnimatedConnector(filled: filled),
                 );
               }
               final stepIdx = i ~/ 2;
@@ -88,6 +75,45 @@ class OrderStatusTimeline extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+// ── Animated Gradient Connector ───────────────────────────────────────────────
+
+class _AnimatedConnector extends StatelessWidget {
+  final bool filled;
+
+  const _AnimatedConnector({required this.filled});
+
+  @override
+  Widget build(BuildContext context) {
+    if (!filled) {
+      return Container(
+        height: 2.5,
+        decoration: BoxDecoration(
+          color: const Color(0xFFE0E6E1),
+          borderRadius: BorderRadius.circular(2),
+        ),
+      );
+    }
+
+    return Container(
+      height: 2.5,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(2),
+        gradient: const LinearGradient(
+          colors: [
+            AppColors.ctaGradientStart,
+            AppColors.ctaGradientEnd,
+          ],
+        ),
+      ),
+    )
+        .animate(onPlay: (c) => c.repeat(reverse: true))
+        .shimmer(
+          duration: 2000.ms,
+          color: AppColors.headerGradientEnd.withValues(alpha: 0.4),
+        );
   }
 }
 
@@ -108,33 +134,61 @@ class _TimelineStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dotSize = 32.0;
+
+    Widget dot = Container(
+      width: dotSize,
+      height: dotSize,
+      decoration: BoxDecoration(
+        color: done || active
+            ? AppColors.primaryGreen
+            : const Color(0xFFE0E6E1),
+        shape: BoxShape.circle,
+        boxShadow: active
+            ? [
+                BoxShadow(
+                  color: AppColors.primaryGreen.withValues(alpha: 0.25),
+                  blurRadius: 12,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
+      ),
+      child: Icon(
+        done ? LucideIcons.check : Icons.circle,
+        size: done ? 16 : 8,
+        color: Colors.white,
+      ),
+    );
+
+    // Ring effect for current step
+    if (active) {
+      dot = Container(
+        width: dotSize + 8,
+        height: dotSize + 8,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: AppColors.primaryGreen.withValues(alpha: 0.2),
+            width: 3,
+          ),
+        ),
+        child: Center(child: dot),
+      )
+          .animate(onPlay: (c) => c.repeat(reverse: true))
+          .scaleXY(
+            begin: 0.95,
+            end: 1.05,
+            duration: 1200.ms,
+            curve: Curves.easeInOut,
+          );
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: 28,
-          height: 28,
-          decoration: BoxDecoration(
-            color: done || active
-                ? const Color(0xFF06402B)
-                : const Color(0xFFE0E6E1),
-            shape: BoxShape.circle,
-            boxShadow: active
-                ? [
-                    BoxShadow(
-                      color: const Color(0xFF06402B).withValues(alpha: 0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Icon(
-            done ? LucideIcons.check : Icons.circle,
-            size: done ? 16 : 8,
-            color: Colors.white,
-          ),
-        ),
+        dot,
         const SizedBox(height: 8),
         Text(
           label,

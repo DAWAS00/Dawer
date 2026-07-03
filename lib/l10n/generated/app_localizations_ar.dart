@@ -1425,6 +1425,12 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get orderEtaEnRouteToDropoff => 'أنت في الطريق إلى موقع التسليم';
+
+  @override
+  String get orderEtaMinutesUnit => 'دقيقة';
+
+  @override
   String get orderCompletionTitle => 'إتمام الرحلة';
 
   @override
@@ -1472,6 +1478,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get marketItemDescriptionLabel => 'وصف المنتج';
+
+  @override
+  String get marketItemReserveNowButton => 'احجز الآن بـ ١٠٪';
+
+  @override
+  String get marketItemReservationSent =>
+      'تم إرسال طلب الحجز — بانتظار موافقة البائع';
 
   @override
   String marketListingPrice(String price) {
@@ -1621,7 +1634,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chatInputHint => 'اكتب رسالة...';
 
   @override
-  String get openInGoogleMaps => 'فتح في خرائط جوجل';
+  String get openInGoogleMaps => 'الذهاب للمركز عبر خرائط جوجل';
 
   @override
   String get mapsNotInstalledTitle => 'خرائط جوجل غير مثبتة';
@@ -2414,7 +2427,37 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverStatusReady => 'جاهز';
 
   @override
-  String get driverStatusCollecting => 'يجمع';
+  String get driverStatusCollecting => 'قيد الجمع';
+
+  @override
+  String get hubCapacity => 'سعة مركز التجميع';
+
+  @override
+  String get hubBreakdown => 'تفاصيل المواد';
+
+  @override
+  String get cookingOilLabel => 'زيت طهي';
+
+  @override
+  String get plasticLabel => 'بلاستيك';
+
+  @override
+  String get paperLabel => 'ورق';
+
+  @override
+  String get electronicsLabel => 'إلكترونيات';
+
+  @override
+  String get weekly => 'أسبوعي';
+
+  @override
+  String get monthly => 'شهري';
+
+  @override
+  String get nextShipment => 'الشحنة القادمة';
+
+  @override
+  String get lastShipment => 'آخر شحنة';
 
   @override
   String get driverUnavailableBottomTitle => 'غير متاح للعمل';
@@ -3246,4 +3289,40 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get reservationBuyerTag => 'أنت المشتري';
+
+  @override
+  String get errorConnectionFailed =>
+      'فشل الاتصال بالشبكة. يرجى التحقق من اتصالك بالإنترنت وإعادة المحاولة.';
+
+  @override
+  String get errorPermissionDenied =>
+      'عذراً، ليس لديك الصلاحية الكافية لإتمام هذه العملية.';
+
+  @override
+  String get errorUniqueViolation =>
+      'البيانات التي تحاول إدخالها مسجلة مسبقاً في النظام.';
+
+  @override
+  String get errorForeignKeyViolation =>
+      'البيانات المرتبطة غير صحيحة أو لم تعد موجودة.';
+
+  @override
+  String get errorTimeout =>
+      'انتهت مهلة الاتصال بالخادم. يرجى المحاولة لاحقاً.';
+
+  @override
+  String get errorPhoneNotRegistered =>
+      'رقم الهاتف غير مسجل. يرجى إنشاء حساب جديد.';
+
+  @override
+  String get errorInvalidOtp =>
+      'رمز التحقق المدخل غير صحيح. يرجى إعادة المحاولة.';
+
+  @override
+  String get errorOtpLimitExceeded =>
+      'لقد تجاوزت الحد الأقصى لطلب الرموز. يرجى المحاولة بعد قليل.';
+
+  @override
+  String get errorUnknown =>
+      'حدث خطأ غير متوقع في النظام. يرجى المحاولة لاحقاً.';
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order/order.dart';
 import '../../../../../l10n/l10n.dart';
 
@@ -43,6 +45,9 @@ class _OrderArrivalSectionState extends State<OrderArrivalSection> {
             content: Text(error, style: GoogleFonts.cairo(color: Colors.white)),
             backgroundColor: const Color(0xFF991B1B),
             behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         );
       }
@@ -60,13 +65,15 @@ class _OrderArrivalSectionState extends State<OrderArrivalSection> {
       if (s == OrderStatus.accepted && widget.onMarkArrivedAtPickup != null) {
         return _ArrivalCard(
           icon: Icons.location_on_rounded,
-          iconColor: const Color(0xFF06402B),
-          iconBg: const Color(0xFFD1FAE5),
-          borderColor: const Color(0xFF06402B),
+          iconColor: AppColors.primaryGreen,
+          iconBg: AppColors.statusActiveBg,
+          borderColor: AppColors.primaryGreen,
           title: l10n.orderArrivalAtPickup,
           subtitle: l10n.orderArrivalGeoNote,
           buttonLabel: l10n.orderArrivalHerePickup,
-          buttonColor: const Color(0xFF06402B),
+          buttonGradient: const LinearGradient(
+            colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
+          ),
           loading: _loading,
           onTap: () => _tap(widget.onMarkArrivedAtPickup!),
         );
@@ -78,12 +85,14 @@ class _OrderArrivalSectionState extends State<OrderArrivalSection> {
         return _ArrivalCard(
           icon: Icons.flag_rounded,
           iconColor: const Color(0xFF1E40AF),
-          iconBg: const Color(0xFFDBEAFE),
+          iconBg: AppColors.statusInTransitBg,
           borderColor: const Color(0xFF1E40AF),
           title: l10n.orderArrivalAtDropoff,
           subtitle: l10n.orderArrivalGeoNote,
           buttonLabel: l10n.orderArrivalHereDropoff,
-          buttonColor: const Color(0xFF1E40AF),
+          buttonGradient: const LinearGradient(
+            colors: [Color(0xFF1E40AF), Color(0xFF3B82F6)],
+          ),
           loading: _loading,
           onTap: () => _tap(widget.onMarkArrivedAtDropoff!),
         );
@@ -111,7 +120,7 @@ class _ArrivalCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final String buttonLabel;
-  final Color buttonColor;
+  final Gradient buttonGradient;
   final bool loading;
   final VoidCallback onTap;
 
@@ -123,7 +132,7 @@ class _ArrivalCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.buttonLabel,
-    required this.buttonColor,
+    required this.buttonGradient,
     required this.loading,
     required this.onTap,
   });
@@ -148,50 +157,104 @@ class _ArrivalCard extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Container(
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                   color: iconBg,
                   shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: iconColor.withValues(alpha: 0.2),
+                      blurRadius: 12,
+                      spreadRadius: 2,
+                    ),
+                  ],
                 ),
-                child: Icon(icon, color: iconColor, size: 20),
+                child: Icon(icon, color: iconColor, size: 22),
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Text(
             subtitle,
             textAlign: TextAlign.right,
             style: GoogleFonts.cairo(
               fontSize: 13,
-              color: const Color(0xFF717973),
+              color: AppColors.mutedText,
             ),
           ),
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: loading ? null : onTap,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: buttonColor,
-                disabledBackgroundColor: buttonColor.withValues(alpha: 0.5),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+            child: _GradientButton(
+              gradient: buttonGradient,
+              loading: loading,
+              label: buttonLabel,
+              onTap: onTap,
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 300.ms).slideY(
+      begin: 0.05,
+      end: 0,
+      duration: 400.ms,
+      curve: Curves.easeOutCubic,
+    );
+  }
+}
+
+// ── Gradient Button ───────────────────────────────────────────────────────────
+
+class _GradientButton extends StatelessWidget {
+  final Gradient gradient;
+  final bool loading;
+  final String label;
+  final VoidCallback onTap;
+
+  const _GradientButton({
+    required this.gradient,
+    required this.loading,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: loading ? null : gradient,
+        color: loading ? AppColors.mutedText.withValues(alpha: 0.3) : null,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: loading
+            ? null
+            : [
+                BoxShadow(
+                  color: AppColors.primaryGreen.withValues(alpha: 0.25),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
-                elevation: 0,
-                minimumSize: const Size(double.infinity, 70),
-              ),
+              ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          onTap: loading ? null : onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 18),
+            child: Center(
               child: loading
                   ? const SizedBox(
-                      height: 30,
-                      width: 30,
+                      height: 24,
+                      width: 24,
                       child: CircularProgressIndicator(
-                        strokeWidth: 2,
+                        strokeWidth: 2.5,
                         color: Colors.white,
                       ),
                     )
                   : Text(
-                      buttonLabel,
+                      label,
                       style: GoogleFonts.cairo(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -201,7 +264,7 @@ class _ArrivalCard extends StatelessWidget {
                     ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -219,10 +282,17 @@ class _AwaitingBanner extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: const Color(0xFFFEF3C7),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+            color: AppColors.accentAmber.withValues(alpha: 0.3),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.accentAmber.withValues(alpha: 0.1),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -255,7 +325,7 @@ class _AwaitingBanner extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                color: AppColors.accentAmber.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -263,11 +333,18 @@ class _AwaitingBanner extends StatelessWidget {
                 color: Color(0xFF92400E),
                 size: 22,
               ),
-            ),
+            )
+                .animate(onPlay: (c) => c.repeat(reverse: true))
+                .rotate(
+                  begin: -0.05,
+                  end: 0.05,
+                  duration: 1500.ms,
+                  curve: Curves.easeInOut,
+                ),
           ],
         ),
       ),
-    );
+    ).animate().fadeIn(duration: 300.ms);
   }
 }
 
@@ -298,14 +375,21 @@ class _SupplierConfirmCard extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFD1FAE5),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppColors.statusActiveBg,
                   shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primaryGreen.withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      spreadRadius: 1,
+                    ),
+                  ],
                 ),
                 child: const Icon(
                   Icons.directions_car_rounded,
-                  color: Color(0xFF06402B),
+                  color: AppColors.primaryGreen,
                   size: 22,
                 ),
               ),
@@ -327,10 +411,15 @@ class _SupplierConfirmCard extends StatelessWidget {
                 child: OutlinedButton(
                   onPressed: () => onConfirm(false),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF991B1B),
-                    side: const BorderSide(color: Color(0xFF991B1B)),
+                    foregroundColor: AppColors.statusCancelledText,
+                    side: BorderSide(
+                      color: AppColors.statusCancelledText.withValues(
+                        alpha: 0.5,
+                      ),
+                      width: 1.5,
+                    ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     minimumSize: const Size(0, 56),
@@ -347,24 +436,43 @@ class _SupplierConfirmCard extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: ElevatedButton(
-                  onPressed: () => onConfirm(true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF06402B),
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        AppColors.ctaGradientStart,
+                        AppColors.ctaGradientEnd,
+                      ],
                     ),
-                    minimumSize: const Size(0, 56),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryGreen.withValues(alpha: 0.25),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
-                  child: Text(
-                    l10n.orderArrivalIAmAvailable,
-                    style: GoogleFonts.cairo(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      color: Colors.white,
-                      height: 1.1,
+                  child: Material(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(16),
+                    child: InkWell(
+                      onTap: () => onConfirm(true),
+                      borderRadius: BorderRadius.circular(16),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: Center(
+                          child: Text(
+                            l10n.orderArrivalIAmAvailable,
+                            style: GoogleFonts.cairo(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Colors.white,
+                              height: 1.1,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -373,6 +481,11 @@ class _SupplierConfirmCard extends StatelessWidget {
           ),
         ],
       ),
+    ).animate().fadeIn(duration: 300.ms).slideY(
+      begin: 0.05,
+      end: 0,
+      duration: 400.ms,
+      curve: Curves.easeOutCubic,
     );
   }
 }

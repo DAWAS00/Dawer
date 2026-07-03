@@ -579,6 +579,8 @@
       "eta": { "type": "String" }
     }
   },
+  "orderEtaEnRouteToDropoff": "أنت في الطريق إلى موقع التسليم",
+  "orderEtaMinutesUnit": "دقيقة",
 
   "orderCompletionTitle": "إتمام الرحلة",
   "orderPhotoCamera": "التقاط صورة",
@@ -598,6 +600,8 @@
   "marketItemPriceLabel": "سعر المواد",
   "marketItemNegotiable": "قابل للتفاوض",
   "marketItemDescriptionLabel": "وصف المنتج",
+  "marketItemReserveNowButton": "احجز الآن بـ ١٠٪",
+  "marketItemReservationSent": "تم إرسال طلب الحجز — بانتظار موافقة البائع",
   "marketListingPrice": "{price} د.أ",
   "@marketListingPrice": {
     "placeholders": {
@@ -950,7 +954,18 @@
   "driverActiveOrderTitle": "الطلب النشط الحالي",
   "driverHubsUnavailable": "مراكز التسليم غير متاحة — تحقق من الاتصال",
   "driverStatusReady": "جاهز",
-  "driverStatusCollecting": "يجمع",
+  "driverStatusCollecting": "قيد الجمع",
+  "hubCapacity": "سعة مركز التجميع",
+  "hubBreakdown": "تفاصيل المواد",
+  "openInGoogleMaps": "الذهاب للمركز عبر خرائط جوجل",
+  "cookingOilLabel": "زيت طهي",
+  "plasticLabel": "بلاستيك",
+  "paperLabel": "ورق",
+  "electronicsLabel": "إلكترونيات",
+  "weekly": "أسبوعي",
+  "monthly": "شهري",
+  "nextShipment": "الشحنة القادمة",
+  "lastShipment": "آخر شحنة",
   "driverUnavailableBottomTitle": "غير متاح للعمل",
   "driverUnavailableBottomSubtitle": "فعّل وضع التوفر لاستقبال الطلبات الجديدة",
   "driverEnableNow": "تفعيل الآن",
@@ -1242,5 +1257,14 @@
   "reservationCancelReasonOther": "سبب آخر",
   "reservationCancelFraudWarning": "تحذير: اختيار هذا السبب سيؤدي لخصم ١٠٪ من حسابك فوراً كتعويض للمشتري",
   "reservationSellerTag": "أنت البائع",
-  "reservationBuyerTag": "أنت المشتري"
+  "reservationBuyerTag": "أنت المشتري",
+  "errorConnectionFailed": "فشل الاتصال بالشبكة. يرجى التحقق من اتصالك بالإنترنت وإعادة المحاولة.",
+  "errorPermissionDenied": "عذراً، ليس لديك الصلاحية الكافية لإتمام هذه العملية.",
+  "errorUniqueViolation": "البيانات التي تحاول إدخالها مسجلة مسبقاً في النظام.",
+  "errorForeignKeyViolation": "البيانات المرتبطة غير صحيحة أو لم تعد موجودة.",
+  "errorTimeout": "انتهت مهلة الاتصال بالخادم. يرجى المحاولة لاحقاً.",
+  "errorPhoneNotRegistered": "رقم الهاتف غير مسجل. يرجى إنشاء حساب جديد.",
+  "errorInvalidOtp": "رمز التحقق المدخل غير صحيح. يرجى إعادة المحاولة.",
+  "errorOtpLimitExceeded": "لقد تجاوزت الحد الأقصى لطلب الرموز. يرجى المحاولة بعد قليل.",
+  "errorUnknown": "حدث خطأ غير متوقع في النظام. يرجى المحاولة لاحقاً."
 }

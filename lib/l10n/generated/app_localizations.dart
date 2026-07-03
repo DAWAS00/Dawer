@@ -2816,6 +2816,18 @@ abstract class AppLocalizations {
   /// **'يصل خلال {eta}'**
   String orderDriverArrives(String eta);
 
+  /// No description provided for @orderEtaEnRouteToDropoff.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت في الطريق إلى موقع التسليم'**
+  String get orderEtaEnRouteToDropoff;
+
+  /// No description provided for @orderEtaMinutesUnit.
+  ///
+  /// In ar, this message translates to:
+  /// **'دقيقة'**
+  String get orderEtaMinutesUnit;
+
   /// No description provided for @orderCompletionTitle.
   ///
   /// In ar, this message translates to:
@@ -2911,6 +2923,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'وصف المنتج'**
   String get marketItemDescriptionLabel;
+
+  /// No description provided for @marketItemReserveNowButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'احجز الآن بـ ١٠٪'**
+  String get marketItemReserveNowButton;
+
+  /// No description provided for @marketItemReservationSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال طلب الحجز — بانتظار موافقة البائع'**
+  String get marketItemReservationSent;
 
   /// No description provided for @marketListingPrice.
   ///
@@ -3197,7 +3221,7 @@ abstract class AppLocalizations {
   /// No description provided for @openInGoogleMaps.
   ///
   /// In ar, this message translates to:
-  /// **'فتح في خرائط جوجل'**
+  /// **'الذهاب للمركز عبر خرائط جوجل'**
   String get openInGoogleMaps;
 
   /// No description provided for @mapsNotInstalledTitle.
@@ -4679,8 +4703,68 @@ abstract class AppLocalizations {
   /// No description provided for @driverStatusCollecting.
   ///
   /// In ar, this message translates to:
-  /// **'يجمع'**
+  /// **'قيد الجمع'**
   String get driverStatusCollecting;
+
+  /// No description provided for @hubCapacity.
+  ///
+  /// In ar, this message translates to:
+  /// **'سعة مركز التجميع'**
+  String get hubCapacity;
+
+  /// No description provided for @hubBreakdown.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل المواد'**
+  String get hubBreakdown;
+
+  /// No description provided for @cookingOilLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'زيت طهي'**
+  String get cookingOilLabel;
+
+  /// No description provided for @plasticLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'بلاستيك'**
+  String get plasticLabel;
+
+  /// No description provided for @paperLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ورق'**
+  String get paperLabel;
+
+  /// No description provided for @electronicsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلكترونيات'**
+  String get electronicsLabel;
+
+  /// No description provided for @weekly.
+  ///
+  /// In ar, this message translates to:
+  /// **'أسبوعي'**
+  String get weekly;
+
+  /// No description provided for @monthly.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهري'**
+  String get monthly;
+
+  /// No description provided for @nextShipment.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشحنة القادمة'**
+  String get nextShipment;
+
+  /// No description provided for @lastShipment.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر شحنة'**
+  String get lastShipment;
 
   /// No description provided for @driverUnavailableBottomTitle.
   ///
@@ -6181,6 +6265,60 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'أنت المشتري'**
   String get reservationBuyerTag;
+
+  /// No description provided for @errorConnectionFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل الاتصال بالشبكة. يرجى التحقق من اتصالك بالإنترنت وإعادة المحاولة.'**
+  String get errorConnectionFailed;
+
+  /// No description provided for @errorPermissionDenied.
+  ///
+  /// In ar, this message translates to:
+  /// **'عذراً، ليس لديك الصلاحية الكافية لإتمام هذه العملية.'**
+  String get errorPermissionDenied;
+
+  /// No description provided for @errorUniqueViolation.
+  ///
+  /// In ar, this message translates to:
+  /// **'البيانات التي تحاول إدخالها مسجلة مسبقاً في النظام.'**
+  String get errorUniqueViolation;
+
+  /// No description provided for @errorForeignKeyViolation.
+  ///
+  /// In ar, this message translates to:
+  /// **'البيانات المرتبطة غير صحيحة أو لم تعد موجودة.'**
+  String get errorForeignKeyViolation;
+
+  /// No description provided for @errorTimeout.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتهت مهلة الاتصال بالخادم. يرجى المحاولة لاحقاً.'**
+  String get errorTimeout;
+
+  /// No description provided for @errorPhoneNotRegistered.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الهاتف غير مسجل. يرجى إنشاء حساب جديد.'**
+  String get errorPhoneNotRegistered;
+
+  /// No description provided for @errorInvalidOtp.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز التحقق المدخل غير صحيح. يرجى إعادة المحاولة.'**
+  String get errorInvalidOtp;
+
+  /// No description provided for @errorOtpLimitExceeded.
+  ///
+  /// In ar, this message translates to:
+  /// **'لقد تجاوزت الحد الأقصى لطلب الرموز. يرجى المحاولة بعد قليل.'**
+  String get errorOtpLimitExceeded;
+
+  /// No description provided for @errorUnknown.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ غير متوقع في النظام. يرجى المحاولة لاحقاً.'**
+  String get errorUnknown;
 }
 
 class _AppLocalizationsDelegate

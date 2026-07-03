@@ -20,6 +20,7 @@ import '../shared/viewmodels/marketplace_viewmodel.dart';
 import '../shared/widgets/pickup_fab.dart';
 import 'views/new_pickup_request_view.dart';
 import 'package:dwaar/ui/common/widgets/dev_testing_panel.dart';
+import '../../../core/components/dwaar_snackbar.dart';
 import 'widgets/pending_reservations_dialog.dart';
 
 class IndividualSupplierHomeView extends StatelessWidget {
@@ -152,14 +153,8 @@ class _IndividualSupplierHomeBodyState
           ? PickupFab(
               onPressed: () {
                 if (!marketVm.canAddListing(vm.user.name)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
-                      ),
-                      backgroundColor: const Color(0xFFB91C1C),
-                      behavior: SnackBarBehavior.floating,
-                    ),
+                  context.showErrorSnackBar(
+                    'وصلت للحد الأقصى (${marketVm.maxListings} إعلانات نشطة)',
                   );
                   return;
                 }

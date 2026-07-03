@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import '../../../../../core/constants/app_colors.dart';
 import '../../../../../data/models/order/order.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../ui/core/components/dwaar_detail_card.dart';
 
 class OrderEarningsSection extends StatelessWidget {
   final Order order;
@@ -18,49 +21,44 @@ class OrderEarningsSection extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Container(
+    return DwaarDetailCard(
+      elevation: DwaarCardElevation.highlighted,
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      padding: EdgeInsets.zero,
+      accentColor: AppColors.primaryGreen,
+      animationIndex: 3,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Potential Earnings Header
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xFF06402B).withValues(alpha: 0.03),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
-              ),
+          // Gradient accent bar at top
+          const ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            child: DwaarDetailGradientBar(
+              startColor: AppColors.ctaGradientStart,
+              endColor: AppColors.ctaGradientEnd,
+              height: 4,
             ),
+          ),
+
+          // Earnings Header
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF06402B).withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.account_balance_wallet_rounded,
-                    size: 18,
-                    color: Color(0xFF06402B),
+                // Total earnings on left
+                Text(
+                  '${order.reward.toStringAsFixed(2)} ${l10n.orderCurrencyJD}',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.primaryGreen,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const Spacer(),
+                // Header title + icon on right (RTL)
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
                         order.status == OrderStatus.pending ||
@@ -72,6 +70,7 @@ class OrderEarningsSection extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF1F2937),
                         ),
+                        textAlign: TextAlign.end,
                       ),
                       if (order.status == OrderStatus.pending ||
                           order.status == OrderStatus.accepted)
@@ -79,29 +78,37 @@ class OrderEarningsSection extends StatelessWidget {
                           l10n.orderPayout,
                           style: GoogleFonts.cairo(
                             fontSize: 11,
-                            color: const Color(0xFF6B7280),
+                            color: AppColors.mutedText,
                           ),
+                          textAlign: TextAlign.end,
                         ),
                     ],
                   ),
                 ),
-                Text(
-                  '${order.reward.toStringAsFixed(2)} ${l10n.orderCurrencyJD}',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    color: const Color(0xFF06402B),
+                const SizedBox(width: 10),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryGreen.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    LucideIcons.wallet,
+                    size: 16,
+                    color: AppColors.primaryGreen,
                   ),
                 ),
               ],
             ),
           ),
 
+          // Breakdown Rows
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Column(
               children: [
                 if (breakdown != null) ...[
+                  const DwaarDetailDivider(verticalPadding: 10),
                   _BreakdownRow(
                     label: l10n.orderBaseFee,
                     value: breakdown.base,
@@ -124,10 +131,7 @@ class OrderEarningsSection extends StatelessWidget {
 
                 // Invoices / Item Cost Section
                 if ((order.itemPrice ?? 0) > 0) ...[
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Divider(height: 1, color: Color(0xFFF3F4F6)),
-                  ),
+                  const DwaarDetailDivider(verticalPadding: 10),
                   Row(
                     children: [
                       const Icon(
@@ -150,7 +154,7 @@ class OrderEarningsSection extends StatelessWidget {
                           '${order.invoices!.length} ${l10n.navOrders}',
                           style: GoogleFonts.cairo(
                             fontSize: 12,
-                            color: const Color(0xFF6B7280),
+                            color: AppColors.mutedText,
                           ),
                         ),
                     ],
@@ -162,9 +166,11 @@ class OrderEarningsSection extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF9FAFB),
+                        color: AppColors.background,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFFF3F4F6)),
+                        border: Border.all(
+                          color: AppColors.borderSubtle,
+                        ),
                       ),
                       child: Column(
                         children: [
@@ -188,7 +194,7 @@ class OrderEarningsSection extends StatelessWidget {
                                     'x${item.quantity}',
                                     style: GoogleFonts.dmSans(
                                       fontSize: 12,
-                                      color: const Color(0xFF9CA3AF),
+                                      color: AppColors.mutedText,
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -204,14 +210,7 @@ class OrderEarningsSection extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 4),
-                            child: Divider(
-                              height: 1,
-                              color: Color(0xFFE5E7EB),
-                              thickness: 0.5,
-                            ),
-                          ),
+                          const DwaarDetailDivider(verticalPadding: 4),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -275,7 +274,7 @@ class _BreakdownRow extends StatelessWidget {
             label,
             style: GoogleFonts.cairo(
               fontSize: 13,
-              color: isBold ? const Color(0xFF374151) : const Color(0xFF6B7280),
+              color: isBold ? const Color(0xFF374151) : AppColors.mutedText,
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
             ),
           ),

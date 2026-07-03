@@ -56,11 +56,15 @@ extension GreenLevelInfo on GreenLevel {
 
   /// Derive the level from a raw خُضَر balance.
   static GreenLevel fromPoints(int points) {
-    if (points >= GreenCreditsConfig.forestGuardianThreshold)
+    if (points >= GreenCreditsConfig.forestGuardianThreshold) {
       return GreenLevel.forestGuardian;
-    if (points >= GreenCreditsConfig.treeThreshold) return GreenLevel.tree;
-    if (points >= GreenCreditsConfig.saplingThreshold)
+    }
+    if (points >= GreenCreditsConfig.treeThreshold) {
+      return GreenLevel.tree;
+    }
+    if (points >= GreenCreditsConfig.saplingThreshold) {
       return GreenLevel.sapling;
+    }
     return GreenLevel.seedling;
   }
 }

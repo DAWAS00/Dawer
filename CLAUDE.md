@@ -5,7 +5,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
+flutter pub get                      # Install dependencies
 flutter run                          # Run on connected device/emulator
+flutter run -d windows               # Or use launch_app.bat
 flutter analyze                      # Lint
 flutter test                         # All tests
 flutter test test/path/to/file.dart  # Single test file
@@ -18,13 +20,15 @@ dart run build_runner build --delete-conflicting-outputs
 flutter gen-l10n
 ```
 
-App startup requires `.env.local` in repo root (declared as an asset) with `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `GEMINI_API_KEY`. Missing Supabase vars fall back to hardcoded defaults in `main.dart`; missing Gemini key is asserted by `AiConfig.assertConfigured()`.
+App startup requires `.env.local` in repo root (declared as an asset) with `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `GEMINI_API_KEY`. Missing Supabase vars fall back to hardcoded defaults in `main.dart`; missing Gemini key is asserted by `AiConfig.assertConfigured()`. Never commit `.env.local` — also gitignored: `lib/core/constants/map_tokens.dart`, `android/local.properties`, `.vscode/launch.json`.
 
 If a test run fails with a `shaders/ink_sparkle.frag` version exception, it's stale build cache after a Flutter SDK update — run `flutter clean` first.
 
 ## Architecture
 
-**Dwaar (دوّر)** — Arabic-first waste-recycling logistics app (Jordan). Three roles, each with its own home shell: **Driver**, **Supplier**, **Recycling Company**. (`lib/ui/features/home/restaurant/` exists but is not wired into `HomeRouter`.)
+**Dwaar (دوّر)** — Arabic-first waste-recycling logistics app (Jordan). Three roles, each with its own home shell: **Driver**, **Supplier**, **Recycling Company**. (`lib/ui/features/home/restaurant/` exists but is not wired into `HomeRouter`; store-business suppliers route to it under a different path.)
+
+**Backend strategy**: Supabase (Postgres + RLS + Realtime + Storage + Edge Functions) is the primary, locked backend. A parallel Python/FastAPI GCP re-platform exists under `backend/` but is **reference-only, not wired into the app** — don't treat it as live infrastructure. See `docs/architecture-decisions/backend-strategy.md`.
 
 ### Layering
 
@@ -36,7 +40,25 @@ lib/ui/            — feature-scoped MVVM (Provider)
 lib/backend_integration_locally/local_store.dart — local JSON persistence (survives restarts)
 ```
 
-Data flow is **hybrid**: `AppOrderStore` (the central `ChangeNotifier` for all order state, provided app-wide in `main.dart`) writes to `LocalStore` locally and mirrors to `SupabaseOrderRepository`. Auth is still `MockAuthRepository`; Supabase auth/file-storage services exist and are partially wired (`UserSignUpService.setGlobalAuthService` in `main.dart`). When swapping mock → real implementations, bind through the `lib/domain/` interface in `main.dart`'s `MultiProvider`.
+Cross-layer results use `AppResult<T>` (= `Result<T, AppFailure>`, `lib/core/result/result.dart`) rather than thrown exceptions; repository implementations catch and map exceptions to `AppFailure` subtypes (`NetworkFailure`, `AuthFailure`, `ValidationFailure`, `NotFoundFailure`, `PermissionFailure`, `StorageFailure`, `UnknownFailure`).
+
+### Dependency injection — `lib/app/app_providers.dart`
+
+All repository bindings are wired in `buildProviders()`, keyed off two flags passed from `main.dart`: `useSupabase` (true when `.env.local` loaded and Supabase initialized) and `mockAuth`. Pattern: `useSupabase ? Supabase*Repository(...) : NoOp*Repository()` for most repos, but auth and chat fall back to hand-written `Mock*` fakes instead of `NoOp`:
+
+| Interface | Live binding (`useSupabase`) | Fallback |
+| --- | --- | --- |
+| `IOrderRepository` | `SupabaseOrderRepository` | `NoOpOrderRepository` |
+| `IWalletRepository` | `SupabaseWalletRepository` | `NoOpWalletRepository` |
+| `IHubRepository` | `SupabaseHubRepository` | `NoOpHubRepository` |
+| `IReservationRepository` | `SupabaseReservationRepository` | `NoOpReservationRepository` |
+| `IFileStorageRepository` | `SupabaseFileStorageRepository` | `NoOpFileStorageRepository` |
+| `IChatRepository` | `SupabaseChatRepository` | `MockChatRepository` |
+| `IAuthRepository` | `SupabaseAuthRepository` (only if `!mockAuth`) | `MockAuthRepository` |
+
+**`main.dart` hardcodes `const mockAuth = true`** — so `IAuthRepository` always resolves to `MockAuthRepository` regardless of `useSupabase`, even though `SupabaseAuthRepository` is fully wired and ready. Flip that constant (and remove any other auth gating) to switch to real phone-OTP auth. When swapping any other mock → real implementation, bind through the `lib/domain/` interface in `app_providers.dart`, not by editing call sites.
+
+Data flow is otherwise **hybrid**: `AppOrderStore` (the central `ChangeNotifier` for all order state, provided app-wide) writes to `LocalStore` locally and mirrors to `IOrderRepository`.
 
 ### Pattern: Feature-Scoped MVVM with Provider
 
@@ -63,4 +85,18 @@ Each role lives under `lib/ui/features/home/<role>/` with the same structure:
 
 ### Testing
 
-Tests mirror `lib/` structure under `test/`. `AppOrderStore` lifecycle/persistence tests are the core safety net — run them after touching order state logic.
+Tests mirror `lib/` structure under `test/`. `AppOrderStore` lifecycle/persistence tests are the core safety net — run them after touching order state logic. No `integration_test/` suite exists yet — unit/widget tests only.
+
+### Security notes
+
+- `SUPABASE_SERVICE_ROLE_KEY` must never ship in the Flutter app — it's for Edge Functions / server-side tooling only.
+- Google Maps API key is read from `android/local.properties` into `AndroidManifest.xml` via a `MAPS_API_KEY` placeholder (gitignored).
+- `MockAuthRepository` disables OTP validation and trusts the UI-selected role — fine for development, not safe if ever shipped as the live binding.
+
+### Supabase backend
+
+Migrations live in `supabase/migrations/`, applied in filename order. Edge Functions (`supabase/functions/`) deploy via `supabase functions deploy <name> --project-ref <ref>`; current functions are `verify_arrival` and `daily_payout` (docs referencing `match_driver`/`send_push` predate their actual implementation — verify against `supabase/functions/` before assuming a function exists).
+
+### Other docs
+
+`AGENTS.md` and `docs/codebase-guide/` contain more detail but can drift from the live code faster than this file — when in doubt, verify against `lib/app/app_providers.dart` and `main.dart` directly rather than trusting narrative docs about "current state."

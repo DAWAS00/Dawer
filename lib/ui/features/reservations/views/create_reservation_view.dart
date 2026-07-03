@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../domain/repositories/i_reservation_repository.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../core/components/dwaar_snackbar.dart';
 import '../../../common/green_button.dart';
 import '../reservation_viewmodel.dart';
 
@@ -83,9 +84,7 @@ class _CreateReservationBodyState extends State<_CreateReservationBody> {
       return;
     }
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(l10n.reservationCreateSuccess)));
+    context.showSuccessSnackBar(l10n.reservationCreateSuccess);
     Navigator.of(context).pop();
   }
 

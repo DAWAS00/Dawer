@@ -1442,6 +1442,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get orderEtaEnRouteToDropoff =>
+      'You\'re on the way to the dropoff location';
+
+  @override
+  String get orderEtaMinutesUnit => 'min';
+
+  @override
   String get orderCompletionTitle => 'Complete Trip';
 
   @override
@@ -1490,6 +1497,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get marketItemDescriptionLabel => 'Product Description';
+
+  @override
+  String get marketItemReserveNowButton => 'Reserve Now for 10%';
+
+  @override
+  String get marketItemReservationSent =>
+      'Reservation request sent — awaiting seller approval';
 
   @override
   String marketListingPrice(String price) {
@@ -2446,6 +2460,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get driverStatusCollecting => 'Collecting';
 
   @override
+  String get hubCapacity => 'Hub Capacity';
+
+  @override
+  String get hubBreakdown => 'Material Breakdown';
+
+  @override
+  String get cookingOilLabel => 'Cooking Oil';
+
+  @override
+  String get plasticLabel => 'Plastic';
+
+  @override
+  String get paperLabel => 'Paper';
+
+  @override
+  String get electronicsLabel => 'Electronics';
+
+  @override
+  String get weekly => 'Weekly';
+
+  @override
+  String get monthly => 'Monthly';
+
+  @override
+  String get nextShipment => 'Next Shipment';
+
+  @override
+  String get lastShipment => 'Last Shipment';
+
+  @override
   String get driverUnavailableBottomTitle => 'Unavailable for work';
 
   @override
@@ -3283,4 +3327,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reservationBuyerTag => 'You are the buyer';
+
+  @override
+  String get errorConnectionFailed =>
+      'Network connection failed. Please check your internet connection and try again.';
+
+  @override
+  String get errorPermissionDenied =>
+      'Sorry, you do not have sufficient permissions to perform this action.';
+
+  @override
+  String get errorUniqueViolation =>
+      'The data you are trying to enter already exists in the system.';
+
+  @override
+  String get errorForeignKeyViolation =>
+      'The associated data is invalid or no longer exists.';
+
+  @override
+  String get errorTimeout =>
+      'Server connection timed out. Please try again later.';
+
+  @override
+  String get errorPhoneNotRegistered =>
+      'Phone number is not registered. Please create a new account.';
+
+  @override
+  String get errorInvalidOtp =>
+      'The verification code is incorrect. Please try again.';
+
+  @override
+  String get errorOtpLimitExceeded =>
+      'You have exceeded the OTP request limit. Please try again in a few minutes.';
+
+  @override
+  String get errorUnknown =>
+      'An unexpected system error occurred. Please try again later.';
 }

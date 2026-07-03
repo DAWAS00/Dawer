@@ -18,6 +18,7 @@ import 'tabs/recycling_profile_tab.dart';
 import 'viewmodels/recycling_home_viewmodel.dart';
 import 'package:dwaar/ui/common/widgets/dev_testing_panel.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../core/components/dwaar_snackbar.dart';
 
 class RecyclingHomeView extends StatelessWidget {
   final String userName;
@@ -108,15 +109,8 @@ class _RecyclingHomeBody extends StatelessWidget {
           ? FloatingActionButton.extended(
               onPressed: () {
                 if (!marketVm.canAddListing(vm.companyName)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        l10n.recyclingMaxListingsReached(marketVm.maxListings),
-                        style: GoogleFonts.cairo(),
-                      ),
-                      backgroundColor: const Color(0xFFB91C1C),
-                      behavior: SnackBarBehavior.floating,
-                    ),
+                  context.showErrorSnackBar(
+                    l10n.recyclingMaxListingsReached(marketVm.maxListings),
                   );
                   return;
                 }

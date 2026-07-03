@@ -33,4 +33,16 @@ final class SupabaseHubRepository implements IHubRepository {
       return Failure(UnknownFailure(message: e.toString()));
     }
   }
+
+  @override
+  Stream<List<Hub>> watchActiveHubs() {
+    return _client
+        .from('hubs')
+        .stream(primaryKey: const ['id'])
+        .eq('active', true)
+        .order('created_at', ascending: true)
+        .map((rows) {
+          return rows.map((row) => Hub.fromJson(row)).toList();
+        });
+  }
 }

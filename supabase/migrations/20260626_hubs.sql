@@ -29,4 +29,27 @@ CREATE POLICY "hubs_select_authenticated"
   TO authenticated
   USING (true);
 
-ALTER PUBLICATION supabase_realtime ADD TABLE public.hubs;
+-- Ensure full row updates are sent over the replication stream for client parsing compatibility
+ALTER TABLE public.hubs REPLICA IDENTITY FULL;
+
+-- Idempotently register public.hubs to the realtime publication
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+    CREATE PUBLICATION supabase_realtime;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 
+    FROM pg_publication_rel pr 
+    JOIN pg_publication p ON p.oid = pr.prpubid 
+    JOIN pg_class c ON c.oid = pr.prrelid 
+    JOIN pg_namespace n ON n.oid = c.relnamespace 
+    WHERE p.pubname = 'supabase_realtime' 
+      AND n.nspname = 'public' 
+      AND c.relname = 'hubs'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.hubs;
+  END IF;
+END $$;
+

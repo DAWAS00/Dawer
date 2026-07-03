@@ -84,8 +84,9 @@ class MarketAiResult {
         s == 'steel' ||
         s == 'copper' ||
         s == 'aluminium' ||
-        s == 'aluminum')
+        s == 'aluminum') {
       return WasteType.metal;
+    }
     if (s == 'timber' || s == 'lumber') return WasteType.wood;
     if (s == 'pvc' || s == 'pet' || s == 'hdpe') return WasteType.plastic;
     return null;

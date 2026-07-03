@@ -40,11 +40,11 @@ class DawerApp extends StatelessWidget {
         builder: (context, themeNotifier, langNotifier, _) {
           return MaterialApp(
             title: 'دوّر',
+            locale: langNotifier.locale,
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeNotifier.mode,
-            locale: langNotifier.locale,
             localizationsDelegates: const [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../data/models/order/order.dart';
 import '../../../../data/services/app_order_store.dart';
 import 'widgets/rate_driver_sheet.dart';
@@ -18,6 +19,7 @@ import 'order_details/order_proof_section.dart';
 import 'order_details/order_customer_card.dart';
 import 'order_details/order_route_card.dart';
 import 'order_details/order_contents_section.dart';
+import 'order_details/order_eta_section.dart';
 import '../../../../l10n/l10n.dart';
 
 class OrderDetailsView extends StatelessWidget {
@@ -43,11 +45,17 @@ class OrderDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAF8),
+      backgroundColor: AppColors.background,
       bottomNavigationBar: _buildBottomBar(context),
       body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
         slivers: [
           OrderDetailsAppBar(order: order, hideStatus: hideStatus),
+
+          // ── Live ETA (top-of-screen; only while a driver is en route) ──
+          SliverToBoxAdapter(
+            child: OrderEtaSection(order: order, isDriverView: isDriverView),
+          ),
 
           // ── Map ──
           SliverToBoxAdapter(
@@ -183,13 +191,18 @@ class OrderDetailsView extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        color: Colors.white.withValues(alpha: 0.97),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF06402B).withValues(alpha: 0.08),
+            color: AppColors.primaryGreen.withValues(alpha: 0.06),
             blurRadius: 24,
             offset: const Offset(0, -8),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
           ),
         ],
       ),
@@ -237,17 +250,21 @@ class _DriverStatusStepper extends StatelessWidget {
   Widget build(BuildContext context) {
     final step = _currentStep;
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEF2EE)),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -258,12 +275,18 @@ class _DriverStatusStepper extends StatelessWidget {
             final active = connectorIdx < step;
             return Expanded(
               child: Container(
-                height: 2,
+                height: 2.5,
                 decoration: BoxDecoration(
-                  color: active
-                      ? const Color(0xFF06402B)
-                      : const Color(0xFFDDE3DD),
-                  borderRadius: BorderRadius.circular(1),
+                  gradient: active
+                      ? const LinearGradient(
+                          colors: [
+                            AppColors.ctaGradientStart,
+                            AppColors.ctaGradientEnd,
+                          ],
+                        )
+                      : null,
+                  color: active ? null : const Color(0xFFE2E8E5),
+                  borderRadius: BorderRadius.circular(1.25),
                 ),
               ),
             );
@@ -279,6 +302,11 @@ class _DriverStatusStepper extends StatelessWidget {
           );
         }),
       ),
+    ).animate().fadeIn(duration: 400.ms).slideY(
+      begin: 0.04,
+      end: 0,
+      duration: 400.ms,
+      curve: Curves.easeOutCubic,
     );
   }
 }
@@ -298,36 +326,50 @@ class _StepDot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color bg = done || current
-        ? const Color(0xFF06402B)
+        ? AppColors.primaryGreen
         : const Color(0xFFEEF2EE);
     final Color fg = done || current ? Colors.white : const Color(0xFF9EA89E);
+
+    Widget dot = AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      width: current ? 34 : 28,
+      height: current ? 34 : 28,
+      decoration: BoxDecoration(
+        color: bg,
+        shape: BoxShape.circle,
+        boxShadow: current
+            ? [
+                BoxShadow(
+                  color: AppColors.primaryGreen.withValues(alpha: 0.3),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ]
+            : null,
+        border: current
+            ? Border.all(
+                color: AppColors.primaryGreen.withValues(alpha: 0.2),
+                width: 3,
+              )
+            : null,
+      ),
+      child: Icon(
+        done ? Icons.check_rounded : icon,
+        size: current ? 16 : 13,
+        color: fg,
+      ),
+    );
+
+    if (current) {
+      dot = dot
+          .animate(onPlay: (c) => c.repeat(reverse: true))
+          .scaleXY(end: 1.08, duration: 1200.ms, curve: Curves.easeInOut);
+    }
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          width: current ? 32 : 26,
-          height: current ? 32 : 26,
-          decoration: BoxDecoration(
-            color: bg,
-            shape: BoxShape.circle,
-            boxShadow: current
-                ? [
-                    BoxShadow(
-                      color: const Color(0xFF06402B).withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      spreadRadius: 1,
-                    ),
-                  ]
-                : null,
-          ),
-          child: Icon(
-            done ? Icons.check_rounded : icon,
-            size: current ? 16 : 13,
-            color: fg,
-          ),
-        ),
+        dot,
         const SizedBox(height: 4),
         Text(
           label,
@@ -335,7 +377,7 @@ class _StepDot extends StatelessWidget {
             fontSize: 9,
             fontWeight: current ? FontWeight.bold : FontWeight.w500,
             color: current
-                ? const Color(0xFF06402B)
+                ? AppColors.primaryGreen
                 : done
                 ? const Color(0xFF404943)
                 : const Color(0xFF9EA89E),
@@ -358,22 +400,44 @@ class _RateDriverButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-      child: OutlinedButton.icon(
-        onPressed: () =>
-            RateDriverSheet.show(context, order: order, onSubmit: onRate),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: const Color(0xFF1E40AF),
-          side: const BorderSide(color: Color(0xFFBFD3F5)),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFF1E40AF).withValues(alpha: 0.3),
+            width: 1.5,
           ),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          minimumSize: const Size(double.infinity, 56),
         ),
-        icon: const Icon(Icons.star_outline_rounded, size: 20),
-        label: Text(
-          context.l10n.rateDriver,
-          style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          child: InkWell(
+            onTap: () =>
+                RateDriverSheet.show(context, order: order, onSubmit: onRate),
+            borderRadius: BorderRadius.circular(16),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.star_outline_rounded,
+                    size: 20,
+                    color: Color(0xFF1E40AF),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    context.l10n.rateDriver,
+                    style: GoogleFonts.cairo(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF1E40AF),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

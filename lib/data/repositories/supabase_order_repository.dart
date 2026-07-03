@@ -211,8 +211,9 @@ final class SupabaseOrderRepository implements IOrderRepository {
     required RewardBreakdown breakdown,
     String? vehicleType,
   }) {
-    if (_client.auth.currentUser == null)
+    if (_client.auth.currentUser == null) {
       return Future.value(const Success(null));
+    }
     return _runWithRetry(
       () => _client.rpc(
         'record_order_transaction',

@@ -31,9 +31,7 @@ class MarketItemInfoCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Spacer(),
           Expanded(
-            flex: 5,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [

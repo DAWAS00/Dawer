@@ -21,10 +21,7 @@ import '../../../../core/components/dwaar_skeleton.dart';
 class SupplierHomeTab extends StatelessWidget {
   final String userName;
 
-  const SupplierHomeTab({
-    super.key,
-    required this.userName,
-  });
+  const SupplierHomeTab({super.key, required this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +64,8 @@ class SupplierHomeTab extends StatelessWidget {
           ),
         const SliverToBoxAdapter(child: SizedBox(height: 14)),
 
-        if (!loading && myListings.isNotEmpty) ..._buildMyListingsSection(context, myListings),
+        if (!loading && myListings.isNotEmpty)
+          ..._buildMyListingsSection(context, myListings),
 
         SliverToBoxAdapter(
           child: HomeSectionHeader(
@@ -83,11 +81,18 @@ class SupplierHomeTab extends StatelessWidget {
               padding: const EdgeInsets.only(top: 60),
               child: Column(
                 children: [
-                  Icon(Icons.inventory_2_outlined, size: 64, color: AppColors.primaryGreen.withValues(alpha: 0.2)),
+                  Icon(
+                    Icons.inventory_2_outlined,
+                    size: 64,
+                    color: AppColors.primaryGreen.withValues(alpha: 0.2),
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     context.l10n.supplierNoOrdersYet,
-                    style: GoogleFonts.cairo(fontSize: 16, color: const Color(0xFF717973)),
+                    style: GoogleFonts.cairo(
+                      fontSize: 16,
+                      color: const Color(0xFF717973),
+                    ),
                   ),
                 ],
               ),
@@ -106,20 +111,24 @@ class SupplierHomeTab extends StatelessWidget {
                       onTap: loading
                           ? null
                           : () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => OrderDetailsView(
-                                    order: displayOrders[i],
-                                    onSupplierConfirmArrival: (available) {
-                                      final store = context.read<AppOrderStore>();
-                                      if (available) {
-                                        store.handleSupplierAvailable(displayOrders[i].id);
-                                      } else {
-                                        store.handleSupplierUnavailable(displayOrders[i].id);
-                                      }
-                                    },
-                                  ),
+                              MaterialPageRoute(
+                                builder: (_) => OrderDetailsView(
+                                  order: displayOrders[i],
+                                  onSupplierConfirmArrival: (available) {
+                                    final store = context.read<AppOrderStore>();
+                                    if (available) {
+                                      store.handleSupplierAvailable(
+                                        displayOrders[i].id,
+                                      );
+                                    } else {
+                                      store.handleSupplierUnavailable(
+                                        displayOrders[i].id,
+                                      );
+                                    }
+                                  },
                                 ),
                               ),
+                            ),
                     ),
                   ],
                 ],
@@ -131,7 +140,10 @@ class SupplierHomeTab extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildMyListingsSection(BuildContext context, List<Order> listings) {
+  List<Widget> _buildMyListingsSection(
+    BuildContext context,
+    List<Order> listings,
+  ) {
     return [
       SliverToBoxAdapter(
         child: Padding(
@@ -139,7 +151,10 @@ class SupplierHomeTab extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFF1E40AF).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -192,19 +207,36 @@ class SupplierHomeTab extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(ctx.l10n.withdrawListing, textAlign: TextAlign.right, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        content: Text(ctx.l10n.withdrawListingConfirm, textAlign: TextAlign.right, style: GoogleFonts.cairo()),
+        title: Text(
+          ctx.l10n.withdrawListing,
+          textAlign: TextAlign.right,
+          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          ctx.l10n.withdrawListingConfirm,
+          textAlign: TextAlign.right,
+          style: GoogleFonts.cairo(),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(ctx.l10n.no, style: GoogleFonts.cairo(color: const Color(0xFF717973))),
+            child: Text(
+              ctx.l10n.no,
+              style: GoogleFonts.cairo(color: const Color(0xFF717973)),
+            ),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               context.read<MarketplaceViewModel>().removeListing(orderId);
             },
-            child: Text(ctx.l10n.yesWithdraw, style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
+            child: Text(
+              ctx.l10n.yesWithdraw,
+              style: GoogleFonts.cairo(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),

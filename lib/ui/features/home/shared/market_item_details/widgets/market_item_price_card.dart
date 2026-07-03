@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../../data/models/order/order.dart';
+import '../../../../../../l10n/l10n.dart';
 
 class MarketItemPriceCard extends StatelessWidget {
   final Order item;
@@ -9,6 +10,7 @@ class MarketItemPriceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -32,7 +34,7 @@ class MarketItemPriceCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                'سعر المواد',
+                l10n.marketItemPriceLabel,
                 style: GoogleFonts.cairo(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -40,7 +42,7 @@ class MarketItemPriceCard extends StatelessWidget {
                 ),
               ),
               Text(
-                'قابل للتفاوض',
+                l10n.marketItemNegotiable,
                 style: GoogleFonts.cairo(
                   fontSize: 12,
                   color: const Color(0xFFB45309),

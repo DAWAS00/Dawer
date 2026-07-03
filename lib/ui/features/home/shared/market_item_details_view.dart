@@ -17,6 +17,7 @@ import 'market_item_details/widgets/market_item_purchase_choice_sheet.dart';
 import 'market_item_details/widgets/market_item_rider_choice_sheet.dart';
 import 'market_item_details/widgets/market_item_invoice_sheet.dart';
 import 'market_item_details/widgets/market_item_reserve_sheet.dart';
+import '../../../core/components/dwaar_snackbar.dart';
 
 class MarketItemDetailsView extends StatelessWidget {
   final Order item;
@@ -174,17 +175,7 @@ class MarketItemDetailsView extends StatelessWidget {
     onSupplierPurchaseConfirmed?.call(purchased);
     Navigator.pop(context); // close choice sheet
     Navigator.pop(context); // close details
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          context.l10n.marketItemPurchasedPickup,
-          style: GoogleFonts.cairo(),
-        ),
-        backgroundColor: const Color(0xFF1E5C35),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
+    context.showSuccessSnackBar(context.l10n.marketItemPurchasedPickup);
   }
 
   Widget _buildActionBar(BuildContext context) {
@@ -253,7 +244,7 @@ class MarketItemDetailsView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      item.reservationStatus?.label ?? 'محجوز',
+                      item.reservationStatus!.label,
                       style: GoogleFonts.cairo(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -326,7 +317,7 @@ class MarketItemDetailsView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'احجز الآن بـ ١٠٪',
+                        context.l10n.marketItemReserveNowButton,
                         style: GoogleFonts.cairo(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -371,21 +362,11 @@ class MarketItemDetailsView extends StatelessWidget {
             reserverId: 'CURRENT-USER',
             pickupDate: pickupDate,
           );
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                err ?? 'تم إرسال طلب الحجز — بانتظار موافقة البائع',
-                style: GoogleFonts.cairo(),
-              ),
-              backgroundColor: err != null
-                  ? const Color(0xFFDC2626)
-                  : const Color(0xFF1E5C35),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          );
+          if (err != null) {
+            context.showErrorSnackBar(err);
+          } else {
+            context.showSuccessSnackBar(context.l10n.marketItemReservationSent);
+          }
           if (err == null) {
             Navigator.pop(context);
           }
@@ -439,17 +420,9 @@ class MarketItemDetailsView extends StatelessWidget {
     Navigator.pop(context); // close invoice sheet
     Navigator.pop(context); // close details
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          context.l10n.marketInvoicePickupSuccess,
-          style: GoogleFonts.cairo(),
-        ),
-        backgroundColor: const Color(0xFF1E5C35),
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 5),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
+    context.showSuccessSnackBar(
+      context.l10n.marketInvoicePickupSuccess,
+      duration: const Duration(seconds: 5),
     );
   }
 
@@ -461,19 +434,7 @@ class MarketItemDetailsView extends StatelessWidget {
     );
     if (claimed != null) {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            context.l10n.marketItemReceived,
-            style: GoogleFonts.cairo(),
-          ),
-          backgroundColor: const Color(0xFF1E5C35),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
+      context.showSuccessSnackBar(context.l10n.marketItemReceived);
     }
   }
 
@@ -499,19 +460,7 @@ class MarketItemDetailsView extends StatelessWidget {
           onSupplierPurchaseConfirmed?.call(purchased);
           Navigator.pop(context); // close sheet
           Navigator.pop(context); // close details
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                context.l10n.marketItemPurchasedDriver,
-                style: GoogleFonts.cairo(),
-              ),
-              backgroundColor: const Color(0xFF1E5C35),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          );
+          context.showSuccessSnackBar(context.l10n.marketItemPurchasedDriver);
         },
       ),
     );
@@ -522,19 +471,7 @@ class MarketItemDetailsView extends StatelessWidget {
     final received = vm.receiveAtFacility(item.id, 'مقر الشركة');
     if (received != null) {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            context.l10n.marketItemFacilityReceived,
-            style: GoogleFonts.cairo(),
-          ),
-          backgroundColor: const Color(0xFF1E40AF),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
+      context.showInfoSnackBar(context.l10n.marketItemFacilityReceived);
     }
   }
 

@@ -10,6 +10,7 @@ import 'package:dwaar/ui/features/home/shared/viewmodels/base_supplier_viewmodel
 import 'package:dwaar/domain/requests/create_pickup_request.dart';
 import 'package:dwaar/core/utils/haptic_util.dart';
 import 'package:dwaar/l10n/l10n.dart';
+import 'package:dwaar/ui/core/components/dwaar_snackbar.dart';
 
 import 'package:dwaar/ui/features/home/supplier/widgets/wizard/top_bar.dart';
 import 'package:dwaar/ui/features/home/supplier/widgets/wizard/progress_bar.dart';
@@ -130,13 +131,7 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
       vm.addOrder(order);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.wizardPublishedToMarket),
-            backgroundColor: const Color(0xFF2E7D32),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        context.showSuccessSnackBar(l10n.wizardPublishedToMarket);
         Navigator.pop(context);
       }
     } else {
@@ -157,24 +152,14 @@ class _NewPickupRequestViewState extends State<NewPickupRequestView> {
 
       if (mounted) {
         if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.wizardPickupRequestSent),
-              backgroundColor: const Color(0xFF2E7D32),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          context.showSuccessSnackBar(l10n.wizardPickupRequestSent);
           Navigator.pop(context);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                vm.pickupSubmitError?.message ?? l10n.wizardPickupRequestFailed,
-              ),
-              backgroundColor: const Color(0xFFC62828),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          if (vm.pickupSubmitError != null) {
+            context.showErrorFailure(vm.pickupSubmitError!);
+          } else {
+            context.showErrorSnackBar(l10n.wizardPickupRequestFailed);
+          }
         }
       }
     }
