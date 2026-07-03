@@ -394,7 +394,13 @@ void main() {
       );
       await tester.pumpAndSettle();
       await tester.tap(find.byType(GestureDetector).first);
-      await tester.pumpAndSettle();
+      // OrderDetailsView contains looping pulse animations
+      // (order_arrival_section.dart, order_status_timeline.dart) that never
+      // settle, so pumpAndSettle() here would hang forever. Pump past the
+      // route transition in discrete steps instead of settling fully.
+      for (var i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
       // Navigation happened (widget tree changed)
       expect(find.byType(SupplierOrderCard), findsNothing);
     });
