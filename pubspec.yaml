@@ -1,4 +1,4 @@
-﻿name: dwaar
+name: dwaar
 description: "A new Flutter project."
 publish_to: 'none'
 version: 0.1.0+1
@@ -9,7 +9,7 @@ environment:
 dependencies:
   cached_network_image: ^3.4.1
   intl_phone_field: ^3.2.0
-  pinput: ^5.0.2
+  pinput: ^6.0.2
   lucide_icons_flutter: ^3.1.14+2
   flutter:
     sdk: flutter
