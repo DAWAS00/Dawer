@@ -1,31 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:dwaar/data/services/app_order_store.dart';
-import 'package:dwaar/data/models/order/order.dart';
-import 'package:dwaar/data/models/user_role.dart';
-import 'package:dwaar/data/models/user.dart';
-import 'package:dwaar/ui/features/home/home_router.dart';
-import 'package:dwaar/domain/requests/create_pickup_request.dart';
 
 class DevTestingPanel extends StatelessWidget {
   const DevTestingPanel({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 90,
-      left: 16,
-      child: FloatingActionButton(
-        mini: true,
-        backgroundColor: Colors.red.shade800,
-        foregroundColor: Colors.white,
-        onPressed: () => _showPanel(context),
-        child: const Icon(Icons.bug_report_rounded),
-      ),
-    );
+    // Dev panel is disabled
+    return const SizedBox.shrink();
   }
+}
 
+/*
   void _showPanel(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
@@ -256,3 +241,4 @@ class _DevTestingPanelSheetState extends State<_DevTestingPanelSheet> {
     );
   }
 }
+*/
