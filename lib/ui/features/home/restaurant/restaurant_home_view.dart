@@ -4,7 +4,10 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../data/models/order/order.dart';
 import '../../../../data/services/app_order_store.dart';
+import '../../../../domain/repositories/i_auth_repository.dart';
+import '../../../../domain/repositories/i_report_request_repository.dart';
 import '../../../features/auth/viewmodels/login_viewmodel.dart';
+import '../../analytics/analytics_tab.dart';
 import '../shared/viewmodels/base_supplier_viewmodel.dart';
 import 'viewmodels/restaurant_home_viewmodel.dart';
 import 'tabs/restaurant_home_tab.dart';
@@ -95,8 +98,26 @@ class _RestaurantHomeBody extends StatelessWidget {
         onStartTransit: vm.startCollectionSaleTransit,
         onComplete: vm.completeCollectionSale,
       ),
+      // Matches SupplierBottomNav's 5 items (home/market/orders/reports/
+      // profile) — this tab was missing, so tapping "Reports" or "Profile"
+      // sent an out-of-range index to the IndexedStack below.
+      AnalyticsTab(
+        userId: context.read<IAuthRepository>().currentSession?.userId ?? '',
+        allOrders: context.read<AppOrderStore>().supplierCompletedOrdersFor(
+          vm.user.name,
+        ),
+        reportRepository: context.read<IReportRequestRepository>(),
+        showMilestones: true,
+        showReportCenter: true,
+        showProfitability: true,
+        showGreenCredits: true,
+        greenPoints: context.read<AppOrderStore>().greenPointsFor(
+          context.read<IAuthRepository>().currentSession?.userId ?? '',
+        ),
+      ),
       SupplierProfileTab(
         user: vm.user,
+        userId: context.read<IAuthRepository>().currentSession?.userId ?? '',
         totalPoints: vm.totalPoints,
         totalOrders: vm.totalOrders,
         supplierType: supplierType,
