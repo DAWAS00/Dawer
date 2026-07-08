@@ -13,7 +13,7 @@ name: CI
 
 on:
   push:
-    branches: [main, mohammad, ui-v2-port]
+    branches: [main, mohammad]
   pull_request:
     branches: [main]
 
