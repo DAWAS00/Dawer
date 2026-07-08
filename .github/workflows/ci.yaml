@@ -41,6 +41,20 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Create dummy .env.local
+        # .env.local is declared as a pubspec asset (pubspec.yaml:84) but is
+        # gitignored (holds secrets), so it's absent on a clean CI checkout.
+        # flutter analyze flags asset_does_not_exist if the file is missing,
+        # and flutter test's asset bundle also needs it. The APK smoke-test
+        # job already does the same — see build-apk below. Placeholder values
+        # only; the app falls back to mock/offline mode when they're fake.
+        run: |
+          cat > .env.local <<'EOF'
+          SUPABASE_URL=https://placeholder.supabase.co
+          SUPABASE_ANON_KEY=placeholder
+          GEMINI_API_KEY=placeholder
+          EOF
+
       - name: Verify formatting
         # Local fix: dart format .
         # This only checks style (spacing, line breaks) — never logic. It
