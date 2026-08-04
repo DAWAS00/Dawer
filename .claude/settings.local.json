@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__mcp-registry__search_mcp_registry",
+      "WebFetch(domain:www.skills.sh)",
+      "PowerShell(npx skills add https://github.com/vercel-labs/skills --skill find-skills)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\User\\\\Desktop\\\\myProjects\\\\Dawer\" -Recurse -Depth 3 | Where-Object { !$_.FullName.Contains\\('node_modules'\\) -and !$_.FullName.Contains\\('.git'\\) } | Select-Object FullName)",
+      "Bash(flutter --version)",
+      "Bash(git clone *)",
+      "Bash(python -c \"import pypdf; print\\('pypdf ok'\\)\")",
+      "Bash(python -m pip install pypdf --quiet)",
+      "Bash(python -c ' *)",
+      "Bash(flutter analyze *)",
+      "Bash([ -f \"$f\" ])",
+      "Bash(grep -o \" - [a-z_]*$\")",
+      "Bash(grep -o \"\\\\\\(lib\\\\|test\\\\\\)\\\\\\\\\\\\\\\\[^ ]*\\\\.dart\")",
+      "Bash(flutter test *)",
+      "Bash(awk '{print $1, $2}')",
+      "Bash(python \"C:/Users/User/AppData/Local/Temp/claude/C--Users-User-Desktop-myProjects-Dawer/d01bbad4-e72d-4070-9832-26907f5e17fa/scratchpad/remap_colors.py\")",
+      "Bash(python -)",
+      "Bash(mkdir -p android/app/src/main/kotlin/io/ghuson/app)",
+      "Bash(git mv *)",
+      "Bash(rm -rf android/app/src/main/kotlin/com)",
+      "Bash(flutter pub *)",
+      "Bash(python \"C:/Users/User/AppData/Local/Temp/claude/C--Users-User-Desktop-myProjects-Dawer/d01bbad4-e72d-4070-9832-26907f5e17fa/scratchpad/gen_icons.py\")",
+      "Bash(flutter build *)",
+      "Bash([ -s \"$f\" ])",
+      "Bash(python brand_source/generate_icons.py)",
+      "Bash(python -c \"import reportlab; print\\('reportlab', reportlab.Version\\)\")",
+      "Bash(python -m pip install reportlab --quiet)",
+      "Bash(python \"C:/Users/User/AppData/Local/Temp/claude/C--Users-User-Desktop-myProjects-Dawer/d01bbad4-e72d-4070-9832-26907f5e17fa/scratchpad/build_stack_pdf.py\")",
+      "Bash(xargs grep -l \"SnackBar\")",
+      "Bash(xargs -I{} sh -c 'grep -q \"catch\" \"{}\" && echo {}')",
+      "Read(//c/Users/User/Desktop/Ghuson/**)"
+    ]
+  },
+  "skillOverrides": {
+    "find-skills": "off"
+  }
+}
